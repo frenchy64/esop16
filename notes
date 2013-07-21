@@ -1,0 +1,69 @@
+
+Typed Clojure: Gradual typing for Clojure
+
+* Motivation
+
+It is increasingly common to enhance existing dynamically typed languages with
+optional static type systems. They bring many advantages of statically typed languages
+
+* Typed Clojure
+
+Typed Clojure is a gradual type system for Clojure which enables programmers to annotate
+untyped code to turn it into typed code. It can check interoperability between Clojure and
+Java code via Clojure's interoperability support.
+It is designed to be flexible enough to be appealing to Clojure programmers, while
+providing kk
+
+(Gilad)
+
+* Protection against null-pointer exceptions
+
+A common class of errors on the JVM is unintentional invocations
+of the null-pointer (nil in Clojure). Following the techniques used
+in Typed Racket, paricularly union types and occurrence typing, we
+protect against null-pointer exceptions in statically typed Clojure code
+in a way that is natural to Clojure programmers.
+
+We also give programmers the tools to annotate normal Java constructs
+to document where null is valid. This way, we can give a *static type error* if
+Clojure code uses Java code via interoperability without guarding against null-pointer
+exceptions.
+
+The approach is simple. The concepts of reference types and null are
+separated in our type system. This differs from Java, where the type system
+must always assume reference types could be null. In our system, a reference
+type such as `java.lang.Number` denotes a *non-nilable* type, and the singleton
+type `nil` contains just Java's `null`. 
+This means `java.lang.Number` in Java is equivalent to `(U nil java.lang.Number)` in Typed Clojure.
+
+* Array covariance
+
+Covariance of arrays in Java are well known to be statically unsound. In practice,
+arrays are protected from unsound writes via runtime checks. Other, more recent languages
+Dart and Typescript have intentionally chosen arrays to be covariant. They argue
+that it is more intuitive and convenient to users, enough to introduce static unsoundness
+in the type system.
+
+Typed Clojure helps programmers use arrays correctly, in particular those passed from Java code.
+We argue that array types in Typed Clojure are easy to understand and use, without the drawbacks
+of covariant arrays. We hope to inspire language designers to avoid array covariance in new languages,
+and to demonstrate to users the drawbacks of covariant arrays.
+
+Our approach uses *bivariant* array types, with one parameter for the types that can be written
+to an array and another for the types that can be read from an array.
+
+In general, a Java type signature that contains an array type should not be trusted 
+
+* Occurrence typing
+
+The features of occurrence typing have proven essential for designing a satisfying type system
+for Clojure. Our implementation of occurrence typing is based on Typed Racket,
+with some extensions to help check Clojure code.
+
+filter/remove
+
+Heterogeneous maps
+
+Flow filters
+
+* Heterogeneous maps
