@@ -1,0 +1,71 @@
+% macros for Clojure grammars
+\usepackage{mathpartir}
+
+%% metavariables
+
+% constants
+\newmeta\c{c}
+
+% types
+\newmeta\s{\sigma}              % these are automatically wrapped in \ma
+\newmeta\t{\tau}
+\newmeta\T{T}
+
+% expressions
+\newmeta\M{M}
+\newmeta\N{N}
+\newmeta\P{P}
+\newmeta\expe{e}
+\newmeta\expd{d}
+
+% we write a macro for every bit of abstract syntax.  That way they
+% will all look the same!
+
+% types
+\newbfop\int{int}
+\newbfop\bool{bool}
+\newbfop\IPersistentMapLiteral{IPersistentMap}
+\newbfop\ULiteral{\vee}
+\newbfop\ILiteral{\wedge}
+\newcommand\proctype[2]{(#1 \to #2)}
+% \proctype is a little overkill.
+%% Reynolds' package can also abstract things like (\s1 \to \s2 \to \s3).
+
+\newbfop\Top{Any}
+\newbfop\Bottom{Nothing}
+\newbfop\Keyword{Keyword}
+\newbfop\Nil{nil}
+\newcommand\IPersistentMap[2]{(\IPersistentMapLiteral\ #1\ #2)}
+\newbfop\TopIPersistentMap{{\IPersistentMap {\Top} {\Top}}}
+\newbfop\TopHMap{\{ \}}
+
+% terms
+\newmeta\x{x}                   % not sure if \x is reserved...
+\newmeta\v{v}
+\newmeta\k{k}
+\newmeta\nil{nil}
+\newmeta\assoc{assoc}
+\newmeta\dissoc{dissoc}
+\newmeta\get{get}
+\newcommand\abs[2]{\ma{\l #1 . #2}}
+\newcommand\comb[2]{\ma{(#1\ #2)}}
+
+% Clojure values
+\newmeta\symbol{symbol}
+\newmeta\nat{nat}
+
+% constant calls
+
+% typing judgements
+\newcommand\hastype[2]{\ma{#1 \mathbin{:} #2}}
+\newcommand\issubtype[2]{\ma{#1 \mathbin{<:} #2}}
+
+
+% evaluation contexts
+\newmeta\E{E}
+
+
+% propositions
+\newmeta\prop{P}
+\newmeta\pathelem{PE}
+\newcommand\isprop[2]{(is #1 #2)}

@@ -29,6 +29,35 @@
 % 11pt          To set in 11-point type instead of 9-point.
 % authoryear    To obtain author/year citation style instead of numeric.
 
+\usepackage{mmm}
+\usepackage{mathpartir}
+\usepackage{clj-grammar}
+%\usepackage{url}
+%\usepackage[style=alphabetic, sorting=nyt]{biblatex}
+%\addbibresource{bibliography.bib}
+
+\usepackage{listings}
+\lstset{ %
+  language=Lisp,                % choose the language of the code
+  columns=fixed,basewidth=.5em,
+  basicstyle=\small\ttfamily,       % the size of the fonts that are used for the code
+  %numbers=left,                   % where to put the line-numbers
+  %numberstyle=\small\ttfamily,      % the size of the fonts that are used for the line-numbers
+  %stepnumber=1,                   % the step between two line-numbers. If it is 1 each line will be numbered
+  %numbersep=5pt,                  % how far the line-numbers are from the code
+  %backgroundcolor=\color{white},  % choose the background color. You must add \usepackage{color}
+  %showspaces=false,               % show spaces adding particular underscores
+  showstringspaces=false,         % underline spaces within strings
+  %showtabs=false,                 % show tabs within strings adding particular underscores
+  frame=single,           % adds a frame around the code
+  %tabsize=2,          % sets default tabsize to 2 spaces
+  captionpos=t,           % sets the caption-position to bottom
+  breaklines=true,        % sets automatic line breaking
+  breakatwhitespace=true,    % sets if automatic breaks should only happen at whitespace
+  %escapeinside={\%*}{*)},          % if you want to add a comment within your code
+}
+
+
 \usepackage{amsmath}
 
 
@@ -76,211 +105,110 @@ This is the text of the abstract.
 
 % general terms are not compulsory anymore, 
 % you may leave them out
-\terms
-term1, term2
+%\terms
+%term1, term2
 
 \keywords
 keyword1, keyword2
 
 \section{Introduction}
 
-The text of the paper begins here.
-
-Lots of text.
-
-More text.
-
-Lots of text.
-
-More text.
-
-
-Lots of text.
-
-More text.
-
-Lots of text.
-
-More text.
-
-
-Lots of text.
-
-More text.
-
-Lots of text.
-
-More text.
-
-Lots of text.
-
-More text.
-
-Lots of text.
-
-More text.
-
-Lots of text.
-
-More text.
-
-Lots of text.
-
-More text.
-
-Lots of text.
-
-More text.
-
-Lots of text.
-
-More text.
-
-Lots of text.
-
-More text.
-
-Lots of text.
-
-More text.
-
-
-Lots of text.
-
-More text.
-
-Lots of text.
-
-More text.
-
-
-Lots of text.
-
-More text.
-
-Lots of text.
-
-More text.
-
-Lots of text.
-
-More text.
-
-Lots of text.
-
-More text.
-
-Lots of text.
-
-More text.
-
-Lots of text.
-
-More text.
-
-Lots of text.
-
-More text.
-
-Lots of text.
-
-More text.
-
-
-Lots of text.
-
-More text.
-
-Lots of text.
-
-More text.
-
-
-
-
-Lots of text.
-
-More text.
-
-Lots of text.
-
-More text.
-
-Lots of text.
-
-
-Lots of text.
-
-More text.
-
-Lots of text.
-
-More text.
-
-Lots of text.
-
-More text.
-
-Lots of text.
-
-More text.
-
-Lots of text.
-
-More text.
-
-Lots of text.
-
-More text.
-
-Lots of text.
-
-More text.
-
-Lots of text.
-
-More text.
-
-Lots of text.
-
-More text.
-
-Lots of text.
-
-More text.
-
-Lots of text.
-
-More text.
-
-Lots of text.
-
-More text.
-
-Lots of text.
-
-\appendix
-\section{Appendix Title}
-
-This is the text of the appendix, if you need one.
-
-\acks
-
-Acknowledgments, if needed.
+Typed Clojure is a gradual type system for Clojure, based on the
+static portion of Typed Racket.
+This paper gives an overview of Typed Clojure, concentrating on extensions
+that could interest Typed Racket users.
+
+% what are the goals of Typed Clojure?
+% where do they differ from Typed Racket? why?
+
+% Things todo
+% - small calculus based on previous TR formalisation
+%   that demos the ``flow'' environment & not/intersection type
+% - discussion and examples for flow filters
+% - discussion on the not/difference type, real code where it helps
+% - higher-rank polymorphism, show what it enables (eg. monads)
+%   - also show more complicated example, making an extensible
+%     type for clojure.core/conj, and why it's not straightforward
+% - discussion on limitations of local type inference
+% - demonstration of how we check multimethods
+% - dealing with array covariance
+% - note on how we avoid null-pointer exceptions
+% - discussion on why Typed Clojure only uses the ``static'' part
+%   of Typed Racket
+% - the equality filter problem (and draft solution?), a proposition
+%   that knows about binding aliasing. Sounds straightforward?
+
+
+\section{Using negative filters}
+
+Occurrence typing plays an important role in Typed Racket and Typed Clojure.
+By maintaining a \emph{proposition environment} of propositions relating types to
+bindings, we can update bindings with more accurate types as programs progress.
+It follows that there is some correspondence between propositions and types,
+characterised by the \emph{update} function, which takes a type and a proposition
+and returns a type which updates the input type using the proposition.
+
+There is a straightforward relationship between ``positive'' propositions and types.
+For example 
+{\tt (update Number (is Integer 0))}
+updates Number by Integer, which is Integer, because Integer <: Number.
+
+The relationship between ``negative'' propositions and types is not always obvious.
+A common proposition in Typed Clojure is (! (U nil false) a): the proposition that
+local binding ``a'' is \emph{not} of type (U nil false).
+This problem is most visible in expressions like {\tt (filter identity coll)}, where
+``identity'' has a ``then'' proposition that has negative information: (! (U nil false) 0),
+which reads, the 0th argument of identity does not contain (U nil false).
+
+\section{Extending occurrence typing}
+
+\begin{figure*}
+$$
+\begin{altgrammar}
+  \expd{}, \expe{} &::=& (\expe{}\ \expe{}) \alt \abs{\x a}{\expe{}}
+                &\mbox{Expressions}
+%  \c{} &::=& \assoc{} \alt \dissoc{} \alt \get{}
+%              &\mbox{Constants}
+\end{altgrammar}
+$$
+\end{figure*}
+
+%$$
+%\begin{tdisplay}{Evaluation Contexts}
+%  \begin{altgrammar}
+%    \E{} &::=& [ ] % application rules
+%              \alt (\c{}\ \overrightarrow{\v{}}\ \E{}\ \overrightarrow{\exp{}}) % eval arguments left-to-right
+%              % map rules
+%              \alt \{\overrightarrow{\v{}\ \v{}}\ \E{}\ \exp{}\ \overrightarrow{\exp{}\ \exp{}} \} % key first
+%              \alt \{\overrightarrow{\v{}\ \v{}}\ \v{}\ \E{}\ \overrightarrow{\exp{}\ \exp{}} \}   % value next
+%              &\mbox{Evaluation Contexts}
+%  \end{altgrammar}
+%\end{tdisplay}
+%$$ 
+
+
+%\appendix
+%\section{Appendix Title}
+%
+%This is the text of the appendix, if you need one.
+
+%\acks
+%
+%Acknowledgments, if needed.
 
 % We recommend abbrvnat bibliography style.
 
-\bibliographystyle{abbrvnat}
-
-% The bibliography should be embedded for final submission.
-
-\begin{thebibliography}{}
-\softraggedright
-
-\bibitem[Smith et~al.(2009)Smith, Jones]{smith02}
-P. Q. Smith, and X. Y. Jones. ...reference text...
-
-\end{thebibliography}
+%\bibliographystyle{abbrvnat}
+%
+%% The bibliography should be embedded for final submission.
+%
+%\begin{thebibliography}{}
+%\softraggedright
+%
+%\bibitem[Smith et~al.(2009)Smith, Jones]{smith02}
+%P. Q. Smith, and X. Y. Jones. ...reference text...
+%
+%\end{thebibliography}
 
 
 \end{document}
