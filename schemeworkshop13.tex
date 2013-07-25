@@ -111,12 +111,10 @@ This is the text of the abstract.
 \keywords
 keyword1, keyword2
 
-\section{Introduction}
+\section{Typed Clojure}
 
 Typed Clojure is a gradual type system for Clojure, based on the
 static portion of Typed Racket.
-This paper gives an overview of Typed Clojure, concentrating on extensions
-that could interest Typed Racket users.
 
 % what are the goals of Typed Clojure?
 % where do they differ from Typed Racket? why?
@@ -138,6 +136,10 @@ that could interest Typed Racket users.
 % - the equality filter problem (and draft solution?), a proposition
 %   that knows about binding aliasing. Sounds straightforward?
 
+\section{Higher-rank polymorphism}
+
+Typed Clojure supports f-bounded polymorphism and higher-rank
+types.
 
 \section{Using negative filters}
 
@@ -186,6 +188,103 @@ $$
 %\end{tdisplay}
 %$$ 
 
+\section{Java interoperability}
+
+As Clojure supports Java interoperability, Typed Clojure has some
+integration with Java's type system. Calls to Java methods from
+Clojure can be type checked by Typed Clojure.
+
+We currently do not support Java generics
+
+\subsection{Arrays}
+
+Supporting statically sound interactions with Java arrays is a goal
+of Typed Clojure. This is complicated by Java's decision to make
+arrays covariant in their argument, a well documented source of static
+unsoundness.
+
+Our basic approach is to make our array types \emph{bivariant}. Array types
+look like \lstinline|(Array2 w r)| and
+are reminicent of functions or pipes: having a contravariant parameter for input (writing)
+and a covariant parameter for output (reading).
+
+Most commonly, an array type is invariant in its parameter; it can
+write and read input of the same type.
+We can get the same effect by setting our input and output
+parameters to the same type. For example, \lstinline|(Array2 Number Number)|
+(or equivalently, \lstinline|(Array Number)|)
+in Typed Clojure is similar to invariant array types of \lstinline|Number| in languages like Scala.
+
+The biggest gain in using a separate input parameter is the ability
+to specify \emph{read-only} arrays. Crucially, our type system features an
+explicit bottom type \lstinline|Nothing|, allowing a read-only \lstinline|Number| array
+to be of type \lstinline|(Array2 Nothing Number)|.
+
+To realise why defining read-only arrays are useful, we need to examine
+what makes array covariance unsound in Java.
+Array covariance lets us lie about the type of an array so the consumer
+of an array cannot tell the actual type of the array when examining a type
+signature.
+
+\begin{verbatim}
+...
+public static Number[] getNumberArray() {
+  Number[] n = new Integer[10];
+  return n;
+}
+...
+\end{verbatim}
+
+To the casual consumer \emph{getNumberArray} returns an array that can both
+read and write \lstinline|Number|s. However it is clear from the implementation
+that attempting to write say a \lstinline|Double| to this array will result
+in a runtime error.
+
+\begin{verbatim}
+...
+Number[] myArray = getNumberArray();
+myArray[0] = 1.1;
+/* Exception in thread "main" java.lang.ArrayStoreException: java.lang.Double */
+...
+\end{verbatim}
+
+Notice that this is a runtime error, and Java's type system has not helped
+statically prevent it.
+This could cause a similar issue for other statically-typed languages offering
+interoperability with Java. 
+
+To prevent these sorts of runtime exceptions in Typed Clojure, we declare
+all arrays from unknown sources to be \emph{read-only}. Put differently,
+the only way to define a writeable array is to create it in type-checked Clojure
+code.
+
+\begin{lstlisting}
+(let [n (CovariantArray/getNumberArray)]
+  (aset n 0 1.1))
+
+; Polymorphic static method clojure.lang.RT/aset could not be 
+; applied to arguments:
+; Domains: 
+;         (Array2 i o) clojure.core.typed/AnyInteger i
+; 
+; Arguments:
+;         (Array2 Nothing java.lang.Number) int (Value 1.1)
+; 
+; with expected type:
+;         Any
+\end{lstlisting}
+
+The type inferred for the local \lstinline|n| is (Array2 Nothing Number)
+which tells the type system: it is never safe to write to this array, but
+it is safe to assume \lstinline|Number|s can be read from this array.
+
+To emphasise, this is a static type error. Errors like this help Clojure programmers
+use foreign Java libraries more correctly.
+
+\begin{verbatim}
+Note that Java libraries are often large and complex and programmers will probably
+enjoy the extra help from the type system.
+\end{verbatim}
 
 %\appendix
 %\section{Appendix Title}
