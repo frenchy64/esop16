@@ -205,7 +205,7 @@ unsoundness.
 
 Our basic approach is to make our array types \emph{bivariant}. Array types
 look like \lstinline|(Array2 w r)| and
-are reminicent of functions or pipes: having a contravariant parameter for input (writing)
+are reminiscent of functions or pipes: having a contravariant parameter for input (writing)
 and a covariant parameter for output (reading).
 
 Most commonly, an array type is invariant in its parameter; it can
@@ -274,7 +274,7 @@ code.
 ;         Any
 \end{lstlisting}
 
-The type inferred for the local \lstinline|n| is (Array2 Nothing Number)
+The type inferred for the local \lstinline|n| is \lstinline|(Array2 Nothing Number)|
 which tells the type system: it is never safe to write to this array, but
 it is safe to assume \lstinline|Number|s can be read from this array.
 
@@ -285,6 +285,37 @@ use foreign Java libraries more correctly.
 Note that Java libraries are often large and complex and programmers will probably
 enjoy the extra help from the type system.
 \end{verbatim}
+
+\subsection{Handling null}
+
+Probably the most common pain point in Java programming is dealing with \emph{null}.
+It is crucial that Typed Clojure deals with \emph{null} intelligently so that
+all potentially erroneous interactions with \emph{null} in typed code are caught at compile time.
+We also want to represent \emph{null} in a way that is natural to Clojure programmers
+and approximates their mental model when reasoning about Clojure code.
+
+Firstly, we separate the concepts of \emph{null} and reference types at the type level.
+This is unlike Java, where a reference type, like \emph{java.lang.Number}, includes \emph{null}.
+We provide a singleton type \lstinline|nil|, which contains just the value \lstinline|nil|,
+Clojure's equivalent of \emph{null}. 
+
+Armed with general unions and the type \lstinline|nil|, 
+we can make Typed Clojure's reference types \emph{non-nullable}.
+A Java type like \emph{java.lang.Number} is written \lstinline|(U nil java.lang.Number)|
+in Typed Clojure.
+
+Typed Racket already provides what is needed to write such types; indeed this is a repurposing
+of a common Typed Racket idiom of approximating an Option or Maybe type by
+making a union that includes \emph{\#f}, Racket's only false value.
+However, like handling covariant arrays, the subtlety lies in our interactions with foreign
+Java code.
+
+A set of conversion rules define how to convert a Java type signature into a null-safe
+Clojure version. These rules are designed to be conservative and can be explicitly overridden
+by programmers. Method parameters are non-nullable, while return types are nullable.
+Field types are nullable. Constructors parameters are non-nullable, and return types
+are also non-nullable: it is a Java invariant that all constructors return an instance
+of the Class they are constructing.
 
 %\appendix
 %\section{Appendix Title}
