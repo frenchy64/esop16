@@ -1,5 +1,12 @@
+% see mmm.sty for implementation of newmeta etc
+
 % macros for Clojure grammars
 \usepackage{mathpartir}
+\usepackage{amsfonts}
+
+
+% newmeta variables are automatically subscripted
+% \x0, \x1, \x{}
 
 %% metavariables
 
@@ -15,7 +22,7 @@
 \newmeta\M{M}
 \newmeta\N{N}
 \newmeta\P{P}
-\newmeta\expe{e}
+\newmeta\e{e}
 \newmeta\expd{d}
 
 % we write a macro for every bit of abstract syntax.  That way they
@@ -25,8 +32,12 @@
 \newbfop\int{int}
 \newbfop\bool{bool}
 \newbfop\IPersistentMapLiteral{IPersistentMap}
-\newbfop\ULiteral{\vee}
+\newbfop\Uliteral{\vee}
 \newbfop\ILiteral{\wedge}
+\newbfop\Not{Not}
+\newbfop\All{All}
+\newbfop\TFn{TFn}
+\newbfop\Value{Value}
 \newcommand\proctype[2]{(#1 \to #2)}
 % \proctype is a little overkill.
 %% Reynolds' package can also abstract things like (\s1 \to \s2 \to \s3).
@@ -35,6 +46,9 @@
 \newbfop\Bottom{Nothing}
 \newbfop\Keyword{Keyword}
 \newbfop\Nil{nil}
+\newbfop\True{true}
+\newbfop\False{false}
+\newbfop\falsy{(\ma{\cup\ \Nil\ \False})}
 \newcommand\IPersistentMap[2]{(\IPersistentMapLiteral\ #1\ #2)}
 \newbfop\TopIPersistentMap{{\IPersistentMap {\Top} {\Top}}}
 \newbfop\TopHMap{\{ \}}
@@ -42,13 +56,28 @@
 % terms
 \newmeta\x{x}                   % not sure if \x is reserved...
 \newmeta\v{v}
+\newmeta\class{C}
 \newmeta\k{k}
-\newmeta\nil{nil}
+\newmeta\nil{{\bf nil}}
+\newmeta\true{{\bf true}}
+\newmeta\false{{\bf false}}
 \newmeta\assoc{assoc}
 \newmeta\dissoc{dissoc}
 \newmeta\get{get}
+\newmeta\tryliteral{{\bf try}}
+\newmeta\catchliteral{{\bf catch}}
+\newmeta\finallyliteral{{\bf finally}}
+\newmeta\ifliteral{{\bf if}}
+\newmeta\doliteral{{\bf do}}
+\newmeta\fnliteral{{\bf fn}}
+\newmeta\letliteral{{\bf let}}
 \newcommand\abs[2]{\ma{\l #1 . #2}}
 \newcommand\comb[2]{\ma{(#1\ #2)}}
+\newcommand\tryexp[5]{(\ma{\tryliteral{}\ #1\ (\ma{\catchliteral{}\ #2\ #3\ #4})\ (\ma{\finallyliteral{}\ #5})})}
+\newcommand\ifexp[3]{(\ma{\ifliteral{}\ #1\ #2\ #3})}
+\newcommand\doexp[2]{(\ma{\doliteral{}\ #1\ #2})}
+\newcommand\fnexp[3]{(\ma{\fnliteral{}\ [\ma{#1 \mathbin{:} #2}]\ #3})}
+%\newcommand\letexp[3]{(\ma{\letliteral{}\ [\ensuremath{#1_{#2}}]\ #3})}
 
 % Clojure values
 \newmeta\symbol{symbol}
@@ -59,13 +88,27 @@
 % typing judgements
 \newcommand\hastype[2]{\ma{#1 \mathbin{:} #2}}
 \newcommand\issubtype[2]{\ma{#1 \mathbin{<:} #2}}
+\newcommand\judgement[5]{\ma{#1\ \vdash\ #2\ ;\ #3\ ;\ #4\ ;\ #5}}
+% lookuping props in the env
+\newcommand\inpropenv[2]{\ma{#1 \vdash #2}}
 
+% environment
+\newcommand\propenv{\Gamma}
 
 % evaluation contexts
 \newmeta\E{E}
 
 
 % propositions
-\newmeta\prop{P}
+\newmeta\prop{\psi}
 \newmeta\pathelem{PE}
-\newcommand\isprop[2]{(is #1 #2)}
+\newcommand\isprop[2]{\ensuremath{#1 #2}}
+\newcommand\notprop[2]{\ensuremath{\overline{#1} #2}}
+\newcommand\andprop[2]{\ma{#1 \wedge #2}}
+\newmeta\topprop{\mathbb{TT}}
+\newmeta\botprop{\mathbb{FF}}
+\newcommand\filterset[2]{\ma{#1 | #2}}
+
+% objects
+\newmeta\object{o}
+\newmeta\emptyobject{\O}

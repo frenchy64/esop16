@@ -20,7 +20,7 @@
 %-----------------------------------------------------------------------------
 
 
-\documentclass[preprint]{sigplanconf}
+\documentclass[preprint,10pt]{sigplanconf}
 
 % The following \documentclass options may be useful:
 
@@ -86,19 +86,26 @@
 %\preprintfooter{short description of paper}   % 'preprint' option specified.
 
 \title{Typed Clojure}
-%\subtitle{Subtitle Text, if any}
+\subtitle{A Practical Type System for Clojure based on Typed Racket}
 
-\authorinfo{Name1}
-           {Affiliation1}
-           {Email1}
-\authorinfo{Name2\and Name3}
-           {Affiliation2/3}
-           {Email2/3}
+\authorinfo{Ambrose Bonnaire-Sergeant}
+           {}
+           {abonnairesergeant@gmail.com}
+\authorinfo{Rowan Davies}
+           {University of Western Australia}
+           {rowan@csse.uwa.edu.au}
 
 \maketitle
 
 \begin{abstract}
-This is the text of the abstract.
+Typed Racket has proved to be a valuable starting point for
+a gradual type system for Clojure.
+Building a similar type system for a new language gives the
+designer some flexibility to repurpose and extend features.
+This paper gives an overview of Typed Clojure, concentrating
+on the extensions and differences from Typed Racket. We also
+show where Typed Racket's features were particularly useful
+for type checking non-trivial Clojure idioms.
 \end{abstract}
 
 \category{CR-number}{subcategory}{third-level}
@@ -109,7 +116,7 @@ This is the text of the abstract.
 %term1, term2
 
 \keywords
-keyword1, keyword2
+gradual types, Clojure
 
 \section{Typed Clojure}
 
@@ -135,6 +142,12 @@ static portion of Typed Racket.
 %   of Typed Racket
 % - the equality filter problem (and draft solution?), a proposition
 %   that knows about binding aliasing. Sounds straightforward?
+
+\section{Contributions}
+
+The main result of this paper is to demonstrate that Typed Racket's design
+and implementation is applicable to a practical type system for Clojure
+by implementing Typed Clojure.
 
 \section{Higher-rank polymorphism}
 
@@ -162,17 +175,105 @@ This problem is most visible in expressions like {\tt (filter identity coll)}, w
 ``identity'' has a ``then'' proposition that has negative information: (! (U nil false) 0),
 which reads, the 0th argument of identity does not contain (U nil false).
 
+
+
+\section{Multimethods}
+
+Clojure provides multimethods which can dispatch on the result of an
+arbitrary function, the \emph{dispatch function}. \emph{Methods} are
+added to the multimethod
+which are associated with a \emph{dispatch value}, which is compared to the
+result of apply the dispatch function to the argument passed to the
+multimethod. If this comparison unambiguously dispatches to one method,
+that method is then called with the current arguments.
+
+Occurrence typing, in particular when extended with paths,
+for checking method definitions for arbitrary dispatch functions.
+
+\begin{lstlisting}
+(ns example.mm
+  (:require 
+    [clojure.core.typed :refer [ann]]))
+
+(ann my-mm [Any -> Number])
+(defmulti my-mm class)
+
+(defmethod my-mm Float [f] (inc f))
+\end{lstlisting}
+
+\begin{lstlisting}
+(ann clojure.core/class
+  [Any -> (U nil Class)
+   :object {:id 0, :path [Class]}])
+\end{lstlisting}
+
+\begin{verbatim}
+TODO
+- example of normal MM usage
+- explain descrepency btwn TC syntax and formal
+  TR calculs syntax. eg. :object/:filter vs over arrow
+\end{verbatim}
+
 \section{Extending occurrence typing}
 
 \begin{figure*}
 $$
 \begin{altgrammar}
-  \expd{}, \expe{} &::=& (\expe{}\ \expe{}) \alt \abs{\x a}{\expe{}}
-                &\mbox{Expressions}
+  \expd{}, \e{} &::=& \x\ \alt {\comb {\e{}} {\e{}}} %\alt {\abs {\x a} {\e{}}}
+                      \alt \true{} \alt \false{} \alt \nil{}
+                      \alt {\tryexp {\e{}} {\class} {\x} {\e{}} {\e{}}}
+                      \alt {\ifexp {\e{}} {\e{}} {\e{}}}
+                      \alt {\doexp {\e{}} {\e{}}}
+                      \alt {\fnexp {\x{}} {\t{}} {\e{}}}
+                &\mbox{Expressions} \\ \\
+  \s{}, \t{}    &::=& (\class{}\ \overrightarrow{\t{}})
+                      \alt (\ma{\Value\ \v})
+                      \alt (\cup\ \overrightarrow{\t{}})
+                      \alt (\cap\ \overrightarrow{\t{}})
+                      \alt (\Not\ \t{})
+                      \alt (\All\ [\overrightarrow{\x{}}] \t{})
+                      \alt (\TFn\ [\overrightarrow{\x{}}] \t{})
+                &\mbox{Types}
 %  \c{} &::=& \assoc{} \alt \dissoc{} \alt \get{}
 %              &\mbox{Constants}
 \end{altgrammar}
 $$
+\caption{Syntax of Expressions, Types}
+\end{figure*}
+
+\begin{figure*}
+\begin{mathpar}
+\infer [T-Var]
+{ \inpropenv {\propenv{}} {\isprop {\x} {\tau}}}
+{ \judgement {\propenv{}} {{\hastype {\x{}} {\t{}}}} {{\filterset {{\notprop {\falsy} {\x{}}}} {{\isprop {\falsy} {\x{}}}}}}
+             {\emptyobject{}} {\topprop{}}}
+
+\infer [T-True]
+{}
+{ \judgement {\propenv{}} {{\hastype {\true{}} {\True{}}}} {{\filterset {\topprop{}} {\botprop{}}}} {\emptyobject{}} {\topprop{}}}
+
+\infer [T-False]
+{}
+{ \judgement {\propenv{}} {{\hastype {\false{}} {\False{}}}} {{\filterset {\botprop{}} {\topprop{}}}} {\emptyobject{}} {\topprop{}}}
+
+\infer [T-Nil]
+{}
+{ \judgement {\propenv{}} {{\hastype {\nil{}} {\Nil{}}}} {{\filterset {\botprop{}} {\topprop{}}}} {\emptyobject{}} {\topprop{}}}
+
+\infer [T-Do]
+{ \judgement {\propenv{}} {{\hastype {\e1} {\t1}}} {{\filterset {\prop{1+}} {\prop2}}} {\object{1}} {{\prop{f1}}}
+\\
+  \judgement {\propenv{}, \prop{f1}} {{\hastype {\e2} {\t2}}} {{\filterset {\prop3} {\prop4}}} {\object{}} {\prop{f2}}
+  }
+{ \judgement {\propenv{}} {{\hastype {\doexp {\e1} {\e2}} {\t2}}} {{\filterset {\prop3} {\prop4}}} {\object} 
+             {{\andprop {\prop{f1}} {\prop{f2}}}}}
+
+\infer [T-If]
+
+%\infer [T-App]
+
+\end{mathpar}
+\caption{Typing Rules}
 \end{figure*}
 
 %$$
@@ -244,7 +345,9 @@ in a runtime error.
 ...
 Number[] myArray = getNumberArray();
 myArray[0] = 1.1;
-/* Exception in thread "main" java.lang.ArrayStoreException: java.lang.Double */
+/* Exception in thread "main" 
+   java.lang.ArrayStoreException: 
+   java.lang.Double */
 ...
 \end{verbatim}
 
@@ -282,7 +385,8 @@ To emphasise, this is a static type error. Errors like this help Clojure program
 use foreign Java libraries more correctly.
 
 \begin{verbatim}
-Note that Java libraries are often large and complex and programmers will probably
+Note that Java libraries are often large 
+and complex and programmers will probably
 enjoy the extra help from the type system.
 \end{verbatim}
 
@@ -300,7 +404,7 @@ We provide a singleton type \lstinline|nil|, which contains just the value \lsti
 Clojure's equivalent of \emph{null}. 
 
 Armed with general unions and the type \lstinline|nil|, 
-we can make Typed Clojure's reference types \emph{non-nullable}.
+we make Typed Clojure's reference types \emph{non-nullable}.
 A Java type like \emph{java.lang.Number} is written \lstinline|(U nil java.lang.Number)|
 in Typed Clojure.
 
@@ -313,9 +417,15 @@ Java code.
 A set of conversion rules define how to convert a Java type signature into a null-safe
 Clojure version. These rules are designed to be conservative and can be explicitly overridden
 by programmers. Method parameters are non-nullable, while return types are nullable.
-Field types are nullable. Constructors parameters are non-nullable, and return types
+Field types are nullable. Constructor parameters are non-nullable, and return types
 are also non-nullable: it is a Java invariant that all constructors return an instance
-of the Class they are constructing.
+of the class they are constructing.
+
+\begin{verbatim}
+TODO 
+- write conversion rules for 
+  Java type -> Clojure type
+\end{verbatim}
 
 %\appendix
 %\section{Appendix Title}
