@@ -38,7 +38,12 @@
 \newbfop\All{All}
 \newbfop\TFn{TFn}
 \newbfop\Value{Value}
+\newbfop\ArrayTwoLiteral{Array2}
+\newbfop\ArrayLiteral{Array}
+\newbfop\Throwable{java.lang.Throwable}
 \newcommand\proctype[2]{(#1 \to #2)}
+\newcommand\ArrayTwo[2]{(\ArrayTwoLiteral #1 #2)}
+\newcommand\Array[1]{(\ArrayLiteral #1)}
 % \proctype is a little overkill.
 %% Reynolds' package can also abstract things like (\s1 \to \s2 \to \s3).
 
@@ -71,13 +76,15 @@
 \newmeta\doliteral{{\bf do}}
 \newmeta\fnliteral{{\bf fn}}
 \newmeta\letliteral{{\bf let}}
+\newmeta\throwliteral{{\bf throw}}
 \newcommand\abs[2]{\ma{\l #1 . #2}}
 \newcommand\comb[2]{\ma{(#1\ #2)}}
 \newcommand\tryexp[5]{(\ma{\tryliteral{}\ #1\ (\ma{\catchliteral{}\ #2\ #3\ #4})\ (\ma{\finallyliteral{}\ #5})})}
 \newcommand\ifexp[3]{(\ma{\ifliteral{}\ #1\ #2\ #3})}
 \newcommand\doexp[2]{(\ma{\doliteral{}\ #1\ #2})}
 \newcommand\fnexp[3]{(\ma{\fnliteral{}\ [\ma{#1 \mathbin{:} #2}]\ #3})}
-%\newcommand\letexp[3]{(\ma{\letliteral{}\ [\ensuremath{#1_{#2}}]\ #3})}
+\newcommand\letexp[3]{(\ma{\letliteral{}\ [\ma{#1\ #2}]\ #3})}
+\newcommand\throwexp[1]{(\ma{\throwliteral{}\ #1})}
 
 % Clojure values
 \newmeta\symbol{symbol}
@@ -88,7 +95,7 @@
 % typing judgements
 \newcommand\hastype[2]{\ma{#1 \mathbin{:} #2}}
 \newcommand\issubtype[2]{\ma{#1 \mathbin{<:} #2}}
-\newcommand\judgement[5]{\ma{#1\ \vdash\ #2\ ;\ #3\ ;\ #4\ ;\ #5}}
+\newcommand\judgement[5]{\ma{#1 \vdash #2\ ;\ #3\ ;\ #4\ ;\ #5}}
 % lookuping props in the env
 \newcommand\inpropenv[2]{\ma{#1 \vdash #2}}
 
@@ -102,13 +109,26 @@
 % propositions
 \newmeta\prop{\psi}
 \newmeta\pathelem{PE}
-\newcommand\isprop[2]{\ensuremath{#1 #2}}
-\newcommand\notprop[2]{\ensuremath{\overline{#1} #2}}
+\newcommand\isprop[2]{\ma{{#1}_{#2}}}
+\newcommand\impprop[2]{\ma{#1 \supset #2}}
+\newcommand\notprop[2]{\ma{{\overline{#1}}_{#2}}}
 \newcommand\andprop[2]{\ma{#1 \wedge #2}}
+\newcommand\orprop[2]{\ma{#1 \vee #2}}
 \newmeta\topprop{\mathbb{TT}}
 \newmeta\botprop{\mathbb{FF}}
 \newcommand\filterset[2]{\ma{#1 | #2}}
+\newcommand\thenprop[1]{\ma{{#1}_+}}
+\newcommand\elseprop[1]{\ma{{#1}_-}}
+\newcommand\flowprop[1]{\ma{{#1}_\rightarrow}}
 
 % objects
 \newmeta\object{o}
 \newmeta\emptyobject{\O}
+
+% scope replacements
+\newcommand\replacefor[3]{\ma{#1 [#2 / #3]}}
+
+% Java type conversion functions
+\newcommand\javaspecial[1]{{\bf SpecialToTC}(#1)}
+\newcommand\javatotc[2]{{\bf JavaToTC}(#1, #2)}
+\newcommand\JavaField[1]{{\bf Field}(#1)}

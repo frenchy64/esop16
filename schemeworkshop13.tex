@@ -223,29 +223,40 @@ $$
                       \alt \true{} \alt \false{} \alt \nil{}
                       \alt {\tryexp {\e{}} {\class} {\x} {\e{}} {\e{}}}
                       \alt {\ifexp {\e{}} {\e{}} {\e{}}}
-                      \alt {\doexp {\e{}} {\e{}}}
+                      \alt \\ &&
+                      {\doexp {\e{}} {\e{}}}
                       \alt {\fnexp {\x{}} {\t{}} {\e{}}}
+                      \alt {\letexp {\x{}} {\e{}} {\e{}}}
                 &\mbox{Expressions} \\ \\
-  \s{}, \t{}    &::=& (\class{}\ \overrightarrow{\t{}})
+  \s{}, \t{}    &::=& \Top \alt (\class{}\ \overrightarrow{\t{}})
                       \alt (\ma{\Value\ \v})
                       \alt (\cup\ \overrightarrow{\t{}})
                       \alt (\cap\ \overrightarrow{\t{}})
                       \alt (\Not\ \t{})
                       \alt (\All\ [\overrightarrow{\x{}}] \t{})
                       \alt (\TFn\ [\overrightarrow{\x{}}] \t{})
-                &\mbox{Types}
+                &\mbox{Types} \\ \\
+  \prop{}       &::=& {\isprop {\t{}} {\x{}}}
+                      \alt {\notprop {\t{}} {\x{}}}
+                      \alt {\impprop {\prop{}} {\prop{}}}
+                      \alt {\andprop {\prop{}} {\prop{}}}
+                      \alt {\orprop {\prop{}} {\prop{}}}
+                      \alt \topprop{}
+                      \alt \botprop{}
+                &\mbox{Propositions} \\ \\
+                % TODO objects with path
 %  \c{} &::=& \assoc{} \alt \dissoc{} \alt \get{}
 %              &\mbox{Constants}
 \end{altgrammar}
 $$
-\caption{Syntax of Expressions, Types}
+\caption{Syntax of Terms, Types, Propositions, and Objects}
 \end{figure*}
 
 \begin{figure*}
 \begin{mathpar}
 \infer [T-Var]
-{ \inpropenv {\propenv{}} {\isprop {\x} {\tau}}}
-{ \judgement {\propenv{}} {{\hastype {\x{}} {\t{}}}} {{\filterset {{\notprop {\falsy} {\x{}}}} {{\isprop {\falsy} {\x{}}}}}}
+{ \inpropenv {\propenv{}} {\isprop {\x{}} {\t{}}}}
+{ \judgement {\propenv{}} {\hastype {\x{}} {\t{}}} {\filterset {{\notprop {\falsy} {\x{}}}} {{\isprop {\falsy} {\x{}}}}}
              {\emptyobject{}} {\topprop{}}}
 
 \infer [T-True]
@@ -254,23 +265,65 @@ $$
 
 \infer [T-False]
 {}
-{ \judgement {\propenv{}} {{\hastype {\false{}} {\False{}}}} {{\filterset {\botprop{}} {\topprop{}}}} {\emptyobject{}} {\topprop{}}}
+{ \judgement {\propenv{}} {{\hastype {\false{}} {\False{}}}} {\filterset {\botprop{}} {\topprop{}}} {\emptyobject{}} {\topprop{}}}
 
 \infer [T-Nil]
 {}
-{ \judgement {\propenv{}} {{\hastype {\nil{}} {\Nil{}}}} {{\filterset {\botprop{}} {\topprop{}}}} {\emptyobject{}} {\topprop{}}}
+{ \judgement {\propenv{}} {{\hastype {\nil{}} {\Nil{}}}} {\filterset {\botprop{}} {\topprop{}}} {\emptyobject{}} {\topprop{}}}
 
 \infer [T-Do]
-{ \judgement {\propenv{}} {{\hastype {\e1} {\t1}}} {{\filterset {\prop{1+}} {\prop2}}} {\object{1}} {{\prop{f1}}}
-\\
-  \judgement {\propenv{}, \prop{f1}} {{\hastype {\e2} {\t2}}} {{\filterset {\prop3} {\prop4}}} {\object{}} {\prop{f2}}
+{ \judgement {\propenv{}} {\hastype {\e1} {\t1}} {\filterset {\thenprop {\prop{1}}} {\elseprop {\prop1}}} {\object{1}} 
+             {\flowprop {\prop{1}}}
+\\\\
+  \judgement {\propenv{}, {\flowprop {\prop{1}}}} {\hastype {\e2} {\t2}} {\filterset {\thenprop {\prop2}} {\elseprop {\prop2}}} 
+             {\object{}} {\flowprop {\prop{2}}}
   }
-{ \judgement {\propenv{}} {{\hastype {\doexp {\e1} {\e2}} {\t2}}} {{\filterset {\prop3} {\prop4}}} {\object} 
-             {{\andprop {\prop{f1}} {\prop{f2}}}}}
+{ \judgement {\propenv{}} {\hastype {\doexp {\e1} {\e2}} {\t2}} {\filterset {\thenprop {\prop2}} {\elseprop {\prop2}}} {\object} 
+             {\andprop {\flowprop {\prop{1}}} {\flowprop {\prop{2}}}}}
 
 \infer [T-If]
+{ \judgement {\propenv{}} {\hastype {\e1} {\t{1}}} {\filterset {\thenprop {\prop{1}}} {\elseprop {\prop{1}}}}
+             {\object{1}} {\flowprop {\prop{1}}} 
+             \\\\
+  \judgement {\propenv{}} {\hastype {\e2} {\t{}}} {\filterset {\thenprop {\prop{2}}} {\elseprop {\prop{2}}}}
+             {\object{}} {\flowprop {\prop{2}}}
+  \\\\
+  \judgement {\propenv{}} {\hastype {\e3} {\t{}}} {\filterset {\thenprop {\prop{3}}} {\elseprop {\prop{3}}}}
+             {\object{}} {\flowprop {\prop{3}}}
+             }
+{ \judgement {\propenv{}} {\hastype {\ifexp {\e1} {\e2} {\e3}} {\t{}}} 
+            % do we need to include prop1+/- here?
+             {\filterset {\orprop {\thenprop {\prop{2}}} {\thenprop {\prop{3}}}} 
+                         {\orprop {\elseprop {\prop{2}}} {\elseprop {\prop{3}}}}}
+             {\object{}} {\orprop {\flowprop {\prop{2}}}
+                                  {\flowprop {\prop{3}}}} }
 
-%\infer [T-App]
+\infer [T-Let]
+{ \judgement {\propenv{}} {\hastype {\e{1}} {\s{}}} {\filterset {\thenprop {\prop{1}}} {\elseprop {\prop{1}}}}
+             {\object{1}} {\flowprop {\prop{1}}}
+  \\\\
+  \judgement {\propenv{}, {\isprop {\s{}} {\x{}}}, 
+              {\impprop {\notprop {\falsy} {\x{}}} {\thenprop {\prop{1}}}}, 
+              {\impprop {\isprop {\falsy} {\x{}}} {\elseprop {\prop{1}}}}}
+             {\hastype {\e{}} {\t{}}} {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}}
+             {\object{}} {\flowprop {\prop{2}}}
+             }
+{ \judgement {\propenv{}} {\hastype {\letexp {\x{}} {\e{1}} {\e{}}} {\t{}}}
+             {\replacefor {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}}
+                          {\object{1}}
+                          {\x{}}}
+             {\replacefor {\object{}} 
+                          {\object{1}}
+                          {\x{}}}
+             {\replacefor {\andprop {\flowprop {\prop{1}}} {\flowprop {\prop{2}}}}
+                          {\object{1}}
+                          {\x{}}}}
+
+\infer [T-Throw]
+{ \judgement {\propenv{}} {\hastype {\e{}} {\Throwable}} {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}}
+             {\object{}} {\flowprop {\prop{}}}}
+{ \judgement {\propenv{}} {\hastype {\throwexp {\e{}}} {\Bottom}} {\filterset {\botprop} {\botprop}}
+             {\emptyobject{}} {\botprop} }
 
 \end{mathpar}
 \caption{Typing Rules}
@@ -288,6 +341,16 @@ $$
 %  \end{altgrammar}
 %\end{tdisplay}
 %$$ 
+
+\begin{figure*}
+$$
+\begin{altgrammar}
+{\javaspecial {\JavaField {\class{}}}} &=& {\javatotc {\class{}} {\true{}}}
+%{\javaspecial {\JavaMethod {\class{1}} {\class{2}}}} &=& {\javatotc {\class{}} {\true{}}}
+\end{altgrammar}
+$$
+\caption{Converting Java types to Typed Clojure types}
+\end{figure*}
 
 \section{Java interoperability}
 
