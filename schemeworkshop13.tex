@@ -33,8 +33,8 @@
 \usepackage{mathpartir}
 \usepackage{clj-grammar}
 %\usepackage{url}
-%\usepackage[style=alphabetic, sorting=nyt]{biblatex}
-%\addbibresource{bibliography.bib}
+%\usepackage{biblatex}
+\include{bibliography.bib}
 
 \usepackage{listings}
 \lstset{ %
@@ -60,6 +60,7 @@
 
 \usepackage{amsmath}
 
+\newcommand\smallsection[1]{\bf \emph{#1}}
 
 \begin{document}
 
@@ -86,10 +87,10 @@
 %\preprintfooter{short description of paper}   % 'preprint' option specified.
 
 \title{Typed Clojure}
-\subtitle{A Practical Type System for Clojure based on Typed Racket}
+\subtitle{A Practical Type System for Clojure, based on Typed Racket}
 
 \authorinfo{Ambrose Bonnaire-Sergeant}
-           {}
+           {University of Western Australia}
            {abonnairesergeant@gmail.com}
 \authorinfo{Rowan Davies}
            {University of Western Australia}
@@ -127,7 +128,7 @@ static portion of Typed Racket.
 % where do they differ from Typed Racket? why?
 
 % Things todo
-% - small calculus based on previous TR formalisation
+% - DONE small calculus based on previous TR formalisation
 %   that demos the ``flow'' environment & not/intersection type
 % - discussion and examples for flow filters
 % - discussion on the not/difference type, real code where it helps
@@ -150,6 +151,53 @@ and implementation is applicable to a practical type system for Clojure
 by implementing Typed Clojure.
 
 \section{A Practical Type System for Clojure}
+
+\subsection{Based on Typed Racket}
+
+The design, implementation and theory developed for the Typed Racket project
+has proven to be a valuable base for a type system for Clojure. 
+
+{\smallsection {Occurrence typing}}
+Tobin-Hochstadt and Felleisen~\cite{TF08,TF10} developed \emph{occurrence
+typing}, which enables Typed Racket to infer better types at branches.
+Typed Clojure uses occurrence typing in a similar way to Typed Racket.
+We extend and apply occurrence typing in several interesting ways discussed
+in Section [?].
+
+{\smallsection {Practical Variable-Arity Polymorphism}}
+Functions with non-trivial variable parameters are common in Racket.
+For example, Racket provides \emph{map} which takes a function and a
+variable number of collections and applies the function simultaneously
+to each element of the provided collections, returning a list of results.
+Strickland, Tobin-Hochstadt and Felleisen%~\cite{STF09}
+developed a practical system that handles advanced variable parameters
+which can handle applications of functions like \emph{map}.
+
+Clojure has a similar emphasis on variable-arity functions. In some ways,
+Clojure's core library encourages even more complicated variable-parameter schemes.
+The \emph{assoc} core function, for example, takes three parameters and
+then a quantity of variable parameters that is a multiple of two.
+This is beyond what Typed Racket can currently handle. 
+
+Functions like \emph{map} are common in Clojure, so we provide an implementation
+of variable-arity polymorphism which has similar capabilities as Typed Racket's
+implementation.
+
+{\smallsection {Local Type Inference}}
+
+
+% TODO references
+% why is TR such a good base?
+% - immutability
+% - common lisp ancestry
+% differences?
+% - Clojure is built on JVM
+% - interop with JVM
+% - Clojure's idiomatic primitives are different
+% - multimethods + protocols
+% - less sophisticated macro system
+%  - not an issue
+%  - implementation difference, AST walking vs syntax walking
 
 \subsection{Higher-rank polymorphism}
 
@@ -213,7 +261,8 @@ for checking method definitions for arbitrary dispatch functions.
 TODO
 - example of normal MM usage
 - explain descrepency btwn TC syntax and formal
-  TR calculs syntax. eg. :object/:filter vs over arrow
+  TR calculs syntax. eg. :object/:filter 
+    vs over arrow
 \end{verbatim}
 
 \subsection{Extending occurrence typing}
@@ -277,7 +326,7 @@ $$
 \infer [T-Var]
 { \inpropenv {\propenv{}} {\isprop {\x{}} {\t{}}}}
 { \judgement {\propenv{}} {\hastype {\x{}} {\t{}}} {\filterset {{\notprop {\falsy} {\x{}}}} {{\isprop {\falsy} {\x{}}}}}
-             {\emptyobject{}} {\topprop{}}}
+             {\x{}} {\topprop{}}}
 
 \infer [T-True]
 {}
@@ -419,39 +468,47 @@ We currently do not support Java generics
 Supporting statically sound interactions with Java arrays is a goal
 of Typed Clojure. This is complicated by Java's decision to make
 arrays covariant in their argument, a well documented source of static
-unsoundness.
+unsoundness. Bracha~\cite{Bra98} summarises Java's approach to maintaining
+soundness at runtime, which involves all array writes being checked by
+runtime assertions.
+
+This approach fits Java's type system, but we can do better in a more powerful
+type system like Typed Clojure. Our goal is to catch all type-incorrect array
+writes at compile time so the type system can do more to help Clojure programmers
+use arrays, especially those being passed from foreign Java code.
 
 Our basic approach is to make our array types \emph{bivariant}. Array types
-look like \lstinline|(Array2 w r)| and
+look like {\ArrayTwo {\t{w}} {\t{r}}} and
 are reminiscent of functions or pipes: having a contravariant parameter for input (writing)
 and a covariant parameter for output (reading).
+This type can write type {\t{w}} and read type {\t{r}}.
 
 Most commonly, an array type is invariant in its parameter; it can
 write and read input of the same type.
 We can get the same effect by setting our input and output
-parameters to the same type. For example, \lstinline|(Array2 Number Number)|
-(or equivalently, \lstinline|(Array Number)|)
-in Typed Clojure is similar to invariant array types of \lstinline|Number| in languages like Scala.
+parameters to the same type. For example, {\ArrayTwo {\Number} {\Number}}
+(or equivalently, {\Array {\Number}}
+in Typed Clojure is similar to invariant array types of \Number in languages like Scala.
 
 The biggest gain in using a separate input parameter is the ability
 to specify \emph{read-only} arrays. Crucially, our type system features an
-explicit bottom type \lstinline|Nothing|, allowing a read-only \lstinline|Number| array
+explicit bottom type \lstinline|Nothing|, enabling a read-only \lstinline|Number| array
 to be of type \lstinline|(Array2 Nothing Number)|.
 
 To realise why defining read-only arrays are useful, we need to examine
 what makes array covariance unsound in Java.
-Array covariance lets us lie about the type of an array so the consumer
+Array covariance about the type of an array so the consumer
 of an array cannot tell the actual type of the array when examining a type
 signature.
 
-\begin{verbatim}
+\begin{lstlisting}
 ...
 public static Number[] getNumberArray() {
   Number[] n = new Integer[10];
   return n;
 }
 ...
-\end{verbatim}
+\end{lstlisting}
 
 To the casual consumer \emph{getNumberArray} returns an array that can both
 read and write \lstinline|Number|s. However it is clear from the implementation
@@ -555,10 +612,12 @@ TODO
 
 % We recommend abbrvnat bibliography style.
 
-%\bibliographystyle{abbrvnat}
-%
-%% The bibliography should be embedded for final submission.
-%
+\bibliographystyle{abbrvnat}
+
+% The bibliography should be embedded for final submission.
+
+\bibliography{bibliography}
+
 %\begin{thebibliography}{}
 %\softraggedright
 %

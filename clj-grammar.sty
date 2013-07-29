@@ -45,7 +45,7 @@
 \newcommand\proctype[2]{(#1 \to #2)}
 \newcommand\Unionsplice[1]{(\ma{\Uliteral\ #1})}
 \newcommand\Union[2]{(\ma{\cup\ #1\ #2})}
-\newcommand\ArrayTwo[2]{\ma{(\ArrayTwoLiteral\ #1\ #2)}}
+\newcommand\ArrayTwo[2]{(\ma{\ArrayTwoLiteral\ #1\ #2})}
 \newcommand\Array[1]{(\ArrayLiteral #1)}
 % \proctype is a little overkill.
 %% Reynolds' package can also abstract things like (\s1 \to \s2 \to \s3).
@@ -57,6 +57,7 @@
 \newbfop\Top{Any}
 \newbfop\Bottom{Nothing}
 \newbfop\Keyword{Keyword}
+\newbfop\Number{Number}
 \newbfop\Nil{nil}
 \newbfop\True{true}
 \newbfop\False{false}
@@ -133,7 +134,7 @@
 % objects
 \newcommand\path[2]{\ma{#1(#2)}}
 \newmeta\object{o}
-\newmeta\emptyobject{\O}
+\newmeta\emptyobject{\emptyset}
 \newmeta\pathelem{\pi}
 % abstract syntax for pathelem
 \newmeta\pesyntax{pe}
@@ -143,9 +144,9 @@
 \newcommand\replacefor[3]{\ma{#1 [#2 / #3]}}
 
 % Java type conversion functions
-\newcommand\javaspecial[1]{{\bf SpecialToTC}(#1)}
-\newcommand\javatotc[2]{{\bf JavaToTC}(#1, #2)}
-\newcommand\JavaField[1]{{\bf Field}(#1)}
-\newcommand\JavaMethod[2]{{\bf Method}(#1, #2)}
-\newcommand\JavaCtor[2]{{\bf Ctor}(#1, #2)}
+\newcommand\javaspecial[1]{{\bf SpecialToTC}(\ma{#1})}
+\newcommand\javatotc[2]{{\bf JavaToTC}(\ma{#1, #2})}
+\newcommand\JavaField[1]{{\bf Field}(\ma{#1})}
+\newcommand\JavaMethod[2]{{\bf Method}(\ma{#1, #2})}
+\newcommand\JavaCtor[2]{{\bf Ctor}(\ma{#1, #2})}
 \newcommand\JavaArray[1]{#1[]}
