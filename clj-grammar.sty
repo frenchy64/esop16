@@ -3,6 +3,7 @@
 % macros for Clojure grammars
 \usepackage{mathpartir}
 \usepackage{amsfonts}
+\usepackage{bbm}
 
 
 % newmeta variables are automatically subscripted
@@ -32,21 +33,27 @@
 \newbfop\int{int}
 \newbfop\bool{bool}
 \newbfop\IPersistentMapLiteral{IPersistentMap}
-\newbfop\Uliteral{\vee}
+\newbfop\Uliteral{\ma{\cup}}
 \newbfop\ILiteral{\wedge}
 \newbfop\Not{Not}
-\newbfop\All{All}
-\newbfop\TFn{TFn}
-\newbfop\Value{Value}
+\newbfop\Allliteral{All}
+\newbfop\TFnliteral{TFn}
+\newbfop\Valueliteral{Value}
 \newbfop\ArrayTwoLiteral{Array2}
 \newbfop\ArrayLiteral{Array}
 \newbfop\Throwable{java.lang.Throwable}
 \newcommand\proctype[2]{(#1 \to #2)}
-\newcommand\ArrayTwo[2]{(\ArrayTwoLiteral #1 #2)}
+\newcommand\Unionsplice[1]{(\ma{\Uliteral\ #1})}
+\newcommand\Union[2]{(\ma{\cup\ #1\ #2})}
+\newcommand\ArrayTwo[2]{\ma{(\ArrayTwoLiteral\ #1\ #2)}}
 \newcommand\Array[1]{(\ArrayLiteral #1)}
 % \proctype is a little overkill.
 %% Reynolds' package can also abstract things like (\s1 \to \s2 \to \s3).
+\newcommand\Arrow[5]{\ma{#1 \xrightarrow[#4; #5]{#3} #2}}
 
+\newcommand\All[2]{(\ma{\Allliteral\ [#1]\ #2})}
+\newcommand\TFn[2]{(\ma{\TFnliteral\ [#1]\ #2})}
+\newcommand\Value[1]{(\ma{\Valueliteral\ #1})}
 \newbfop\Top{Any}
 \newbfop\Bottom{Nothing}
 \newbfop\Keyword{Keyword}
@@ -77,14 +84,16 @@
 \newmeta\fnliteral{{\bf fn}}
 \newmeta\letliteral{{\bf let}}
 \newmeta\throwliteral{{\bf throw}}
+\newmeta\newliteral{{\bf new}}
 \newcommand\abs[2]{\ma{\l #1 . #2}}
 \newcommand\comb[2]{\ma{(#1\ #2)}}
 \newcommand\tryexp[5]{(\ma{\tryliteral{}\ #1\ (\ma{\catchliteral{}\ #2\ #3\ #4})\ (\ma{\finallyliteral{}\ #5})})}
 \newcommand\ifexp[3]{(\ma{\ifliteral{}\ #1\ #2\ #3})}
 \newcommand\doexp[2]{(\ma{\doliteral{}\ #1\ #2})}
-\newcommand\fnexp[3]{(\ma{\fnliteral{}\ [\ma{#1 \mathbin{:} #2}]\ #3})}
+\newcommand\fnexp[2]{(\ma{\fnliteral{}\ [#1]\ #2})}
 \newcommand\letexp[3]{(\ma{\letliteral{}\ [\ma{#1\ #2}]\ #3})}
 \newcommand\throwexp[1]{(\ma{\throwliteral{}\ #1})}
+\newcommand\newexp[2]{(\ma{\newliteral{}\ #1\ #2})}
 
 % Clojure values
 \newmeta\symbol{symbol}
@@ -114,16 +123,21 @@
 \newcommand\notprop[2]{\ma{{\overline{#1}}_{#2}}}
 \newcommand\andprop[2]{\ma{#1 \wedge #2}}
 \newcommand\orprop[2]{\ma{#1 \vee #2}}
-\newmeta\topprop{\mathbb{TT}}
-\newmeta\botprop{\mathbb{FF}}
+\newmeta\topprop{\mathbbm{tt}}
+\newmeta\botprop{\mathbbm{ff}}
 \newcommand\filterset[2]{\ma{#1 | #2}}
 \newcommand\thenprop[1]{\ma{{#1}_+}}
 \newcommand\elseprop[1]{\ma{{#1}_-}}
 \newcommand\flowprop[1]{\ma{{#1}_\rightarrow}}
 
 % objects
+\newcommand\path[2]{\ma{#1(#2)}}
 \newmeta\object{o}
 \newmeta\emptyobject{\O}
+\newmeta\pathelem{\pi}
+% abstract syntax for pathelem
+\newmeta\pesyntax{pe}
+\newmeta\classpe{{\bf Class}}
 
 % scope replacements
 \newcommand\replacefor[3]{\ma{#1 [#2 / #3]}}
@@ -132,3 +146,6 @@
 \newcommand\javaspecial[1]{{\bf SpecialToTC}(#1)}
 \newcommand\javatotc[2]{{\bf JavaToTC}(#1, #2)}
 \newcommand\JavaField[1]{{\bf Field}(#1)}
+\newcommand\JavaMethod[2]{{\bf Method}(#1, #2)}
+\newcommand\JavaCtor[2]{{\bf Ctor}(#1, #2)}
+\newcommand\JavaArray[1]{#1[]}

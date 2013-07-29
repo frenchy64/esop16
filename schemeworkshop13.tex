@@ -98,8 +98,8 @@
 \maketitle
 
 \begin{abstract}
-Typed Racket has proved to be a valuable starting point for
-a gradual type system for Clojure.
+Typed Racket is a valuable starting point for
+a gradual type system that targets Clojure.
 Building a similar type system for a new language gives the
 designer some flexibility to repurpose and extend features.
 This paper gives an overview of Typed Clojure, concentrating
@@ -149,12 +149,14 @@ The main result of this paper is to demonstrate that Typed Racket's design
 and implementation is applicable to a practical type system for Clojure
 by implementing Typed Clojure.
 
-\section{Higher-rank polymorphism}
+\section{A Practical Type System for Clojure}
+
+\subsection{Higher-rank polymorphism}
 
 Typed Clojure supports f-bounded polymorphism and higher-rank
 types.
 
-\section{Using negative filters}
+\subsection{Using negative filters}
 
 Occurrence typing plays an important role in Typed Racket and Typed Clojure.
 By maintaining a \emph{proposition environment} of propositions relating types to
@@ -177,7 +179,7 @@ which reads, the 0th argument of identity does not contain (U nil false).
 
 
 
-\section{Multimethods}
+\subsection{Multimethods}
 
 Clojure provides multimethods which can dispatch on the result of an
 arbitrary function, the \emph{dispatch function}. \emph{Methods} are
@@ -214,39 +216,57 @@ TODO
   TR calculs syntax. eg. :object/:filter vs over arrow
 \end{verbatim}
 
-\section{Extending occurrence typing}
+\subsection{Extending occurrence typing}
 
 \begin{figure*}
 $$
 \begin{altgrammar}
   \expd{}, \e{} &::=& \x\ \alt {\comb {\e{}} {\e{}}} %\alt {\abs {\x a} {\e{}}}
                       \alt \true{} \alt \false{} \alt \nil{}
+                      \alt \class{}
                       \alt {\tryexp {\e{}} {\class} {\x} {\e{}} {\e{}}}
                       \alt {\ifexp {\e{}} {\e{}} {\e{}}}
-                      \alt \\ &&
+                      \alt
                       {\doexp {\e{}} {\e{}}}
-                      \alt {\fnexp {\x{}} {\t{}} {\e{}}}
+                      \\ &\alt& 
+                      {\fnexp {\overrightarrow{\hastype {\x{}} {\t{}}}} {\e{}}}
                       \alt {\letexp {\x{}} {\e{}} {\e{}}}
                 &\mbox{Expressions} \\ \\
   \s{}, \t{}    &::=& \Top \alt (\class{}\ \overrightarrow{\t{}})
-                      \alt (\ma{\Value\ \v})
-                      \alt (\cup\ \overrightarrow{\t{}})
+                      \alt {\Value \v{}}
+                      \alt {\Unionsplice {\overrightarrow{\t{}}}}
                       \alt (\cap\ \overrightarrow{\t{}})
                       \alt (\Not\ \t{})
-                      \alt (\All\ [\overrightarrow{\x{}}] \t{})
-                      \alt (\TFn\ [\overrightarrow{\x{}}] \t{})
+                      \alt {\All {\overrightarrow{\x{}}} {\t{}}}
+                      \alt {\TFn {\overrightarrow{\x{}}} \t{}}
+                      \alt {\Arrow {\overrightarrow{ \hastype {\x{}} {\t{}}}}
+                                   {\t{}}
+                                   {\filterset {\prop{}} {\prop{}}}
+                                   {\object{}}
+                                   {\prop{}}}
+                      \\ &\alt&
+                      {\ArrayTwo {\t{}} {\t{}}}
                 &\mbox{Types} \\ \\
-  \prop{}       &::=& {\isprop {\t{}} {\x{}}}
-                      \alt {\notprop {\t{}} {\x{}}}
+  \prop{}       &::=& {\isprop {\t{}} {\path {\pathelem{}} {\x{}}}}
+                      \alt {\notprop {\t{}} {\path {\pathelem{}} {\x{}}}}
                       \alt {\impprop {\prop{}} {\prop{}}}
                       \alt {\andprop {\prop{}} {\prop{}}}
                       \alt {\orprop {\prop{}} {\prop{}}}
                       \alt \topprop{}
                       \alt \botprop{}
-                &\mbox{Propositions} \\ \\
+                &\mbox{Propositions} \\
+  \object{}     &::=& {\path {\pathelem{}} {\x{}}}
+                      \alt \emptyobject{}
+                &\mbox{Objects} \\
+  \pathelem{}   &::=& \overrightarrow{\pesyntax{}}
+                &\mbox{Paths} \\
+  \pesyntax{}   &::=& \classpe{}
+                &\mbox{Path Elements} \\ \\
                 % TODO objects with path
 %  \c{} &::=& \assoc{} \alt \dissoc{} \alt \get{}
 %              &\mbox{Constants}
+  \Gamma       &::=& \overrightarrow{\prop{}}
+               &\mbox{Environments}
 \end{altgrammar}
 $$
 \caption{Syntax of Terms, Types, Propositions, and Objects}
@@ -325,6 +345,17 @@ $$
 { \judgement {\propenv{}} {\hastype {\throwexp {\e{}}} {\Bottom}} {\filterset {\botprop} {\botprop}}
              {\emptyobject{}} {\botprop} }
 
+\infer [T-Fn]
+{}
+{ TODO }
+
+\infer [T-New]
+{ }
+{ \judgement {\propenv{}} {\hastype {\newexp {\class{}} {\overrightarrow{\e{i}}}} {\t{n}}}
+             {\filterset {\topprop{}} {\topprop{}}}
+             {\emptyobject}
+             {\topprop{}}}
+
 \end{mathpar}
 \caption{Typing Rules}
 \end{figure*}
@@ -346,13 +377,36 @@ $$
 $$
 \begin{altgrammar}
 {\javaspecial {\JavaField {\class{}}}} &=& {\javatotc {\class{}} {\true{}}}
-%{\javaspecial {\JavaMethod {\class{1}} {\class{2}}}} &=& {\javatotc {\class{}} {\true{}}}
+\\
+{\javaspecial {\JavaMethod {\overrightarrow{{\class{1}}}} {\class{2}}}} &=& 
+    {\Arrow {\overrightarrow {\hastype {\x{}} {\javatotc {\class{1}} {\false{}}}}}
+            {\javatotc {\class{2}} {\true{}}}
+            {\filterset {\topprop{}} {\topprop{}}}
+            {\emptyobject{}}
+            {\topprop{}}}
+\\
+{\javaspecial {\JavaCtor {\overrightarrow{{\class{1}}}} {\class{2}}}} &=& 
+    {\Arrow {\overrightarrow {\hastype {\x{}} {\javatotc {\class{1}} {\false{}}}}}
+            {\javatotc {\class{2}} {\false{}}}
+            {\filterset {\topprop{}} {\topprop{}}}
+            {\emptyobject{}}
+            {\topprop{}}}
+\\\\
+
+{\javatotc {\class{}} {\true{}}} &=& {\Union {\Nil} {\class{}}}
+\\
+{\javatotc {\class{}} {\false{}}} &=& \class{}
+\\
+{\javatotc {\JavaArray {\class{}}} {\true{}}} &=& {\Union {\Nil} {\javatotc {\ArrayTwo {\Bottom} {\class{}}} \true{}}}
+\\
+{\javatotc {\JavaArray {\class{}}} {\false{}}} &=& {\javatotc {\ArrayTwo {\Bottom} {\class{}}} \false{}}
+
 \end{altgrammar}
 $$
 \caption{Converting Java types to Typed Clojure types}
 \end{figure*}
 
-\section{Java interoperability}
+\subsection{Java interoperability}
 
 As Clojure supports Java interoperability, Typed Clojure has some
 integration with Java's type system. Calls to Java methods from
@@ -360,7 +414,7 @@ Clojure can be type checked by Typed Clojure.
 
 We currently do not support Java generics
 
-\subsection{Arrays}
+\subsubsection{Arrays}
 
 Supporting statically sound interactions with Java arrays is a goal
 of Typed Clojure. This is complicated by Java's decision to make
