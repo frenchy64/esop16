@@ -146,45 +146,93 @@ static portion of Typed Racket.
 
 \section{Contributions}
 
+We present a practical type system for Clojure
+
 The main result of this paper is to demonstrate that Typed Racket's design
 and implementation is applicable to a practical type system for Clojure
 by implementing Typed Clojure.
 
-\section{A Practical Type System for Clojure}
+\section{Overview of Typed Clojure}
 
-\subsection{Based on Typed Racket}
+Typed Clojure is a gradual type system for Clojure, designed to 
 
-The design, implementation and theory developed for the Typed Racket project
-has proven to be a valuable base for a type system for Clojure. 
+{\smallsection {Based on Typed Racket}}
+Initially, the similarities between untyped Racket and Clojure and Typed Racket's 
+ability to type check Racket code led us to investigate a similar type system for Clojure.
+After two years of development, the solid basis of Typed Racket 
+helps us type check many Clojure idioms without significant differences
+in implementation or theory. We found that extending Typed Clojure to check
+those idioms that have no obvious Racket equivalent did not significantly alter the structure
+of the type system.
 
 {\smallsection {Occurrence typing}}
-Tobin-Hochstadt and Felleisen~\cite{TF08,TF10} developed \emph{occurrence
-typing}, which enables Typed Racket to infer better types at branches.
-Typed Clojure uses occurrence typing in a similar way to Typed Racket.
-We extend and apply occurrence typing in several interesting ways discussed
-in Section [?].
+\citet{TF08,TF10} developed \emph{occurrence typing}, which helps improve types at branches.
+Typed Clojure uses occurrence typing in a similar way to Typed Racket, with
+some extensions (discussed in in Section [?]). %FIXME
 
 {\smallsection {Practical Variable-Arity Polymorphism}}
 Functions with non-trivial variable parameters are common in Racket.
 For example, Racket provides \emph{map} which takes a function and a
 variable number of collections and applies the function simultaneously
 to each element of the provided collections, returning a list of results.
-Strickland, Tobin-Hochstadt and Felleisen%~\cite{STF09}
-developed a practical system that handles advanced variable parameters
+\citet*{STF09} developed a practical system that handles advanced variable parameters
 which can handle applications of functions like \emph{map}.
 
 Clojure has a similar emphasis on variable-arity functions. In some ways,
 Clojure's core library encourages even more complicated variable-parameter schemes.
 The \emph{assoc} core function, for example, takes three parameters and
 then a quantity of variable parameters that is a multiple of two.
-This is beyond what Typed Racket can currently handle. 
+This is beyond what Typed Racket (and Typed Clojure) can currently handle. 
 
 Functions like \emph{map} are common in Clojure, so we provide an implementation
 of variable-arity polymorphism which has similar capabilities as Typed Racket's
 implementation.
 
 {\smallsection {Local Type Inference}}
+We use Pierce and Turner's Local Type Inference~\cite{PT00} to infer some polymorphic
+applications. Our implementation is based on Typed Racket's, which has extensions
+to support applications of polymorphic variable-arity functions like \emph{map}.
 
+{\smallsection {Unions and intersections}}
+Like Typed Racket, we include union and ordered intersection types. Unions define
+a least-upper-bound for a set of types. For example, we can express a type that is
+either \Number or \Symbol by including them in a union: {\Union {\Number} {\Symbol}}
+
+Ordered intersections (described further by \citet{SA+12})
+are used for overloading function types. We can express a function that takes
+a \Number and returns a \Symbol, and vice-versa with an ordered intersection function type:
+
+\begin{lstlisting}[label=lst:ordered]
+(Fn [Number -> Symbol]
+    [Symbol -> Number])
+\end{lstlisting}
+
+As our intersections are \emph{ordered}, we can express fine invariants in the
+case where arity parameter types overlap. Similar to a pattern match, earlier arities 
+are tried first, and the first arity to match ``wins''.
+
+For example, applying an \lstinline|Integer| argument to a function of type
+
+\begin{lstlisting}[label=lst:ordered]
+(Fn [Integer -> Integer]
+    [Number -> Number])
+\end{lstlisting}
+
+returns an \lstinline|Integer|. Reversing the arities however gives
+type \lstinline|Number|, because the arity taking a \lstinline|Number|
+always matches first.
+
+{\smallsection {Hosted on the Java Virtual Machine}}
+Clojure is built to run on the Java Virtual Machine (JVM),
+offering good interoperability with existing Java code.
+Typed Clojure helps programmers correctly call Java code
+by integrating with Java's type system.
+
+We give Java arrays and Java's \emph{null} special treatment
+when involved with interoperability. Arrays are treated as \emph{read-only}
+when sourced from Java methods, discussed in Section \ref{sec:arrays}.
+We are explicit, and conservative by default, in the positions where
+Java's \emph{null} can be passed, discussed in Section \ref{sec:null}.
 
 % TODO references
 % why is TR such a good base?
@@ -224,8 +272,6 @@ local binding ``a'' is \emph{not} of type (U nil false).
 This problem is most visible in expressions like {\tt (filter identity coll)}, where
 ``identity'' has a ``then'' proposition that has negative information: (! (U nil false) 0),
 which reads, the 0th argument of identity does not contain (U nil false).
-
-
 
 \subsection{Multimethods}
 
@@ -464,6 +510,7 @@ Clojure can be type checked by Typed Clojure.
 We currently do not support Java generics
 
 \subsubsection{Arrays}
+\label{sec:arrays}
 
 Supporting statically sound interactions with Java arrays is a goal
 of Typed Clojure. This is complicated by Java's decision to make
@@ -487,7 +534,7 @@ Most commonly, an array type is invariant in its parameter; it can
 write and read input of the same type.
 We can get the same effect by setting our input and output
 parameters to the same type. For example, {\ArrayTwo {\Number} {\Number}}
-(or equivalently, {\Array {\Number}}
+(or equivalently, {\Array {\Number}})
 in Typed Clojure is similar to invariant array types of \Number in languages like Scala.
 
 The biggest gain in using a separate input parameter is the ability
@@ -497,9 +544,12 @@ to be of type \lstinline|(Array2 Nothing Number)|.
 
 To realise why defining read-only arrays are useful, we need to examine
 what makes array covariance unsound in Java.
+\begin{verbatim}
+FIXME
 Array covariance about the type of an array so the consumer
 of an array cannot tell the actual type of the array when examining a type
 signature.
+\end{verbatim}
 
 \begin{lstlisting}
 ...
@@ -555,7 +605,7 @@ The type inferred for the local \lstinline|n| is \lstinline|(Array2 Nothing Numb
 which tells the type system: it is never safe to write to this array, but
 it is safe to assume \lstinline|Number|s can be read from this array.
 
-To emphasise, this is a static type error. Errors like this help Clojure programmers
+To emphasise, Typed Clojure throws a static type error. Errors like this help Clojure programmers
 use foreign Java libraries more correctly.
 
 \begin{verbatim}
@@ -565,6 +615,7 @@ enjoy the extra help from the type system.
 \end{verbatim}
 
 \subsection{Handling null}
+\label{sec:null}
 
 Probably the most common pain point in Java programming is dealing with \emph{null}.
 It is crucial that Typed Clojure deals with \emph{null} intelligently so that
