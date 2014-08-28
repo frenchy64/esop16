@@ -24,6 +24,7 @@
 \newmeta\N{N}
 \newmeta\P{P}
 \newmeta\e{e}
+\newmeta\ep{e'}
 \newmeta\expd{d}
 
 % we write a macro for every bit of abstract syntax.  That way they
@@ -49,7 +50,7 @@
 \newcommand\Array[1]{(\ArrayLiteral #1)}
 % \proctype is a little overkill.
 %% Reynolds' package can also abstract things like (\s1 \to \s2 \to \s3).
-\newcommand\Arrow[5]{\ma{#1 \xrightarrow[#4; #5]{#3} #2}}
+\newcommand\Arrow[4]{\ma{#1 \xrightarrow[#4]{#3} #2}}
 
 \newcommand\All[2]{(\ma{\Allliteral\ [#1]\ #2})}
 \newcommand\TFn[2]{(\ma{\TFnliteral\ [#1]\ #2})}
@@ -65,7 +66,9 @@
 \newbfop\falsy{(\ma{\cup\ \Nil\ \False})}
 \newcommand\IPersistentMap[2]{(\IPersistentMapLiteral\ #1\ #2)}
 \newbfop\TopIPersistentMap{{\IPersistentMap {\Top} {\Top}}}
-\newbfop\TopHMap{\{ \}}
+\newbfop\HMapliteral{HMap}
+\newcommand\HMapc[1]{(\HMapliteral^{complete}\ #1)}
+\newcommand\HMapp[2]{(\HMapliteral^{partial}\ #1\ #2)}
 
 % terms
 \newmeta\x{x}                   % not sure if \x is reserved...
@@ -94,6 +97,7 @@
 \newcommand\doexp[2]{(\ma{\doliteral{}\ #1\ #2})}
 \newcommand\fnexp[2]{(\ma{\fnliteral{}\ [#1]\ #2})}
 \newcommand\letexp[3]{(\ma{\letliteral{}\ [\ma{#1\ #2}]\ #3})}
+\newcommand\appexp[2]{(\ma{#1\ #2})}
 \newcommand\throwexp[1]{(\ma{\throwliteral{}\ #1})}
 \newcommand\newexp[2]{(\ma{\newliteral{}\ #1\ #2})}
 
@@ -107,6 +111,7 @@
 \newcommand\hastype[2]{\ma{#1 \mathbin{:} #2}}
 \newcommand\issubtype[2]{\ma{#1 \mathbin{<:} #2}}
 \newcommand\judgement[5]{\ma{#1 \vdash #2\ ;\ #3\ ;\ #4\ ;\ #5}}
+\newcommand\judgementfour[4]{\ma{#1 \vdash #2\ ;\ #3\ ;\ #4}}
 % lookuping props in the env
 \newcommand\inpropenv[2]{\ma{#1 \vdash #2}}
 
@@ -119,6 +124,7 @@
 
 % propositions
 \newmeta\prop{\psi}
+\newmeta\propp{\psi'}
 \newmeta\pathelem{PE}
 \newcommand\isprop[2]{\ma{{#1}_{#2}}}
 \newcommand\impprop[2]{\ma{#1 \supset #2}}
@@ -135,11 +141,13 @@
 % objects
 \newcommand\path[2]{\ma{#1(#2)}}
 \newmeta\object{o}
+\newmeta\objectp{o'}
 \newmeta\emptyobject{\emptyset}
 \newmeta\pathelem{\pi}
 % abstract syntax for pathelem
 \newmeta\pesyntax{pe}
 \newmeta\classpe{{\bf Class}}
+\newcommand\keype[1]{{\bf Key(\ma{#1})}}
 
 % scope replacements
 \newcommand\replacefor[3]{\ma{#1 [#2 / #3]}}

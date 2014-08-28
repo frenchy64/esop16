@@ -87,18 +87,20 @@
 %\preprintfooter{short description of paper}   % 'preprint' option specified.
 
 \title{Typed Clojure}
-\subtitle{A Practical Type System for Clojure, based on Typed Racket}
+\subtitle{An Optional Type System for Clojure, based on Typed Racket}
 
 \authorinfo{Ambrose Bonnaire-Sergeant}
            {University of Western Australia}
            {abonnairesergeant@gmail.com}
 \authorinfo{Rowan Davies}
            {University of Western Australia}
-           {rowan@csse.uwa.edu.au}
+           {rowan.davies@uwa.edu.au}
 
 \maketitle
 
 \begin{abstract}
+Clojure is a dynamically typed language hosted on the Java 
+Virtual Machine.
 Typed Racket is a valuable starting point for
 a gradual type system that targets Clojure.
 Building a similar type system for a new language gives the
@@ -119,7 +121,28 @@ for type checking non-trivial Clojure idioms.
 \keywords
 gradual types, Clojure
 
-\section{Typed Clojure}
+\section{Clojure with static typing}
+
+% current situation 
+
+Programming is an error prone activity, especially in the presence of
+multiple languages working together. Over the past decade, it has become increasingly
+frequent to extend existing dynamically typed languages with optional type systems.
+The guarantees that a sound type system provides can be the difference between
+choosing a language that supports a type system or one that does not.
+
+% presenting clojure
+
+Clojure is a dynamically typed language built to run on the Java Virtual Machine (JVM)
+which has recently gained popularity as an alternative JVM language.
+It offers the flexibility of a Lisp dialect, including Common Lisp-style macros,
+emphasising a functional style via a standard library of immutable datastructures. 
+Clojure has good interoperability with existing Java code, allowing programmers to
+use existing Java libaries without leaving Clojure.
+
+%problem?
+
+Clojure
 
 Typed Clojure is a gradual type system for Clojure, based on the
 static portion of Typed Racket.
@@ -152,9 +175,14 @@ The main result of this paper is to demonstrate that Typed Racket's design
 and implementation is applicable to a practical type system for Clojure
 by implementing Typed Clojure.
 
+% list the delta from Typed Racket
+
 \section{Overview of Typed Clojure}
 
-Typed Clojure is a gradual type system for Clojure, designed to 
+Typed Clojure is a gradual type system for Clojure. It is designed
+to type check normal Clojure code by adding annotations. It is implemented
+as a library, and can be seamlessly included in any Clojure project; no
+separate compiler or language is needed.
 
 {\smallsection {Based on Typed Racket}}
 Initially, the similarities between untyped Racket and Clojure and Typed Racket's 
@@ -213,7 +241,7 @@ are tried first, and the first arity to match ``wins''.
 
 For example, applying an \lstinline|Integer| argument to a function of type
 
-\begin{lstlisting}[label=lst:ordered]
+\begin{lstlisting}
 (Fn [Integer -> Integer]
     [Number -> Number])
 \end{lstlisting}
@@ -247,10 +275,26 @@ Java's \emph{null} can be passed, discussed in Section \ref{sec:null}.
 %  - not an issue
 %  - implementation difference, AST walking vs syntax walking
 
+\section{A Formal Model of Typed Clojure}
+
+We describe our type system in a similar way to Typed Racket (\citet{TF10}).
+The main judgement 
+{\judgement {\Gamma} {\hastype {\e{}} {\t{}}} 
+  {\filterset {\thenprop {\prop{}}}
+              {\elseprop {\prop{}}}}
+            {\object{}} {\flowprop {\prop{}}}}
+says expression \e{} is of type \t{} in environment $\Gamma$, with 
+then proposition {\thenprop {\prop{}}}, else proposition {\elseprop {\prop{}}},
+object \object{} and flow proposition {\flowprop {\prop{}}}.
+
+
 \subsection{Higher-rank polymorphism}
 
 Typed Clojure supports f-bounded polymorphism and higher-rank
 types.
+% why include them?
+% examples, involving generic type operators for monads & conduits
+% useful for generic programming, similar to Hashell type classes
 
 \subsection{Using negative filters}
 
@@ -337,10 +381,12 @@ $$
                       \alt {\Arrow {\overrightarrow{ \hastype {\x{}} {\t{}}}}
                                    {\t{}}
                                    {\filterset {\prop{}} {\prop{}}}
-                                   {\object{}}
-                                   {\prop{}}}
+                                   {\object{}}}
                       \\ &\alt&
                       {\ArrayTwo {\t{}} {\t{}}}
+                      \alt {\HMapc {TODO}}
+                      \alt {\HMapp {TODO} {TODO}}
+                      
                 &\mbox{Types} \\ \\
   \prop{}       &::=& {\isprop {\t{}} {\path {\pathelem{}} {\x{}}}}
                       \alt {\notprop {\t{}} {\path {\pathelem{}} {\x{}}}}
@@ -355,7 +401,7 @@ $$
                 &\mbox{Objects} \\
   \pathelem{}   &::=& \overrightarrow{\pesyntax{}}
                 &\mbox{Paths} \\
-  \pesyntax{}   &::=& \classpe{}
+  \pesyntax{}   &::=& \classpe{} \alt \keype{k}
                 &\mbox{Path Elements} \\ \\
                 % TODO objects with path
 %  \c{} &::=& \assoc{} \alt \dissoc{} \alt \get{}
@@ -371,85 +417,176 @@ $$
 \begin{mathpar}
 \infer [T-Var]
 { \inpropenv {\propenv{}} {\isprop {\x{}} {\t{}}}}
-{ \judgement {\propenv{}} {\hastype {\x{}} {\t{}}} {\filterset {{\notprop {\falsy} {\x{}}}} {{\isprop {\falsy} {\x{}}}}}
-             {\x{}} {\topprop{}}}
+{ \judgementfour {\propenv{}} {\hastype {\x{}} {\t{}}} {\filterset {{\notprop {\falsy} {\x{}}}} {{\isprop {\falsy} {\x{}}}}}
+             {\x{}}}
 
 \infer [T-True]
 {}
-{ \judgement {\propenv{}} {{\hastype {\true{}} {\True{}}}} {{\filterset {\topprop{}} {\botprop{}}}} {\emptyobject{}} {\topprop{}}}
+{ \judgementfour {\propenv{}} {{\hastype {\true{}} {\True{}}}} {{\filterset {\topprop{}} {\botprop{}}}} {\emptyobject{}} }
 
 \infer [T-False]
 {}
-{ \judgement {\propenv{}} {{\hastype {\false{}} {\False{}}}} {\filterset {\botprop{}} {\topprop{}}} {\emptyobject{}} {\topprop{}}}
+{ \judgementfour {\propenv{}} {{\hastype {\false{}} {\False{}}}} {\filterset {\botprop{}} {\topprop{}}} {\emptyobject{}} }
 
 \infer [T-Nil]
 {}
-{ \judgement {\propenv{}} {{\hastype {\nil{}} {\Nil{}}}} {\filterset {\botprop{}} {\topprop{}}} {\emptyobject{}} {\topprop{}}}
+{ \judgementfour {\propenv{}} {{\hastype {\nil{}} {\Nil{}}}} {\filterset {\botprop{}} {\topprop{}}} {\emptyobject{}} }
 
 \infer [T-Do]
-{ \judgement {\propenv{}} {\hastype {\e1} {\t1}} {\filterset {\thenprop {\prop{1}}} {\elseprop {\prop1}}} {\object{1}} 
-             {\flowprop {\prop{1}}}
+{ \judgementfour {\propenv{}} {\hastype {\e1} {\t1}} {\filterset {\thenprop {\prop{1}}} {\elseprop {\prop1}}} {\object{1}} 
 \\\\
-  \judgement {\propenv{}, {\flowprop {\prop{1}}}} {\hastype {\e2} {\t2}} {\filterset {\thenprop {\prop2}} {\elseprop {\prop2}}} 
-             {\object{}} {\flowprop {\prop{2}}}
+  \judgementfour {\propenv{}, {\orprop {\thenprop {\prop{1}}} {\elseprop {\prop{1}}}}}
+                 {\hastype {\e{}} {\t{}}} {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}} 
+                 {\object{}}
   }
-{ \judgement {\propenv{}} {\hastype {\doexp {\e1} {\e2}} {\t2}} {\filterset {\thenprop {\prop2}} {\elseprop {\prop2}}} {\object} 
-             {\andprop {\flowprop {\prop{1}}} {\flowprop {\prop{2}}}}}
+{ \judgementfour {\propenv{}} {\hastype {\doexp {\e1} {\e{}}} {\t{}}} {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}} {\object} 
+             }
 
 \infer [T-If]
-{ \judgement {\propenv{}} {\hastype {\e1} {\t{1}}} {\filterset {\thenprop {\prop{1}}} {\elseprop {\prop{1}}}}
-             {\object{1}} {\flowprop {\prop{1}}} 
+{ \judgementfour {\propenv{}} {\hastype {\e1} {\t{1}}} {\filterset {\thenprop {\prop{1}}} {\elseprop {\prop{1}}}}
+                 {\object{1}} 
              \\\\
-  \judgement {\propenv{}} {\hastype {\e2} {\t{}}} {\filterset {\thenprop {\prop{2}}} {\elseprop {\prop{2}}}}
-             {\object{}} {\flowprop {\prop{2}}}
+  \judgementfour {\propenv{}, {\thenprop {\prop{1}}}}
+                 {\hastype {\e2} {\t{}}} {\filterset {\thenprop {\prop{2}}} {\elseprop {\prop{2}}}}
+                 {\object{}}
   \\\\
-  \judgement {\propenv{}} {\hastype {\e3} {\t{}}} {\filterset {\thenprop {\prop{3}}} {\elseprop {\prop{3}}}}
-             {\object{}} {\flowprop {\prop{3}}}
+  \judgementfour {\propenv{}, {\elseprop {\prop{1}}}}
+                 {\hastype {\e3} {\t{}}} {\filterset {\thenprop {\prop{3}}} {\elseprop {\prop{3}}}}
+                 {\object{}}
              }
-{ \judgement {\propenv{}} {\hastype {\ifexp {\e1} {\e2} {\e3}} {\t{}}} 
-            % do we need to include prop1+/- here?
-             {\filterset {\orprop {\thenprop {\prop{2}}} {\thenprop {\prop{3}}}} 
-                         {\orprop {\elseprop {\prop{2}}} {\elseprop {\prop{3}}}}}
-             {\object{}} {\orprop {\flowprop {\prop{2}}}
-                                  {\flowprop {\prop{3}}}} }
+{ \judgementfour {\propenv{}} {\hastype {\ifexp {\e1} {\e2} {\e3}} {\t{}}} 
+                 {\filterset {\orprop {\thenprop {\prop{2}}} {\thenprop {\prop{3}}}} 
+                             {\orprop {\elseprop {\prop{2}}} {\elseprop {\prop{3}}}}}
+                 {\object{}} }
 
 \infer [T-Let]
-{ \judgement {\propenv{}} {\hastype {\e{1}} {\s{}}} {\filterset {\thenprop {\prop{1}}} {\elseprop {\prop{1}}}}
-             {\object{1}} {\flowprop {\prop{1}}}
+{ \judgementfour {\propenv{}} {\hastype {\e{1}} {\s{}}} {\filterset {\thenprop {\prop{1}}} {\elseprop {\prop{1}}}}
+             {\object{1}}
   \\\\
-  \judgement {\propenv{}, {\isprop {\s{}} {\x{}}}, 
+  \judgementfour {\propenv{}, {\isprop {\s{}} {\x{}}}, 
               {\impprop {\notprop {\falsy} {\x{}}} {\thenprop {\prop{1}}}}, 
               {\impprop {\isprop {\falsy} {\x{}}} {\elseprop {\prop{1}}}}}
              {\hastype {\e{}} {\t{}}} {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}}
-             {\object{}} {\flowprop {\prop{2}}}
+             {\object{}} 
              }
-{ \judgement {\propenv{}} {\hastype {\letexp {\x{}} {\e{1}} {\e{}}} {\t{}}}
+{ \judgementfour {\propenv{}} {\hastype {\letexp {\x{}} {\e{1}} {\e{}}} {\t{}}}
              {\replacefor {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}}
                           {\object{1}}
                           {\x{}}}
              {\replacefor {\object{}} 
                           {\object{1}}
                           {\x{}}}
-             {\replacefor {\andprop {\flowprop {\prop{1}}} {\flowprop {\prop{2}}}}
-                          {\object{1}}
-                          {\x{}}}}
+             }
 
 \infer [T-Throw]
-{ \judgement {\propenv{}} {\hastype {\e{}} {\Throwable}} {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}}
-             {\object{}} {\flowprop {\prop{}}}}
-{ \judgement {\propenv{}} {\hastype {\throwexp {\e{}}} {\Bottom}} {\filterset {\botprop} {\botprop}}
-             {\emptyobject{}} {\botprop} }
+{ \judgementfour {\propenv{}} {\hastype {\e{}} {\Throwable}} {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}}
+                 {\object{}}
+}
+{ \judgementfour {\propenv{}} {\hastype {\throwexp {\e{}}} {\Bottom}} {\filterset {\botprop} {\botprop}}
+             {\emptyobject{}} }
 
-\infer [T-Fn]
+\infer [T-App]
+{ \judgementfour {\propenv{}} {\hastype {\e{}} {\Arrow {\hastype {\x{}} {\s{}}}
+                                                       {\t{}}
+                                                       {\filterset {\thenprop {\prop{f}}}
+                                                                   {\elseprop {\prop{f}}}}
+                                                       {\object{f}}}}
+                {\filterset {\thenprop {\prop{}}}
+                            {\elseprop {\prop{}}}}
+                {\object{}}
+  \\\\
+  \judgementfour {\propenv{}}
+                 {\hastype {\ep{}} {\s{}}}
+                 {\filterset {\thenprop {\propp{}}}
+                             {\elseprop {\propp{}}}}
+                 {\objectp{}} 
+}
+{ \judgementfour {\propenv{}} {\hastype {\appexp {\e{}} {\ep{}}}
+                                        {\replacefor {\t{}}
+                                                     {\objectp{}}
+                                                     {\x{}}}}
+                 {\replacefor {\filterset {\thenprop {\prop{f}}}
+                                          {\elseprop {\prop{f}}}}
+                              {\objectp{}}
+                              {\x{}}}
+                 {\replacefor {\object{f}}
+                              {\objectp{}}
+                              {\x{}}}
+}
+                 
+                              
+
+
+\infer [T-Abs]
+{}
+{ TODO }
+
+\infer [T-Try]
 {}
 { TODO }
 
 \infer [T-New]
-{ }
-{ \judgement {\propenv{}} {\hastype {\newexp {\class{}} {\overrightarrow{\e{i}}}} {\t{n}}}
-             {\filterset {\topprop{}} {\topprop{}}}
+{ TODO }
+{ \judgementfour {\propenv{}} {\hastype {\newexp {\class{}} {\overrightarrow{\e{i}}}} {\t{n}}}
+             {\filterset {\topprop{}} {\botprop{}}}
              {\emptyobject}
-             {\topprop{}}}
+             }
+
+\infer [T-Field]
+{ TODO }
+{ }
+
+\infer [T-Method]
+{ TODO }
+{ }
+
+\infer [T-KwInvoke]
+{}
+{ TODO }
+
+\infer [T-HMapInvoke]
+{}
+{ TODO }
+
+\infer [T-HMapFull]
+{}
+{ TODO }
+
+\infer [T-HMapAbsent]
+{}
+{ TODO }
+
+\infer [T-HMapBoth]
+{}
+{ TODO }
+
+\infer [T-Defmulti]
+{}
+{ TODO }
+
+\infer [T-Defmethod]
+{}
+{ TODO }
+
+\infer [T-InstanceOf]
+{}
+{ TODO }
+
+\infer [T-Count]
+{}
+{ TODO }
+
+\infer [T-Nth]
+{}
+{ TODO }
+
+\infer [T-Class]
+{}
+{ TODO }
+
+\infer [T-Subsume]
+{}
+{ TODO }
 
 \end{mathpar}
 \caption{Typing Rules}
@@ -478,23 +615,23 @@ $$
             {\javatotc {\class{2}} {\true{}}}
             {\filterset {\topprop{}} {\topprop{}}}
             {\emptyobject{}}
-            {\topprop{}}}
+            }
 \\
 {\javaspecial {\JavaCtor {\overrightarrow{{\class{1}}}} {\class{2}}}} &=& 
     {\Arrow {\overrightarrow {\hastype {\x{}} {\javatotc {\class{1}} {\false{}}}}}
             {\javatotc {\class{2}} {\false{}}}
             {\filterset {\topprop{}} {\topprop{}}}
             {\emptyobject{}}
-            {\topprop{}}}
+            }
 \\\\
 
 {\javatotc {\class{}} {\true{}}} &=& {\Union {\Nil} {\class{}}}
 \\
 {\javatotc {\class{}} {\false{}}} &=& \class{}
 \\
-{\javatotc {\JavaArray {\class{}}} {\true{}}} &=& {\Union {\Nil} {\javatotc {\ArrayTwo {\Bottom} {\class{}}} \true{}}}
+{\javatotc {\JavaArray {\class{}}} {\true{}}} &=& {\Union {\Nil} {\ArrayTwo {\Bottom} {\javatotc {\class{}} \true{}}}}
 \\
-{\javatotc {\JavaArray {\class{}}} {\false{}}} &=& {\javatotc {\ArrayTwo {\Bottom} {\class{}}} \false{}}
+{\javatotc {\JavaArray {\class{}}} {\false{}}} &=& {\ArrayTwo {\Bottom} {\javatotc {\class{}} \true{}}}
 
 \end{altgrammar}
 $$
@@ -508,6 +645,8 @@ integration with Java's type system. Calls to Java methods from
 Clojure can be type checked by Typed Clojure.
 
 We currently do not support Java generics
+% because generics don't "exist" on the JVM
+% clojure also doesn't use them
 
 \subsubsection{Arrays}
 \label{sec:arrays}
