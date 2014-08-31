@@ -90,11 +90,14 @@
 \subtitle{An Optional Type System for Clojure, based on Typed Racket}
 
 \authorinfo{Ambrose Bonnaire-Sergeant}
-           {University of Western Australia}
-           {abonnairesergeant@gmail.com}
+           {Indiana University}
+           {abonnair@indiana.edu}
 \authorinfo{Rowan Davies}
            {University of Western Australia}
            {rowan.davies@uwa.edu.au}
+\authorinfo{Sam Tobin-Hochstadt}
+           {Indiana University}
+           {samth@indiana.edu}
 
 \maketitle
 
@@ -282,10 +285,10 @@ The main judgement
 {\judgement {\Gamma} {\hastype {\e{}} {\t{}}} 
   {\filterset {\thenprop {\prop{}}}
               {\elseprop {\prop{}}}}
-            {\object{}} {\flowprop {\prop{}}}}
+            {\object{}}}
 says expression \e{} is of type \t{} in environment $\Gamma$, with 
-then proposition {\thenprop {\prop{}}}, else proposition {\elseprop {\prop{}}},
-object \object{} and flow proposition {\flowprop {\prop{}}}.
+then proposition {\thenprop {\prop{}}}, else proposition {\elseprop {\prop{}}}
+and object \object{}.
 
 
 \subsection{Higher-rank polymorphism}
@@ -384,8 +387,8 @@ $$
                                    {\object{}}}
                       \\ &\alt&
                       {\ArrayTwo {\t{}} {\t{}}}
-                      \alt {\HMapc {TODO}}
-                      \alt {\HMapp {TODO} {TODO}}
+                      \alt {\HMapc {\mandatory}}
+                      \alt {\HMapp {\mandatory} {\absent}}
                       
                 &\mbox{Types} \\ \\
   \prop{}       &::=& {\isprop {\t{}} {\path {\pathelem{}} {\x{}}}}
@@ -415,61 +418,61 @@ $$
 
 \begin{figure*}
 \begin{mathpar}
-\infer [T-Var]
+\infer [T-Local]
 { \inpropenv {\propenv{}} {\isprop {\x{}} {\t{}}}}
-{ \judgementfour {\propenv{}} {\hastype {\x{}} {\t{}}} {\filterset {{\notprop {\falsy} {\x{}}}} {{\isprop {\falsy} {\x{}}}}}
+{ \judgement {\propenv{}} {\hastype {\x{}} {\t{}}} {\filterset {{\notprop {\falsy} {\x{}}}} {{\isprop {\falsy} {\x{}}}}}
              {\x{}}}
 
 \infer [T-True]
 {}
-{ \judgementfour {\propenv{}} {{\hastype {\true{}} {\True{}}}} {{\filterset {\topprop{}} {\botprop{}}}} {\emptyobject{}} }
+{ \judgement {\propenv{}} {{\hastype {\true{}} {\True{}}}} {{\filterset {\topprop{}} {\botprop{}}}} {\emptyobject{}} }
 
 \infer [T-False]
 {}
-{ \judgementfour {\propenv{}} {{\hastype {\false{}} {\False{}}}} {\filterset {\botprop{}} {\topprop{}}} {\emptyobject{}} }
+{ \judgement {\propenv{}} {{\hastype {\false{}} {\False{}}}} {\filterset {\botprop{}} {\topprop{}}} {\emptyobject{}} }
 
 \infer [T-Nil]
 {}
-{ \judgementfour {\propenv{}} {{\hastype {\nil{}} {\Nil{}}}} {\filterset {\botprop{}} {\topprop{}}} {\emptyobject{}} }
+{ \judgement {\propenv{}} {{\hastype {\nil{}} {\Nil{}}}} {\filterset {\botprop{}} {\topprop{}}} {\emptyobject{}} }
 
 \infer [T-Do]
-{ \judgementfour {\propenv{}} {\hastype {\e1} {\t1}} {\filterset {\thenprop {\prop{1}}} {\elseprop {\prop1}}} {\object{1}} 
+{ \judgement {\propenv{}} {\hastype {\e1} {\t1}} {\filterset {\thenprop {\prop{1}}} {\elseprop {\prop1}}} {\object{1}} 
 \\\\
-  \judgementfour {\propenv{}, {\orprop {\thenprop {\prop{1}}} {\elseprop {\prop{1}}}}}
+  \judgement {\propenv{}, {\orprop {\thenprop {\prop{1}}} {\elseprop {\prop{1}}}}}
                  {\hastype {\e{}} {\t{}}} {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}} 
                  {\object{}}
   }
-{ \judgementfour {\propenv{}} {\hastype {\doexp {\e1} {\e{}}} {\t{}}} {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}} {\object} 
+{ \judgement {\propenv{}} {\hastype {\doexp {\e1} {\e{}}} {\t{}}} {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}} {\object} 
              }
 
 \infer [T-If]
-{ \judgementfour {\propenv{}} {\hastype {\e1} {\t{1}}} {\filterset {\thenprop {\prop{1}}} {\elseprop {\prop{1}}}}
+{ \judgement {\propenv{}} {\hastype {\e1} {\t{1}}} {\filterset {\thenprop {\prop{1}}} {\elseprop {\prop{1}}}}
                  {\object{1}} 
              \\\\
-  \judgementfour {\propenv{}, {\thenprop {\prop{1}}}}
+  \judgement {\propenv{}, {\thenprop {\prop{1}}}}
                  {\hastype {\e2} {\t{}}} {\filterset {\thenprop {\prop{2}}} {\elseprop {\prop{2}}}}
                  {\object{}}
   \\\\
-  \judgementfour {\propenv{}, {\elseprop {\prop{1}}}}
+  \judgement {\propenv{}, {\elseprop {\prop{1}}}}
                  {\hastype {\e3} {\t{}}} {\filterset {\thenprop {\prop{3}}} {\elseprop {\prop{3}}}}
                  {\object{}}
              }
-{ \judgementfour {\propenv{}} {\hastype {\ifexp {\e1} {\e2} {\e3}} {\t{}}} 
+{ \judgement {\propenv{}} {\hastype {\ifexp {\e1} {\e2} {\e3}} {\t{}}} 
                  {\filterset {\orprop {\thenprop {\prop{2}}} {\thenprop {\prop{3}}}} 
                              {\orprop {\elseprop {\prop{2}}} {\elseprop {\prop{3}}}}}
                  {\object{}} }
 
 \infer [T-Let]
-{ \judgementfour {\propenv{}} {\hastype {\e{1}} {\s{}}} {\filterset {\thenprop {\prop{1}}} {\elseprop {\prop{1}}}}
+{ \judgement {\propenv{}} {\hastype {\e{1}} {\s{}}} {\filterset {\thenprop {\prop{1}}} {\elseprop {\prop{1}}}}
              {\object{1}}
   \\\\
-  \judgementfour {\propenv{}, {\isprop {\s{}} {\x{}}}, 
+  \judgement {\propenv{}, {\isprop {\s{}} {\x{}}}, 
               {\impprop {\notprop {\falsy} {\x{}}} {\thenprop {\prop{1}}}}, 
               {\impprop {\isprop {\falsy} {\x{}}} {\elseprop {\prop{1}}}}}
              {\hastype {\e{}} {\t{}}} {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}}
              {\object{}} 
              }
-{ \judgementfour {\propenv{}} {\hastype {\letexp {\x{}} {\e{1}} {\e{}}} {\t{}}}
+{ \judgement {\propenv{}} {\hastype {\letexp {\x{}} {\e{1}} {\e{}}} {\t{}}}
              {\replacefor {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}}
                           {\object{1}}
                           {\x{}}}
@@ -479,14 +482,14 @@ $$
              }
 
 \infer [T-Throw]
-{ \judgementfour {\propenv{}} {\hastype {\e{}} {\Throwable}} {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}}
+{ \judgement {\propenv{}} {\hastype {\e{}} {\Throwable}} {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}}
                  {\object{}}
 }
-{ \judgementfour {\propenv{}} {\hastype {\throwexp {\e{}}} {\Bottom}} {\filterset {\botprop} {\botprop}}
+{ \judgement {\propenv{}} {\hastype {\throwexp {\e{}}} {\Bottom}} {\filterset {\botprop{}} {\botprop{}}}
              {\emptyobject{}} }
 
 \infer [T-App]
-{ \judgementfour {\propenv{}} {\hastype {\e{}} {\Arrow {\hastype {\x{}} {\s{}}}
+{ \judgement {\propenv{}} {\hastype {\e{}} {\Arrow {\hastype {\x{}} {\s{}}}
                                                        {\t{}}
                                                        {\filterset {\thenprop {\prop{f}}}
                                                                    {\elseprop {\prop{f}}}}
@@ -495,13 +498,13 @@ $$
                             {\elseprop {\prop{}}}}
                 {\object{}}
   \\\\
-  \judgementfour {\propenv{}}
+  \judgement {\propenv{}}
                  {\hastype {\ep{}} {\s{}}}
                  {\filterset {\thenprop {\propp{}}}
                              {\elseprop {\propp{}}}}
                  {\objectp{}} 
 }
-{ \judgementfour {\propenv{}} {\hastype {\appexp {\e{}} {\ep{}}}
+{ \judgement {\propenv{}} {\hastype {\appexp {\e{}} {\ep{}}}
                                         {\replacefor {\t{}}
                                                      {\objectp{}}
                                                      {\x{}}}}
@@ -522,12 +525,28 @@ $$
 { TODO }
 
 \infer [T-Try]
-{}
-{ TODO }
+{ \judgement {\propenv{}} {\hastype {\e{1}} {\t{}}}
+                 {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}}
+                 {\object{}}
+\\\\
+  \judgement {\propenv{}, {\isprop {\x{}} {\class{1}}}}
+             {\hastype {\e{2}} {\t{}}}
+                 {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}}
+                 {\object{}}
+\\
+  \judgement {\propenv{}}
+             {\hastype {\e{3}} {\t{3}}}
+                 {\filterset {\thenprop {\prop{3}}} {\elseprop {\prop{3}}}}
+                 {\object{3}}
+}
+{ \judgement {\propenv{}} {\hastype {\tryexp {\e{1}} {\class{1}} {\x{}} {\e{2}} {\e{3}}} {\t{}}}
+                 {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}}
+                 {\object{}}
+                 }
 
 \infer [T-New]
-{ TODO }
-{ \judgementfour {\propenv{}} {\hastype {\newexp {\class{}} {\overrightarrow{\e{i}}}} {\t{n}}}
+{}
+{ \judgement {\propenv{}} {\hastype {\newexp {\class{}} {\overrightarrow{\e{i}}}} {\class{}}}
              {\filterset {\topprop{}} {\botprop{}}}
              {\emptyobject}
              }
@@ -548,9 +567,32 @@ $$
 {}
 { TODO }
 
+\infer [T-KeywordMap]
+{ \judgement {\propenv{}} {\hastype {\overrightarrow{{\e{v}}}} {\overrightarrow {{\t{v}}}}}
+             {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}}
+             {\object}}
+{ \judgement {\propenv{}} {\hastype {\{\overrightarrow{{k_{v}}\ {\e{v}}}\}} {\HMapc {\overrightarrow{{k_{v}}\ {\t{v}}}}}}
+             {\filterset {\topprop{}} {\botprop{}}}
+             {\emptyobject}}
+
+\infer [T-Map]
+{ 
+\judgement {\propenv{}} {\hastype {\overrightarrow{{\e{k}}}} {\overrightarrow {{\t{k}}}}}
+             {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}}
+             {\object}
+\\
+\judgement {\propenv{}} {\hastype {\overrightarrow{{\e{v}}}} {\overrightarrow {{\t{v}}}}}
+             {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}}
+             {\object}}
+{ \judgement {\propenv{}} {\hastype {\{\overrightarrow{{\e{k}}\ {\e{v}}}\}}
+                                    {\IPersistentMap {\Unionsplice {\overrightarrow{{t_{k}}}}}
+                                                     {\Unionsplice {\overrightarrow{{t_{v}}}}}}}
+             {\filterset {\topprop{}} {\botprop{}}}
+             {\emptyobject}}
+
 \infer [T-HMapFull]
 {}
-{ TODO }
+{ }
 
 \infer [T-HMapAbsent]
 {}
@@ -561,32 +603,99 @@ $$
 { TODO }
 
 \infer [T-Defmulti]
-{}
-{ TODO }
+{ \inpropenv {\propenv{}} {\isprop {\x{}} 
+                                   {\Arrow {\overrightarrow {\hastype {\x{p}} {\t{p}}}} {\t{m}}
+                                    {\filterset {\thenprop {\prop{m}}}
+                                                {\elseprop {\prop{m}}}}
+                                    {\object{m}}}}
+\\\\
+  \judgement {\propenv{}} {\hastype {\e{d}} {\Arrow {\overrightarrow {\hastype {\x{p}} {\t{p}}}} {\t{r}}
+                                                    {\filterset {\thenprop {\prop{d}}}
+                                                                {\elseprop {\prop{d}}}}
+                                                    {\object{d}}}}
+             {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}}
+             {\object{}}
+\\\\
+{\adddispatchfn
+{\x{}}
+{\e{d}}}
+}
+{ \judgement {\propenv{}} {\hastype {\defmultiexp {\x{}} {\e{d}}} {\MultiFn{}}}
+             {\filterset {\topprop{}} {\botprop{}}}
+             {\emptyobject}
+}
 
 \infer [T-Defmethod]
-{}
-{ TODO }
+{ \inpropenv {\propenv{}} {\isprop {\x{m}}
+                                   {\Arrow {\overrightarrow {\hastype {\x{p}} {\t{p}}}} {\t{m}}
+                                    {\filterset {\thenprop {\prop{m}}}
+                                                {\elseprop {\prop{m}}}}
+                                    {\object{m}}}}
+\\
+\getdispatchfn {\x{m}} {\e{d}}
+\\\\
+\judgement {\propenv{}, {\overrightarrow {\isprop {\x{p}} {\t{p}}}}}
+           {\hastype {\appexp {\e{d}} {\overrightarrow {\x{p}}}}
+                                  {\t{d}}}
+           {\filterset {\thenprop {\prop{d}}}
+                       {\elseprop {\prop{d}}}}
+           {\object{d}}
+\\\\
+\judgement {\propenv{}, {\thenprop {\prop{d}}}}
+           {\hastype {\e{b}} {\t{m}}}
+           {\filterset {\thenprop {\prop{m}}}
+                       {\elseprop {\prop{m}}}}
+           {\object{m}}
+}
+{ \judgement {\propenv{}} {\hastype {\defmethodexp {\x{m}} {\e{v}} {\overrightarrow{\x{p}}}
+                                                   {\e{b}}}
+                                    {\MultiFn{}}}
+             {\filterset {\topprop{}} {\botprop{}}}
+             {\emptyobject}
+}
 
 \infer [T-InstanceOf]
-{}
-{ TODO }
+{ \judgement {\propenv{}} 
+             {\hastype {\e{}} {\t{}}}
+             {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}}
+             {\object}
+}
+{ \judgement {\propenv{}} {\hastype {\instanceapp {\class{}} {\e{}}}
+                                    {\Boolean}}
+             {\filterset {\isprop  {\class{}} {\object{}}}
+                         {\notprop {\class{}} {\object{}}}}
+             {\emptyobject}
+}
 
-\infer [T-Count]
-{}
-{ TODO }
-
-\infer [T-Nth]
-{}
-{ TODO }
-
-\infer [T-Class]
-{}
-{ TODO }
+\infer [T-Isa]
+{ \isacompare {\e{1}} {\e{2}}
+             {\filterset {\thenprop {\prop{}}}
+                         {\elseprop {\prop{}}}}
+}
+{ \judgement {\propenv{}} {\hastype {\isaapp {\e{1}} {\e{2}}}
+                                    {\Boolean{}}}
+             {\filterset {\thenprop {\prop{}}}
+                         {\elseprop {\prop{}}}}
+             {\emptyobject}}
 
 \infer [T-Subsume]
-{}
-{ TODO }
+{ \judgement {\propenv{}} {\hastype {\e{}} {\t{}}}
+             {\filterset {\thenprop {\prop{}}}
+                         {\elseprop {\prop{}}}}
+             {\object}
+\\\\
+\inpropenv {\propenv{}, {\thenprop {\prop{}}}} {\thenprop {\propp{}}}
+\\
+\inpropenv {\propenv{}, {\elseprop {\prop{}}}} {\elseprop {\propp{}}}
+\\\\
+\inpropenv {} {\issubtype {\t{}} {\tp{}}}
+\\
+\inpropenv {} {\issubtype {\object{}} {\objectp{}}}
+}
+{ \judgement {\propenv{}} {\hastype {\e{}} {\tp{}}}
+             {\filterset {\thenprop {\propp{}}}
+                         {\elseprop {\propp{}}}}
+             {\objectp}}
 
 \end{mathpar}
 \caption{Typing Rules}
@@ -625,13 +734,27 @@ $$
             }
 \\\\
 
-{\javatotc {\class{}} {\true{}}} &=& {\Union {\Nil} {\class{}}}
+{\javatotc {\pint{}} {b}} &=& \Integer{}
 \\
-{\javatotc {\class{}} {\false{}}} &=& \class{}
+{\javatotc {\Void{}} {b}} &=& \Nil
+\\
+{\javatotc {\pvoid{}} {b}} &=& \Nil
+\\
+{\javatotc {\pchar{}} {b}} &=& \Character{}
+\\
+{\javatotc {\pdouble{}} {b}} &=& \Double{}
+\\
+{\javatotc {\JavaArray {\pint{}}} {b}} &=& {\Union {\Nil} {\ArrayP {\pint{}}}}
+\\
+{\javatotc {\JavaArray {\pdouble{}}} {b}} &=& {\Union {\Nil} {\ArrayP {\pdouble{}}}}
 \\
 {\javatotc {\JavaArray {\class{}}} {\true{}}} &=& {\Union {\Nil} {\ArrayTwo {\Bottom} {\javatotc {\class{}} \true{}}}}
 \\
 {\javatotc {\JavaArray {\class{}}} {\false{}}} &=& {\ArrayTwo {\Bottom} {\javatotc {\class{}} \true{}}}
+\\
+{\javatotc {\class{}} {\true{}}} &=& {\Union {\Nil} {\class{}}}
+\\
+{\javatotc {\class{}} {\false{}}} &=& \class{}
 
 \end{altgrammar}
 $$
@@ -764,7 +887,7 @@ and approximates their mental model when reasoning about Clojure code.
 
 Firstly, we separate the concepts of \emph{null} and reference types at the type level.
 This is unlike Java, where a reference type, like \emph{java.lang.Number}, includes \emph{null}.
-We provide a singleton type \lstinline|nil|, which contains just the value \lstinline|nil|,
+We provide a singleton type \Nil{}, which contains just the value \lstinline|nil|,
 Clojure's equivalent of \emph{null}. 
 
 Armed with general unions and the type \lstinline|nil|, 

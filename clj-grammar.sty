@@ -17,6 +17,7 @@
 % types
 \newmeta\s{\sigma}              % these are automatically wrapped in \ma
 \newmeta\t{\tau}
+\newmeta\tp{\tau{'}}
 \newmeta\T{T}
 
 % expressions
@@ -32,7 +33,8 @@
 
 % types
 \newbfop\int{int}
-\newbfop\bool{bool}
+\newbfop\Boolean{java.lang.Boolean}
+\newbfop\MultiFn{MultiFn}
 \newbfop\IPersistentMapLiteral{IPersistentMap}
 \newbfop\Uliteral{\ma{\cup}}
 \newbfop\ILiteral{\wedge}
@@ -42,12 +44,15 @@
 \newbfop\Valueliteral{Value}
 \newbfop\ArrayTwoLiteral{Array2}
 \newbfop\ArrayLiteral{Array}
+\newbfop\ArrayPLiteral{ArrayP}
 \newbfop\Throwable{java.lang.Throwable}
+\newbfop\Class{java.lang.Class}
 \newcommand\proctype[2]{(#1 \to #2)}
 \newcommand\Unionsplice[1]{(\ma{\Uliteral\ #1})}
 \newcommand\Union[2]{(\ma{\cup\ #1\ #2})}
 \newcommand\ArrayTwo[2]{(\ma{\ArrayTwoLiteral\ #1\ #2})}
 \newcommand\Array[1]{(\ArrayLiteral #1)}
+\newcommand\ArrayP[1]{(\ArrayPLiteral #1)}
 % \proctype is a little overkill.
 %% Reynolds' package can also abstract things like (\s1 \to \s2 \to \s3).
 \newcommand\Arrow[4]{\ma{#1 \xrightarrow[#4]{#3} #2}}
@@ -68,7 +73,9 @@
 \newbfop\TopIPersistentMap{{\IPersistentMap {\Top} {\Top}}}
 \newbfop\HMapliteral{HMap}
 \newcommand\HMapc[1]{(\HMapliteral^{complete}\ #1)}
-\newcommand\HMapp[2]{(\HMapliteral^{partial}\ #1\ #2)}
+\newcommand\HMapp[2]{(\HMapliteral\ #1\ #2)}
+\newmeta\mandatory{p}
+\newmeta\absent{a}
 
 % terms
 \newmeta\x{x}                   % not sure if \x is reserved...
@@ -90,6 +97,8 @@
 \newmeta\letliteral{{\bf let}}
 \newmeta\throwliteral{{\bf throw}}
 \newmeta\newliteral{{\bf new}}
+\newmeta\defmultiliteral{{\bf defmulti}}
+\newmeta\defmethodliteral{{\bf defmethod}}
 \newcommand\abs[2]{\ma{\l #1 . #2}}
 \newcommand\comb[2]{\ma{(#1\ #2)}}
 \newcommand\tryexp[5]{(\ma{\tryliteral{}\ #1\ (\ma{\catchliteral{}\ #2\ #3\ #4})\ (\ma{\finallyliteral{}\ #5})})}
@@ -100,23 +109,48 @@
 \newcommand\appexp[2]{(\ma{#1\ #2})}
 \newcommand\throwexp[1]{(\ma{\throwliteral{}\ #1})}
 \newcommand\newexp[2]{(\ma{\newliteral{}\ #1\ #2})}
+\newcommand\defmultiexp[2]{(\ma{\defmultiliteral{}\ #1\ #2})}
+\newcommand\defmethodexp[4]{(\ma{\defmethodliteral{}\ #1\ #2\ [#3]\ #4})}
+
+% Java primitives
+\newmeta\pint{int}
+\newbfop\Integer{java.lang.Integer}
+\newmeta\plong{long}
+\newbfop\Long{java.lang.Long}
+\newmeta\pdouble{double}
+\newbfop\Double{java.lang.Double}
+\newmeta\pchar{char}
+\newbfop\Character{java.lang.Character}
+\newmeta\pvoid{void}
+\newbfop\Void{java.lang.Void}
 
 % Clojure values
 \newmeta\symbol{symbol}
 \newmeta\nat{nat}
 
 % constant calls
+\newbfop\ccclass{class}
+\newbfop\instanceop{instance?}
+\newbfop\isaop{isa?}
+\newcommand\instanceapp[2]{(\instanceop\ #1\ #2)}
+\newcommand\isaapp[2]{(\isaop\ #1\ #2)}
 
 % typing judgements
 \newcommand\hastype[2]{\ma{#1 \mathbin{:} #2}}
 \newcommand\issubtype[2]{\ma{#1 \mathbin{<:} #2}}
-\newcommand\judgement[5]{\ma{#1 \vdash #2\ ;\ #3\ ;\ #4\ ;\ #5}}
-\newcommand\judgementfour[4]{\ma{#1 \vdash #2\ ;\ #3\ ;\ #4}}
+\newcommand\judgement[4]{\ma{#1 \vdash #2\ ;\ #3\ ;\ #4}}
 % lookuping props in the env
 \newcommand\inpropenv[2]{\ma{#1 \vdash #2}}
 
 % environment
 \newcommand\propenv{\Gamma}
+
+% multimethod envs
+\newcommand\adddispatchfn[2]{\ma{add\_dispatch\_fn(#1,\ #2)}}
+\newcommand\getdispatchfn[2]{\ma{get\_dispatch\_fn(#1)_{#2}}}
+
+% isa? special functions
+\newcommand\isacompare[3]{\ma{isa\_compare(#1,\ #2)_{#3}}}
 
 % evaluation contexts
 \newmeta\E{E}
@@ -125,7 +159,6 @@
 % propositions
 \newmeta\prop{\psi}
 \newmeta\propp{\psi'}
-\newmeta\pathelem{PE}
 \newcommand\isprop[2]{\ma{{#1}_{#2}}}
 \newcommand\impprop[2]{\ma{#1 \supset #2}}
 \newcommand\notprop[2]{\ma{{\overline{#1}}_{#2}}}
