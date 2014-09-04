@@ -772,11 +772,13 @@ $$
              {\hastype {\e{}} {\t{}}}
              {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}}
              {\object}
+             \\
+             {\tp{}} = {\Satisfies {\protocol{}}}
 }
 { \judgement {\propenv{}} {\hastype {\satisfiesapp {\protocol{}} {\e{}}}
                                     {\Boolean}}
-             {\filterset {\isprop  {{\Satisfies {\protocol{}}}} {\object{}}}
-                         {\notprop {{\Satisfies {\protocol{}}}} {\object{}}}}
+            {\filterset {\isprop  {\tp{}} {\object{}}}
+                        {\notprop {\tp{}} {\object{}}}}
              {\emptyobject}
 }
 \infer [T-Isa]
@@ -792,6 +794,34 @@ $$
 
 \end{mathpar}
 \caption{Typing rules 2}
+\end{figure*}
+
+\begin{figure*}
+\begin{mathpar}
+
+\infer [SO-Refl]
+{}
+{ \inpropenv {} {\issubtype {\object{}} {\object{}}}}
+
+
+\infer [SO-Top]
+{}
+{ \inpropenv {} {\issubtype {\object{}} {\emptyobject{}}}}
+
+\infer [S-Refl]
+{}
+{ \inpropenv {} {\issubtype {\t{}} {\t{}}}}
+
+\infer [S-Top]
+{}
+{ \inpropenv {} {\issubtype {\t{}} {\Top{}}}}
+
+\infer [S-UnionSuper]
+{}
+{ \inpropenv {} {\issubtype {\t{}} {\Top{}}}}
+
+\end{mathpar}
+\caption{Subtyping rules}
 \end{figure*}
 
 %$$
