@@ -625,7 +625,8 @@ $$
              %\\
              %\t{k} %= {\Value {k}}
          %}
-\infer [T-HMapInvoke]
+% invoke complete HMap with present key
+\infer [T-HMapCInvokePresent]
 { \judgement {\propenv{}} {\hastype {\e{m}} {\t{m}}}
              {\filterset {\prop{}} {\prop{}}}
            {\object{m}}
