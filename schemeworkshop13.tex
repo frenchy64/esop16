@@ -373,6 +373,9 @@ $$
                       \alt
                       {\fnexp {\overrightarrow{\hastype {\x{}} {\t{}}}} {\e{}}}
                       \alt {\letexp {\x{}} {\e{}} {\e{}}}
+                      \alt {\fieldexp {fld} {\e{}}}
+                      \alt {\methodexp {fld} {\e{}} {\overrightarrow{\e{}}}}
+                      \alt {\newexp {\e{}} {\overrightarrow{\e{}}}}
                 &\mbox{Expressions} \\ \\
   \s{}, \t{}    &::=& \Top \alt (\class{}\ \overrightarrow{\t{}})
                       \alt \class\ 
@@ -586,7 +589,18 @@ $$
 
 
 \infer [T-Method]
-{ }
+{ \judgement {\propenv{}} {\hastype {\e{t}} {\t{t}}}
+             {\filterset {\prop{}} {\prop{}}}
+             {\object{}}
+             \\
+             \overrightarrow{
+ \judgement {\propenv{}} {\hastype {\e{a}} {\t{a}}}
+             {\filterset {\prop{}} {\prop{}}}
+             {\object{}}
+           }^{a}
+             \\
+             \methodtype {\t{t}} {\overrightarrow{\t{a}}} {\t{}}
+           }
 { \judgement {\propenv{}} {\hastype {\methodexp {mth} {\e{t}} {\overrightarrow{\e{a}}}}
                                     {\t{}}}
              {\filterset {\topprop{}} {\topprop{}}}

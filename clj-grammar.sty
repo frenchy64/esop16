@@ -168,11 +168,16 @@
 \newcommand\isacompare[3]{\ma{isa\_compare(#1,\ #2)_{#3}}}
 
 % new special functions
+% Type -> [Type]
 \newcommand\ctorparams[2]{\ma{constructor\_params(#1)_{#2}}}
 
 % field special functions
 % Type Field -> Type
 \newcommand\fieldtype[3]{\ma{field\_type(#1,\ #2)_{#3}}}
+
+% method special functions
+% Type [Type] Method -> [Type]
+\newcommand\methodtype[3]{\ma{method\_type(#1,\ #2)_{#3}}}
 
 % evaluation contexts
 \newmeta\E{E}
