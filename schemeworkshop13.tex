@@ -610,9 +610,46 @@ $$
 {}
 { TODO }
 
+%{ \judgement {\propenv{}} {\hastype {\e{m}} {\t{m}}}
+%             {\filterset {\prop{}} {\prop{}}}
+%           {\object{m}}}
+%             \\
+%  \judgement {\propenv{}} {\hastype {\e{k}} {\t{k}}}
+%             {\filterset {\prop{}} {\prop{}}}
+%             {\object{}}
+             %\\\\
+%  \judgement {\propenv{}} {\hastype {\e{d}} {\t{d}}}
+%             {\filterset {\prop{}} {\prop{}}}
+%             {\object{}}
+
+             %\\
+             %\t{k} %= {\Value {k}}
+         %}
 \infer [T-HMapInvoke]
-{}
-{ TODO }
+{ \judgement {\propenv{}} {\hastype {\e{m}} {\t{m}}}
+             {\filterset {\prop{}} {\prop{}}}
+           {\object{m}}
+         \\
+  \judgement {\propenv{}} {\hastype {\e{k}} {\t{k}}}
+             {\filterset {\prop{}} {\prop{}}}
+             {\object{}}
+             \\\\
+  \judgement {\propenv{}} {\hastype {\e{d}} {\t{d}}}
+             {\filterset {\prop{}} {\prop{}}}
+             {\object{}}
+             \\
+             {\t{m}} = {\HMapc {\mandatory{}}}
+             \\
+             {\t{k}} = {\Value {k}}
+             \\
+             {(k\ \t{})} \in {\mandatory{}}
+       }
+{ \judgement {\propenv{}} {\hastype {\appexp {\e{m}} {\e{k}\ \e{d}}}
+                                    {\t{}}}
+             {\filterset {\topprop{}} {\topprop{}}}
+             {\path {\keype{k}} {\object{m}}}
+                                  }
+                                  
 
 \infer [T-KeywordMap]
 { \judgement {\propenv{}} {\hastype {\overrightarrow{{\e{v}}}} {\overrightarrow {{\t{v}}}}}
