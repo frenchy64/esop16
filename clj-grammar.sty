@@ -33,11 +33,11 @@
 
 % types
 \newbfop\int{int}
-\newbfop\Boolean{java.lang.Boolean}
+\newbfop\Boolean{Boolean}
 \newbfop\MultiFn{MultiFn}
 \newbfop\IPersistentMapLiteral{IPersistentMap}
-\newbfop\Uliteral{\ma{\cup}}
-\newbfop\ILiteral{\wedge}
+\newbfop\Uliteral{\ma{\bigcup}}
+\newbfop\Iliteral{\ma{\bigcap}}
 \newbfop\Not{Not}
 \newbfop\Allliteral{All}
 \newbfop\TFnliteral{TFn}
@@ -49,13 +49,16 @@
 \newbfop\Class{java.lang.Class}
 \newcommand\proctype[2]{(#1 \to #2)}
 \newcommand\Unionsplice[1]{(\ma{\Uliteral\ #1})}
-\newcommand\Union[2]{(\ma{\cup\ #1\ #2})}
+\newcommand\Union[2]{(\ma{\Uliteral\ #1\ #2})}
+\newcommand\In[1]{(\ma{\Iliteral\ #1})}
 \newcommand\ArrayTwo[2]{(\ma{\ArrayTwoLiteral\ #1\ #2})}
 \newcommand\Array[1]{(\ArrayLiteral #1)}
 \newcommand\ArrayP[1]{(\ArrayPLiteral #1)}
 % \proctype is a little overkill.
 %% Reynolds' package can also abstract things like (\s1 \to \s2 \to \s3).
 \newcommand\Arrow[4]{\ma{#1 \xrightarrow[#4]{#3} #2}}
+% TODO figure out how to make #1 : #2 closer to the :
+\newcommand\ArrowOne[5]{\ma{{\hastype {#1} {#2}} \xrightarrow[#5]{#4} #3}}
 
 \newcommand\All[2]{(\ma{\Allliteral\ [#1]\ #2})}
 \newcommand\TFn[2]{(\ma{\TFnliteral\ [#1]\ #2})}
@@ -69,18 +72,23 @@
 \newbfop\True{true}
 \newbfop\False{false}
 \newbfop\falsy{(\ma{\cup\ \Nil\ \False})}
-\newcommand\IPersistentMap[2]{(\IPersistentMapLiteral\ #1\ #2)}
-\newbfop\TopIPersistentMap{{\IPersistentMap {\Top} {\Top}}}
+\newcommand\IPersistentMap[2]{(\ma{\IPersistentMapLiteral\ #1\ #2})}
 \newbfop\HMapliteral{HMap}
-\newcommand\HMapc[1]{(\HMapliteral^{complete}\ #1)}
-\newcommand\HMapp[2]{(\HMapliteral\ #1\ #2)}
+\newcommand\HMapc[1]{(\ma{\HMapliteral^{complete}\ #1})}
+\newcommand\HMapp[2]{(\ma{\HMapliteral\ #1\ #2})}
+\newcommand\mandatoryset[1]{\ma{\{#1\}}}
 \newmeta\mandatory{p}
 \newmeta\absent{a}
+\newbfop\Satisfiesliteral{Satisfies}
+\newcommand\Satisfies[1]{(\ma{\Satisfiesliteral\ #1})}
+\newbfop\Instanceliteral{InstanceOf}
+\newcommand\Instance[1]{(\ma{\Instanceliteral\ #1})}
 
 % terms
 \newmeta\x{x}                   % not sure if \x is reserved...
 \newmeta\v{v}
 \newmeta\class{C}
+\newmeta\protocol{P}
 \newmeta\k{k}
 \newmeta\nil{{\bf nil}}
 \newmeta\true{{\bf true}}
@@ -100,6 +108,7 @@
 \newmeta\defmultiliteral{{\bf defmulti}}
 \newmeta\defmethodliteral{{\bf defmethod}}
 \newcommand\abs[2]{\ma{\l #1 . #2}}
+\newcommand\curlymap[1]{\ma{\{#1\}}}
 \newcommand\comb[2]{\ma{(#1\ #2)}}
 \newcommand\tryexp[5]{(\ma{\tryliteral{}\ #1\ (\ma{\catchliteral{}\ #2\ #3\ #4})\ (\ma{\finallyliteral{}\ #5})})}
 \newcommand\ifexp[3]{(\ma{\ifliteral{}\ #1\ #2\ #3})}
@@ -109,6 +118,9 @@
 \newcommand\appexp[2]{(\ma{#1\ #2})}
 \newcommand\throwexp[1]{(\ma{\throwliteral{}\ #1})}
 \newcommand\newexp[2]{(\ma{\newliteral{}\ #1\ #2})}
+\newmeta\dotliteral{.}
+\newcommand\fieldexp[2]{(\ma{\dotliteral\ #2\ #1})}
+\newcommand\methodexp[3]{(\ma{\dotliteral\ #2\ (#1\ #3)})}
 \newcommand\defmultiexp[2]{(\ma{\defmultiliteral{}\ #1\ #2})}
 \newcommand\defmethodexp[4]{(\ma{\defmethodliteral{}\ #1\ #2\ [#3]\ #4})}
 
@@ -131,12 +143,15 @@
 % constant calls
 \newbfop\ccclass{class}
 \newbfop\instanceop{instance?}
+\newbfop\satisfiesop{satisfies?}
 \newbfop\isaop{isa?}
 \newcommand\instanceapp[2]{(\instanceop\ #1\ #2)}
+\newcommand\satisfiesapp[2]{(\satisfiesop\ #1\ #2)}
 \newcommand\isaapp[2]{(\isaop\ #1\ #2)}
 
 % typing judgements
 \newcommand\hastype[2]{\ma{#1 \mathbin{:} #2}}
+\newcommand\hastypesmall[2]{\ma{#1 : #2}}
 \newcommand\issubtype[2]{\ma{#1 \mathbin{<:} #2}}
 \newcommand\judgement[4]{\ma{#1 \vdash #2\ ;\ #3\ ;\ #4}}
 % lookuping props in the env
@@ -151,6 +166,13 @@
 
 % isa? special functions
 \newcommand\isacompare[3]{\ma{isa\_compare(#1,\ #2)_{#3}}}
+
+% new special functions
+\newcommand\ctorparams[2]{\ma{constructor\_params(#1)_{#2}}}
+
+% field special functions
+% Type Field -> Type
+\newcommand\fieldtype[3]{\ma{field\_type(#1,\ #2)_{#3}}}
 
 % evaluation contexts
 \newmeta\E{E}

@@ -363,29 +363,36 @@ TODO
 \begin{figure*}
 $$
 \begin{altgrammar}
-  \expd{}, \e{} &::=& \x\ \alt {\comb {\e{}} {\e{}}} %\alt {\abs {\x a} {\e{}}}
+  \expd{}, \e{} &::=& \x\ \alt {\comb {\e{}} {\e{}}} \alt {\abs {\x a} {\e{}}}
                       \alt \true{} \alt \false{} \alt \nil{}
                       \alt \class{}
                       \alt {\tryexp {\e{}} {\class} {\x} {\e{}} {\e{}}}
                       \alt {\ifexp {\e{}} {\e{}} {\e{}}}
-                      \alt
-                      {\doexp {\e{}} {\e{}}}
                       \\ &\alt& 
+                      {\doexp {\e{}} {\e{}}}
+                      \alt
                       {\fnexp {\overrightarrow{\hastype {\x{}} {\t{}}}} {\e{}}}
                       \alt {\letexp {\x{}} {\e{}} {\e{}}}
                 &\mbox{Expressions} \\ \\
   \s{}, \t{}    &::=& \Top \alt (\class{}\ \overrightarrow{\t{}})
+                      \alt \class\ 
+                      \alt \protocol\ 
+                      \alt {\Instance {\class}}
+                      \alt {\Satisfies {\protocol}}
                       \alt {\Value \v{}}
                       \alt {\Unionsplice {\overrightarrow{\t{}}}}
-                      \alt (\cap\ \overrightarrow{\t{}})
-                      \alt (\Not\ \t{})
-                      \alt {\All {\overrightarrow{\x{}}} {\t{}}}
-                      \alt {\TFn {\overrightarrow{\x{}}} \t{}}
-                      \alt {\Arrow {\overrightarrow{ \hastype {\x{}} {\t{}}}}
+                      \alt {\In {\t{}\ \overrightarrow{\t{}}}}
+                      \\ &\alt&
+                      %\alt (\Not\ \t{})
+                      {\All {\overrightarrow{\x{}}} {\t{}}}
+                      \alt
+                      {\TFn {\overrightarrow{\x{}}} \t{}}
+                      \alt
+                      {\Arrow {\overrightarrow{ \hastype {\x{}} {\t{}}}}
                                    {\t{}}
                                    {\filterset {\prop{}} {\prop{}}}
                                    {\object{}}}
-                      \\ &\alt&
+                      \alt
                       {\ArrayTwo {\t{}} {\t{}}}
                       \alt {\HMapc {\mandatory}}
                       \alt {\HMapp {\mandatory} {\absent}}
@@ -521,8 +528,18 @@ $$
 
 
 \infer [T-Abs]
-{}
-{ TODO }
+{ \judgement {\propenv{}, {\isprop {\s{}} {\x{}}}}
+             {\filterset {\thenprop {\prop{}}}
+                         {\elseprop {\prop{}}}}
+             {\object{}}}
+{ \judgement {\propenv{}} {\hastype {\e{}} {\ArrowOne {\x{}} {\s{}}
+                                                      {\t{}}
+                                                      {\filterset {\thenprop {\prop{}}}
+                                                                  {\elseprop {\prop{}}}}
+                                                      {\object{}}}}
+                {\filterset {\topprop}
+                            {\botprop}}
+                {\object{}}}
 
 \infer [T-Try]
 { \judgement {\propenv{}} {\hastype {\e{1}} {\t{}}}
@@ -545,19 +562,35 @@ $$
                  }
 
 \infer [T-New]
-{}
+{ \ctorparams {\overrightarrow {\e{i}}} {\overrightarrow {\t{i}}}
+  \\
+  \overrightarrow{
+  \judgement {\propenv{}} {\hastype {\e{i}} {\t{i}}} 
+             {\filterset {\prop{}} {\prop{}}}
+           {\object{}}}^{i}
+           }
 { \judgement {\propenv{}} {\hastype {\newexp {\class{}} {\overrightarrow{\e{i}}}} {\class{}}}
              {\filterset {\topprop{}} {\botprop{}}}
              {\emptyobject}
              }
 
 \infer [T-Field]
-{ TODO }
-{ }
+{ \judgement {\propenv{}} {\hastype {\e{t}} {\t{t}}}
+             {\filterset {\prop{}} {\prop{}}}
+             {\object{}}
+           \\
+         \fieldtype {\t{t}} {fld} {\t{}}}
+{ \judgement {\propenv{}} {\hastype {\fieldexp {fld} {\e{t}}} {\t{}}}
+             {\filterset {\topprop{}} {\topprop}}
+             {\emptyobject{}}}
+
 
 \infer [T-Method]
-{ TODO }
 { }
+{ \judgement {\propenv{}} {\hastype {\methodexp {mth} {\e{t}} {\overrightarrow{\e{a}}}}
+                                    {\t{}}}
+             {\filterset {\topprop{}} {\topprop{}}}
+             {\emptyobject{}}}
 
 \infer [T-KwInvoke]
 {}
@@ -571,7 +604,8 @@ $$
 { \judgement {\propenv{}} {\hastype {\overrightarrow{{\e{v}}}} {\overrightarrow {{\t{v}}}}}
              {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}}
              {\object}}
-{ \judgement {\propenv{}} {\hastype {\{\overrightarrow{{k_{v}}\ {\e{v}}}\}} {\HMapc {\overrightarrow{{k_{v}}\ {\t{v}}}}}}
+{ \judgement {\propenv{}} {\hastype {\curlymap {\overrightarrow{{k_{v}}\ {\e{v}}}}}
+  {\HMapc {\mandatoryset {{\overrightarrow{({k_{v}}\ {\t{v}})}}}}}}
              {\filterset {\topprop{}} {\botprop{}}}
              {\emptyobject}}
 
@@ -589,18 +623,6 @@ $$
                                                      {\Unionsplice {\overrightarrow{{t_{v}}}}}}}
              {\filterset {\topprop{}} {\botprop{}}}
              {\emptyobject}}
-
-\infer [T-HMapFull]
-{}
-{ }
-
-\infer [T-HMapAbsent]
-{}
-{ TODO }
-
-\infer [T-HMapBoth]
-{}
-{ TODO }
 
 \infer [T-Defmulti]
 { \inpropenv {\propenv{}} {\isprop {\x{}} 
@@ -624,6 +646,13 @@ $$
              {\filterset {\topprop{}} {\botprop{}}}
              {\emptyobject}
 }
+
+\end{mathpar}
+\caption{Typing Rules 1}
+\end{figure*}
+
+\begin{figure*}
+\begin{mathpar}
 
 \infer [T-Defmethod]
 { \inpropenv {\propenv{}} {\isprop {\x{m}}
@@ -654,30 +683,6 @@ $$
              {\emptyobject}
 }
 
-\infer [T-InstanceOf]
-{ \judgement {\propenv{}} 
-             {\hastype {\e{}} {\t{}}}
-             {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}}
-             {\object}
-}
-{ \judgement {\propenv{}} {\hastype {\instanceapp {\class{}} {\e{}}}
-                                    {\Boolean}}
-             {\filterset {\isprop  {\class{}} {\object{}}}
-                         {\notprop {\class{}} {\object{}}}}
-             {\emptyobject}
-}
-
-\infer [T-Isa]
-{ \isacompare {\e{1}} {\e{2}}
-             {\filterset {\thenprop {\prop{}}}
-                         {\elseprop {\prop{}}}}
-}
-{ \judgement {\propenv{}} {\hastype {\isaapp {\e{1}} {\e{2}}}
-                                    {\Boolean{}}}
-             {\filterset {\thenprop {\prop{}}}
-                         {\elseprop {\prop{}}}}
-             {\emptyobject}}
-
 \infer [T-Subsume]
 { \judgement {\propenv{}} {\hastype {\e{}} {\t{}}}
              {\filterset {\thenprop {\prop{}}}
@@ -697,8 +702,44 @@ $$
                          {\elseprop {\propp{}}}}
              {\objectp}}
 
+\infer [T-InstanceOf]
+{ \judgement {\propenv{}} 
+             {\hastype {\e{}} {\t{}}}
+             {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}}
+             {\object}
+}
+{ \judgement {\propenv{}} {\hastype {\instanceapp {\class{}} {\e{}}}
+                                    {\Boolean}}
+             {\filterset {\isprop  {{\Instance {\class{}}}} {\object{}}}
+                         {\notprop {{\Instance {\class{}}}} {\object{}}}}
+             {\emptyobject}
+}
+
+\infer [T-Satisfies]
+{ \judgement {\propenv{}} 
+             {\hastype {\e{}} {\t{}}}
+             {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}}
+             {\object}
+}
+{ \judgement {\propenv{}} {\hastype {\satisfiesapp {\protocol{}} {\e{}}}
+                                    {\Boolean}}
+             {\filterset {\isprop  {{\Satisfies {\protocol{}}}} {\object{}}}
+                         {\notprop {{\Satisfies {\protocol{}}}} {\object{}}}}
+             {\emptyobject}
+}
+\infer [T-Isa]
+{ \isacompare {\e{1}} {\e{2}}
+             {\filterset {\thenprop {\prop{}}}
+                         {\elseprop {\prop{}}}}
+}
+{ \judgement {\propenv{}} {\hastype {\isaapp {\e{1}} {\e{2}}}
+                                    {\Boolean{}}}
+             {\filterset {\thenprop {\prop{}}}
+                         {\elseprop {\prop{}}}}
+             {\emptyobject}}
+
 \end{mathpar}
-\caption{Typing Rules}
+\caption{Typing rules 2}
 \end{figure*}
 
 %$$
