@@ -567,10 +567,10 @@ $$
 \infer [T-New]
 { \ctorparams {\overrightarrow {\e{i}}} {\overrightarrow {\t{i}}}
   \\
-  \overrightarrow{
+  {\overrightarrow{
   \judgement {\propenv{}} {\hastype {\e{i}} {\t{i}}} 
              {\filterset {\prop{}} {\prop{}}}
-           {\object{}}}^{i}
+         {\object{}}}}^{i}
            }
 { \judgement {\propenv{}} {\hastype {\newexp {\class{}} {\overrightarrow{\e{i}}}} {\class{}}}
              {\filterset {\topprop{}} {\botprop{}}}
@@ -593,11 +593,11 @@ $$
              {\filterset {\prop{}} {\prop{}}}
              {\object{}}
              \\
-             \overrightarrow{
+             {\overrightarrow{
  \judgement {\propenv{}} {\hastype {\e{a}} {\t{a}}}
              {\filterset {\prop{}} {\prop{}}}
              {\object{}}
-           }^{a}
+           }}^{a}
              \\
              \methodtype {\t{t}} {\overrightarrow{\t{a}}} {\t{}}
            }
@@ -816,9 +816,47 @@ $$
 {}
 { \inpropenv {} {\issubtype {\t{}} {\Top{}}}}
 
+% FIXME fix overrightarrow caption
+\infer [S-IntersectSuper]
+{ {\overrightarrow {\inpropenv {} {\issubtype {\t{}} {\s{i}}}}}^{i}}
+{ \inpropenv {} {\issubtype {\t{}} {\In{{\overrightarrow{\s{}}}^{i}}}}}
+
+\infer [S-IntersectSub]
+{ \exists i.\ {\inpropenv {} {\issubtype {\t{i}} {\s{}}}}}
+{ \inpropenv {} {\issubtype {\In{{\overrightarrow{\t{}}}^{i}}} {\s{}}}}
+
 \infer [S-UnionSuper]
-{}
-{ \inpropenv {} {\issubtype {\t{}} {\Top{}}}}
+{ \exists i.\ {\inpropenv {} {\issubtype {\t{}} {\s{i}}}}}
+{ \inpropenv {} {\issubtype {\t{}} {\Unionsplice{{\overrightarrow{\s{}}}^{i}}}}}
+
+% FIXME fix overrightarrow caption
+\infer [S-UnionSub]
+{ {\overrightarrow {\inpropenv {} {\issubtype {\t{i}} {\s{}}}}}^{i}}
+{ \inpropenv {} {\issubtype {\Unionsplice{\overrightarrow{\t{}}^{i}}} {\s{}}}}
+
+\infer [S-Fun]
+{ \inpropenv {} {\issubtype {\sp{}} {\s{}}}
+  \\
+  \inpropenv {} {\issubtype {\t{}} {\tp{}}}
+  \\\\
+  \inpropenv {\thenprop {\prop{}}} {\thenprop {\propp{}}}
+  \\
+  \inpropenv {\elseprop {\prop{}}} {\elseprop {\propp{}}}
+  \\
+  \inpropenv {\object{}} {\objectp{}}
+}
+{ \inpropenv {}
+  {\issubtype
+    {\ArrowOne {\x{}} {\s{}}
+              {\t{}}
+              {\filterset {\thenprop {\prop{}}}
+                          {\elseprop {\prop{}}}}
+              {\object{}}}
+    {\ArrowOne {\xp{}} {\sp{}}
+              {\tp{}}
+              {\filterset {\thenprop {\propp{}}}
+                          {\elseprop {\propp{}}}}
+              {\objectp{}}}}}
 
 \end{mathpar}
 \caption{Subtyping rules}
