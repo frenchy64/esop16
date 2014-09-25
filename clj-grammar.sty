@@ -90,6 +90,7 @@
 \newmeta\xp{x{'}}                   % not sure if \x is reserved...
 \newmeta\v{v}
 \newmeta\class{C}
+\newmeta\classp{C{'}}
 \newmeta\protocol{P}
 \newmeta\k{k}
 \newmeta\nil{{\bf nil}}
@@ -180,6 +181,9 @@
 % method special functions
 % Type [Type] Method -> [Type]
 \newcommand\methodtype[3]{\ma{method\_type(#1,\ #2)_{#3}}}
+
+% java subtyping
+\newcommand\assignable[2]{\ma{assignable(#1, #2)}}
 
 % evaluation contexts
 \newmeta\E{E}

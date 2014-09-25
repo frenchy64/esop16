@@ -1,4 +1,4 @@
 all:
-	pdflatex schemeworkshop13.tex
-	bibtex schemeworkshop13
-	pdflatex schemeworkshop13.tex
+	pdflatex icfp15-typedclojure.tex
+	bibtex icfp15-typedclojure
+	pdflatex icfp15-typedclojure.tex
