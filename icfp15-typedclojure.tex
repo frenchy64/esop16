@@ -933,9 +933,28 @@ As Clojure supports Java interoperability, Typed Clojure has some
 integration with Java's type system. Calls to Java methods from
 Clojure can be type checked by Typed Clojure.
 
-We currently do not support Java generics
-% because generics don't "exist" on the JVM
-% clojure also doesn't use them
+We do not support Java Generics for several reasons. Firstly
+Clojure programmers already use \emph{type hints} to resolve
+Java methods which does not interact with generics. Secondly
+it would complicate the type system to need to consider advanced
+Generics features like existentials and f-bounded polymorphism
+which has complicated other type systems like Scala's.
+Finally Java interop is rare in Clojure code, so the extra
+work needed would not be worth the effort compared to the number
+of new bugs core.typed catches.
+
+Thanks to type erasure, only unparameterised classes, primitive
+types and array classes live at runtime. This simplifies 
+inference for \emph{tools.analyzer}, which uses type hints
+to resolve ambiguities in Java interop like overloaded methods.
+
+\subsection{Clojure type hints}
+
+Clojure comes with a small type system that helps improve
+performance in Clojure code: type hints. They are used to help
+the compiler resolve Java methods and prevent unboxing in
+certain situations. Tags are propagated bidirectionally
+and the programmer is free to add them where they like.
 
 \subsubsection{Arrays}
 \label{sec:arrays}
