@@ -73,6 +73,7 @@
 \newbfop\True{true}
 \newbfop\False{false}
 \newbfop\falsy{(\ma{\cup\ \Nil\ \False})}
+\newbfop\falsydiff{\ma{\trdiff{\falsy}}}
 \newcommand\IPersistentMap[2]{(\ma{\IPersistentMapLiteral\ #1\ #2})}
 \newbfop\HMapliteral{HMap}
 \newcommand\HMapc[1]{(\ma{\HMapliteral^{complete}\ #1})}
@@ -152,16 +153,29 @@
 \newcommand\satisfiesapp[2]{(\satisfiesop\ #1\ #2)}
 \newcommand\isaapp[2]{(\isaop\ #1\ #2)}
 
+% differences from TR
+\newcommand\trdiff[1]{\mathbin{\textcolor{blue}{#1}}}
+
 % typing judgements
 \newcommand\hastype[2]{\ma{#1 \mathbin{:} #2}}
 \newcommand\hastypesmall[2]{\ma{#1 : #2}}
 \newcommand\issubtype[2]{\ma{#1 \mathbin{<:} #2}}
+% 4 place relation (TR formalism)
 \newcommand\judgement[4]{\ma{#1 \vdash #2\ ;\ #3\ ;\ #4}}
+% 7 place relation (TC formalism)
+\newcommand\judgementsev[7]{\ma{#1\ ; #2\ ; #3 \vdash_{\trdiff{\mathcal{CT}}} #4\ ;\ #5\ ;\ #6\ ;\ #7}}
+% 7 place relation with color
+\newcommand\judgementsevcol[7]{\judgementsev {\trdiff{#1}} {\trdiff{#2}} {#3} {#4} {#5} {#6} {\trdiff{\mmenv}}}
+% expands to 7 place but with 4 args (the TR formalism)
+\newcommand\judgementfillcol[4]{\judgementsevcol {\mmenv} {\taenv} {#1} {#2} {#3} {#4} {\mmenv}}
 % lookuping props in the env
 \newcommand\inpropenv[2]{\ma{#1 \vdash #2}}
 
 % environment
 \newcommand\propenv{\Gamma}
+\newcommand\mmenv{\Delta}
+\newcommand\mmenvp{\Delta'}
+\newcommand\taenv{\Gamma'}
 
 % multimethod envs
 \newcommand\adddispatchfn[2]{\ma{add\_dispatch\_fn(#1,\ #2)}}
