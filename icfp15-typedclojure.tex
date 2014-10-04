@@ -590,12 +590,20 @@ $$
                  }
 
 \infer [T-New]
-{ \ctorparams {\overrightarrow {\e{i}}} {\overrightarrow {\t{i}}}
-  \\
-  {\overrightarrow{
-  \judgementfillcol {\propenv{}} {\hastype {\e{i}} {\t{i}}} 
-             {\filterset {\prop{}} {\prop{}}}
-         {\object{}}}}^{i}
+{ \tajudgement {\taenv{}}
+               {\hastype {\overrightarrow {\e{i}}} {\overrightarrow {\s{i}}}}
+  \\\\
+  \ctorparams {\ctlookup {\class{}}}
+              {\overrightarrow {\s{i}}}
+              {\overrightarrow {\sp{i}}}
+  \\\\
+  \tatotc {\overrightarrow {\sp{i}}}
+          {\overrightarrow {\t{i}}}
+  \\\\
+  \judgementfillcol {\propenv{}}
+                    {\hastype {\overrightarrow {\e{i}}} {\overrightarrow {\s{i}}}}
+                    {\filterset {\prop{}} {\prop{}}}
+                    {\object{}}
            }
 { \judgementfillcol {\propenv{}} {\hastype {\newexp {\class{}} {\overrightarrow{\e{i}}}} {\class{}}}
              {\filterset {\topprop{}} {\botprop{}}}
@@ -603,37 +611,53 @@ $$
              }
 
 \infer [T-Field]
-{ \judgement {\propenv{}} {\hastype {\e{t}} {\t{t}}}
+{ \tajudgement {\taenv}
+               {\hastype {\e{}} {\classhint{h}}}
+               \\\\
+               \fieldtype {\ctlookup {\classhint{h}}} {\fld{}} {\s{}}
+               \\\\
+             \tatotc {\s{}} {\t{}}
+             \\
+             \tatotc {\classhint{h}} {\class{}}
+  \\\\
+  \judgementfillcol {\propenv{}} {\hastype {\e{}} {\class{}}}
              {\filterset {\prop{}} {\prop{}}}
              {\object{}}
-           \\
-         \fieldtype {\t{t}} {fld} {\t{}}}
-{ \judgement {\propenv{}} {\hastype {\fieldexp {fld} {\e{t}}} {\t{}}}
+           }
+{ \judgementfillcol {\propenv{}} {\hastype {\fieldexp {fld} {\e{}}} {\t{}}}
              {\filterset {\topprop{}} {\topprop}}
              {\emptyobject{}}}
 
 
 \infer [T-Method]
-{ \judgement {\propenv{}} {\hastype {\e{t}} {\t{t}}}
+{ 
+  \tajudgement {\taenv}
+               {\hastype {\e{}} {\classhint{h}}}
+             \\\\
+             \methodtype {\ctlookup{\classhint{h}}} {\mth{}} {\overrightarrow{\s{i}}} {\s{r}}
+             \\\\
+             \tatotc {\overrightarrow{\s{i}}} {\overrightarrow{\t{i}}}
+             \\
+             \tatotc {\classhint{h}} {\class{}}
+             \\
+             \tatotc {\s{r}} {\t{}}
+             \\\\
+  \judgementfillcol {\propenv{}} {\hastype {\e{}} {\class{}}}
              {\filterset {\prop{}} {\prop{}}}
              {\object{}}
-             \\
-             {\overrightarrow{
- \judgement {\propenv{}} {\hastype {\e{a}} {\t{a}}}
+             \\\\
+  \judgementfillcol {\propenv{}} {\hastype {\overrightarrow {\e{i}}} {\overrightarrow {\t{i}}}}
              {\filterset {\prop{}} {\prop{}}}
              {\object{}}
-           }}^{a}
-             \\
-             \methodtype {\t{t}} {\overrightarrow{\t{a}}} {\t{}}
            }
-{ \judgement {\propenv{}} {\hastype {\methodexp {mth} {\e{t}} {\overrightarrow{\e{a}}}}
+{ \judgementfillcol {\propenv{}} {\hastype {\methodexp {\mth{}} {\e{}} {\overrightarrow{\e{i}}}}
                                     {\t{}}}
              {\filterset {\topprop{}} {\topprop{}}}
              {\emptyobject{}}}
 
-\infer [T-KwInvoke]
-{}
-{ TODO }
+%\infer [T-KwInvoke]
+%{}
+%{ TODO }
 
 %{ \judgement {\propenv{}} {\hastype {\e{m}} {\t{m}}}
 %             {\filterset {\prop{}} {\prop{}}}
@@ -651,6 +675,12 @@ $$
              %\t{k} %= {\Value {k}}
          %}
 % invoke complete HMap with present key
+\end{mathpar}
+\caption{Typing Rules 1}
+\end{figure*}
+
+\begin{figure*}
+\begin{mathpar}
 \infer [T-HMapCInvokePresent]
 { \judgement {\propenv{}} {\hastype {\e{m}} {\t{m}}}
              {\filterset {\prop{}} {\prop{}}}
@@ -701,12 +731,6 @@ $$
              {\filterset {\topprop{}} {\botprop{}}}
              {\emptyobject}}
 
-\end{mathpar}
-\caption{Typing Rules 1}
-\end{figure*}
-
-\begin{figure*}
-\begin{mathpar}
 
 \infer [T-Defmulti]
 { \inpropenv {\propenv{}} {\isprop {\x{}} 
@@ -819,6 +843,64 @@ $$
 
 \end{mathpar}
 \caption{Typing rules 2}
+\end{figure*}
+
+\begin{figure*}
+\begin{mathpar}
+
+\infer [TA-Nil]
+{}
+{ \tajudgement {\taenv{}} {\hastype {\nil{}} {\unknownhint{}}}
+}
+
+\infer [TA-New]
+{ \tajudgement {\taenv{}}
+               {\hastype {\overrightarrow {\e{i}}} {\overrightarrow {\s{i}}}} 
+             }
+{ \tajudgement {\taenv{}}
+               {\hastype {\newexp {\class{}} {\overrightarrow {\e{i}}}}
+                         {\classhint{}}}
+}
+
+\infer [TA-Let]
+{ \tajudgement {\taenv{}} 
+               {\hastype {\e{1}} {\classhint{}}}
+               \\\\
+  \tajudgement {{\hastype {\x{}} {\classhint{}}}, \taenv{}}
+               {\hastype {\e{}} {\s{}}}
+}
+{ \tajudgement {\taenv{}}
+               {\hastype {\letexp {\x{}}
+                                  {\e{1}}
+                                  {\e{}}}
+                         {\s{}}}
+}
+
+\infer [TA-LetHint]
+{ \tajudgement {{\hastype {\x{}} {\classhint{}}}, \taenv{}}
+               {\hastype {\e{}} {\s{}}}
+}
+{ \tajudgement {\taenv{}}
+               {\hastype {\letexp {\hinted {\classhint{}} {\x{}}}
+                                  {\e{1}}
+                                  {\e{}}}
+                         {\s{}}}
+}
+
+\infer [TA-Method]
+{ \tajudgement {\taenv{}}
+                {\hastype {\e{}}
+                         {\classhint{t}}}
+  %\\
+  %\methodtype {\ctlookup {\classhint{t}}} {\mth} {\overrightarrow
+}
+{ \tajudgement {\taenv{}}
+                {\hastype {\methodexp {\mth} {\e{}} {\overrightarrow {\e{i}}}}
+                         {\classhint{}}}
+  }
+
+\end{mathpar}
+\caption{tools.analyzer Type Hints}
 \end{figure*}
 
 \begin{figure*}

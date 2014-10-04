@@ -4,6 +4,7 @@
 \usepackage{mathpartir}
 \usepackage{amsfonts}
 \usepackage{bbm}
+\usepackage{xcolor}
 
 
 % newmeta variables are automatically subscripted
@@ -139,6 +140,8 @@
 \newbfop\Character{java.lang.Character}
 \newmeta\pvoid{void}
 \newbfop\Void{java.lang.Void}
+\newmeta\mth{mth}
+\newmeta\fld{fld}
 
 % Clojure values
 \newmeta\symbol{symbol}
@@ -156,6 +159,10 @@
 % differences from TR
 \newcommand\trdiff[1]{\mathbin{\textcolor{blue}{#1}}}
 
+% class table
+\newcommand\ct[0]{\mathcal{CT}}
+\newcommand\ctlookup[1]{\ct(\ma{#1})}
+
 % typing judgements
 \newcommand\hastype[2]{\ma{#1 \mathbin{:} #2}}
 \newcommand\hastypesmall[2]{\ma{#1 : #2}}
@@ -163,13 +170,25 @@
 % 4 place relation (TR formalism)
 \newcommand\judgement[4]{\ma{#1 \vdash #2\ ;\ #3\ ;\ #4}}
 % 7 place relation (TC formalism)
-\newcommand\judgementsev[7]{\ma{#1\ ; #2\ ; #3 \vdash_{\trdiff{\mathcal{CT}}} #4\ ;\ #5\ ;\ #6\ ;\ #7}}
+\newcommand\judgementsev[7]{\ma{#1\ ; #2\ ; #3 \vdash_{\trdiff{\ct{}}} #4\ ;\ #5\ ;\ #6\ ;\ #7}}
 % 7 place relation with color
 \newcommand\judgementsevcol[7]{\judgementsev {\trdiff{#1}} {\trdiff{#2}} {#3} {#4} {#5} {#6} {\trdiff{\mmenv}}}
 % expands to 7 place but with 4 args (the TR formalism)
 \newcommand\judgementfillcol[4]{\judgementsevcol {\mmenv} {\taenv} {#1} {#2} {#3} {#4} {\mmenv}}
 % lookuping props in the env
 \newcommand\inpropenv[2]{\ma{#1 \vdash #2}}
+
+% tools.analyzer judgements
+\newcommand\ta[0]{\mathcal{TA}}
+\newcommand\tajudgement[2]{\ma{#1 \vdash_{\ta{}; {\ct{}}} #2}}
+
+% type hints
+\newmeta\classhint{C}
+\newmeta\unknownhint{\mathbbm{?}}
+\newcommand\hinted[2]{\ma{\widehat{} #1\ #2}}
+
+% convert tools.analyzer types to core.typed types
+\newcommand\tatotc[2]{\ma{[[#1]]\ =\ #2}}
 
 % environment
 \newcommand\propenv{\Gamma}
@@ -186,15 +205,15 @@
 
 % new special functions
 % Type -> [Type]
-\newcommand\ctorparams[2]{\ma{constructor\_params(#1)_{#2}}}
+\newcommand\ctorparams[3]{\ma{constructor(#1,\ #2)\ =\ #3}}
 
 % field special functions
 % Type Field -> Type
-\newcommand\fieldtype[3]{\ma{field\_type(#1,\ #2)_{#3}}}
+\newcommand\fieldtype[3]{\ma{field(#1,\ #2)\ =\ #3}}
 
 % method special functions
 % Type [Type] Method -> [Type]
-\newcommand\methodtype[3]{\ma{method\_type(#1,\ #2)_{#3}}}
+\newcommand\methodtype[4]{\ma{method(#1,\ #2)\ =\ [#3, #4]}}
 
 % java subtyping
 \newcommand\assignable[2]{\ma{assignable(#1, #2)}}
