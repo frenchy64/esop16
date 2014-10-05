@@ -170,7 +170,7 @@
 % 4 place relation (TR formalism)
 \newcommand\judgement[4]{\ma{#1 \vdash #2\ ;\ #3\ ;\ #4}}
 % 7 place relation (TC formalism)
-\newcommand\judgementsev[7]{\ma{#1\ ; #2\ ; #3 \vdash_{\trdiff{\ct{}}} #4\ ;\ #5\ ;\ #6\ ;\ #7}}
+\newcommand\judgementsev[7]{\ma{#1\ ; #2\ ; #3 \vdash_{\scriptscriptstyle{\trdiff{\ct{}}}} #4\ ;\ #5\ ;\ #6\ ;\ #7}}
 % 7 place relation with color
 \newcommand\judgementsevcol[7]{\judgementsev {\trdiff{#1}} {\trdiff{#2}} {#3} {#4} {#5} {#6} {\trdiff{\mmenv}}}
 % expands to 7 place but with 4 args (the TR formalism)
@@ -180,12 +180,12 @@
 
 % tools.analyzer judgements
 \newcommand\ta[0]{\mathcal{TA}}
-\newcommand\tajudgement[2]{\ma{#1 \vdash_{\ta{}; {\ct{}}} #2}}
+\newcommand\tajudgement[2]{\ma{#1 \vdash^{\scriptscriptstyle{\ta}}_{\scriptscriptstyle{\ct{}}} #2}}
 
 % type hints
 \newmeta\classhint{C}
 \newmeta\unknownhint{\mathbbm{?}}
-\newcommand\hinted[2]{\ma{\widehat{} #1\ #2}}
+\newcommand\hinted[2]{\ma{\ \widehat{}\ #1\ #2}}
 
 % convert tools.analyzer types to core.typed types
 \newcommand\tatotc[2]{\ma{[[#1]]\ =\ #2}}

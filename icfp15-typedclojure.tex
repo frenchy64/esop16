@@ -624,7 +624,7 @@ $$
              {\filterset {\prop{}} {\prop{}}}
              {\object{}}
            }
-{ \judgementfillcol {\propenv{}} {\hastype {\fieldexp {fld} {\e{}}} {\t{}}}
+{ \judgementfillcol {\propenv{}} {\hastype {\fieldexp {\fld} {\e{}}} {\t{}}}
              {\filterset {\topprop{}} {\topprop}}
              {\emptyobject{}}}
 
@@ -855,10 +855,10 @@ $$
 
 \infer [TA-New]
 { \tajudgement {\taenv{}}
-               {\hastype {\overrightarrow {\e{i}}} {\overrightarrow {\s{i}}}} 
+               {\hastype {\overrightarrow {\e{}}} {\overrightarrow {\s{}}}} 
              }
 { \tajudgement {\taenv{}}
-               {\hastype {\newexp {\class{}} {\overrightarrow {\e{i}}}}
+               {\hastype {\newexp {\class{}} {\overrightarrow {\e{}}}}
                          {\classhint{}}}
 }
 
@@ -887,16 +887,28 @@ $$
                          {\s{}}}
 }
 
+\infer [TA-Field]
+{ \tajudgement {\taenv{}}
+                {\hastype {\e{}}
+                         {\classhint{}}}
+  \\
+  \fieldtype {\ctlookup{\classhint{}}} {\fld{}} {\s{}}
+}
+{ \tajudgement {\taenv{}}
+               {\hastype {\fieldexp {\fld} {\e{}}}
+                         {\s{}}}
+  }
+
 \infer [TA-Method]
 { \tajudgement {\taenv{}}
                 {\hastype {\e{}}
-                         {\classhint{t}}}
-  %\\
-  %\methodtype {\ctlookup {\classhint{t}}} {\mth} {\overrightarrow
+                         {\classhint{}}}
+  \\
+  \methodtype {\ctlookup{\classhint{}}} {\mth{}} {\overrightarrow{\s{i}}} {\s{}}
 }
 { \tajudgement {\taenv{}}
                 {\hastype {\methodexp {\mth} {\e{}} {\overrightarrow {\e{i}}}}
-                         {\classhint{}}}
+                         {\s{}}}
   }
 
 \end{mathpar}
