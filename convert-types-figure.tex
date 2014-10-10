@@ -1,0 +1,61 @@
+\begin{figure*}
+$$
+\begin{altgrammar}
+
+  \methodtypealign {\ \{ methods \Rightarrow \{ \mth{} \Rightarrow [ \overrightarrow{\tatype{p}}, \tatype{r} ] \} \} }
+              {\mth{}}
+              {\overrightarrow{\tatype{p}}}
+              {\tatype{r}}
+      \\\\
+  \fieldtypealign {\ \{ fields \Rightarrow \{ \fld{} \Rightarrow \tatype{} \} \} }
+             {\fld{}}
+             {\tatype{}}
+      \\\\
+  \ctorparamsalign {\ \{ constructors \Rightarrow \{ ctor \Rightarrow \tatype{} \} \} }
+             {\fld{}}
+             {\tatype{}}
+
+%{\javaspecial {\JavaField {\class{}}}} &=& {\javatotc {\class{}} {\true{}}}
+%\\
+%{\javaspecial {\JavaMethod {\overrightarrow{{\class{1}}}} {\class{2}}}} &=& 
+%    {\Arrow {\overrightarrow {\hastype {\x{}} {\javatotc {\class{1}} {\false{}}}}}
+%            {\javatotc {\class{2}} {\true{}}}
+%            {\filterset {\topprop{}} {\topprop{}}}
+%            {\emptyobject{}}
+%            }
+%\\
+%{\javaspecial {\JavaCtor {\overrightarrow{{\class{1}}}} {\class{2}}}} &=& 
+%    {\Arrow {\overrightarrow {\hastype {\x{}} {\javatotc {\class{1}} {\false{}}}}}
+%            {\javatotc {\class{2}} {\false{}}}
+%            {\filterset {\topprop{}} {\topprop{}}}
+%            {\emptyobject{}}
+%            }
+%\\\\
+\\\\
+
+\javatotcalign {\pint{}} {b}  {\Integer{}}
+\\
+\javatotcalign {\Void{}} {b}  {\Nil}
+\\
+\javatotcalign {\pvoid{}} {b}  {\Nil}
+\\
+\javatotcalign {\pchar{}} {b}  {\Character{}}
+\\
+\javatotcalign {\pdouble{}} {b}  {\Double{}}
+\\
+\javatotcalign {\JavaArray {\pint{}}} {b}  {\Union {\Nil} {\ArrayP {\pint{}}}}
+\\
+\javatotcalign {\JavaArray {\pdouble{}}} {b}  {\Union {\Nil} {\ArrayP {\pdouble{}}}}
+\\
+\javatotcalign {\JavaArray {\class{}}} {\true{}}  {\Union {\Nil} {\ArrayTwo {\Bottom} {\javatotctwo {\class{}} \true{}}}}
+\\
+\javatotcalign {\JavaArray {\class{}}} {\false{}}  {\ArrayTwo {\Bottom} {\javatotctwo {\class{}} \true{}}}
+\\
+\javatotcalign {\class{}} {\true{}}  {\Union {\Nil} {\class{}}}
+\\
+\javatotcalign {\class{}} {\false{}}  \class{}
+
+\end{altgrammar}
+$$
+\caption{Converting Java types to Typed Clojure types}
+\end{figure*}

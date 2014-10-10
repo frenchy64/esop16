@@ -1,0 +1,423 @@
+\begin{figure*}
+\begin{mathpar}
+\infer [T-Local]
+{ \inpropenv {\propenv{}} {\isprop {\x{}} {\t{}}}
+  \\
+  \s{} = {\falsydiff} }
+{ \judgementfillcol {\propenv{}} 
+                   {\hastype {\x{}} {\t{}}}
+                   {\filterset {{\notprop {\s{}} {\x{}}}} {{\isprop {\s{}} {\x{}}}}}
+                   {\x{}}
+                   }
+
+\infer [T-True]
+{}
+{ \judgementfillcol {\propenv{}}
+      {{\hastype {\true{}} {\True{}}}}
+      {{\filterset {\topprop{}} {\botprop{}}}}
+      {\emptyobject{}}
+    }
+
+\infer [T-False]
+{}
+{ \judgementfillcol {\propenv{}}
+      {{\hastype {\false{}} {\False{}}}}
+      {\filterset {\botprop{}} {\topprop{}}}
+    {\emptyobject{}}
+   }
+
+\infer [T-Nil]
+{}
+{ \judgementfillcol {\propenv{}} 
+      {{\hastype {\nil{}} {\Nil{}}}} 
+      {\filterset {\botprop{}} {\topprop{}}}
+      {\emptyobject{}} 
+    }
+
+\infer [T-Do]
+{ \judgementsevcol {\mmenv} {\taenv} {\propenv{}} {\hastype {\e1} {\t1}} {\filterset {\thenprop {\prop{1}}} {\elseprop {\prop1}}} {\object{1}} {\mmenvp{}} 
+\\\\
+ \judgementsevcol {\mmenvp}
+                  {\taenv}
+                   {\propenv{}, {\trdiff {\orprop {\thenprop {\prop{1}}} {\elseprop {\prop{1}}}}}}
+                   {\hastype {\e{}} {\t{}}} {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}} 
+                   {\object{}}
+                   {\mmenvpp}
+  }
+{ \judgementsevcol 
+  {\mmenv}
+  {\taenv}
+       {\propenv{}} {\hastype {\doexp {\e1} {\e{}}} {\t{}}} {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}} {\object} 
+       {\mmenvpp}
+             }
+
+\infer [T-If]
+{ \judgementfillcol {\propenv{}} {\hastype {\e1} {\t{1}}} {\filterset {\thenprop {\prop{1}}} {\elseprop {\prop{1}}}}
+                 {\object{1}} 
+             \\\\
+  \judgementfillcol {\propenv{}, {\thenprop {\prop{1}}}}
+                 {\hastype {\e2} {\t{}}} {\filterset {\thenprop {\prop{2}}} {\elseprop {\prop{2}}}}
+                 {\object{}}
+  \\\\
+  \judgementfillcol {\propenv{}, {\elseprop {\prop{1}}}}
+                 {\hastype {\e3} {\t{}}} {\filterset {\thenprop {\prop{3}}} {\elseprop {\prop{3}}}}
+                 {\object{}}
+             }
+{ \judgementfillcol {\propenv{}} {\hastype {\ifexp {\e1} {\e2} {\e3}} {\t{}}} 
+                 {\filterset {\orprop {\thenprop {\prop{2}}} {\thenprop {\prop{3}}}} 
+                             {\orprop {\elseprop {\prop{2}}} {\elseprop {\prop{3}}}}}
+                 {\object{}} }
+
+\infer [T-Let]
+{ \judgementfillcol {\propenv{}} {\hastype {\e{1}} {\s{}}} {\filterset {\thenprop {\prop{1}}} {\elseprop {\prop{1}}}}
+             {\object{1}}
+  \\
+  \sp{} = {\falsydiff}
+  \\\\
+  \judgementfillcol {\propenv{}, {\isprop {\s{}} {\x{}}}, 
+                    {\impprop {\notprop {\sp{}} {\x{}}} {\thenprop {\prop{1}}}}, 
+                    {\impprop {\isprop {\sp{}} {\x{}}} {\elseprop {\prop{1}}}}}
+             {\hastype {\e{}} {\t{}}} {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}}
+             {\object{}} 
+             }
+{ \judgementfillcol {\propenv{}} {\hastype {\letexp {\x{}} {\e{1}} {\e{}}} {\t{}}}
+             {\replacefor {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}}
+                          {\object{1}}
+                          {\x{}}}
+             {\replacefor {\object{}} 
+                          {\object{1}}
+                          {\x{}}}
+             }
+
+\infer [T-Throw]
+{ \judgementfillcol {\propenv{}} {\hastype {\e{}} {\Throwable}} {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}}
+                 {\object{}}
+}
+{ \judgementfillcol {\propenv{}} {\hastype {\throwexp {\e{}}} {\Bottom}} {\trdiff {\filterset {\botprop{}} {\botprop{}}}}
+             {\emptyobject{}} }
+
+\infer [T-App]
+{ \judgementfillcol {\propenv{}} {\hastype {\e{}} {\Arrow {\hastype {\x{}} {\s{}}}
+                                                       {\t{}}
+                                                       {\filterset {\thenprop {\prop{f}}}
+                                                                   {\elseprop {\prop{f}}}}
+                                                       {\object{f}}}}
+                {\filterset {\thenprop {\prop{}}}
+                            {\elseprop {\prop{}}}}
+                {\object{}}
+  \\\\
+  \judgementfillcol {\propenv{}}
+                 {\hastype {\ep{}} {\s{}}}
+                 {\filterset {\thenprop {\propp{}}}
+                             {\elseprop {\propp{}}}}
+                 {\objectp{}} 
+}
+{ \judgementfillcol {\propenv{}} {\hastype {\appexp {\e{}} {\ep{}}}
+                                        {\replacefor {\t{}}
+                                                     {\objectp{}}
+                                                     {\x{}}}}
+                 {\replacefor {\filterset {\thenprop {\prop{f}}}
+                                          {\elseprop {\prop{f}}}}
+                              {\objectp{}}
+                              {\x{}}}
+                 {\replacefor {\object{f}}
+                              {\objectp{}}
+                              {\x{}}}
+}
+                 
+                              
+
+
+\infer [T-Abs]
+{ \judgementfillcol {\propenv{}, {\isprop {\s{}} {\x{}}}}
+            {\hastype {\e{}} {\t{}}}
+             {\filterset {\thenprop {\prop{}}}
+                         {\elseprop {\prop{}}}}
+             {\object{}}}
+{ \judgementfillcol {\propenv{}} {\hastype {\abs {\x a} {\e{}}}
+                                           {\ArrowOne {\x{}} {\s{}}
+                                                      {\t{}}
+                                                      {\filterset {\thenprop {\prop{}}}
+                                                                  {\elseprop {\prop{}}}}
+                                                      {\object{}}}}
+                {\filterset {\topprop}
+                            {\botprop}}
+                {\object{}}}
+
+\infer [T-Try]
+{ \judgementfillcol {\propenv{}} {\hastype {\e{}} {\t{}}}
+                 {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}}
+                 {\object{}}
+\\\\
+  \judgementfillcol {\propenv{}, {\isprop {\x{}} {\class{}}}}
+             {\hastype {\ep{}} {\t{}}}
+                 {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}}
+                 {\object{}}
+\\\\
+  \judgementfillcol {\propenv{}}
+             {\hastype {\e{f}} {\t{f}}}
+                 {\filterset {\thenprop {\prop{f}}} {\elseprop {\prop{f}}}}
+                 {\object{f}}
+}
+{ \judgementfillcol {\propenv{}} {\hastype {\tryexp {\e{}} {\class{}} {\x{}} {\ep{}} {\e{f}}} {\t{}}}
+                 {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}}
+                 {\object{}}
+                 }
+
+\infer [T-New]
+{ \tajudgement {\taenv{}}
+               {\hastype {\overrightarrow {\e{}}} {\overrightarrow {\tatype{}}}}
+  \\\\
+  \ctorparams {\ctlookup {\class{}}}
+              {\overrightarrow {\tatype{}}}
+              {\overrightarrow {\tatypep{}}}
+  \\\\
+  \tatotc {\overrightarrow {\tatypep{}}}
+          {\overrightarrow {\t{}}}
+  \\\\
+  \judgementfillcol {\propenv{}}
+                    {\hastype {\overrightarrow {\e{}}} {\overrightarrow {\t{}}}}
+                    {\overrightarrow {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}}}
+                    {\overrightarrow {\object{}}}
+           }
+{ \judgementfillcol {\propenv{}} {\hastype {\newexp {\class{}} {\overrightarrow{\e{}}}} {\class{}}}
+             {\filterset {\topprop{}} {\botprop{}}}
+             {\emptyobject}
+             }
+
+\infer [T-Field]
+{ \tajudgement {\taenv}
+               {\hastype {\e{}} {\classhint{}}}
+               \\\\
+               \fieldtype {\ctlookup {\classhint{}}} {\fld{}} {\tatype{}}
+               \\\\
+             \javatotc {\tatype{}} {\true{}} {\t{}}
+             \\\\
+             \javatotc {\classhint{}} {\false{}} {\class{}}
+  \\\\
+  \judgementfillcol {\propenv{}} {\hastype {\e{}} {\class{}}}
+                    {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}}
+             {\object{}}
+           }
+{ \judgementfillcol {\propenv{}} {\hastype {\fieldexp {\fld} {\e{}}} {\t{}}}
+             {\filterset {\topprop{}} {\topprop}}
+             {\emptyobject{}}}
+
+
+\infer [T-Method]
+{ 
+  \tajudgement {\taenv}
+               {\hastype {\e{}} {\classhint{}}}
+             \\\\
+             \methodtype {\ctlookup{\classhint{}}} {\mth{}} {\overrightarrow{\tatype{i}}} {\tatype{}}
+             \\\\
+             \javatotc {\overrightarrow{\tatype{i}}} {\true{}} {\overrightarrow{\t{i}}}
+             \\\\
+             \javatotc {\classhint{}} {\false{}} {\class{}}
+             \\\\
+             \javatotc {\tatype{}} {\true{}} {\t{}}
+             \\\\
+  \judgementfillcol {\propenv{}} {\hastype {\e{}} {\class{}}}
+                    {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}}
+             {\object{}}
+             \\\\
+  \judgementfillcol {\propenv{}} {\hastype {\overrightarrow {\e{i}}} {\overrightarrow {\t{i}}}}
+                    {\overrightarrow {\filterset {\thenprop {\prop{i}}} {\elseprop {\prop{i}}}}}
+                    {\overrightarrow {\object{i}}}
+           }
+{ \judgementfillcol {\propenv{}} {\hastype {\methodexp {\mth{}} {\e{}} {\overrightarrow{\e{i}}}}
+                                    {\t{}}}
+             {\filterset {\topprop{}} {\topprop{}}}
+             {\emptyobject{}}}
+
+%\infer [T-KwInvoke]
+%{}
+%{ TODO }
+
+%{ \judgement {\propenv{}} {\hastype {\e{m}} {\t{m}}}
+%             {\filterset {\prop{}} {\prop{}}}
+%           {\object{m}}}
+%             \\
+%  \judgement {\propenv{}} {\hastype {\e{k}} {\t{k}}}
+%             {\filterset {\prop{}} {\prop{}}}
+%             {\object{}}
+             %\\\\
+%  \judgement {\propenv{}} {\hastype {\e{d}} {\t{d}}}
+%             {\filterset {\prop{}} {\prop{}}}
+%             {\object{}}
+
+             %\\
+             %\t{k} %= {\Value {k}}
+         %}
+% invoke complete HMap with present key
+\end{mathpar}
+\caption{Typing Rules 1}
+\end{figure*}
+
+\begin{figure*}
+\begin{mathpar}
+\infer [T-HMapCInvokePresent]
+{ \judgement {\propenv{}} {\hastype {\e{m}} {\t{m}}}
+             {\filterset {\prop{}} {\prop{}}}
+           {\object{m}}
+         \\
+  \judgement {\propenv{}} {\hastype {\e{k}} {\t{k}}}
+             {\filterset {\prop{}} {\prop{}}}
+             {\object{}}
+             \\\\
+  \judgement {\propenv{}} {\hastype {\e{d}} {\t{d}}}
+             {\filterset {\prop{}} {\prop{}}}
+             {\object{}}
+             \\
+             {\t{m}} = {\HMapc {\mandatory{}}}
+             \\
+             {\t{k}} = {\Value {k}}
+             \\
+             {(k\ \t{})} \in {\mandatory{}}
+       }
+{ \judgement {\propenv{}} {\hastype {\appexp {\e{m}} {\e{k}\ \e{d}}}
+                                    {\t{}}}
+             {\filterset {\topprop{}} {\topprop{}}}
+             {\path {\keype{k}} {\object{m}}}
+                                  }
+                                  
+
+\infer [T-KeywordMap]
+{ \judgement {\propenv{}} {\hastype {\overrightarrow{{\e{v}}}} {\overrightarrow {{\t{v}}}}}
+             {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}}
+             {\object}}
+{ \judgement {\propenv{}} {\hastype {\curlymap {\overrightarrow{{k_{v}}\ {\e{v}}}}}
+  {\HMapc {\mandatoryset {{\overrightarrow{({k_{v}}\ {\t{v}})}}}}}}
+             {\filterset {\topprop{}} {\botprop{}}}
+             {\emptyobject}}
+
+\infer [T-Map]
+{ 
+\judgement {\propenv{}} {\hastype {\overrightarrow{{\e{k}}}} {\overrightarrow {{\t{k}}}}}
+             {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}}
+             {\object}
+\\\\
+\judgement {\propenv{}} {\hastype {\overrightarrow{{\e{v}}}} {\overrightarrow {{\t{v}}}}}
+             {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}}
+             {\object}}
+{ \judgement {\propenv{}} {\hastype {\{\overrightarrow{{\e{k}}\ {\e{v}}}\}}
+                                    {\Map {\Unionsplice {\overrightarrow{{t_{k}}}}}
+                                          {\Unionsplice {\overrightarrow{{t_{v}}}}}}}
+             {\filterset {\topprop{}} {\botprop{}}}
+             {\emptyobject}}
+
+
+\infer [T-Defmulti]
+{ \inpropenv {\propenv{}} {\isprop {\x{}} 
+                                   {\Arrow {\overrightarrow {\hastype {\x{p}} {\t{p}}}} {\t{m}}
+                                    {\filterset {\thenprop {\prop{m}}}
+                                                {\elseprop {\prop{m}}}}
+                                    {\object{m}}}}
+\\\\
+  \judgement {\propenv{}} {\hastype {\e{d}} {\Arrow {\overrightarrow {\hastype {\x{p}} {\t{p}}}} {\t{r}}
+                                                    {\filterset {\thenprop {\prop{d}}}
+                                                                {\elseprop {\prop{d}}}}
+                                                    {\object{d}}}}
+             {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}}
+             {\object{}}
+\\\\
+{\adddispatchfn
+{\x{}}
+{\e{d}}}
+}
+{ \judgement {\propenv{}} {\hastype {\defmultiexp {\x{}} {\e{d}}} {\MultiFn{}}}
+             {\filterset {\topprop{}} {\botprop{}}}
+             {\emptyobject}
+}
+
+\infer [T-Defmethod]
+{ \inpropenv {\propenv{}} {\isprop {\x{m}}
+                                   {\Arrow {\overrightarrow {\hastype {\x{p}} {\t{p}}}} {\t{m}}
+                                    {\filterset {\thenprop {\prop{m}}}
+                                                {\elseprop {\prop{m}}}}
+                                    {\object{m}}}}
+\\
+\getdispatchfn {\x{m}} {\e{d}}
+\\\\
+\judgement {\propenv{}, {\overrightarrow {\isprop {\x{p}} {\t{p}}}}}
+           {\hastype {\appexp {\e{d}} {\overrightarrow {\x{p}}}}
+                                  {\t{d}}}
+           {\filterset {\thenprop {\prop{d}}}
+                       {\elseprop {\prop{d}}}}
+           {\object{d}}
+\\\\
+\judgement {\propenv{}, {\thenprop {\prop{d}}}}
+           {\hastype {\e{b}} {\t{m}}}
+           {\filterset {\thenprop {\prop{m}}}
+                       {\elseprop {\prop{m}}}}
+           {\object{m}}
+}
+{ \judgement {\propenv{}} {\hastype {\defmethodexp {\x{m}} {\e{v}} {\overrightarrow{\x{p}}}
+                                                   {\e{b}}}
+                                    {\MultiFn{}}}
+             {\filterset {\topprop{}} {\botprop{}}}
+             {\emptyobject}
+}
+
+\infer [T-Subsume]
+{ \judgementfillcol {\propenv{}} {\hastype {\e{}} {\t{}}}
+             {\filterset {\thenprop {\prop{}}}
+                         {\elseprop {\prop{}}}}
+             {\object}
+\\\\
+\inpropenv {\propenv{}, {\thenprop {\prop{}}}} {\thenprop {\propp{}}}
+\\
+\inpropenv {\propenv{}, {\elseprop {\prop{}}}} {\elseprop {\propp{}}}
+\\\\
+\inpropenv {} {\issubtype {\t{}} {\tp{}}}
+\\
+\inpropenv {} {\issubtype {\object{}} {\objectp{}}}
+}
+{ \judgementfillcol {\propenv{}} {\hastype {\e{}} {\tp{}}}
+             {\filterset {\thenprop {\propp{}}}
+                         {\elseprop {\propp{}}}}
+             {\objectp}}
+
+\infer [T-InstanceOf]
+{ \judgement {\propenv{}} 
+             {\hastype {\e{}} {\t{}}}
+             {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}}
+             {\object}
+             \\
+             \s{} = {\Instance {\class{}}}
+}
+{ \judgement {\propenv{}} {\hastype {\instanceapp {\class{}} {\e{}}}
+                                    {\Boolean}}
+             {\filterset {\isprop  {\s{}} {\object{}}}
+                         {\notprop {\s{}} {\object{}}}}
+             {\emptyobject}
+}
+
+\infer [T-Satisfies]
+{ \judgement {\propenv{}} 
+             {\hastype {\e{}} {\t{}}}
+             {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}}
+             {\object}
+             \\
+             {\s{}} = {\Satisfies {\protocol{}}}
+}
+{ \judgement {\propenv{}} {\hastype {\satisfiesapp {\protocol{}} {\e{}}}
+                                    {\Boolean}}
+            {\filterset {\isprop  {\s{}} {\object{}}}
+                        {\notprop {\s{}} {\object{}}}}
+             {\emptyobject}
+}
+\infer [T-Isa]
+{ \isacompare {\e{1}} {\e{2}}
+             {\filterset {\thenprop {\prop{}}}
+                         {\elseprop {\prop{}}}}
+}
+{ \judgement {\propenv{}} {\hastype {\isaapp {\e{1}} {\e{2}}}
+                                    {\Boolean{}}}
+             {\filterset {\thenprop {\prop{}}}
+                         {\elseprop {\prop{}}}}
+             {\emptyobject}}
+
+\end{mathpar}
+\caption{Typing rules 2}
+\end{figure*}

@@ -1,0 +1,266 @@
+\section{A Formal Model of Typed Clojure}
+
+We describe our type system in a similar way to Typed Racket (\citet{TF10}),
+with differences highlighted in $\trdiff{\text{blue}}$.
+The main judgement 
+
+$
+{\judgementsevcol {\mmenv}
+                 {\taenv}
+                 {\propenv}
+               {\hastype {\e{}} {\t{}}}
+  {\filterset {\thenprop {\prop{}}}
+              {\elseprop {\prop{}}}}
+  {\object{}}
+  {\mmenvp{}}}
+$
+
+says expression \e{} is of type \t{} in the 
+multimethod environment $\trdiff{\mmenv{}}$, the \emph{tools.analyzer} environment
+$\trdiff{\taenv{}}$
+and proposition environment $\propenv{}$, with 
+then proposition {\thenprop {\prop{}}}, else proposition {\elseprop {\prop{}}},
+object \object{} and new multimethod environment
+$\trdiff{\mmenvp{}}$.
+
+
+\subsection{Higher-rank polymorphism}
+
+Typed Clojure supports f-bounded polymorphism and higher-rank
+types.
+% why include them?
+% examples, involving generic type operators for monads & conduits
+% useful for generic programming, similar to Hashell type classes
+
+\subsection{Using negative filters}
+
+Occurrence typing plays an important role in Typed Racket and Typed Clojure.
+By maintaining a \emph{proposition environment} of propositions relating types to
+bindings, we can update bindings with more accurate types as programs progress.
+It follows that there is some correspondence between propositions and types,
+characterised by the \emph{update} function, which takes a type and a proposition
+and returns a type which updates the input type using the proposition.
+
+There is a straightforward relationship between ``positive'' propositions and types.
+For example 
+{\tt (update Number (is Integer 0))}
+updates Number by Integer, which is Integer, because Integer <: Number.
+
+The relationship between ``negative'' propositions and types is not always obvious.
+A common proposition in Typed Clojure is (! (U nil false) a): the proposition that
+local binding ``a'' is \emph{not} of type (U nil false).
+This problem is most visible in expressions like {\tt (filter identity coll)}, where
+``identity'' has a ``then'' proposition that has negative information: (! (U nil false) 0),
+which reads, the 0th argument of identity does not contain (U nil false).
+
+\subsection{Multimethods}
+
+Clojure provides multimethods which can dispatch on the result of an
+arbitrary function, the \emph{dispatch function}. \emph{Methods} are
+added to the multimethod
+which are associated with a \emph{dispatch value}, which is compared to the
+result of apply the dispatch function to the argument passed to the
+multimethod. If this comparison unambiguously dispatches to one method,
+that method is then called with the current arguments.
+
+Occurrence typing, in particular when extended with paths,
+for checking method definitions for arbitrary dispatch functions.
+
+\begin{lstlisting}
+(ns example.mm
+  (:require 
+    [clojure.core.typed :refer [ann]]))
+
+(ann my-mm [Any -> Number])
+(defmulti my-mm class)
+
+(defmethod my-mm Float [f] (inc f))
+\end{lstlisting}
+
+\begin{lstlisting}
+(ann clojure.core/class
+  [Any -> (U nil Class)
+   :object {:id 0, :path [Class]}])
+\end{lstlisting}
+
+\begin{verbatim}
+TODO
+- example of normal MM usage
+- explain descrepency btwn TC syntax and formal
+  TR calculs syntax. eg. :object/:filter 
+    vs over arrow
+\end{verbatim}
+
+\subsection{Extending occurrence typing}
+
+\subsection{Java interoperability}
+
+As Clojure supports Java interoperability, Typed Clojure has some
+integration with Java's type system. Calls to Java methods from
+Clojure can be type checked by Typed Clojure.
+
+We do not support Java Generics for several reasons. Firstly
+Clojure programmers already use \emph{type hints} to resolve
+Java methods which does not interact with generics. Secondly
+it would complicate the type system to need to consider advanced
+Generics features like existentials and f-bounded polymorphism
+which has complicated other type systems like Scala's.
+Finally Java interop is rare in Clojure code, so the extra
+work needed would not be worth the effort compared to the number
+of new bugs core.typed catches.
+
+Thanks to type erasure, only unparameterised classes, primitive
+types and array classes live at runtime. This simplifies 
+inference for \emph{tools.analyzer}, which uses type hints
+to resolve ambiguities in Java interop like overloaded methods.
+
+\subsection{Clojure type hints}
+
+Clojure comes with a small type system that helps improve
+performance in Clojure code: type hints. They are used to help
+the compiler resolve Java methods and prevent unboxing in
+certain situations. Tags are propagated bidirectionally
+and the programmer is free to add them where they like.
+
+\subsubsection{Arrays}
+\label{sec:arrays}
+
+Supporting statically sound interactions with Java arrays is a goal
+of Typed Clojure. This is complicated by Java's decision to make
+arrays covariant in their argument, a well documented source of static
+unsoundness. Bracha~\cite{Bra98} summarises Java's approach to maintaining
+soundness at runtime, which involves all array writes being checked by
+runtime assertions.
+
+This approach fits Java's type system, but we can do better in a more powerful
+type system like Typed Clojure. Our goal is to catch all type-incorrect array
+writes at compile time so the type system can do more to help Clojure programmers
+use arrays, especially those being passed from foreign Java code.
+
+Our basic approach is to make our array types \emph{bivariant}. Array types
+look like {\ArrayTwo {\t{w}} {\t{r}}} and
+are reminiscent of functions or pipes: having a contravariant parameter for input (writing)
+and a covariant parameter for output (reading).
+This type can write type {\t{w}} and read type {\t{r}}.
+
+Most commonly, an array type is invariant in its parameter; it can
+write and read input of the same type.
+We can get the same effect by setting our input and output
+parameters to the same type. For example, {\ArrayTwo {\Number} {\Number}}
+(or equivalently, {\Array {\Number}})
+in Typed Clojure is similar to invariant array types of \Number in languages like Scala.
+
+The biggest gain in using a separate input parameter is the ability
+to specify \emph{read-only} arrays. Crucially, our type system features an
+explicit bottom type \lstinline|Nothing|, enabling a read-only \lstinline|Number| array
+to be of type \lstinline|(Array2 Nothing Number)|.
+
+To realise why defining read-only arrays are useful, we need to examine
+what makes array covariance unsound in Java.
+\begin{verbatim}
+FIXME
+Array covariance about the type of an array so the consumer
+of an array cannot tell the actual type of the array when examining a type
+signature.
+\end{verbatim}
+
+\begin{lstlisting}
+...
+public static Number[] getNumberArray() {
+  Number[] n = new Integer[10];
+  return n;
+}
+...
+\end{lstlisting}
+
+To the casual consumer \emph{getNumberArray} returns an array that can both
+read and write \lstinline|Number|s. However it is clear from the implementation
+that attempting to write say a \lstinline|Double| to this array will result
+in a runtime error.
+
+\begin{verbatim}
+...
+Number[] myArray = getNumberArray();
+myArray[0] = 1.1;
+/* Exception in thread "main" 
+   java.lang.ArrayStoreException: 
+   java.lang.Double */
+...
+\end{verbatim}
+
+Notice that this is a runtime error, and Java's type system has not helped
+statically prevent it.
+This could cause a similar issue for other statically-typed languages offering
+interoperability with Java. 
+
+To prevent these sorts of runtime exceptions in Typed Clojure, we declare
+all arrays from unknown sources to be \emph{read-only}. Put differently,
+the only way to define a writeable array is to create it in type-checked Clojure
+code.
+
+\begin{lstlisting}
+(let [n (CovariantArray/getNumberArray)]
+  (aset n 0 1.1))
+
+; Polymorphic static method clojure.lang.RT/aset could not be 
+; applied to arguments:
+; Domains: 
+;         (Array2 i o) clojure.core.typed/AnyInteger i
+; 
+; Arguments:
+;         (Array2 Nothing java.lang.Number) int (Value 1.1)
+; 
+; with expected type:
+;         Any
+\end{lstlisting}
+
+The type inferred for the local \lstinline|n| is \lstinline|(Array2 Nothing Number)|
+which tells the type system: it is never safe to write to this array, but
+it is safe to assume \lstinline|Number|s can be read from this array.
+
+To emphasise, Typed Clojure throws a static type error. Errors like this help Clojure programmers
+use foreign Java libraries more correctly.
+
+\begin{verbatim}
+Note that Java libraries are often large 
+and complex and programmers will probably
+enjoy the extra help from the type system.
+\end{verbatim}
+
+\subsection{Handling null}
+\label{sec:null}
+
+Probably the most common pain point in Java programming is dealing with \emph{null}.
+It is crucial that Typed Clojure deals with \emph{null} intelligently so that
+all potentially erroneous interactions with \emph{null} in typed code are caught at compile time.
+We also want to represent \emph{null} in a way that is natural to Clojure programmers
+and approximates their mental model when reasoning about Clojure code.
+
+Firstly, we separate the concepts of \emph{null} and reference types at the type level.
+This is unlike Java, where a reference type, like \emph{java.lang.Number}, includes \emph{null}.
+We provide a singleton type \Nil{}, which contains just the value \lstinline|nil|,
+Clojure's equivalent of \emph{null}. 
+
+Armed with general unions and the type \lstinline|nil|, 
+we make Typed Clojure's reference types \emph{non-nullable}.
+A Java type like \emph{java.lang.Number} is written \lstinline|(U nil java.lang.Number)|
+in Typed Clojure.
+
+Typed Racket already provides what is needed to write such types; indeed this is a repurposing
+of a common Typed Racket idiom of approximating an Option or Maybe type by
+making a union that includes \emph{\#f}, Racket's only false value.
+However, like handling covariant arrays, the subtlety lies in our interactions with foreign
+Java code.
+
+A set of conversion rules define how to convert a Java type signature into a null-safe
+Clojure version. These rules are designed to be conservative and can be explicitly overridden
+by programmers. Method parameters are non-nullable, while return types are nullable.
+Field types are nullable. Constructor parameters are non-nullable, and return types
+are also non-nullable: it is a Java invariant that all constructors return an instance
+of the class they are constructing.
+
+\begin{verbatim}
+TODO 
+- write conversion rules for 
+  Java type -> Clojure type
+\end{verbatim}

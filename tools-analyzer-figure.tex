@@ -1,0 +1,112 @@
+
+\begin{figure*}
+\begin{mathpar}
+
+\infer [TA-Local]
+{ \intaenv {\taenv{}} {\x{}} {\tatype{}}
+}
+{ \tajudgement {\taenv{}} {\hastype {\x{}} {\tatype{}}}
+}
+
+\infer [TA-Nil]
+{}
+{ \tajudgement {\taenv{}} {\hastype {\nil{}} {\unknownhint{}}}
+}
+
+\infer [TA-True]
+{}
+{ \tajudgement {\taenv{}} {\hastype {\true{}} {\Boolean{}}}
+}
+
+\infer [TA-False]
+{}
+{ \tajudgement {\taenv{}} {\hastype {\false{}} {\Boolean{}}}
+}
+
+\infer [TA-New]
+{ \class{}\ is\ valid\ class
+  \\
+  \tajudgement {\taenv{}}
+               {\hastype {\overrightarrow {\e{}}} {\overrightarrow {\s{}}}} 
+             }
+{ \tajudgement {\taenv{}}
+               {\hastype {\newexp {\class{}} {\overrightarrow {\e{}}}}
+                         {\classhint{}}}
+}
+
+\infer [TA-Let]
+{ \tajudgement {\taenv{}} 
+               {\hastype {\e{1}} {\tatype{1}}}
+               \\\\
+   \tajudgement {\taenv{}, {\hastype {\x{}} {\tatype{1}}}}
+               {\hastype {\e{}} {\s{}}}
+}
+{ \tajudgement {\taenv{}}
+               {\hastype {\letexp {\x{}}
+                                  {\e{1}}
+                                  {\e{}}}
+                         {\s{}}}
+}
+
+\infer [TA-LetHint]
+{ \tajudgement {\taenv{}, {\hastype {\x{}} {\classhint{}}}}
+               {\hastype {\e{}} {\s{}}}
+}
+{ \tajudgement {\taenv{}}
+               {\hastype {\letexp {\hinted {\classhint{}} {\x{}}}
+                                  {\e{1}}
+                                  {\e{}}}
+                         {\s{}}}
+}
+
+\infer [TA-Field]
+{ \tajudgement {\taenv{}}
+               {\hastype {\e{}}
+                         {\classhint{}}}
+  \\\\
+  \fieldtype {\ctlookup{\classhint{}}} {\fld{}} {\s{}}
+}
+{ \tajudgement {\taenv{}}
+               {\hastype {\fieldexp {\fld} {\e{}}}
+                         {\s{}}}
+  }
+
+\infer [TA-Method]
+{ \tajudgement {\taenv{}}
+               {\hastype {\e{}}
+                         {\classhint{}}}
+  \\\\
+  \methodtype {\ctlookup{\classhint{}}} {\mth{}} {\overrightarrow{\s{i}}} {\s{}}
+}
+{ \tajudgement {\taenv{}}
+               {\hastype {\methodexp {\mth} {\e{}} {\overrightarrow {\e{i}}}}
+                         {\s{}}}
+  }
+
+\infer [TA-Invoke]
+{ \tajudgement {\taenv}
+               {\hastype {\e{}} {\tatype{}}}
+               \\\\
+  \tajudgement {\taenv{}}
+               {\hastype {\overrightarrow {\e{}}} {\overrightarrow {\s{}}}} 
+}
+{ \tajudgement {\taenv}
+               {\hastype {\appexp {\e{}} {\overrightarrow {\e{i}}}}
+                         {\classhint{}}}
+                       }
+
+\infer [TA-InvokeLocal]
+{ \intaenv {\taenv{}} {\x{}} {\tatype{}}
+  \\\\
+  \tajudgement {\taenv{}}
+               {\hastype {\overrightarrow {\e{}}} {\overrightarrow {\s{}}}} 
+}
+{ \tajudgement {\taenv}
+               {\hastype {\appexp {\x{}} {\overrightarrow {\e{}}}}
+                         {\tatype{}}}
+                       }
+
+
+\end{mathpar}
+\caption{tools.analyzer Type Hints}
+\end{figure*}
