@@ -1,18 +1,25 @@
 \begin{figure*}
 $$
 \begin{altgrammar}
-  \expd{}, \e{} &::=& \x\ \alt {\comb {\e{}} {\e{}}} \alt {\abs {\x a} {\e{}}}
+  \expd{}, \e{} &::=& \x{}
+                      \alt
+                      \hinted{\classhint{}} {\x{}}
+                      \alt 
+                      {\comb {\e{}} {\e{}}} %\alt {\abs {\x a} {\e{}}}
                       \alt \true{} \alt \false{} \alt \nil{}
                       \alt \class{}
-                      \alt {\tryexp {\e{}} {\class} {\x} {\e{}} {\e{}}}
                       \\ &\alt& 
+                      {\tryexp {\e{}} {\class} {\x} {\e{}} {\e{}}}
+                      \alt 
                       {\ifexp {\e{}} {\e{}} {\e{}}}
                       \alt 
                       {\doexp {\e{}} {\e{}}}
-                      %\alt
-                      %{\fnexp {\overrightarrow{\hastype {\x{}} {\t{}}}} {\e{}}}
+                      \\ &\alt& 
+                      {\fnexp {\overrightarrow{\hastype {\x{}} {\t{}}}} {\e{}}}
                       \alt {\letexp {\x{}} {\e{}} {\e{}}}
-                      \alt {\fieldexp {fld} {\e{}}}
+                      \alt {\letexp {\hinted {\classhint{}} {\x{}}} {\e{}} {\e{}}}
+                      \\ &\alt& 
+                      {\fieldexp {fld} {\e{}}}
                       \alt {\methodexp {mth} {\e{}} {\overrightarrow{\e{}}}}
                       \alt {\newexp {\class{}} {\overrightarrow{\e{}}}}
                 &\mbox{Expressions} \\ \\
@@ -66,6 +73,12 @@ $$
                &\mbox{Proposition Environment} \\
   \taenv{}    &::=& \{ \overrightarrow{ \hastype{\x{}} {\tatype{}}} \}
                &\mbox{tools.analyzer Environment} \\
+  \mmenv{}    &::=& \{ \overrightarrow{ \hastype{\x{}} 
+                                        {\Arrow {\overrightarrow {\hastype {\x{}} {\t{}}}} {\t{}}
+                                                    {\filterset {\thenprop {\prop{}}}
+                                                                {\elseprop {\prop{}}}}
+                                                    {\object{}}}} \}
+               &\mbox{Multimetod dispatch Environment} \\
                       \\
   \ctentrymeta{} &::=& \ctentry
                &\mbox{Class descriptors} \\
