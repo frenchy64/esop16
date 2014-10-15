@@ -3,15 +3,14 @@
 \begin{mathpar}
 
 \infer [TA-Local]
-{ \intaenv {\taenv{}} {\x{}} {\tatype{}}
+{ \intaenv {\taenv{}} {\x{}} {\tatypeunknown{}}
 }
-{ \tajudgement {\taenv{}} {\hastype {\x{}} {\tatype{}}}
+{ \tajudgement {\taenv{}} {\hastype {\x{}} {\tatypeunknown{}}}
 }
 
 \infer [TA-LocalHint]
-{ \intaenv {\taenv{}} {\x{}} {\tatype{}}
-}
-{ \tajudgement {\taenv{}} {\hastype {\hinted {\classhint{}} {\x{}}} {\classhint{}}}
+{}
+{ \tajudgement {\taenv{}} {\hastype {\hinted {\tatype{}} {\x{}}} {\tatype{}}}
 }
 
 \infer [TA-Nil]
@@ -29,73 +28,74 @@
 { \tajudgement {\taenv{}} {\hastype {\false{}} {\Boolean{}}}
 }
 
-\infer [TA-New]
-{ \class{}\ is\ valid\ class
-  \\
-  \tajudgement {\taenv{}}
-               {\hastype {\overrightarrow {\e{}}} {\overrightarrow {\tatype{}}}} 
-             }
+\infer [TA-NewStatic]
+{}
 { \tajudgement {\taenv{}}
-               {\hastype {\newexp {\class{}} {\overrightarrow {\e{}}}}
+  {\hastype {\newstaticexp {\overrightarrow {\tatype{i}}} {\classhint{}} {\class{}} {\overrightarrow {\e{}}}}
                          {\classhint{}}}
 }
 
+\infer [TA-NewRefl]
+{}
+{ \tajudgement {\taenv{}}
+  {\hastype {\newexp {\class{}} {\overrightarrow {\e{}}}}
+                     {\unknownhint{}}}
+}
+
+\infer [TA-Abs]
+{}
+{ \tajudgement {\taenv{}}
+               {\hastype {\abs {\x{}} {\t{}} {\e{}}}
+                         {\IFn{}}}
+                       }
+
 \infer [TA-Let]
 { \tajudgement {\taenv{}} 
-               {\hastype {\e{1}} {\tatype{1}}}
+               {\hastype {\e{1}} {\tatypeunknown{1}}}
                \\\\
-   \tajudgement {\taenv{}, {\hastype {\x{}} {\tatype{1}}}}
-               {\hastype {\e{}} {\tatype{}}}
+  \tajudgement {\taenv{}, {\hastype {\x{}} {\tatypeunknown{1}}}}
+               {\hastype {\e{}} {\tatypeunknown{}}}
 }
 { \tajudgement {\taenv{}}
                {\hastype {\letexp {\x{}}
                                   {\e{1}}
                                   {\e{}}}
-                         {\tatype{}}}
+                         {\tatypeunknown{}}}
 }
 
-\infer [TA-LetHint]
-{ \tajudgement {\taenv{}, {\hastype {\x{}} {\classhint{}}}}
-               {\hastype {\e{}} {\tatype{}}}
-}
-{ \tajudgement {\taenv{}}
-               {\hastype {\letexp {\hinted {\classhint{}} {\x{}}}
-                                  {\e{1}}
-                                  {\e{}}}
-                         {\tatype{}}}
-}
-
-\infer [TA-Field]
-{ \tajudgement {\taenv{}}
-               {\hastype {\e{}}
-                         {\classhint{}}}
-  \\\\
-  \fieldtype {\ctlookup{\classhint{}}} {\fld{}} {\tatype{}}
-}
+\infer [TA-FieldRefl]
+{}
 { \tajudgement {\taenv{}}
                {\hastype {\fieldexp {\fld} {\e{}}}
+                         {\unknownhint{}}}
+  }
+
+\infer [TA-FieldStatic]
+{}
+{ \tajudgement {\taenv{}}
+               {\hastype {\fieldstaticexp {\classhint{}} {\tatype{}} {fld} {\e{}}}
                          {\tatype{}}}
   }
 
-\infer [TA-Method]
-{ \tajudgement {\taenv{}}
-               {\hastype {\e{}}
-                         {\classhint{}}}
-  \\\\
-  \methodtype {\ctlookup{\classhint{}}} {\mth{}} {\overrightarrow{\tatype{i}}} {\tatype{}}
-}
+\infer [TA-MethodRefl]
+{}
 { \tajudgement {\taenv{}}
                {\hastype {\methodexp {\mth} {\e{}} {\overrightarrow {\e{i}}}}
+                         {\unknownhint{}}}
+  }
+
+\infer [TA-MethodStatic]
+{}
+{ \tajudgement {\taenv{}}
+               {\hastype {\methodstaticexp {\classhint{}} 
+                                           {\overrightarrow{\tatype{i}}} 
+                                           {\tatype{}} 
+                                         {\mth{}} {\e{}} {\overrightarrow {\e{i}}}}
                          {\tatype{}}}
   }
 
 \infer [TA-Invoke]
-{ \tajudgement {\taenv}
-               {\hastype {\e{}} {\tatypep{}}}
-               \\\\
-  \tajudgement {\taenv{}}
-               {\hastype {\overrightarrow {\e{i}}} {\overrightarrow {\tatype{i}}}} 
-}
+{}
 { \tajudgement {\taenv}
                {\hastype {\appexp {\e{}} {\overrightarrow {\e{i}}}}
                          {\unknownhint{}}}
@@ -103,9 +103,6 @@
 
 \infer [TA-InvokeLocal]
 { \intaenv {\taenv{}} {\x{}} {\tatype{}}
-  \\\\
-  \tajudgement {\taenv{}}
-               {\hastype {\overrightarrow {\e{i}}} {\overrightarrow {\tatype{i}}}} 
 }
 { \tajudgement {\taenv}
                {\hastype {\appexp {\x{}} {\overrightarrow {\e{i}}}}
@@ -115,4 +112,209 @@
 
 \end{mathpar}
 \caption{tools.analyzer Type Hints}
+\end{figure*}
+
+\begin{figure*}
+\begin{mathpar}
+
+\infer [R-Local]
+{}
+{ \rewrite {\taenv{}}
+           {\x{}}
+           {\x{}}
+         }
+
+\infer [R-LocalHint]
+{}
+{ \rewrite {\taenv{}}
+  {\hinted {\classhint{}} {\x{}}}
+  {\hinted {\classhint{}} {\x{}}}
+         }
+
+\infer [R-Nil]
+{}
+{ \rewrite {\taenv{}}
+  {\nil{}}
+  {\nil{}}
+}
+
+\infer [R-True]
+{}
+{ \rewrite {\taenv{}}
+  {\true{}}
+  {\true{}}
+}
+
+\infer [R-False]
+{}
+{ \rewrite {\taenv{}}
+  {\false{}}
+  {\false{}}
+}
+
+\infer [R-NewRefl]
+{ \rewrite {\taenv{}}
+           {\overrightarrow {\e{i}}}
+           {\overrightarrow {\e{j}}}
+         }
+{ \rewrite {\taenv{}}
+           {\newexp {\class{}} {\overrightarrow {\e{i}}}}
+           {\newexp {\class{}} {\overrightarrow {\e{j}}}}
+}
+
+\infer [R-NewElimRefl]
+{ \class{}\ is\ valid\ class\ represented\ {\tatype{t}}
+  \\\\
+  \rewrite {\taenv{}}
+           {\overrightarrow {\e{i}}}
+           {\overrightarrow {\e{j}}}
+  \\\\
+  \tajudgement {\taenv{}}
+               {\hastype {\overrightarrow {\e{j}}} {\overrightarrow {\tatype{j}}}}
+               \\\\
+  \methodtype {\ctlookup{\classhint{}}} {\mth{}} {\overrightarrow{\tatype{i}}} {\tatype{}}
+             }
+{ \rewrite {\taenv{}}
+           {\newexp {\class{}} {\overrightarrow {\e{i}}}}
+           {\newstaticexp {\overrightarrow {\tatype{}}} {\tatype{t}} {\class{}} {\overrightarrow {\e{j}}}}
+}
+
+\infer [R-NewStatic]
+{ \rewrite {\taenv{}}
+           {\overrightarrow {\e{i}}}
+           {\overrightarrow {\e{j}}}
+         }
+{ \rewrite {\taenv{}}
+           {\newstaticexp {\overrightarrow {\tatype{p}}} {\tatype{}} {\class{}} {\overrightarrow {\e{i}}}}
+           {\newstaticexp {\overrightarrow {\tatype{p}}} {\tatype{}} {\class{}} {\overrightarrow {\e{j}}}}
+}
+
+\infer [R-Abs]
+{ \rewrite {\taenv{}, {\hastype {\x{}} {\unknownhint{}}}}
+           {\e{}}
+           {\ep{}}
+}
+{ \rewrite {\taenv{}}
+           {\abs {\x{}} {\t{}} {\e{}}}
+           {\abs {\x{}} {\t{}} {\ep{}}}
+         }
+
+\infer [R-Let]
+{ \rewrite {\taenv{}}
+           {\e{1}}
+           {\ep{1}}
+           \\
+  \tajudgement {\taenv{}} {\hastype {\ep{1}} {\tatype{}}}
+           \\\\
+  \rewrite {\taenv{}, {\hastype {\x{}} {\tatype{}}}}
+           {\e{}}
+           {\ep{}}
+         }
+{ \rewrite {\taenv{}}
+           {\letexp {\x{}}
+                    {\e{1}}
+                    {\e{}}}
+           {\letexp {\x{}}
+                    {\ep{1}}
+                    {\ep{}}}
+}
+
+\infer [R-FieldRefl]
+{ \rewrite {\taenv{}}
+           {\e{}}
+           {\ep{}}
+         }
+{ \rewrite {\taenv{}}
+           {\fieldexp {\fld} {\e{}}}
+           {\fieldexp {\fld} {\ep{}}}
+         }
+
+\infer [R-FieldElimRefl]
+{ \rewrite {\taenv{}}
+           {\e{}}
+           {\ep{}}
+           \\
+  \tajudgement {\taenv{}}
+               {\hastype {\ep{}} {\classhint{}}}
+               \\\\
+               \fieldtype {\ctlookup {\classhint{}}} {\fld{}} {\tatype{}}
+         }
+{ \rewrite {\taenv{}}
+           {\fieldexp {\fld{}} {\e{}}}
+           {\fieldstaticexp {\classhint{}} {\tatype{}} {fld} {\ep{}}}
+         }
+
+\infer [R-FieldStatic]
+{ \rewrite {\taenv{}}
+           {\e{}}
+           {\ep{}}
+         }
+{ \rewrite {\taenv{}}
+           {\fieldstaticexp {\classhint{}} {\tatype{}} {fld} {\e{}}}
+           {\fieldstaticexp {\classhint{}} {\tatype{}} {fld} {\ep{}}}
+         }
+
+\infer [R-MethodRefl]
+{ \rewrite {\taenv{}}
+           {\e{}}
+           {\ep{}}
+           \\
+  \rewrite {\taenv{}}
+           {\overrightarrow {\e{i}}}
+           {\overrightarrow {\e{j}}}
+         }
+{ \rewrite {\taenv{}}
+           {\methodexp {\mth} {\e{}} {\overrightarrow {\e{i}}}}
+           {\methodexp {\mth} {\ep{}} {\overrightarrow {\e{j}}}}
+  }
+
+\infer [R-MethodElimRefl]
+{ \rewrite {\taenv{}}
+           {\e{}}
+           {\ep{}}
+           \\
+  \tajudgement {\taenv{}}
+               {\hastype {\ep{}} {\classhint{}}}
+           \\\\
+  \rewrite {\taenv{}}
+           {\overrightarrow {\e{i}}}
+           {\overrightarrow {\e{j}}}
+           \\
+  \tajudgement {\taenv{}}
+               {\hastype {\overrightarrow {\e{i}}} {\overrightarrow {\tatype{i}}}}
+               \\\\
+  \methodtype {\ctlookup{\classhint{}}} {\mth{}} {\overrightarrow{\tatype{p}}} {\tatype{}}
+         }
+{ \rewrite {\taenv{}}
+           {\methodexp {\mth} {\e{}} {\overrightarrow {\e{i}}}}
+           {\methodstaticexp {\classhint{}} {\overrightarrow {\tatype{p}}} {\tatype{}} {\mth{}} {\ep{}} {\overrightarrow {\e{j}}}}
+  }
+
+\infer [R-MethodStatic]
+{ \rewrite {\taenv{}}
+           {\e{}}
+           {\ep{}}
+           \\
+  \rewrite {\taenv{}}
+           {\overrightarrow {\e{i}}}
+           {\overrightarrow {\e{j}}}
+         }
+{ \rewrite {\taenv{}}
+           {\methodstaticexp {\classhint{}} {\overrightarrow {\tatype{p}}} {\tatype{}} {\mth{}} {\e{}} {\overrightarrow {\e{i}}}}
+           {\methodstaticexp {\classhint{}} {\overrightarrow {\tatype{p}}} {\tatype{}} {\mth{}} {\ep{}} {\overrightarrow {\e{j}}}}
+  }
+
+\infer [R-Invoke]
+{ \rewrite {\taenv{}} {\e{}} {\ep{}}
+  \\\\
+  \rewrite {\taenv{}} {\overrightarrow {\e{i}}} {\overrightarrow {\e{j}}}
+}
+{ \rewrite {\taenv{}}
+           {\appexp {\e{}} {\overrightarrow {\e{i}}}}
+           {\appexp {\ep{}} {\overrightarrow {\e{j}}}}
+         }
+
+
+\end{mathpar}
+\caption{Java Reflection Resolution}
 \end{figure*}

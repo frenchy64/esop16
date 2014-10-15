@@ -1,55 +1,62 @@
 \begin{figure*}
 $$
 \begin{altgrammar}
-  \expd{}, \e{} &::=& \x{}
+  v &::=&
+                      \x{}
                       \alt
-                      \hinted{\classhint{}} {\x{}}
-                      \alt 
-                      {\comb {\e{}} {\e{}}} %\alt {\abs {\x a} {\e{}}}
+                      \hinted{\tatype{}} {\x{}}
                       \alt \true{} \alt \false{} \alt \nil{}
                       \alt \class{}
-                      \\ &\alt& 
+                &\mbox{Values} \\
+  \expd{}, \e{} &::=& v \alt
+                      {\comb {\e{}} {\e{}}} \alt {\abs {\x{}} {\t{}} {\e{}}}
+                      \alt
                       {\tryexp {\e{}} {\class} {\x} {\e{}} {\e{}}}
                       \alt 
                       {\ifexp {\e{}} {\e{}} {\e{}}}
-                      \alt 
+                      \\ &\alt& 
                       {\doexp {\e{}} {\e{}}}
-                      \\ &\alt& 
-                      {\fnexp {\overrightarrow{\hastype {\x{}} {\t{}}}} {\e{}}}
-                      \alt {\letexp {\x{}} {\e{}} {\e{}}}
-                      \alt {\letexp {\hinted {\classhint{}} {\x{}}} {\e{}} {\e{}}}
-                      \\ &\alt& 
-                      {\fieldexp {fld} {\e{}}}
+                      %{\fnexp {\overrightarrow{\hastype {\x{}} {\t{}}}} {\e{}}}
+                      \alt
+                      {\letexp {\x{}} {\e{}} {\e{}}}
+                      \alt {\fieldexp {fld} {\e{}}}
                       \alt {\methodexp {mth} {\e{}} {\overrightarrow{\e{}}}}
                       \alt {\newexp {\class{}} {\overrightarrow{\e{}}}}
-                &\mbox{Expressions} \\ \\
+                &\mbox{External Language} \\
+  \expd{}, \e{} &::=& \ldots\ {\methodstaticexp {\tatype{}} {\overrightarrow{\tatype{}}} {\tatype{}} {mth} {\e{}} {\overrightarrow{\e{}}}}
+                      \alt {\newstaticexp {\overrightarrow {\tatype{}}} {\tatype{}} {\class{}} {\overrightarrow{\e{}}}}
+                      \alt {\fieldstaticexp {\tatype{}} {\tatype{}} {fld} {\e{}}}
+                &\mbox{Internal Language} \\ \\
   \s{}, \t{}    &::=& \Top \alt (\class{}\ \overrightarrow{\t{}})
                       \alt \class\ 
                       \alt \protocol\ 
                       \alt {\Instance {\class}}
                       \alt {\Satisfies {\protocol}}
-                      \alt {\Value \v{}}
-                      \alt {\Unionsplice {\overrightarrow{\t{}}}}
                       \\ &\alt&
+                      {\Value \v{}}
+                      \alt {\Unionsplice {\overrightarrow{\t{}}}}
+                      \alt
                       {\In {\t{}\ \overrightarrow{\t{}}}}
                       \alt 
                       %\alt (\Not\ \t{})
                       {\All {\overrightarrow{\x{}}} {\t{}}}
                       \alt
                       {\TFn {\overrightarrow{\x{}}} \t{}}
-                      \alt
-                      {\Arrow {\overrightarrow{ \hastype {\x{}} {\t{}}}}
+                      \\ &\alt&
+                      {\ArrowOverright {\x{}} {\t{}}
                                    {\t{}}
                                    {\filterset {\prop{}} {\prop{}}}
                                    {\object{}}}
                       \alt 
                       {\ArrayTwo {\t{}} {\t{}}}
                       \alt {\HMapp {\mandatory} {\absent}}
-                      \\ &\alt&
+                      \alt
                       {\HMapc {\mandatory}}
                       
                 &\mbox{Typed Clojure Types} \\
-  \tatype{}     &::=& \unknownhint{} \alt \classhint{} \alt \primitivehint{}
+  \tatype{}     &::=& \classhint{} \alt \primitivehint{}
+                &\mbox{Class and Primitive Hints} \\
+  \tatypeunknown{}     &::=& \unknownhint{} \alt \tatype{}
                 &\mbox{tools.analyzer Types} \\ \\
   \prop{}       &::=& {\isprop {\t{}} {\path {\pathelem{}} {\x{}}}}
                       \alt {\notprop {\t{}} {\path {\pathelem{}} {\x{}}}}
@@ -73,13 +80,6 @@ $$
                &\mbox{Proposition Environment} \\
   \taenv{}    &::=& \{ \overrightarrow{ \hastype{\x{}} {\tatype{}}} \}
                &\mbox{tools.analyzer Environment} \\
-  \mmenv{}    &::=& \{ \overrightarrow{ \hastype{\x{}} 
-                                        {\Arrow {\overrightarrow {\hastype {\x{}} {\t{}}}} {\t{}}
-                                                    {\filterset {\thenprop {\prop{}}}
-                                                                {\elseprop {\prop{}}}}
-                                                    {\object{}}}} \}
-               &\mbox{Multimetod dispatch Environment} \\
-                      \\
   \ctentrymeta{} &::=& \ctentry
                &\mbox{Class descriptors} \\
   \ct{}   &::=& \{ \overrightarrow{\classhint{} \Rightarrow \ctentrymeta{}} \}

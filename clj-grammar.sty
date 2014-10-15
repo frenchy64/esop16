@@ -36,7 +36,9 @@
 % types
 \newbfop\int{int}
 \newbfop\Boolean{Boolean}
+\newbfop\IFn{IFn}
 \newbfop\MultiFn{MultiFn}
+\newbfop\PMulti{PMulti}
 \newbfop\IPersistentMapLiteral{IPersistentMap}
 \newbfop\MapLiteral{Map}
 \newbfop\Uliteral{\ma{\bigcup}}
@@ -50,6 +52,7 @@
 \newbfop\ArrayPLiteral{ArrayP}
 \newbfop\Throwable{Throwable}
 \newbfop\Class{java.lang.Class}
+\newcommand\MultiFntype[2]{(\PMulti\ #1\ #2)}
 \newcommand\proctype[2]{(#1 \to #2)}
 \newcommand\Unionsplice[1]{(\ma{\Uliteral\ #1})}
 \newcommand\Union[2]{(\ma{\Uliteral\ #1\ #2})}
@@ -61,7 +64,8 @@
 %% Reynolds' package can also abstract things like (\s1 \to \s2 \to \s3).
 \newcommand\Arrow[4]{\ma{#1 \xrightarrow[#4]{#3} #2}}
 % TODO figure out how to make #1 : #2 closer to the :
-\newcommand\ArrowOne[5]{\ma{{\hastype {#1} {#2}} \xrightarrow[#5]{#4} #3}}
+\newcommand\ArrowOne[5]{\ma{{\hastypesmall {#1} {#2}} \xrightarrow[#5]{#4} #3}}
+\newcommand\ArrowOverright[5]{\ma{{\overrightarrow{\hastypesmall {#1} {#2}}} \xrightarrow[#5]{#4} #3}}
 
 \newcommand\All[2]{(\ma{\Allliteral\ [#1]\ #2})}
 \newcommand\TFn[2]{(\ma{\TFnliteral\ [#1]\ #2})}
@@ -97,24 +101,26 @@
 \newmeta\classp{C{'}}
 \newmeta\protocol{P}
 \newmeta\k{k}
-\newmeta\nil{{\bf nil}}
-\newmeta\true{{\bf true}}
-\newmeta\false{{\bf false}}
+\newmeta\nil{{\mathsf{nil}}}
+\newmeta\true{{\mathsf{true}}}
+\newmeta\false{{\mathsf{false}}}
 \newmeta\assoc{assoc}
 \newmeta\dissoc{dissoc}
 \newmeta\get{get}
 \newmeta\tryliteral{{\bf try}}
 \newmeta\catchliteral{{\bf catch}}
-\newmeta\finallyliteral{{\bf finally}}
-\newmeta\ifliteral{{\bf if}}
+\newmeta\finallyliteral{{\mathrm{\bf finally}}}
+\newmeta\ifliteral{{\bf{if}}}
 \newmeta\doliteral{{\bf do}}
 \newmeta\fnliteral{{\bf fn}}
-\newmeta\letliteral{{\bf let}}
+\newmeta\letliteral{{\mathsf{\bf{let}}}}
 \newmeta\throwliteral{{\bf throw}}
 \newmeta\newliteral{{\bf new}}
 \newmeta\defmultiliteral{{\bf defmulti}}
+\newmeta\createmultiliteral{new\_multi}
+\newmeta\extendmultiliteral{extend\_multi}
 \newmeta\defmethodliteral{{\bf defmethod}}
-\newcommand\abs[2]{\ma{\l #1 . #2}}
+\newcommand\abs[3]{\ma{\l #1^{#2} . #3}}
 \newcommand\curlymap[1]{\ma{\{#1\}}}
 \newcommand\comb[2]{\ma{(#1\ #2)}}
 \newcommand\tryexp[5]{(\ma{\tryliteral{}\ #1\ (\ma{\catchliteral{}\ #2\ #3\ #4})\ (\ma{\finallyliteral{}\ #5})})}
@@ -125,11 +131,16 @@
 \newcommand\appexp[2]{(\ma{#1\ #2})}
 \newcommand\throwexp[1]{(\ma{\throwliteral{}\ #1})}
 \newcommand\newexp[2]{(\ma{\newliteral{}\ #1\ #2})}
+\newcommand\newstaticexp[4]{(\ma{\newliteral{[#1, #2]}\ #3\ #4})}
 \newmeta\dotliteral{{\bf .}}
 \newcommand\fieldexp[2]{(\ma{\dotliteral\ #2\ #1})}
+\newcommand\fieldstaticexp[4]{(\ma{\dotliteral\ #4\ #3^{#1}_{#2}})}
 \newcommand\methodexp[3]{(\ma{\dotliteral\ #2\ (#1\ #3)})}
+\newcommand\methodstaticexp[6]{(\ma{\dotliteral\ #5\ ({#4}^{#1}_{[[#2], #3]}\ #6)})}
+\newcommand\createmultiexp[2]{(\ma{\createmultiliteral{}\ #1\ #2})}
 \newcommand\defmultiexp[2]{(\ma{\defmultiliteral{}\ #1\ #2})}
 \newcommand\defmethodexp[4]{(\ma{\defmethodliteral{}\ #1\ #2\ [#3]\ #4})}
+\newcommand\extendmultiexp[4]{(\ma{\extendmultiliteral{}\ #1\ #2\ [#3]\ #4})}
 \newmeta\defliteral{{\bf def}}
 \newcommand\defexp[2]{(\ma{\defliteral{}\ #1\ #2})}
 
@@ -177,12 +188,13 @@
 
 % typing judgements
 \newcommand\hastype[2]{\ma{#1 \mathbin{:} #2}}
-\newcommand\hastypesmall[2]{\ma{#1 : #2}}
+\newcommand\hastypesmall[2]{\ma{#1 {:} #2}}
 \newcommand\issubtype[2]{\ma{#1 \mathbin{<:} #2}}
 % 4 place relation (TR formalism)
 \newcommand\judgement[4]{\ma{#1 \vdash #2\ ;\ #3\ ;\ #4}}
 % 7 place relation (TC formalism)
-\newcommand\judgementsev[7]{\ma{#1\ ;\ #2\ ;\ #3 \vdash_{\scriptscriptstyle{\trdiff{\ct{}}}} #4\ ;\ #5\ ;\ #6\ ;\ #7}}
+\newcommand\judgementsev[7]{\ma{#3 \vdash #4\ ;\ #5\ ;\ #6}}
+%\newcommand\judgementsev[7]{\ma{#3 \vdash_{\scriptscriptstyle{\trdiff{\ct{}}}} #4\ ;\ #5\ ;\ #6}}
 % 7 place relation with color
 \newcommand\judgementsevcol[7]{\judgementsev {\trdiff{#1}} {\trdiff{#2}} {#3} {#4} {#5} {#6} {\trdiff #7}}
 % expands to 7 place but with 4 args (the TR formalism)
@@ -192,12 +204,16 @@
 % lookuping props in the env
 \newcommand\inpropenv[2]{\ma{#1 \vdash #2}}
 
+% java reflection rewrite 
+\newcommand\rewrite[3]{\ma{#1\ \vdash #2 \Rightarrow #3}}
+
 % tools.analyzer judgements
 \newcommand\ta[0]{\mathcal{TA}}
 \newcommand\intaenv[3]{\ma{#1 (#2) = #3}}
-\newcommand\tajudgement[2]{\ma{#1 \vdash^{\scriptscriptstyle{\ta}}_{\scriptscriptstyle{\ct{}}} #2}}
+\newcommand\tajudgement[2]{\ma{#1 \vdash #2}}
 
 % type hints
+\newmeta\tatypeunknown{\gamma^{?}}
 \newmeta\tatype{\gamma}
 \newmeta\tatypep{\gamma'}
 \newmeta\classhint{C^h}
@@ -249,6 +265,7 @@
 % propositions
 \newmeta\prop{\psi}
 \newmeta\propp{\psi'}
+\newmeta\proppp{\psi''}
 \newcommand\isprop[2]{\ma{{#1}_{#2}}}
 \newcommand\impprop[2]{\ma{#1 \supset #2}}
 \newcommand\notprop[2]{\ma{{\overline{#1}}_{#2}}}
