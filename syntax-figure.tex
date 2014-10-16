@@ -19,14 +19,17 @@ $$
                       %{\fnexp {\overrightarrow{\hastype {\x{}} {\t{}}}} {\e{}}}
                       \alt
                       {\letexp {\x{}} {\e{}} {\e{}}}
-                      \alt {\fieldexp {fld} {\e{}}}
+                      \alt
+                      {\letexp {\hinted {\classhint{}} {\x{}}} {\e{}} {\e{}}}
+                      \\ &\alt& 
+                      {\fieldexp {fld} {\e{}}}
                       \alt {\methodexp {mth} {\e{}} {\overrightarrow{\e{}}}}
                       \alt {\newexp {\class{}} {\overrightarrow{\e{}}}}
-                &\mbox{External Language} \\
-  \expd{}, \e{} &::=& \ldots\ {\methodstaticexp {\tatype{}} {\overrightarrow{\tatype{}}} {\tatype{}} {mth} {\e{}} {\overrightarrow{\e{}}}}
+                      \\ &\alt& 
+                      {\fieldstaticexp {\tatype{}} {\tatype{}} {fld} {\e{}}}
+                      \alt {\methodstaticexp {\tatype{}} {\overrightarrow{\tatype{}}} {\tatype{}} {mth} {\e{}} {\overrightarrow{\e{}}}}
                       \alt {\newstaticexp {\overrightarrow {\tatype{}}} {\tatype{}} {\class{}} {\overrightarrow{\e{}}}}
-                      \alt {\fieldstaticexp {\tatype{}} {\tatype{}} {fld} {\e{}}}
-                &\mbox{Internal Language} \\ \\
+                &\mbox{Expressions} \\
   \s{}, \t{}    &::=& \Top \alt (\class{}\ \overrightarrow{\t{}})
                       \alt \class\ 
                       \alt \protocol\ 

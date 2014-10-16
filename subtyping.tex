@@ -65,6 +65,28 @@
 \\ \assignable {\class{}} {\classp{}}}
 { \inpropenv {} {\issubtype {\Instance {\class{}}} {\Instance {\classp{}}}} }
 
+\infer [S-PMultiFn]
+{ \inpropenv {} {\issubtype {\sp{}} {\s{}}}
+  \\
+  \inpropenv {} {\issubtype {\t{}} {\tp{}}}
+  \\\\
+  \inpropenv {\thenprop {\prop{}}} {\thenprop {\propp{}}}
+  \\
+  \inpropenv {\elseprop {\prop{}}} {\elseprop {\propp{}}}
+  \\
+  \inpropenv {\object{}} {\objectp{}}
+}
+{ \inpropenv {} {\issubtype {\MultiFntype {\ArrowOverright {\x{}} {\s{}} {\t{}}
+                                            {\filterset {\thenprop {\prop{}}}
+                                                        {\elseprop {\prop{}}}}
+                                            {\object{}}}
+                                          {\s{d}}}
+                            {\ArrowOverright {\xp{}} {\sp{}} {\tp{}}
+                                            {\filterset {\thenprop {\propp{}}}
+                                                        {\elseprop {\propp{}}}}
+                                                {\objectp{}}}}
+                                              }
+
 \end{mathpar}
 \caption{Subtyping rules}
 \end{figure*}

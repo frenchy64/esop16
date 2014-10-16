@@ -49,6 +49,17 @@
                          {\IFn{}}}
                        }
 
+\infer [TA-LetHint]
+{ \tajudgement {\taenv{}, {\hastype {\x{}} {\classhint{}}}}
+               {\hastype {\e{}} {\tatypeunknown{}}}
+}
+{ \tajudgement {\taenv{}}
+               {\hastype {\letexp {\hinted{} {\classhint{}} {\x{}}}
+                                  {\e{1}}
+                                  {\e{}}}
+                         {\tatypeunknown{}}}
+}
+
 \infer [TA-Let]
 { \tajudgement {\taenv{}} 
                {\hastype {\e{1}} {\tatypeunknown{1}}}
@@ -109,6 +120,15 @@
                          {\tatype{}}}
                        }
 
+\infer [TA-Do]
+{ \tajudgement {\taenv{}} {\hastype {\e{}} {\tatypeunknown{}}}
+}
+{ \tajudgement {\taenv{}} {\hastype {\doexp {\e1} {\e{}}} {\tatypeunknown{}}}
+}
+
+\infer [TA-Try]
+{ \tajudgement {\taenv{}}
+{ \tryexp {\e{}} {\classhint{}} {\x{}} {\e{c}} {\e{f}}}
 
 \end{mathpar}
 \caption{tools.analyzer Type Hints}
@@ -204,9 +224,9 @@
            {\e{1}}
            {\ep{1}}
            \\
-  \tajudgement {\taenv{}} {\hastype {\ep{1}} {\tatype{}}}
+  \tajudgement {\taenv{}} {\hastype {\ep{1}} {\tatypeunknown{}}}
            \\\\
-  \rewrite {\taenv{}, {\hastype {\x{}} {\tatype{}}}}
+  \rewrite {\taenv{}, {\hastype {\x{}} {\tatypeunknown{}}}}
            {\e{}}
            {\ep{}}
          }
@@ -215,6 +235,24 @@
                     {\e{1}}
                     {\e{}}}
            {\letexp {\x{}}
+                    {\ep{1}}
+                    {\ep{}}}
+}
+
+\infer [R-LetHint]
+{ \rewrite {\taenv{}}
+           {\e{1}}
+           {\ep{1}}
+           \\
+  \rewrite {\taenv{}, {\hastype {\x{}} {\classhint{}}}}
+           {\e{}}
+           {\ep{}}
+         }
+{ \rewrite {\taenv{}}
+           {\letexp {\hinted {\classhint{}} {\x{}}}
+                    {\e{1}}
+                    {\e{}}}
+           {\letexp {\hinted {\classhint{}} {\x{}}}
                     {\ep{1}}
                     {\ep{}}}
 }
@@ -314,6 +352,17 @@
            {\appexp {\ep{}} {\overrightarrow {\e{j}}}}
          }
 
+\infer [R-Try]
+{ \rewrite {\taenv{}} {\e{}} {\ep{}}
+  \\
+  \rewrite {\taenvp{},{\hastype {\x{}} {\classhint{}}}} {\e{c}} {\ep{c}}
+  \\
+  \rewrite {\taenvp{}} {\e{f}} {\ep{f}}
+}
+{ \rewrite {\taenv{}}
+           {\tryexp {\e{}} {\classhint{}} {\x{}} {\e{c}} {\e{f}}}
+           {\tryexp {\ep{}} {\classhint{}} {\x{}} {\ep{c}} {\ep{f}}}
+         }
 
 \end{mathpar}
 \caption{Java Reflection Resolution}
