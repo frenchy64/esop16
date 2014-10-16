@@ -120,7 +120,7 @@
 \newmeta\createmultiliteral{new\_multi}
 \newmeta\extendmultiliteral{extend\_multi}
 \newmeta\defmethodliteral{{\bf defmethod}}
-\newcommand\abs[3]{\ma{\l #1^{#2} . #3}}
+\newcommand\abs[3]{\ma{\l #1^{#2}. #3}}
 \newcommand\curlymap[1]{\ma{\{#1\}}}
 \newcommand\comb[2]{\ma{(#1\ #2)}}
 \newcommand\tryexp[5]{(\ma{\tryliteral{}\ #1\ (\ma{\catchliteral{}\ #2\ #3\ #4})\ (\ma{\finallyliteral{}\ #5})})}
@@ -203,6 +203,13 @@
 \newcommand\judgementfillmmcol[5]{\judgementsevcol {\mmenv} {#1} {#2} {#3} {#4} {#5} {\mmenv}}
 % lookuping props in the env
 \newcommand\inpropenv[2]{\ma{#1 \vdash #2}}
+
+% operational semantics
+\newmeta\openv{\rho}
+\newcommand\inopenv[3]{\ma{#1 (#2) = #3}}
+\newcommand\extendopenv[3]{\ma{#1[#2 \rightarrow #3]}}
+\newcommand\opsem[3]{\ma{#1 \vdash #2 \Downarrow #3}}
+\newcommand\closure[2]{[#1, #2]}
 
 % java reflection rewrite 
 \newcommand\rewrite[3]{\ma{#1\ \vdash #2 \Rightarrow #3}}
