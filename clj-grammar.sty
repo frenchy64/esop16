@@ -137,10 +137,10 @@
 \newcommand\fieldstaticexp[4]{(\ma{\dotliteral\ #4\ #3^{#1}_{#2}})}
 \newcommand\methodexp[3]{(\ma{\dotliteral\ #2\ (#1\ #3)})}
 \newcommand\methodstaticexp[6]{(\ma{\dotliteral\ #5\ ({#4}^{#1}_{[[#2], #3]}\ #6)})}
-\newcommand\createmultiexp[2]{(\ma{\createmultiliteral{}\ #1\ #2})}
+\newcommand\createmultiexp[2]{(\ma{\defmultiliteral{}\ #1\ #2})}
 \newcommand\defmultiexp[2]{(\ma{\defmultiliteral{}\ #1\ #2})}
 \newcommand\defmethodexp[4]{(\ma{\defmethodliteral{}\ #1\ #2\ [#3]\ #4})}
-\newcommand\extendmultiexp[4]{(\ma{\extendmultiliteral{}\ #1\ #2\ [#3]\ #4})}
+\newcommand\extendmultiexp[4]{(\ma{\defmethodliteral{}\ #1\ #2\ [#3]\ #4})}
 \newmeta\defliteral{{\bf def}}
 \newcommand\defexp[2]{(\ma{\defliteral{}\ #1\ #2})}
 
