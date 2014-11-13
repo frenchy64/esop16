@@ -72,12 +72,35 @@
          {\v{}}
        }
 
-%\infer [B-NewStatic]
-%{}
-%{ \opsem {\openv{}}
-%         {\newstaticexp {\overrightarrow{\tatype{}}} {\classhint{}}
-%                        {\class{}} {\overrightarrow{\e{i}}}}
-%   }
+\infer [B-Field]
+{ \opsem {\openv{}}
+         {\e{}} 
+         {\classvalue{\classhint} {\classfieldpair{fld} {\v{}}}}
+       }
+{ \opsem {\openv{}}
+         {\fieldstaticexp {\classhint{}} {\tatype{}} {fld} {\e{}}}
+         {\v{}}
+   }
+
+\infer [B-Method]
+{ \opsem {\openv{}}
+         {\e{m}}
+         {\v{m}}
+  \\
+  \forall a.\ 
+  \opsem {\openv{}}
+         {\e{a}}
+         {\v{a}}
+  \\
+  \opsem {\openv{}}
+        {\invokejavamethod {\v{m}} {mth} {\overrightarrow{\v{a}}}}
+        {\v{}}
+}
+{\opsem {\openv{}}
+        {\methodstaticexp {\classhint{}} {\overrightarrow{\tatype{}}} {\tatype{}} {mth} {\e{m}} {\overrightarrow{\e{}}}}
+        {\v{}}
+      }
+
 
 \end{mathpar}
 \caption{Operational Semantics}

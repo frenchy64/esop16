@@ -309,3 +309,12 @@
 \newcommand\JavaMethod[2]{{\bf Method}(\ma{#1, #2})}
 \newcommand\JavaCtor[2]{{\bf Ctor}(\ma{#1, #2})}
 \newcommand\JavaArray[1]{#1[]}
+
+% # Runtime semantics
+% ## Runtime class syntax
+\newmeta\classvaluemeta{CV}
+\newcommand\classfieldpair[2]{#1 : #2}
+\newcommand\classvalue[2]{#1\ \{#2\}}
+
+% ## metafunction to invoke java
+\newcommand\invokejavamethod[3]{JAVA[#1, #2, [#3]]}

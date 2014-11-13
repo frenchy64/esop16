@@ -26,9 +26,9 @@ $$
                       \alt {\methodexp {mth} {\e{}} {\overrightarrow{\e{}}}}
                       \alt {\newexp {\class{}} {\overrightarrow{\e{}}}}
                       \\ &\alt& 
-                      {\fieldstaticexp {\tatype{}} {\tatype{}} {fld} {\e{}}}
-                      \alt {\methodstaticexp {\tatype{}} {\overrightarrow{\tatype{}}} {\tatype{}} {mth} {\e{}} {\overrightarrow{\e{}}}}
-                      \alt {\newstaticexp {\overrightarrow {\tatype{}}} {\tatype{}} {\class{}} {\overrightarrow{\e{}}}}
+                      {\fieldstaticexp {\classhint{}} {\tatype{}} {fld} {\e{}}}
+                      \alt {\methodstaticexp {\classhint{}} {\overrightarrow{\tatype{}}} {\tatype{}} {mth} {\e{}} {\overrightarrow{\e{}}}}
+                      \alt {\newstaticexp {\overrightarrow {\tatype{}}} {\classhint{}} {\class{}} {\overrightarrow{\e{}}}}
                 &\mbox{Expressions} \\
   \s{}, \t{}    &::=& \Top \alt (\class{}\ \overrightarrow{\t{}})
                       \alt \class\ 
@@ -86,7 +86,10 @@ $$
   \ctentrymeta{} &::=& \ctentry
                &\mbox{Class descriptors} \\
   \ct{}   &::=& \{ \overrightarrow{\classhint{} \Rightarrow \ctentrymeta{}} \}
-               &\mbox{Class Table}
+               &\mbox{Class Table} \\
+  \classvaluemeta{} 
+          &::=& {\classvalue{\classhint} {\overrightarrow {\classfieldpair{fld} {\v{}}}}}
+               &\mbox{Class Values}
 \end{altgrammar}
 $$
 \caption{Syntax of Terms, Types, Propositions, and Objects}
