@@ -1,7 +1,7 @@
 \begin{figure*}
 \begin{mathpar}
 
-\infer [B-Local]
+\infer [B-Var]
 { \inopenv {\openv{}} {\x{}} {\v{}} }
 { \opsem {\openv{}} {\x{}} {\v{}} }
 
@@ -54,7 +54,7 @@
          {\abs {\x{}} {\t{}} {\e{}}}
          {\closure {\openv{}} {\abs {\x{}} {\t{}} {\e{}}}}}
 
-\infer [B-Beta]
+\infer [B-BetaClosure]
 { \opsem {\openv{}}
          {\e{f}}
          {\closure {\openv{c}} {\abs {\x{}} {\t{}} {\e{b}}}}
@@ -72,10 +72,30 @@
          {\v{}}
        }
 
+\infer [B-BetaMulti]
+{ \opsem {\openv{}}
+         {\e{f}}
+         {\multi {\v{d}} {m}}
+         \\\\
+  \opsem {\openv{}}
+         {\e{a}}
+         {\v{a}}
+         \\\\
+  \opsem {\extendopenv {\openv{c}} {\x{}} {\v{a}}}
+         {\e{b}}
+         {\v{}}
+       }
+{ \opsem {\openv{}}
+         {\appexp {\e{f}} {\e{a}}}
+         {\v{}}
+       }
+
 \infer [B-Field]
 { \opsem {\openv{}}
          {\e{}} 
-         {\classvalue{\classhint} {\classfieldpair{fld} {\v{}}}}
+         {\classvalue{\classhint{}} {\classfieldpair{fld} {\v{}}}}
+         \\\\
+         \getfieldjava{\classhint{}} {\classvalue{\classhint{}} {\classfieldpair{fld} {\v{}}}} {fld} {\tatype{}} {\v{}}
        }
 { \opsem {\openv{}}
          {\fieldstaticexp {\classhint{}} {\tatype{}} {fld} {\e{}}}
@@ -92,41 +112,79 @@
          {\e{a}}
          {\v{a}}
   \\\\
-  \opsem {\openv{}}
-        {\invokejavamethod {\v{m}} {mth} {\overrightarrow{\v{a}}}}
-        {\v{}}
+  \invokejavamethod {\classhint{}} {\v{m}} {mth}
+                    {\overrightarrow{\tatype{a}}} {\overrightarrow{\v{a}}}
+                    {\tatype{r}}
+                    {\v{}}
 }
 {\opsem {\openv{}}
-        {\methodstaticexp {\classhint{}} {\overrightarrow{\tatype{}}} {\tatype{}} {mth} {\e{m}} {\overrightarrow{\e{}}}}
+        {\methodstaticexp {\classhint{}} {\overrightarrow{\tatype{a}}} {\tatype{r}} {mth} {\e{m}} {\overrightarrow{\e{}}}}
         {\v{}}
       }
 
-\infer [B-Var]
-{\inopenv {\openv{}} {\x{}} {\v{}}
+\infer [B-New]
+{ \forall a.\ 
+  \opsem {\openv{}}
+         {\e{a}}
+         {\v{a}}
+         \\\\
+         \newjava {\classhint}
+                  {\overrightarrow{\tatype{}}}
+                  {\overrightarrow{\e{i}}}
+                  {\v{}}
+       }
+{ \opsem {\openv{}}
+         {\newstaticexp {\overrightarrow{\tatype{}}} {\classhint{}} 
+                        {\class{}} {\overrightarrow{\e{i}}}}
+         {\v{}}}
+
+\infer [B-Map]
+{ \forall k.\ \opsem {\openv{}} {\e{k}} {\v{k}}
+  \\\\
+  \forall v.\ \opsem {\openv{}} {\e{v}} {\v{v}}
 }
 {\opsem {\openv{}}
-        {\x{}}
-        {\v{}}
+        {\curlymap {\overrightarrow{{e_{k}}\ {\e{v}}}}}
+        {\curlymap {\overrightarrow{{v_{k}}\ {\v{v}}}}}
+      }
+
+\infer [B-InstanceOf]
+{ \opsem {\openv{}} {\e{}} {\v{o}}
+  \\\\
+  \instanceofjava {\class{}} {\v{o}} {\v{}}
+}
+{ \opsem {\openv{}} 
+         {\instanceapp {\class{}} {\e{}}}
+         {\v{}}
 }
 
-\infer [B-Beta]
+\infer [B-Multi]
+{ \opsem {\openv{}} {\e{d}} {\v{d}}
+}
+{\opsem {\openv{}}
+        {\createmultiexp {\t{}}
+                         {\e{d}}}
+        {\multi {\v{d}} {\emptydisptable}}
+}
+
+\infer [B-ExtendMulti]
 { \opsem {\openv{}}
-         {\e{f}}
-         {\closure {\openv{c}} {\abs {\x{}} {\t{}} {\e{b}}}}
-       \\\\
+         {\e{m}}
+         {\multi {\v{d}} {\disptable{}}}
+         \\\\
   \opsem {\openv{}}
-       {\e{a}}
-       {\v{a}}
-       \\\\ 
-  \opsem {\extendopenv {\openv{c}}{\x{}} {\v{a}}}
-       {\e{a}}
-       {\v{a}}
-     }
-{ \opsem {\openv{}}
-  {\appexp {\e{f}} {\e{a}}}
-  {\v{}}
+         {\e{v}}
+         {\v{v}}
+         \\\\
+  \opsem {\openv{}}
+         {\closure {\openv{}} {\abs {\x{}} {\t{}} {\e{b}}}}
+         {\v{b}}
 }
-
+{\opsem {\openv{}}
+        {\extendmultiexp {\e{m}} {\e{v}} {\x{}}
+                         {\e{b}}}
+        {\multi {\v{d}} {\extenddisptable {\disptable{}} {\v{v}} {\v{b}}}}
+                       }
 \end{mathpar}
 \caption{Operational Semantics}
 \end{figure*}

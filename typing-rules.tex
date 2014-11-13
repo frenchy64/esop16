@@ -307,20 +307,20 @@
 
 \infer [T-ExtendMulti]
 {
-\judgementfillcol {\propenv{}}
-                  {\hastype {\e{m}} {\MultiFntype {\s{}} {\s{d}}}}
-             {\filterset {\topprop{}} {\botprop{}}}
-             {\emptyobject}
-             \\\\
-  \s{} = {\ArrowOverright {\x{p}} {\t{p}} {\t{m}}
+  \t{m} = {\ArrowOverright {\x{}} {\t{}} {\s{b}}
                                     {\filterset {\thenprop {\prop{m}}}
                                                 {\elseprop {\prop{m}}}}
                                     {\object{m}}}
 \\
-\s{d} = {\ArrowOverright {\x{p}} {\t{p}} {\t{r}}
+\t{d} = {\ArrowOverright {\x{}} {\t{}} {\t{r}}
                                     {\filterset {\thenprop {\prop{d}}}
                                                 {\elseprop {\prop{d}}}}
                                     {\object{d}}}
+             \\\\
+\judgementfillcol {\propenv{}}
+                  {\hastype {\e{m}} {\MultiFntype {\t{m}} {\t{d}}}}
+             {\filterset {\topprop{}} {\botprop{}}}
+             {\emptyobject}
 \\\\
 \judgementfillcol {\propenv{}}
            {\hastype {\e{v}} {\t{v}}}
@@ -328,19 +328,18 @@
                        {\elseprop {\prop{v}}}}
            {\object{v}}
 \\\\
-\isacompare {\t{v}} {\object{v}} {\t{d}} {\object{d}}
+\isacompare {\t{v}} {\object{v}} {\t{r}} {\object{d}}
              {\filterset {\thenprop {\prop{}}}
                          {\elseprop {\prop{}}}}
 \\\\
-\judgementfillcol {\propenv{}, {\thenprop {\prop{}}}}
-           {\hastype {\e{b}} {\t{m}}}
+\judgementfillcol {\propenv{}, \overrightarrow{\isprop{\x{}} {\t{}}}, {\thenprop {\prop{}}}}
+           {\hastype {\e{b}} {\s{b}}}
            {\filterset {\thenprop {\prop{m}}}
                        {\elseprop {\prop{m}}}}
            {\object{m}}
 }
-{ \judgementfillcol {\propenv{}} {\hastype {\extendmultiexp {\e{m}} {\e{v}} {\overrightarrow{\x{p}}}
-                                                   {\e{b}}}
-                                    {\MultiFntype {\s{}} {\s{d}}}}
+{ \judgementfillcol {\propenv{}} {\hastype {\extendmultiexp {\e{m}} {\e{v}} {\overrightarrow {\x{}}} {\e{b}}}
+                                    {\MultiFntype {\t{m}} {\t{d}}}}
              {\filterset {\topprop{}} {\botprop{}}}
              {\emptyobject}
 }

@@ -210,6 +210,10 @@
 \newcommand\extendopenv[3]{\ma{#1[#2 \rightarrow #3]}}
 \newcommand\opsem[3]{\ma{#1 \vdash #2 \Downarrow #3}}
 \newcommand\closure[2]{[#1, #2]_{closure}}
+\newcommand\multi[2]{[#1, #2]_{multi}}
+\newcommand\emptydisptable[0]{\{\}}
+\newmeta\disptable{m}
+\newcommand\extenddisptable[3]{\ma{#1[#2 \rightarrow #3]}}
 
 % java reflection rewrite 
 \newcommand\rewrite[3]{\ma{#1\ \vdash #2 \Rightarrow #3}}
@@ -317,4 +321,11 @@
 \newcommand\classvalue[2]{#1\ \{#2\}}
 
 % ## metafunction to invoke java
-\newcommand\invokejavamethod[3]{JAVA[#1, #2, [#3]]}
+% Class Target Method ArgTypes Args ReturnType ReturnValue
+\newcommand\invokejavamethod[7]{JVM_{invokestatic}[#1, #2, #3, [#4], [#5], #6] = #7} % Class Args ReturnValue
+% Class ArgTypes Args ReturnValue
+\newcommand\newjava[4]{JVM_{new}[#1, [#2], [#3]] = #4}
+% Class Target Field FieldType ReturnValue
+\newcommand\getfieldjava[5]{JVM_{getstatic}[#1, #2, #3, #4] = #5}
+% Class Target Bool
+\newcommand\instanceofjava[3]{JVM_{instanceof}[#1, #2] = #3}
