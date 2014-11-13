@@ -86,12 +86,12 @@
 { \opsem {\openv{}}
          {\e{m}}
          {\v{m}}
-  \\
+  \\\\
   \forall a.\ 
   \opsem {\openv{}}
          {\e{a}}
          {\v{a}}
-  \\
+  \\\\
   \opsem {\openv{}}
         {\invokejavamethod {\v{m}} {mth} {\overrightarrow{\v{a}}}}
         {\v{}}
@@ -101,6 +101,31 @@
         {\v{}}
       }
 
+\infer [B-Var]
+{\inopenv {\openv{}} {\x{}} {\v{}}
+}
+{\opsem {\openv{}}
+        {\x{}}
+        {\v{}}
+}
+
+\infer [B-Beta]
+{ \opsem {\openv{}}
+         {\e{f}}
+         {\closure {\openv{c}} {\abs {\x{}} {\t{}} {\e{b}}}}
+       \\\\
+  \opsem {\openv{}}
+       {\e{a}}
+       {\v{a}}
+       \\\\ 
+  \opsem {\extendopenv {\openv{c}}{\x{}} {\v{a}}}
+       {\e{a}}
+       {\v{a}}
+     }
+{ \opsem {\openv{}}
+  {\appexp {\e{f}} {\e{a}}}
+  {\v{}}
+}
 
 \end{mathpar}
 \caption{Operational Semantics}
