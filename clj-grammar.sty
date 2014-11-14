@@ -210,10 +210,13 @@
 \newcommand\extendopenv[3]{\ma{#1[#2 \rightarrow #3]}}
 \newcommand\opsem[3]{\ma{#1 \vdash #2 \Downarrow #3}}
 \newcommand\closure[2]{[#1, #2]_{closure}}
+% multimethod semantics
 \newcommand\multi[2]{[#1, #2]_{multi}}
 \newcommand\emptydisptable[0]{\{\}}
 \newmeta\disptable{m}
+\newmeta\disptablep{m'}
 \newcommand\extenddisptable[3]{\ma{#1[#2 \rightarrow #3]}}
+\newcommand\getmethod[3]{get\_method(#1,\ #2)\ =\ #3}
 
 % java reflection rewrite 
 \newcommand\rewrite[3]{\ma{#1\ \vdash #2 \Rightarrow #3}}

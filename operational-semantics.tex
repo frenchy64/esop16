@@ -81,8 +81,16 @@
          {\e{a}}
          {\v{a}}
          \\\\
-  \opsem {\extendopenv {\openv{c}} {\x{}} {\v{a}}}
-         {\e{b}}
+  \opsem {\openv{}}
+         {\appexp {\v{d}} {\v{a}}}
+         {\v{e}}
+         \\\\
+  \getmethod {\multi {\v{d}} {m}}
+             {\v{e}}
+             {\v{f}}
+         \\\\
+  \opsem {\openv{}}
+         {\appexp {\v{f}} {\v{a}}}
          {\v{}}
        }
 { \opsem {\openv{}}
@@ -176,15 +184,15 @@
          {\e{v}}
          {\v{v}}
          \\\\
-  \opsem {\openv{}}
-         {\closure {\openv{}} {\abs {\x{}} {\t{}} {\e{b}}}}
-         {\v{b}}
+         \disptablep{} = {\extenddisptable {\disptable{}} 
+                                {\v{v}}
+                              {\closure {\openv{}} {\abs {\x{}} {\t{}} {\e{b}}}}}
 }
 {\opsem {\openv{}}
         {\extendmultiexp {\e{m}} {\e{v}} {\x{}}
                          {\e{b}}}
-        {\multi {\v{d}} {\extenddisptable {\disptable{}} {\v{v}} {\v{b}}}}
-                       }
+        {\multi {\v{d}} {\disptablep{}}}
+      }
 \end{mathpar}
 \caption{Operational Semantics}
 \end{figure*}
