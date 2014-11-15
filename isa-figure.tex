@@ -2,10 +2,14 @@
 $$
 \begin{array}{lclr}
 
-\isacomparealign {\t{}} {\x{}} {\s{r}} {\x{}}
-            {\filterset {\thenprop {\prop{}}}
-                        {\elseprop {\prop{}}}} 
-& foo
+\isacomparealign {\s{}} {\x{}} {\t{}}
+                {\filterset {\isprop{\t{}}  {\x{}}}
+                            {\notprop{\t{}} {\x{}}}}
+                            %\\
+                            % Other case: 2 equal sized HVecs
+%\isacomparealign {} {\x{}} {\t{}}
+%                {\filterset {\isprop{\t{}}  {\x{}}}
+%                            {\notprop{\t{}} {\x{}}}}
 \end{array}
 $$
 \caption{Definition of isa}

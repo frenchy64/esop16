@@ -216,7 +216,9 @@
 \newmeta\disptable{m}
 \newmeta\disptablep{m'}
 \newcommand\extenddisptable[3]{\ma{#1[#2 \rightarrow #3]}}
-\newcommand\getmethod[3]{get\_method(#1,\ #2)\ =\ #3}
+\newcommand\getmethodliteral[0]{get\_method}
+\newcommand\getmethod[3]{\getmethodliteral(#1,\ #2)\ =\ #3}
+\newcommand\getmethodalign[3]{\getmethodliteral(#1,\ #2)\ &=&\ #3}
 
 % java reflection rewrite 
 \newcommand\rewrite[3]{\ma{#1\ \vdash #2 \Rightarrow #3}}
@@ -252,8 +254,8 @@
 \newcommand\inmmenv[3]{\ma{#1 (#2) = #3}}
 
 % isa? special functions
-\newcommand\isacompare[5]{\ma{isa(#1,\ #2,\ #3,\ #4)\ =\ {#5}}}
-\newcommand\isacomparealign[5]{\ma{isa(#1,\ #2,\ #3,\ #4)\ &=&\ {#5}}}
+\newcommand\isacompare[4]{\ma{isa(#1,\ #2,\ #3)\ =\ {#4}}}
+\newcommand\isacomparealign[4]{\ma{isa(#1,\ #2,\ #3)\ &=&\ {#4}}}
 
 % new special functions
 % Type -> [Type]
