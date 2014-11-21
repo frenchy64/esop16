@@ -2,18 +2,18 @@
 $$
 \begin{altgrammar}
 
-  \methodtypealign {\ \{ methods \Rightarrow \{ \mth{} \Rightarrow [ \overrightarrow{\tatype{p}}, \tatype{r} ] \} \} }
+  \methodtypealign {\ \{ methods \Rightarrow \{ \mth{} \Rightarrow [ \overrightarrow{\classhint{p}}, \classhint{r} ] \} \} }
               {\mth{}}
-              {\overrightarrow{\tatype{p}}}
-              {\tatype{r}}
+              {\overrightarrow{\classhint{p}}}
+              {\classhint{r}}
       \\\\
-  \fieldtypealign {\ \{ fields \Rightarrow \{ \fld{} \Rightarrow \tatype{} \} \} }
+  \fieldtypealign {\ \{ fields \Rightarrow \{ \fld{} \Rightarrow \classhint{} \} \} }
              {\fld{}}
-             {\tatype{}}
+             {\classhint{}}
       \\\\
-  \ctorparamsalign {\ \{ constructors \Rightarrow \{ ctor \Rightarrow \tatype{} \} \} }
+  \ctorparamsalign {\ \{ constructors \Rightarrow \{ ctor \Rightarrow \classhint{} \} \} }
              {\fld{}}
-             {\tatype{}}
+             {\classhint{}}
 
 %{\javaspecial {\JavaField {\class{}}}} &=& {\javatotc {\class{}} {\true{}}}
 %\\
@@ -33,27 +33,13 @@ $$
 %\\\\
 \\\\
 
-\javatotcalign {\pint{}} {b}  {\Integer{}}
+\javatotcalign {\Void{}} {\Nil}
 \\
-\javatotcalign {\Void{}} {b}  {\Nil}
+\javatotcalignnil {\Void{}} {\Nil}
 \\
-\javatotcalign {\pvoid{}} {b}  {\Nil}
+\javatotcalign {\class{}} \class{}
 \\
-\javatotcalign {\pchar{}} {b}  {\Character{}}
-\\
-\javatotcalign {\pdouble{}} {b}  {\Double{}}
-\\
-\javatotcalign {\JavaArray {\pint{}}} {b}  {\Union {\Nil} {\ArrayP {\pint{}}}}
-\\
-\javatotcalign {\JavaArray {\pdouble{}}} {b}  {\Union {\Nil} {\ArrayP {\pdouble{}}}}
-\\
-\javatotcalign {\JavaArray {\class{}}} {\true{}}  {\Union {\Nil} {\ArrayTwo {\Bottom} {\javatotctwo {\class{}} \true{}}}}
-\\
-\javatotcalign {\JavaArray {\class{}}} {\false{}}  {\ArrayTwo {\Bottom} {\javatotctwo {\class{}} \true{}}}
-\\
-\javatotcalign {\class{}} {\true{}}  {\Union {\Nil} {\class{}}}
-\\
-\javatotcalign {\class{}} {\false{}}  \class{}
+\javatotcalignnil {\class{}} {\Union {\Nil} {\class{}}}
 
 \end{altgrammar}
 $$

@@ -182,80 +182,63 @@
                             {\botprop{}}}
                 {\emptyobject{}}}
 
-\infer [T-Try]
-{ \judgementfillcol {\propenv{}} {\hastype {\e{}} {\t{}}}
-                 {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}}
-                 {\object{}}
-\\\\
-  \judgementfillcol {\propenv{}, {\isprop {\class{}} {\x{}}}}
-             {\hastype {\ep{}} {\t{}}}
-                 {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}}
-                 {\object{}}
-\\\\
-  \judgementfillcol {\propenv{}}
-             {\hastype {\e{f}} {\t{f}}}
-                 {\filterset {\thenprop {\prop{f}}} {\elseprop {\prop{f}}}}
-                 {\object{f}}
-}
-{ \judgementfillcol {\propenv{}} {\hastype {\tryexp {\e{}} {\class{}} {\x{}} {\ep{}} {\e{f}}} {\t{}}}
-                 {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}}
-                 {\object{}}
-                 }
-
 \infer [T-NewStatic]
-{ \javatotc {\overrightarrow {\tatype{}}}
-            {\false{}}
-            {\overrightarrow {\t{i}}}
+{ 
+  \overrightarrow{
+\javatotc {\classhint{i}}
+          {\t{i}}
+          }
   \\\\
-  \javatotc {\classhint{}}
-            {\false{}}
+  \javatotc {\classhint{2}}
             {\t{}}
   \\\\
-  \forall i.\ 
+  \overrightarrow{
   \judgementfillcol {\propenv{}}
                     {\hastype {\e{i}} {\t{i}}}
                     {\filterset {\thenprop {\prop{i}}} {\elseprop {\prop{i}}}}
                     {\object{i}}
+                  }
            }
-{ \judgementfillcol {\propenv{}} {\hastype {\newstaticexp {\overrightarrow{\tatype{}}} {\classhint{}} 
+{ \judgementfillcol {\propenv{}} {\hastype {\newstaticexp {\overrightarrow{\classhint{i}}} {\classhint{2}} 
                                                           {\class{}} {\overrightarrow{\e{i}}}} {\t{}}}
              {\filterset {\topprop{}} {\botprop{}}}
              {\emptyobject}
              }
 
 \infer [T-FieldStatic]
-{ \javatotc {\classhint{}} {\false{}} {\class{}}
+{ \javatotc {\classhint{1}} {\class{}}
              \\\\
-  \javatotc {\tatype{}} {\true{}} {\t{}}
+  \javatotcnil {\classhint{2}} {\t{}}
   \\\\
   \judgementfillcol {\propenv{}} {\hastype {\e{}} {\class{}}}
                     {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}}
              {\object{}}
            }
-{ \judgementfillcol {\propenv{}} {\hastype {\fieldstaticexp {\classhint{}} {\tatype{}} {fld} {\e{}}} {\t{}}}
+{ \judgementfillcol {\propenv{}} {\hastype {\fieldstaticexp {\classhint{1}} {\classhint{2}} {fld} {\e{}}} {\t{}}}
              {\filterset {\topprop{}} {\topprop}}
              {\emptyobject{}}}
 
 \infer [T-MethodStatic]
 { 
-             \forall i.\  \javatotc {\tatype{i}} {\false{}} {\t{i}}
+  \overrightarrow{\javatotc {\classhint{i}} {\t{i}}}
              \\\\
-             \javatotc {\classhint{}} {\false{}} {\class{}}
+             \javatotc {\classhint{1}} {\class{}}
              \\\\
-             \javatotc {\tatype{}} {\true{}} {\t{}}
+             \javatotcnil {\classhint{2}} {\t{}}
              \\\\
   \judgementfillcol {\propenv{}} {\hastype {\e{}} {\class{}}}
                     {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}}
              {\object{}}
              \\\\
-             \forall i.\ 
+             \overrightarrow{
   \judgementfillcol {\propenv{}} {\hastype {\e{i}} {\t{i}}}
                     {\filterset {\thenprop {\prop{i}}} {\elseprop {\prop{i}}}}
                     {\object{i}}
+                  }
            }
-{ \judgementfillcol {\propenv{}} {\hastype {\methodstaticexp {\classhint{}} 
-                                                            {\overrightarrow {\tatype{i}}} 
-                                                            {\tatype{i}}
+{ \judgementfillcol {\propenv{}} {\hastype {\methodstaticexp {\classhint{1}} 
+                                                            {\overrightarrow {\classhint{i}}} 
+                                                            {\classhint{2}}
                                                             {\mth{}} {\e{}} {\overrightarrow{\e{i}}}}
                                     {\t{}}}
              {\filterset {\topprop{}} {\topprop{}}}
@@ -281,12 +264,12 @@
              {\objectp}}
 
 \infer [T-DefMulti]
-{ \t{} = {\ArrowOverright {\x{p}} {\t{p}} {\t{m}}
+{ \t{} = {\ArrowOne {\x{p}} {\t{p}} {\t{m}}
                           {\filterset {\thenprop {\prop{m}}}
                                       {\elseprop {\prop{m}}}}
                           {\object{m}}}
                           \\
-  \s{} = {\ArrowOverright {\x{p}} {\t{p}} {\t{r}}
+  \s{} = {\ArrowOne {\x{p}} {\t{p}} {\t{r}}
                           {\filterset {\thenprop {\prop{d}}}
                                       {\elseprop {\prop{d}}}}
                           {\object{d}}}
@@ -307,12 +290,12 @@
 
 \infer [T-DefMethod]
 {
-  \t{m} = {\ArrowOverright {\x{}} {\t{}} {\s{b}}
+  \t{m} = {\ArrowOne {\x{}} {\t{}} {\s{b}}
                                     {\filterset {\thenprop {\prop{m}}}
                                                 {\elseprop {\prop{m}}}}
                                     {\object{m}}}
 \\
-\t{d} = {\ArrowOverright {\x{}} {\t{}} {\t{r}}
+\t{d} = {\ArrowOne {\x{}} {\t{}} {\t{r}}
                                     {\filterset {\thenprop {\prop{d}}}
                                                 {\elseprop {\prop{d}}}}
                                     {\object{d}}}
@@ -328,18 +311,19 @@
                        {\elseprop {\prop{v}}}}
            {\object{v}}
 \\\\
-\isacompare {\t{v}} {\object{v}} {\t{r}}
+\isacompare {\t{v}} {\x{}} {\t{r}}
              {\filterset {\thenprop {\prop{}}}
                          {\elseprop {\prop{}}}}
 \\\\
-\judgementfillcol {\propenv{}, \overrightarrow{\isprop{\x{}} {\t{}}}, {\thenprop {\prop{}}}}
+\judgementfillcol {\propenv{}, {\isprop{\t{}} {\x{}}}, {\thenprop {\prop{}}}}
            {\hastype {\e{b}} {\s{b}}}
            {\filterset {\thenprop {\prop{m}}}
                        {\elseprop {\prop{m}}}}
            {\object{m}}
 }
-{ \judgementfillcol {\propenv{}} {\hastype {\extendmultiexp {\e{m}} {\e{v}} {\overrightarrow {\x{}}} {\e{b}}}
-                                    {\MultiFntype {\t{m}} {\t{d}}}}
+{ \judgementfillcol {\propenv{}} {\hastype {\extendmultiexp {\e{m}} {\e{v}} 
+                                                            {\abs {\x{}} {\t{}} {\e{b}}}}
+                                           {\MultiFntype {\t{m}} {\t{d}}}}
              {\filterset {\topprop{}} {\botprop{}}}
              {\emptyobject}
 }
@@ -422,22 +406,6 @@
   {\HMapc {\mandatoryset {{\overrightarrow{({k_{v}}\ {\t{v}})}}}}}}
              {\filterset {\topprop{}} {\botprop{}}}
              {\emptyobject}}
-
-\infer [T-Map]
-{ 
-\judgement {\propenv{}} {\hastype {\overrightarrow{{\e{k}}}} {\overrightarrow {{\t{k}}}}}
-             {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}}
-             {\object}
-\\\\
-\judgement {\propenv{}} {\hastype {\overrightarrow{{\e{v}}}} {\overrightarrow {{\t{v}}}}}
-             {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}}
-             {\object}}
-{ \judgement {\propenv{}} {\hastype {\{\overrightarrow{{\e{k}}\ {\e{v}}}\}}
-                                    {\Map {\Unionsplice {\overrightarrow{{t_{k}}}}}
-                                          {\Unionsplice {\overrightarrow{{t_{v}}}}}}}
-             {\filterset {\topprop{}} {\botprop{}}}
-             {\emptyobject}}
-
 
 \infer [T-InstanceOf]
 { \judgement {\propenv{}} 

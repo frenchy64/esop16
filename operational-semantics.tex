@@ -101,12 +101,12 @@
 \infer [B-Field]
 { \opsem {\openv{}}
          {\e{}} 
-         {\classvalue{\classhint{}} {\classfieldpair{fld} {\v{}}}}
+         {\classvalue{\classhint{1}} {\classfieldpair{fld} {\v{}}}}
          \\\\
-         \getfieldjava{\classhint{}} {\classvalue{\classhint{}} {\classfieldpair{fld} {\v{}}}} {fld} {\tatype{}} {\v{}}
+         \getfieldjava{\classhint{1}} {\classvalue{\classhint{1}} {\classfieldpair{fld} {\v{}}}} {fld} {\classhint{2}} {\v{}}
        }
 { \opsem {\openv{}}
-         {\fieldstaticexp {\classhint{}} {\tatype{}} {fld} {\e{}}}
+         {\fieldstaticexp {\classhint{1}} {\classhint{2}} {fld} {\e{}}}
          {\v{}}
    }
 
@@ -115,41 +115,43 @@
          {\e{m}}
          {\v{m}}
   \\\\
-  \forall a.\ 
+  \overrightarrow{
   \opsem {\openv{}}
          {\e{a}}
          {\v{a}}
+       }
   \\\\
-  \invokejavamethod {\classhint{}} {\v{m}} {mth}
-                    {\overrightarrow{\tatype{a}}} {\overrightarrow{\v{a}}}
-                    {\tatype{r}}
+  \invokejavamethod {\classhint{1}} {\v{m}} {mth}
+                    {\overrightarrow{\classhint{a}}} {\overrightarrow{\v{a}}}
+                    {\classhint{2}}
                     {\v{}}
 }
 {\opsem {\openv{}}
-        {\methodstaticexp {\classhint{}} {\overrightarrow{\tatype{a}}} {\tatype{r}} {mth} {\e{m}} {\overrightarrow{\e{}}}}
+        {\methodstaticexp {\classhint{1}} {\overrightarrow{\classhint{a}}} {\classhint{2}} {mth} {\e{m}} {\overrightarrow{\e{}}}}
         {\v{}}
       }
 
 \infer [B-New]
-{ \forall a.\ 
+{ \overrightarrow{
   \opsem {\openv{}}
-         {\e{a}}
-         {\v{a}}
+         {\e{i}}
+         {\v{i}}
+       }
          \\\\
-         \newjava {\classhint}
-                  {\overrightarrow{\tatype{}}}
-                  {\overrightarrow{\e{i}}}
+         \newjava {\classhint{1}}
+                  {\overrightarrow{\classhint{i}}}
+                  {\overrightarrow{\v{i}}}
                   {\v{}}
        }
 { \opsem {\openv{}}
-         {\newstaticexp {\overrightarrow{\tatype{}}} {\classhint{}} 
+         {\newstaticexp {\overrightarrow{\classhint{i}}} {\classhint{1}} 
                         {\class{}} {\overrightarrow{\e{i}}}}
          {\v{}}}
 
 \infer [B-Map]
-{ \forall k.\ \opsem {\openv{}} {\e{k}} {\v{k}}
+{ \overrightarrow {\opsem {\openv{}} {\e{k}} {\v{k}}}
   \\\\
-  \forall v.\ \opsem {\openv{}} {\e{v}} {\v{v}}
+  \overrightarrow {\opsem {\openv{}} {\e{v}} {\v{v}}}
 }
 {\opsem {\openv{}}
         {\curlymap {\overrightarrow{{e_{k}}\ {\e{v}}}}}
@@ -166,7 +168,7 @@
          {\v{}}
 }
 
-\infer [B-Multi]
+\infer [B-DefMulti]
 { \opsem {\openv{}} {\e{d}} {\v{d}}
 }
 {\opsem {\openv{}}
@@ -175,7 +177,7 @@
         {\multi {\v{d}} {\emptydisptable}}
 }
 
-\infer [B-ExtendMulti]
+\infer [B-DefMethod]
 { \opsem {\openv{}}
          {\e{m}}
          {\multi {\v{d}} {\disptable{}}}
@@ -184,15 +186,39 @@
          {\e{v}}
          {\v{v}}
          \\\\
+  \opsem {\openv{}}
+         {\e{f}}
+         {\v{f}}
+         \\\\
          \disptablep{} = {\extenddisptable {\disptable{}} 
                                 {\v{v}}
-                              {\closure {\openv{}} {\abs {\x{}} {\t{}} {\e{b}}}}}
+                                {\v{f}}}
 }
 {\opsem {\openv{}}
-        {\extendmultiexp {\e{m}} {\e{v}} {\x{}}
-                         {\e{b}}}
+        {\extendmultiexp {\e{m}} {\e{v}} {\e{f}}}
         {\multi {\v{d}} {\disptablep{}}}
       }
+
+\infer [B-MethodRefl]
+{}
+{\opsem {\openv{}} {\methodexp {mth} {\e{}} {\overrightarrow{\e{}}}}
+        {refl\ error}}
+
+\infer [B-FieldRefl]
+{}
+{\opsem {\openv{}} {\fieldexp {fld} {\e{}}}
+        {refl\ error}}
+
+\infer [B-NewRefl]
+{}
+{\opsem {\openv{}} {\fieldexp {fld} {\e{}}}
+        {refl\ error}}
+
+\infer [B-Throw]
+{ \opsem {\openv{}} {\e{}} {\v{}}}
+{\opsem {\openv{}} {\throwexp {\e{}}}
+        {error_{v}}}
+
 \end{mathpar}
 \caption{Operational Semantics}
 \end{figure*}

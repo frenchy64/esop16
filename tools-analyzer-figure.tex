@@ -3,14 +3,14 @@
 \begin{mathpar}
 
 \infer [TA-Local]
-{ \intaenv {\taenv{}} {\x{}} {\tatypeunknown{}}
+{ \intaenv {\taenv{}} {\x{}} {\tatype{}}
 }
-{ \tajudgement {\taenv{}} {\hastype {\x{}} {\tatypeunknown{}}}
+{ \tajudgement {\taenv{}} {\hastype {\x{}} {\tatype{}}}
 }
 
 \infer [TA-LocalHint]
 {}
-{ \tajudgement {\taenv{}} {\hastype {\hinted {\tatype{}} {\x{}}} {\tatype{}}}
+{ \tajudgement {\taenv{}} {\hastype {\hinted {\classhint{}} {\x{}}} {\classhint{}}}
 }
 
 \infer [TA-Nil]
@@ -31,8 +31,8 @@
 \infer [TA-NewStatic]
 {}
 { \tajudgement {\taenv{}}
-  {\hastype {\newstaticexp {\overrightarrow {\tatype{i}}} {\classhint{}} {\class{}} {\overrightarrow {\e{}}}}
-                         {\classhint{}}}
+  {\hastype {\newstaticexp {\overrightarrow {\classhint{i}}} {\classhint{1}} {\class{}} {\overrightarrow {\e{}}}}
+                           {\classhint{1}}}
 }
 
 \infer [TA-NewRefl]
@@ -51,27 +51,27 @@
 
 \infer [TA-LetHint]
 { \tajudgement {\taenv{}, {\hastype {\x{}} {\classhint{}}}}
-               {\hastype {\e{}} {\tatypeunknown{}}}
+               {\hastype {\e{}} {\tatype{}}}
 }
 { \tajudgement {\taenv{}}
-               {\hastype {\letexp {\hinted{} {\classhint{}} {\x{}}}
+      {\hastype {\letexp {\hinted{\classhint{}}{\x{}}}
                                   {\e{1}}
                                   {\e{}}}
-                         {\tatypeunknown{}}}
+                         {\tatype{}}}
 }
 
 \infer [TA-Let]
 { \tajudgement {\taenv{}} 
-               {\hastype {\e{1}} {\tatypeunknown{1}}}
+               {\hastype {\e{1}} {\tatype{1}}}
                \\\\
-  \tajudgement {\taenv{}, {\hastype {\x{}} {\tatypeunknown{1}}}}
-               {\hastype {\e{}} {\tatypeunknown{}}}
+  \tajudgement {\taenv{}, {\hastype {\x{}} {\tatype{1}}}}
+               {\hastype {\e{}} {\tatype{}}}
 }
 { \tajudgement {\taenv{}}
                {\hastype {\letexp {\x{}}
                                   {\e{1}}
                                   {\e{}}}
-                         {\tatypeunknown{}}}
+                         {\tatype{}}}
 }
 
 \infer [TA-FieldRefl]
@@ -84,8 +84,8 @@
 \infer [TA-FieldStatic]
 {}
 { \tajudgement {\taenv{}}
-               {\hastype {\fieldstaticexp {\classhint{}} {\tatype{}} {fld} {\e{}}}
-                         {\tatype{}}}
+               {\hastype {\fieldstaticexp {\classhint{1}} {\classhint{}} {fld} {\e{}}}
+                         {\classhint{}}}
   }
 
 \infer [TA-MethodRefl]
@@ -98,21 +98,21 @@
 \infer [TA-MethodStatic]
 {}
 { \tajudgement {\taenv{}}
-               {\hastype {\methodstaticexp {\classhint{}} 
-                                           {\overrightarrow{\tatype{i}}} 
-                                           {\tatype{}} 
+               {\hastype {\methodstaticexp {\classhint{1}} 
+                                           {\overrightarrow{\classhint{i}}} 
+                                           {\classhint{}} 
                                          {\mth{}} {\e{}} {\overrightarrow {\e{i}}}}
-                         {\tatype{}}}
+                         {\classhint{}}}
   }
 
-\infer [TA-Invoke]
+\infer [TA-App]
 {}
 { \tajudgement {\taenv}
                {\hastype {\appexp {\e{}} {\overrightarrow {\e{i}}}}
                          {\unknownhint{}}}
                        }
 
-\infer [TA-InvokeLocal]
+\infer [TA-AppLocal]
 { \intaenv {\taenv{}} {\x{}} {\tatype{}}
 }
 { \tajudgement {\taenv}
@@ -121,14 +121,38 @@
                        }
 
 \infer [TA-Do]
-{ \tajudgement {\taenv{}} {\hastype {\e{}} {\tatypeunknown{}}}
+{ \tajudgement {\taenv{}} {\hastype {\e{}} {\tatype{}}}
 }
-{ \tajudgement {\taenv{}} {\hastype {\doexp {\e1} {\e{}}} {\tatypeunknown{}}}
+{ \tajudgement {\taenv{}} {\hastype {\doexp {\e1} {\e{}}} {\tatype{}}}
 }
 
-%\infer [TA-Try]
-%{ \tajudgement {\taenv{}}
-%{ \tryexp {\e{}} {\classhint{}} {\x{}} {\e{c}} {\e{f}}}
+\infer [TA-Throw]
+{}
+{ \tajudgement {\taenv{}} {\hastype {\throwexp {\e{}}} {\unknownhint{}}}}
+
+\infer [TA-DefMulti]
+{}
+{ \tajudgement {\taenv{}} {\hastype {\createmultiexp {\t{}} {\e{}}} {\unknownhint{}}}}
+
+\infer [TA-DefMethod]
+{}
+{ \tajudgement {\taenv{}} {\hastype {\extendmultiexp {\e{}} {\e{}} {\e{}}} {\unknownhint{}}}}
+
+\infer [TA-If]
+{ \tajudgement {\taenv{}} {\hastype {\e{2}} {\classhint{}}}
+  \\\\
+  \tajudgement {\taenv{}} {\hastype {\e{3}} {\classhint{}}}
+}
+{ \tajudgement {\taenv{}} {\hastype {\ifexp {\e{1}} {\e{2}} {\e{3}}} {\classhint{}}}}
+
+\infer [TA-IfUnknown]
+{}
+{ \tajudgement {\taenv{}} {\hastype {\ifexp {\e{1}} {\e{2}} {\e{3}}} {\unknownhint{}}}}
+
+\infer [TA-Isa]
+{}
+{ \tajudgement {\taenv{}} {\hastype {\isaapp {\e{}} {\e{}}} {\Boolean{}}}}
+
 
 \end{mathpar}
 \caption{tools.analyzer Type Hints}
@@ -173,9 +197,11 @@
 }
 
 \infer [R-NewRefl]
-{ \rewrite {\taenv{}}
-           {\overrightarrow {\e{i}}}
-           {\overrightarrow {\e{j}}}
+{ \overrightarrow{
+  \rewrite {\taenv{}}
+           {\e{i}}
+           {\e{j}}
+         }
          }
 { \rewrite {\taenv{}}
            {\newexp {\class{}} {\overrightarrow {\e{i}}}}
@@ -183,30 +209,32 @@
 }
 
 \infer [R-NewElimRefl]
-{ \class{}\ is\ valid\ class\ represented\ {\tatype{t}}
+{ \overrightarrow{
+    \rewrite {\taenv{}}
+           {\e{i}}
+           {\e{j}}}
   \\\\
-  \rewrite {\taenv{}}
-           {\overrightarrow {\e{i}}}
-           {\overrightarrow {\e{j}}}
-  \\\\
+  \overrightarrow{
   \tajudgement {\taenv{}}
-               {\hastype {\overrightarrow {\e{j}}} {\overrightarrow {\tatype{j}}}}
+               {\hastype {\e{j}} {\classhint{j}}}
+             }
                \\\\
-  \methodtype {\ctlookup{\classhint{}}} {\mth{}} {\overrightarrow{\tatype{i}}} {\tatype{}}
+  \methodtype {\ctlookup{\classhint{}}} {\mth{}} {\overrightarrow{\classhint{j}}} {\classhint{}}
              }
 { \rewrite {\taenv{}}
            {\newexp {\class{}} {\overrightarrow {\e{i}}}}
-           {\newstaticexp {\overrightarrow {\tatype{}}} {\tatype{t}} {\class{}} {\overrightarrow {\e{j}}}}
+           {\newstaticexp {\overrightarrow {\classhint{j}}} {\classhint{}} {\class{}} {\overrightarrow {\e{j}}}}
 }
 
 \infer [R-NewStatic]
-{ \rewrite {\taenv{}}
-           {\overrightarrow {\e{i}}}
-           {\overrightarrow {\e{j}}}
+{ \overrightarrow
+  {\rewrite {\taenv{}}
+           {\e{i}}
+           {\e{j}}}
          }
 { \rewrite {\taenv{}}
-           {\newstaticexp {\overrightarrow {\tatype{p}}} {\tatype{}} {\class{}} {\overrightarrow {\e{i}}}}
-           {\newstaticexp {\overrightarrow {\tatype{p}}} {\tatype{}} {\class{}} {\overrightarrow {\e{j}}}}
+           {\newstaticexp {\overrightarrow {\classhint{p}}} {\classhint{}} {\class{}} {\overrightarrow {\e{i}}}}
+           {\newstaticexp {\overrightarrow {\classhint{p}}} {\classhint{}} {\class{}} {\overrightarrow {\e{j}}}}
 }
 
 \infer [R-Abs]
@@ -224,9 +252,9 @@
            {\e{1}}
            {\ep{1}}
            \\
-  \tajudgement {\taenv{}} {\hastype {\ep{1}} {\tatypeunknown{}}}
+  \tajudgement {\taenv{}} {\hastype {\ep{1}} {\tatype{}}}
            \\\\
-  \rewrite {\taenv{}, {\hastype {\x{}} {\tatypeunknown{}}}}
+  \rewrite {\taenv{}, {\hastype {\x{}} {\tatype{}}}}
            {\e{}}
            {\ep{}}
          }
@@ -273,13 +301,13 @@
            {\ep{}}
            \\
   \tajudgement {\taenv{}}
-               {\hastype {\ep{}} {\classhint{}}}
+               {\hastype {\ep{}} {\classhint{1}}}
                \\\\
-               \fieldtype {\ctlookup {\classhint{}}} {\fld{}} {\tatype{}}
+               \fieldtype {\ctlookup {\classhint{1}}} {\fld{}} {\classhint{2}}
          }
 { \rewrite {\taenv{}}
            {\fieldexp {\fld{}} {\e{}}}
-           {\fieldstaticexp {\classhint{}} {\tatype{}} {fld} {\ep{}}}
+           {\fieldstaticexp {\classhint{1}} {\classhint{2}} {fld} {\ep{}}}
          }
 
 \infer [R-FieldStatic]
@@ -288,8 +316,8 @@
            {\ep{}}
          }
 { \rewrite {\taenv{}}
-           {\fieldstaticexp {\classhint{}} {\tatype{}} {fld} {\e{}}}
-           {\fieldstaticexp {\classhint{}} {\tatype{}} {fld} {\ep{}}}
+           {\fieldstaticexp {\classhint{1}} {\classhint{2}} {fld} {\e{}}}
+           {\fieldstaticexp {\classhint{1}} {\classhint{2}} {fld} {\ep{}}}
          }
 
 \infer [R-MethodRefl]
@@ -297,9 +325,11 @@
            {\e{}}
            {\ep{}}
            \\
+           \overrightarrow
+           {
   \rewrite {\taenv{}}
-           {\overrightarrow {\e{i}}}
-           {\overrightarrow {\e{j}}}
+           {\e{i}}
+           {\e{j}}}
          }
 { \rewrite {\taenv{}}
            {\methodexp {\mth} {\e{}} {\overrightarrow {\e{i}}}}
@@ -314,18 +344,21 @@
   \tajudgement {\taenv{}}
                {\hastype {\ep{}} {\classhint{}}}
            \\\\
+           \overrightarrow{
   \rewrite {\taenv{}}
-           {\overrightarrow {\e{i}}}
-           {\overrightarrow {\e{j}}}
+           {\e{i}}
+           {\e{j}}}
            \\
+           \overrightarrow{
   \tajudgement {\taenv{}}
-               {\hastype {\overrightarrow {\e{i}}} {\overrightarrow {\tatype{i}}}}
+               {\hastype {\e{j}} {\classhint{j}}}
+             }
                \\\\
-  \methodtype {\ctlookup{\classhint{}}} {\mth{}} {\overrightarrow{\tatype{p}}} {\tatype{}}
+  \methodtype {\ctlookup{\classhint{}}} {\mth{}} {\overrightarrow{\classhint{1}}} {\classhint{2}}
          }
 { \rewrite {\taenv{}}
            {\methodexp {\mth} {\e{}} {\overrightarrow {\e{i}}}}
-           {\methodstaticexp {\classhint{}} {\overrightarrow {\tatype{p}}} {\tatype{}} {\mth{}} {\ep{}} {\overrightarrow {\e{j}}}}
+           {\methodstaticexp {\classhint{}} {\overrightarrow {\classhint{1}}} {\classhint{2}} {\mth{}} {\ep{}} {\overrightarrow {\e{j}}}}
   }
 
 \infer [R-MethodStatic]
@@ -338,31 +371,24 @@
            {\overrightarrow {\e{j}}}
          }
 { \rewrite {\taenv{}}
-           {\methodstaticexp {\classhint{}} {\overrightarrow {\tatype{p}}} {\tatype{}} {\mth{}} {\e{}} {\overrightarrow {\e{i}}}}
-           {\methodstaticexp {\classhint{}} {\overrightarrow {\tatype{p}}} {\tatype{}} {\mth{}} {\ep{}} {\overrightarrow {\e{j}}}}
+           {\methodstaticexp {\classhint{}} {\overrightarrow {\classhint{1}}} {\classhint{2}} {\mth{}} {\e{}} {\overrightarrow {\e{i}}}}
+           {\methodstaticexp {\classhint{}} {\overrightarrow {\classhint{1}}} {\classhint{2}} {\mth{}} {\ep{}} {\overrightarrow {\e{j}}}}
   }
 
-\infer [R-Invoke]
+\infer [R-App]
 { \rewrite {\taenv{}} {\e{}} {\ep{}}
-  \\\\
-  \rewrite {\taenv{}} {\overrightarrow {\e{i}}} {\overrightarrow {\e{j}}}
+  \\\\\overrightarrow {
+  \rewrite {\taenv{}} {\e{i}} {\e{j}}
+}
 }
 { \rewrite {\taenv{}}
            {\appexp {\e{}} {\overrightarrow {\e{i}}}}
            {\appexp {\ep{}} {\overrightarrow {\e{j}}}}
          }
 
-\infer [R-Try]
-{ \rewrite {\taenv{}} {\e{}} {\ep{}}
-  \\
-  \rewrite {\taenvp{},{\hastype {\x{}} {\classhint{}}}} {\e{c}} {\ep{c}}
-  \\
-  \rewrite {\taenvp{}} {\e{f}} {\ep{f}}
-}
-{ \rewrite {\taenv{}}
-           {\tryexp {\e{}} {\classhint{}} {\x{}} {\e{c}} {\e{f}}}
-           {\tryexp {\ep{}} {\classhint{}} {\x{}} {\ep{c}} {\ep{f}}}
-         }
+\infer [R-Throw]
+{ \rewrite {\taenv{}} {\e{}} {\ep{}}}
+{ \rewrite {\taenv{}} {\throwexp {\e{}}} {\throwexp {\ep{}}}}
 
 \end{mathpar}
 \caption{Java Reflection Resolution}

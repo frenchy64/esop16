@@ -29,6 +29,9 @@
 \newmeta\e{e}
 \newmeta\ep{e'}
 \newmeta\expd{d}
+\newmeta\ReflectiveExp{R}
+\newmeta\NonReflectiveExp{E}
+\newmeta\MultimethodExp{M}
 
 % we write a macro for every bit of abstract syntax.  That way they
 % will all look the same!
@@ -70,7 +73,7 @@
 \newcommand\All[2]{(\ma{\Allliteral\ [#1]\ #2})}
 \newcommand\TFn[2]{(\ma{\TFnliteral\ [#1]\ #2})}
 \newcommand\Value[1]{(\ma{\Valueliteral\ #1})}
-\newbfop\Top{Any}
+\newbfop\Top{$\top$}
 \newbfop\Bottom{Nothing}
 \newbfop\Keyword{Keyword}
 \newbfop\Symbol{Symbol}
@@ -120,7 +123,8 @@
 \newmeta\createmultiliteral{new\_multi}
 \newmeta\extendmultiliteral{extend\_multi}
 \newmeta\defmethodliteral{{\bf defmethod}}
-\newcommand\abs[3]{\ma{\l #1^{#2}. #3}}
+\newcommand\abs[3]{\ma{\l #1^{#2} . #3}}
+\newcommand\absoverright[3]{\ma{\l \overrightarrow{#1^{#2}} . #3}}
 \newcommand\curlymap[1]{\ma{\{#1\}}}
 \newcommand\comb[2]{\ma{(#1\ #2)}}
 \newcommand\tryexp[5]{(\ma{\tryliteral{}\ #1\ (\ma{\catchliteral{}\ #2\ #3\ #4})\ (\ma{\finallyliteral{}\ #5})})}
@@ -140,7 +144,7 @@
 \newcommand\createmultiexp[2]{(\ma{\defmultiliteral{}\ #1\ #2})}
 \newcommand\defmultiexp[2]{(\ma{\defmultiliteral{}\ #1\ #2})}
 \newcommand\defmethodexp[4]{(\ma{\defmethodliteral{}\ #1\ #2\ [#3]\ #4})}
-\newcommand\extendmultiexp[4]{(\ma{\defmethodliteral{}\ #1\ #2\ [#3]\ #4})}
+\newcommand\extendmultiexp[3]{(\ma{\defmethodliteral{}\ #1\ #2\ #3})}
 \newmeta\defliteral{{\bf def}}
 \newcommand\defexp[2]{(\ma{\defliteral{}\ #1\ #2})}
 
@@ -181,9 +185,9 @@
 \newmeta\ctmethod{m}
 \newmeta\ctfield{f}
 \newmeta\ctctor{c}
-\newcommand\ctentry[0]{\{ methods \Rightarrow \{ \overrightarrow{\mth{} \Rightarrow [\overrightarrow{\tatype{}}, \tatype{}] } \}, \ 
-                          fields \Rightarrow \{\overrightarrow{\fld{} \Rightarrow \tatype{}} \}, \ 
-                          constructors \Rightarrow \{ [\overrightarrow{\tatype{}}] \}
+\newcommand\ctentry[0]{\{ methods \Rightarrow \{ \overrightarrow{\mth{} \Rightarrow [\overrightarrow{\classhint{}}, \classhint{}] } \}, \ 
+                          fields \Rightarrow \{\overrightarrow{\fld{} \Rightarrow \classhint{}} \}, \ 
+                          constructors \Rightarrow \{ [\overrightarrow{\classhint{}}] \}
                           \}}
 
 % typing judgements
@@ -232,7 +236,7 @@
 \newmeta\tatypeunknown{\gamma^{?}}
 \newmeta\tatype{\gamma}
 \newmeta\tatypep{\gamma'}
-\newmeta\classhint{C^h}
+\newmeta\classhint{C}
 \newmeta\primitivehint{p}
 \newmeta\unknownhint{\mathbbm{?}}
 \newcommand\hinted[2]{\ma{\ \widehat{}\ #1\ #2}}
@@ -253,24 +257,30 @@
 \newcommand\getdispatchfn[2]{\ma{get\_dispatch\_fn(#1)_{#2}}}
 \newcommand\inmmenv[3]{\ma{#1 (#2) = #3}}
 
+\newcommand\metafnfont[1]{{\bf #1}}
+
 % isa? special functions
-\newcommand\isacompare[4]{\ma{isa(#1,\ #2,\ #3)\ =\ {#4}}}
-\newcommand\isacomparealign[4]{\ma{isa(#1,\ #2,\ #3)\ &=&\ {#4}}}
+\newcommand\isacompareliteral[0]{\metafnfont{IsA}}
+\newcommand\isacompare[4]{\ma{\isacompareliteral(#1,\ #2,\ #3)\ =\ {#4}}}
+\newcommand\isacomparealign[4]{\ma{\isacompareliteral(#1,\ #2,\ #3)\ &=&\ {#4}}}
 
 % new special functions
 % Type -> [Type]
-\newcommand\ctorparams[3]{\ma{constructor(#1,\ #2)\ =\ #3}}
-\newcommand\ctorparamsalign[3]{\ma{constructor(#1,\ #2)\ &=&\ #3}}
+\newcommand\ctorparamsliteral[0]{\metafnfont{Constructor}}
+\newcommand\ctorparams[3]{\ma{\ctorparamsliteral(#1,\ #2)\ =\ #3}}
+\newcommand\ctorparamsalign[3]{\ma{\ctorparamsliteral(#1,\ #2)\ &=&\ #3}}
 
 % field special functions
 % Type Field -> Type
-\newcommand\fieldtype[3]{\ma{field(#1,\ #2)\ =\ #3}}
-\newcommand\fieldtypealign[3]{\ma{field(#1,\ #2)\ &=&\ #3}}
+\newcommand\fieldtypeliteral[0]{\metafnfont{Field}}
+\newcommand\fieldtype[3]{\ma{\fieldtypeliteral(#1,\ #2)\ =\ #3}}
+\newcommand\fieldtypealign[3]{\ma{\fieldtypeliteral(#1,\ #2)\ &=&\ #3}}
 
 % method special functions
 % Type [Type] Method -> [Type]
-\newcommand\methodtype[4]{\ma{method(#1,\ #2)\ =\ [#3, #4]}}
-\newcommand\methodtypealign[4]{\ma{method(#1,\ #2)\ &=&\ [#3, #4]}}
+\newcommand\methodtypeliteral[0]{\metafnfont{Method}}
+\newcommand\methodtype[4]{\ma{\methodtypeliteral(#1,\ #2)\ =\ [#3, #4]}}
+\newcommand\methodtypealign[4]{\ma{\methodtypeliteral(#1,\ #2)\ &=&\ [#3, #4]}}
 
 % java subtyping
 \newcommand\assignable[2]{\ma{assignable(#1, #2)}}
@@ -311,14 +321,11 @@
 \newcommand\replacefor[3]{\ma{#1 [#2 / #3]}}
 
 % Java type conversion functions
-\newcommand\javaspecial[1]{{\bf SpecialToTC}(\ma{#1})}
-\newcommand\javatotctwo[2]{{\bf JavaToTC}(\ma{#1, #2})}
-\newcommand\javatotc[3]{{\bf JavaToTC}(\ma{#1, #2})\ =\ #3}
-\newcommand\javatotcalign[3]{{\bf JavaToTC}(\ma{#1,\ #2})\ &=&\ #3}
-\newcommand\JavaField[1]{{\bf Field}(\ma{#1})}
-\newcommand\JavaMethod[2]{{\bf Method}(\ma{#1, #2})}
-\newcommand\JavaCtor[2]{{\bf Ctor}(\ma{#1, #2})}
-\newcommand\JavaArray[1]{#1[]}
+\newcommand\javatotcliteral[0]{\metafnfont{JavaToTC}}
+\newcommand\javatotc[2]{\javatotcliteral(\ma{#1})\ =\ #2}
+\newcommand\javatotcnil[2]{\javatotcliteral_{\nil{}}(\ma{#1})\ =\ #2}
+\newcommand\javatotcalign[2]{\javatotcliteral(\ma{#1})\ &=&\ #2}
+\newcommand\javatotcalignnil[2]{\javatotcliteral_{\nil{}}(\ma{#1})\ &=&\ #2}
 
 % # Runtime semantics
 % ## Runtime class syntax

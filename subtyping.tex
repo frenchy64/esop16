@@ -54,16 +54,21 @@
               {\filterset {\thenprop {\prop{}}}
                           {\elseprop {\prop{}}}}
               {\object{}}}
-    {\ArrowOne {\xp{}} {\sp{}}
+    {\ArrowOne {\x{}} {\sp{}}
               {\tp{}}
               {\filterset {\thenprop {\propp{}}}
                           {\elseprop {\propp{}}}}
               {\objectp{}}}}}
 
 \infer [S-Instance]
-{ \class{},\ \classp{}\ not\ arrays
-\\ \assignable {\class{}} {\classp{}}}
+{ \assignable {\class{}} {\classp{}}}
 { \inpropenv {} {\issubtype {\Instance {\class{}}} {\Instance {\classp{}}}} }
+
+\infer [S-PMulti]
+{ \inpropenv {} {\issubtype {\s{}} {\sp{}}}
+  \\
+  \inpropenv {} {\issubtype {\t{}} {\tp{}}}}
+{ \inpropenv {} {\issubtype {\MultiFntype {\s{}} {\t{}}}{\MultiFntype {\sp{}} {\tp{}}}}}
 
 \infer [S-PMultiFn]
 { \inpropenv {} {\issubtype {\sp{}} {\s{}}}
@@ -76,12 +81,12 @@
   \\
   \inpropenv {\object{}} {\objectp{}}
 }
-{ \inpropenv {} {\issubtype {\MultiFntype {\ArrowOverright {\x{}} {\s{}} {\t{}}
+{ \inpropenv {} {\issubtype {\MultiFntype {\ArrowOne {\x{}} {\s{}} {\t{}}
                                             {\filterset {\thenprop {\prop{}}}
                                                         {\elseprop {\prop{}}}}
                                             {\object{}}}
                                           {\s{d}}}
-                            {\ArrowOverright {\xp{}} {\sp{}} {\tp{}}
+                            {\ArrowOne {\xp{}} {\sp{}} {\tp{}}
                                             {\filterset {\thenprop {\propp{}}}
                                                         {\elseprop {\propp{}}}}
                                                 {\objectp{}}}}

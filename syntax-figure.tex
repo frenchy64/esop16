@@ -2,42 +2,57 @@
 $$
 \begin{altgrammar}
   v &::=&
-                      \x{}
-                      \alt
-                      \hinted{\tatype{}} {\x{}}
-                      \alt \true{} \alt \false{} \alt \nil{}
-                      \alt \class{}
+                      \true{} \alt \false{} \alt \nil{}
+                      \alt \class{} \alt \classvaluemeta{}
+                      \alt \k{}
                 &\mbox{Values} \\
-  \expd{}, \e{} &::=& v \alt
-                      {\comb {\e{}} {\e{}}} \alt {\abs {\x{}} {\t{}} {\e{}}}
+  \expd{}, \e{} &::=& \x{}
                       \alt
-                      {\tryexp {\e{}} {\class} {\x} {\e{}} {\e{}}}
+                      \hinted{\classhint{}} {\x{}}
+                      \alt
+                      \v{} \alt
+                      {\comb {\e{}} {\e{}}} \alt {\abs {\x{}} {\t{}} {\e{}}}
                       \alt 
                       {\ifexp {\e{}} {\e{}} {\e{}}}
-                      \\ &\alt& 
+                      \alt 
                       {\doexp {\e{}} {\e{}}}
+                      \alt {\curlymap {\overrightarrow{\e{}\ \e{}}}}
+                      \\ &\alt& 
                       %{\fnexp {\overrightarrow{\hastype {\x{}} {\t{}}}} {\e{}}}
-                      \alt
                       {\letexp {\x{}} {\e{}} {\e{}}}
                       \alt
                       {\letexp {\hinted {\classhint{}} {\x{}}} {\e{}} {\e{}}}
-                      \\ &\alt& 
+                      \alt {\throwexp {\e{}}}
+                      \alt {\isaapp {\e{}} {\e{}}}
+                      \alt {\ReflectiveExp{}}
+                      \alt {\NonReflectiveExp{}}
+                      \alt {\MultimethodExp{}}
+                &\mbox{Expressions} \\
+  \ReflectiveExp{}     &::=&
+                      {\fieldstaticexp {\classhint{}} {\classhint{}} {fld} {\e{}}}
+                      \alt {\methodstaticexp {\classhint{}} {\overrightarrow{\classhint{}}} {\classhint{}} {mth} {\e{}} {\overrightarrow{\e{}}}}
+                      \alt {\newstaticexp {\overrightarrow {\classhint{}}} {\classhint{}} {\class{}} {\overrightarrow{\e{}}}}
+                &\mbox{Non-Reflective Java Interop} \\
+  \NonReflectiveExp{}     &::=&
                       {\fieldexp {fld} {\e{}}}
                       \alt {\methodexp {mth} {\e{}} {\overrightarrow{\e{}}}}
                       \alt {\newexp {\class{}} {\overrightarrow{\e{}}}}
-                      \\ &\alt& 
-                      {\fieldstaticexp {\classhint{}} {\tatype{}} {fld} {\e{}}}
-                      \alt {\methodstaticexp {\classhint{}} {\overrightarrow{\tatype{}}} {\tatype{}} {mth} {\e{}} {\overrightarrow{\e{}}}}
-                      \alt {\newstaticexp {\overrightarrow {\tatype{}}} {\classhint{}} {\class{}} {\overrightarrow{\e{}}}}
-                &\mbox{Expressions} \\
+                &\mbox{Reflective Java Interop} \\
+  \MultimethodExp{}     &::=& {\createmultiexp {\t{}} {\e{}}}
+                      \alt
+                              {\extendmultiexp {\e{}} {\e{}} {\e{}}}
+                &\mbox{Immutable First-Class Multimethods} \\
+                      \\\\
   \s{}, \t{}    &::=& \Top \alt (\class{}\ \overrightarrow{\t{}})
                       \alt \class\ 
-                      \alt \protocol\ 
                       \alt {\Instance {\class}}
-                      \alt {\Satisfies {\protocol}}
+                      \alt
+                      {\Value \k{}} 
+                      \alt {\Nil{}}
+                      \alt {\True{}}
+                      \alt {\False{}}
                       \\ &\alt&
-                      {\Value \v{}}
-                      \alt {\Unionsplice {\overrightarrow{\t{}}}}
+                      {\Unionsplice {\overrightarrow{\t{}}}}
                       \alt
                       {\In {\t{}\ \overrightarrow{\t{}}}}
                       \alt 
@@ -46,20 +61,16 @@ $$
                       \alt
                       {\TFn {\overrightarrow{\x{}}} \t{}}
                       \\ &\alt&
-                      {\ArrowOverright {\x{}} {\t{}}
+                      {\ArrowOne {\x{}} {\t{}}
                                    {\t{}}
                                    {\filterset {\prop{}} {\prop{}}}
                                    {\object{}}}
-                      \alt 
-                      {\ArrayTwo {\t{}} {\t{}}}
                       \alt {\HMapp {\mandatory} {\absent}}
                       \alt
                       {\HMapc {\mandatory}}
                       
                 &\mbox{Typed Clojure Types} \\
-  \tatype{}     &::=& \classhint{} \alt \primitivehint{}
-                &\mbox{Class and Primitive Hints} \\
-  \tatypeunknown{}     &::=& \unknownhint{} \alt \tatype{}
+  \tatype{}     &::=& \unknownhint{} \alt \classhint{}
                 &\mbox{tools.analyzer Types} \\ \\
   \prop{}       &::=& {\isprop {\t{}} {\path {\pathelem{}} {\x{}}}}
                       \alt {\notprop {\t{}} {\path {\pathelem{}} {\x{}}}}
@@ -76,7 +87,6 @@ $$
                 &\mbox{Paths} \\
   \pesyntax{}   &::=& \classpe{} \alt \keype{k} \alt \countpe{}
                 &\mbox{Path Elements} \\ \\
-                % TODO objects with path
 %  \c{} &::=& \assoc{} \alt \dissoc{} \alt \get{}
 %              &\mbox{Constants}
   \propenv{}   &::=& \overrightarrow{\prop{}}
