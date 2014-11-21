@@ -372,31 +372,109 @@
 \begin{figure*}
 \begin{mathpar}
 
-\infer [T-HMapCInvokePresent]
-{ \judgement {\propenv{}} {\hastype {\e{m}} {\t{m}}}
-             {\filterset {\prop{}} {\prop{}}}
+\infer [T-AppHMapComplete]
+{ \judgement {\propenv{}} {\hastype {\e{m}} {\HMapc {\mandatory{}}}}
+           {\filterset {\thenprop {\prop{m}}} {\elseprop {\prop{m}}}}
            {\object{m}}
-         \\
-  \judgement {\propenv{}} {\hastype {\e{k}} {\t{k}}}
-             {\filterset {\prop{}} {\prop{}}}
-             {\object{}}
+         \\\\
+  \judgement {\propenv{}} {\hastype {\e{k}} {\Value {k}}}
+             {\filterset {\thenprop {\prop{k}}} {\elseprop {\prop{k}}}}
+             {\object{k}}
              \\\\
   \judgement {\propenv{}} {\hastype {\e{d}} {\t{d}}}
-             {\filterset {\prop{}} {\prop{}}}
-             {\object{}}
-             \\
-             {\t{m}} = {\HMapc {\mandatory{}}}
-             \\
-             {\t{k}} = {\Value {k}}
-             \\
-             {(k\ \t{})} \in {\mandatory{}}
+             {\filterset {\thenprop {\prop{d}}} {\elseprop {\prop{d}}}}
+             {\object{d}}
+             \\\\
+             {(\k{}\ \t{})} \in {\mandatory{}}
        }
 { \judgement {\propenv{}} {\hastype {\appexp {\e{m}} {\e{k}\ \e{d}}}
                                     {\t{}}}
              {\filterset {\topprop{}} {\topprop{}}}
              {\path {\keype{k}} {\object{m}}}
                                   }
+
+\infer [T-AppHMapCompleteDefault]
+{ \judgement {\propenv{}} {\hastype {\e{m}} {\HMapc {\mandatory{}}}}
+           {\filterset {\thenprop {\prop{m}}} {\elseprop {\prop{m}}}}
+           {\object{m}}
+         \\\\
+  \judgement {\propenv{}} {\hastype {\e{k}} {\Value {k}}}
+             {\filterset {\thenprop {\prop{k}}} {\elseprop {\prop{k}}}}
+             {\object{k}}
+             \\\\
+  \judgement {\propenv{}} {\hastype {\e{d}} {\t{d}}}
+             {\filterset {\thenprop {\prop{d}}} {\elseprop {\prop{d}}}}
+             {\object{d}}
+             \\\\
+             {(\k{}\ \t{})} \not\in {\mandatory{}}
+       }
+{ \judgement {\propenv{}} {\hastype {\appexp {\e{m}} {\e{k}\ \e{d}}}
+                                    {\t{d}}}
+             {\filterset {\topprop{}} {\topprop{}}}
+             {\path {\keype{k}} {\object{m}}}}
+
+\infer [T-AppHMapPartial]
+{ \judgement {\propenv{}} {\hastype {\e{m}} {\HMapp {\mandatory{}} {\absent}}}
+           {\filterset {\thenprop {\prop{m}}} {\elseprop {\prop{m}}}}
+           {\object{m}}
+         \\\\
+  \judgement {\propenv{}} {\hastype {\e{k}} {\Value {k}}}
+             {\filterset {\thenprop {\prop{k}}} {\elseprop {\prop{k}}}}
+             {\object{k}}
+             \\\\
+  \judgement {\propenv{}} {\hastype {\e{d}} {\t{d}}}
+             {\filterset {\thenprop {\prop{d}}} {\elseprop {\prop{d}}}}
+             {\object{d}}
+             \\\\
+             {(\k{}\ \t{})} \in {\mandatory{}}
+       }
+{ \judgement {\propenv{}} {\hastype {\appexp {\e{m}} {\e{k}\ \e{d}}}
+                                    {\t{}}}
+             {\filterset {\topprop{}} {\topprop{}}}
+             {\path {\keype{k}} {\object{m}}}}
                                   
+
+\infer [T-AppHMapPartialAbsent]
+{ \judgement {\propenv{}} {\hastype {\e{m}} {\HMapp {\mandatory{}} {\absent}}}
+           {\filterset {\thenprop {\prop{m}}} {\elseprop {\prop{m}}}}
+           {\object{m}}
+         \\\\
+  \judgement {\propenv{}} {\hastype {\e{k}} {\Value {k}}}
+             {\filterset {\thenprop {\prop{k}}} {\elseprop {\prop{k}}}}
+             {\object{k}}
+             \\\\
+  \judgement {\propenv{}} {\hastype {\e{d}} {\t{d}}}
+             {\filterset {\thenprop {\prop{d}}} {\elseprop {\prop{d}}}}
+             {\object{d}}
+             \\\\
+             \k{} \in {\absent{}}
+       }
+{ \judgement {\propenv{}} {\hastype {\appexp {\e{m}} {\e{k}\ \e{d}}}
+                                    {\t{d}}}
+             {\filterset {\topprop{}} {\topprop{}}}
+             {\path {\keype{k}} {\object{m}}}}
+
+\infer [T-AppHMapPartialDefault]
+{ \judgement {\propenv{}} {\hastype {\e{m}} {\HMapp {\mandatory{}} {\absent}}}
+           {\filterset {\thenprop {\prop{m}}} {\elseprop {\prop{m}}}}
+           {\object{m}}
+         \\\\
+  \judgement {\propenv{}} {\hastype {\e{k}} {\Value {k}}}
+             {\filterset {\thenprop {\prop{k}}} {\elseprop {\prop{k}}}}
+             {\object{k}}
+             \\\\
+  \judgement {\propenv{}} {\hastype {\e{d}} {\t{d}}}
+             {\filterset {\thenprop {\prop{d}}} {\elseprop {\prop{d}}}}
+             {\object{d}}
+             \\\\
+             {(\k{}\ \t{})} \not\in {\mandatory{}}
+             \\\\
+             \k{} \not\in {\absent{}}
+       }
+{ \judgement {\propenv{}} {\hastype {\appexp {\e{m}} {\e{k}\ \e{d}}}
+                                    {\Top{}}}
+             {\filterset {\topprop{}} {\topprop{}}}
+             {\path {\keype{k}} {\object{m}}}}
 
 \infer [T-KeywordMap]
 { \judgement {\propenv{}} {\hastype {\overrightarrow{{\e{v}}}} {\overrightarrow {{\t{v}}}}}
@@ -419,21 +497,6 @@
                                     {\Boolean}}
              {\filterset {\isprop  {\s{}} {\object{}}}
                          {\notprop {\s{}} {\object{}}}}
-             {\emptyobject}
-}
-
-\infer [T-Satisfies]
-{ \judgement {\propenv{}} 
-             {\hastype {\e{}} {\t{}}}
-             {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}}
-             {\object}
-             \\
-             {\s{}} = {\Satisfies {\protocol{}}}
-}
-{ \judgement {\propenv{}} {\hastype {\satisfiesapp {\protocol{}} {\e{}}}
-                                    {\Boolean}}
-            {\filterset {\isprop  {\s{}} {\object{}}}
-                        {\notprop {\s{}} {\object{}}}}
              {\emptyobject}
 }
 
