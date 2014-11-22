@@ -111,9 +111,10 @@
 \newcommand\true[0]{{\literalfont{true}}}
 \newcommand\false[0]{{\literalfont{false}}}
 \newcommand\assocliteral[0]{{\operatorfont{assoc}}}
-\newcommand\assoc[3]{(\assocliteral{}\ #1\ #2\ #3)}
+\newcommand\assocexp[3]{(\assocliteral{}\ #1\ #2\ #3)}
 \newmeta\dissoc{dissoc}
-\newmeta\get{get}
+\newmeta\getliteral{{\operatorfont{get}}}
+\newcommand\getexp[2]{(\getliteral{}\ #1\ #2)}
 \newcommand\ifliteral[0]{{\operatorfont{if}}}
 \newcommand\doliteral[0]{{\operatorfont{do}}}
 \newcommand\letliteral[0]{{\operatorfont{let}}}
@@ -172,6 +173,15 @@
 
 % differences from TR
 \newcommand\trdiff[1]{\mathbin{\textcolor{blue}{#1}}}
+
+% update function
+\newcommand\metafunctionfont[1]{{\mathsf{#1}}}
+\newcommand\updateliteral[0]{\metafunctionfont{update}}
+\newcommand\update[3]{\updateliteral(#1, #2, #3)}
+\newcommand\restrictliteral[0]{\metafunctionfont{restrict}}
+\newcommand\restrict[2]{\restrictliteral(#1, #2)}
+\newcommand\removeliteral[0]{\metafunctionfont{remove}}
+\newcommand\remove[2]{\removeliteral(#1, #2)}
 
 % class table
 \newcommand\ct[0]{\mathcal{CT}}
@@ -288,6 +298,7 @@
 \newmeta\prop{\psi}
 \newmeta\propp{\psi'}
 \newmeta\proppp{\psi''}
+\newmeta\propisnotmeta{\nu}
 \newcommand\isprop[2]{\ma{{#1}_{#2}}}
 \newcommand\impprop[2]{\ma{#1 \supset #2}}
 \newcommand\notprop[2]{\ma{{\overline{#1}}_{#2}}}
@@ -311,6 +322,8 @@
 \newmeta\classpe{{\bf Class}}
 \newmeta\countpe{{\bf Count}}
 \newcommand\keype[1]{{\bf Key}_{\ma{#1}}}
+
+\newcommand\destructpath[2]{\ma{#1 :: #2}}
 
 % scope replacements
 \newcommand\replacefor[3]{\ma{#1 [#2 / #3]}}
