@@ -413,7 +413,7 @@
              {\filterset {\thenprop {\prop{k}}} {\elseprop {\prop{k}}}}
              {\object{k}}
              \\\\
-             {(\k{}\ \t{})} \in {\mandatory{}}
+             {\inmandatory{\k{}}{\t{}}{\mandatory{}}}
        }
 { \judgement {\propenv{}} {\hastype {\getexp {\e{m}} {\e{k}}} {\t{}}}
              {\filterset {\topprop{}} {\topprop{}}}
@@ -429,7 +429,7 @@
              {\filterset {\thenprop {\prop{k}}} {\elseprop {\prop{k}}}}
              {\object{k}}
              \\\\
-             {(\k{}\ \t{})} \not\in {\mandatory{}}
+             {\notinmandatory{\k{}}{\t{}}{\mandatory{}}}
        }
 { \judgement {\propenv{}} {\hastype {\getexp {\e{m}} {\e{k}}}
                                     {\Nil{}}}
@@ -445,7 +445,7 @@
              {\filterset {\thenprop {\prop{k}}} {\elseprop {\prop{k}}}}
              {\object{k}}
              \\\\
-             {(\k{}\ \t{})} \in {\mandatory{}}
+             {\inmandatory{\k{}}{\t{}}{\mandatory{}}}
        }
 { \judgement {\propenv{}} {\hastype {\getexp {\e{m}} {\e{k}}}
                                     {\t{}}}
@@ -462,7 +462,7 @@
              {\filterset {\thenprop {\prop{k}}} {\elseprop {\prop{k}}}}
              {\object{k}}
              \\\\
-             \k{} \in {\absent{}}
+             {\inabsent{\k{}}{\absent{}}}
        }
 { \judgement {\propenv{}} {\hastype {\getexp {\e{m}} {\e{k}}}
                                     {\Nil{}}}
@@ -478,11 +478,11 @@
              {\filterset {\thenprop {\prop{k}}} {\elseprop {\prop{k}}}}
              {\object{k}}
              \\\\
-             {(\k{}\ \t{})} \not\in {\mandatory{}}
+             {\notinmandatory{\k{}}{\t{}}{\mandatory{}}}
              \\\\
-             \k{} \not\in {\absent{}}
+             {\notinabsent{\k{}}{\absent{}}}
        }
-{ \judgement {\propenv{}} {\hastype {\getexp {\e{m}} {\e{k}\ \e{d}}}
+{ \judgement {\propenv{}} {\hastype {\getexp {\e{m}} {\e{k}}}
                                     {\Top{}}}
              {\filterset {\topprop{}} {\topprop{}}}
              {\path {\keype{k}} {\object{m}}}}

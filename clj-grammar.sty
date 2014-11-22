@@ -73,8 +73,9 @@
 \newcommand\All[2]{(\ma{\Allliteral\ [#1]\ #2})}
 \newcommand\TFn[2]{(\ma{\TFnliteral\ [#1]\ #2})}
 \newcommand\Value[1]{(\ma{\Valueliteral\ #1})}
-\newbfop\Top{$\top$}
-\newbfop\Bottom{Nothing}
+\newbfop\Top{\ma{\top}}
+\newbfop\Bottom{\ma{\bot}}
+\newbfop\Bot{\ma{\bot}}
 \newbfop\Keyword{Keyword}
 \newbfop\Symbol{Symbol}
 \newbfop\Number{Number}
@@ -89,9 +90,14 @@
 \newcommand\HMapc[1]{(\ma{\HMapliteral^{complete}\ #1})}
 \newcommand\HMapp[2]{(\ma{\HMapliteral\ #1\ #2})}
 \newcommand\mandatoryset[1]{\ma{\{#1\}}}
+\newcommand\notinmandatory[3]{\ma{(#1\ #2)} \not\in {#3}}
+\newcommand\inmandatory[3]{\ma{(#1\ #2)} \in {#3}}
 \newcommand\extendmandatoryset[3]{(#1, (#2\ #3))}
 \newmeta\mandatory{p}
 \newmeta\absent{a}
+\newcommand\inabsent[2]{\ma{#1 \in #2}}
+\newcommand\notinabsent[2]{\ma{#1 \not\in #2}}
+\newcommand\extendabsentset[2]{(#1, #2)}
 \newbfop\Satisfiesliteral{Satisfies}
 \newcommand\Satisfies[1]{(\ma{\Satisfiesliteral\ #1})}
 \newbfop\Instanceliteral{InstanceOf}
@@ -182,6 +188,7 @@
 \newcommand\restrict[2]{\restrictliteral(#1, #2)}
 \newcommand\removeliteral[0]{\metafunctionfont{remove}}
 \newcommand\remove[2]{\removeliteral(#1, #2)}
+\newcommand\emptypath[0]{\epsilon}
 
 % class table
 \newcommand\ct[0]{\mathcal{CT}}
@@ -199,6 +206,8 @@
 \newcommand\hastype[2]{\ma{#1 \mathbin{:} #2}}
 \newcommand\hastypesmall[2]{\ma{#1 {:} #2}}
 \newcommand\issubtype[2]{\ma{#1 \mathbin{<:} #2}}
+\newcommand\issubtypein[3]{\ma{{\inpropenv{#1} {#2 \mathbin{<:} #3}}}}
+\newcommand\notsubtypein[3]{\ma{{\inpropenv{#1} {#2 \mathbin{\not<:} #3}}}}
 % 4 place relation (TR formalism)
 \newcommand\judgement[4]{\ma{#1 \vdash #2\ ;\ #3\ ;\ #4}}
 % 7 place relation (TC formalism)
@@ -225,7 +234,7 @@
 \newmeta\disptable{m}
 \newmeta\disptablep{m'}
 \newcommand\extenddisptable[3]{\ma{#1[#2 \rightarrow #3]}}
-\newcommand\getmethodliteral[0]{get\_method}
+\newcommand\getmethodliteral[0]{\metafunctionfont{GetMethod}}
 \newcommand\getmethod[3]{\getmethodliteral(#1,\ #2)\ =\ #3}
 \newcommand\getmethodalign[3]{\getmethodliteral(#1,\ #2)\ &=&\ #3}
 
@@ -262,7 +271,7 @@
 \newcommand\getdispatchfn[2]{\ma{get\_dispatch\_fn(#1)_{#2}}}
 \newcommand\inmmenv[3]{\ma{#1 (#2) = #3}}
 
-\newcommand\metafnfont[1]{{\bf #1}}
+\newcommand\metafnfont[1]{{\metafunctionfont{#1}}}
 
 % isa? special functions
 \newcommand\isacompareliteral[0]{\metafnfont{IsA}}
@@ -301,7 +310,8 @@
 \newmeta\propisnotmeta{\nu}
 \newcommand\isprop[2]{\ma{{#1}_{#2}}}
 \newcommand\impprop[2]{\ma{#1 \supset #2}}
-\newcommand\notprop[2]{\ma{{\overline{#1}}_{#2}}}
+\newcommand\nottype[1]{\ma{\overline{#1}}}
+\newcommand\notprop[2]{\ma{{\nottype{#1}}_{#2}}}
 \newcommand\andprop[2]{\ma{#1 \wedge #2}}
 \newcommand\orprop[2]{\ma{#1 \vee #2}}
 \newmeta\topprop{\mathbbm{tt}}
@@ -331,7 +341,7 @@
 % Java type conversion functions
 \newcommand\javatotcliteral[0]{\metafnfont{JavaToTC}}
 \newcommand\javatotc[2]{\javatotcliteral(\ma{#1})\ =\ #2}
-\newcommand\javatotcnil[2]{\javatotcliteral_{\nil{}}(\ma{#1})\ =\ #2}
+\newcommand\javatotcnil[2]{\javatotcliteral_{\Nil{}}(\ma{#1})\ =\ #2}
 \newcommand\javatotcalign[2]{\javatotcliteral(\ma{#1})\ &=&\ #2}
 \newcommand\javatotcalignnil[2]{\javatotcliteral_{\nil{}}(\ma{#1})\ &=&\ #2}
 

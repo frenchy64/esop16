@@ -4,7 +4,93 @@
 \begin{array}{lllr}
 \update{\HMapp {\mandatory} {\absent}}{\propisnotmeta{}}{\destructpath {\pathelem{}} {\keype{\k{}}}}
 &=&
+{\HMapp {\extendmandatoryset{\mandatory}{\k{}}{\update{\t{}}{\propisnotmeta{}}{\pathelem{}}}}{\absent}}
+& {\inmandatory{\k{}}{\t{}}{\mandatory{}}}
+\\
+\update{\HMapp {\mandatory} {\absent}}{\t{}}{\destructpath {\pathelem{}} {\keype{\k{}}}}
+&=&
+{\Bottom{}}
+& {\notsubtypein {} {\Nil{}} {\t{}}}\ \text{and}\ {\inabsent{\k{}}{\absent{}}}
+\\
+\update{\HMapp {\mandatory} {\absent}}{\nottype{\t{}}}{\destructpath {\pathelem{}} {\keype{\k{}}}}
+&=&
+{\Bottom{}}
+& {\issubtypein {} {\Nil{}} {\t{}}}\ \text{and}\ {\inabsent{\k{}}{\absent{}}}
+\\
+\update{\HMapp {\mandatory} {\absent}}{\propisnotmeta{}}{\destructpath {\pathelem{}} {\keype{\k{}}}}
+&=&
 {\HMapp {\mandatory} {\absent}}
+& {\inabsent{\k{}}{\absent{}}}
+\\
+\update{\HMapp {\mandatory} {\absent}}{\t{}}{\destructpath {\pathelem{}} {\keype{\k{}}}}
+&=&
+{\HMapp {\extendmandatoryset {\mandatory} {\k{}}{\t{}}} {\absent}}
+& {\notsubtypein {} {\Nil{}} {\t{}}},\ 
+{\notinmandatory{\k{}}{\s{}}{\mandatory{}}}\ \text{and}\ {\notinabsent{\k{}}{\absent{}}}
+\\
+\update{\HMapp {\mandatory} {\absent}}{\t{}}{\destructpath {\pathelem{}} {\keype{\k{}}}}
+&=&
+{\Union {\HMapp {\extendmandatoryset {\mandatory} {\k{}}
+                                     {\t{}}}
+                {\absent}}
+        {\HMapp {\mandatory} {\extendabsentset{\absent}{\k{}}}}}
+&
+{\notinmandatory{\k{}}{\s{}}{\mandatory{}}}\ \text{and}\ {\notinabsent{\k{}}{\absent{}}}
+\\
+\update{\HMapp {\mandatory} {\absent}}{\nottype{\t{}}}{\destructpath {\pathelem{}} {\keype{\k{}}}}
+&=&
+{\HMapp {\extendmandatoryset {\mandatory} {\k{}}{\t{}}} {\absent}}
+& {\issubtypein {} {\Nil{}} {\t{}}},\ 
+{\notinmandatory{\k{}}{\s{}}{\mandatory{}}}\ \text{and}\ {\notinabsent{\k{}}{\absent{}}}
+\\
+\update{\HMapp {\mandatory} {\absent}}{\nottype{\t{}}}{\destructpath {\pathelem{}} {\keype{\k{}}}}
+&=&
+{\HMapp {\extendmandatoryset {\mandatory} {\k{}}{\update{\Top{}}{\nottype{\t{}}}{\pathelem{}}}} {\absent}}
+&
+{\notinmandatory{\k{}}{\s{}}{\mandatory{}}}\ \text{and}\ {\notinabsent{\k{}}{\absent{}}}
+\\
+\update{\HMapc {\mandatory}}{\propisnotmeta{}}{\destructpath {\pathelem{}} {\keype{\k{}}}}
+&=&
+{\HMapc {\extendmandatoryset {\mandatory} {\k{}}{\update{\t{}}{\propisnotmeta{}}{\pathelem{}}}}}
+& {\inmandatory{\k{}}{\t{}}{\mandatory{}}}
+\\
+\update{\HMapc {\mandatory}}{\propisnotmeta{}}{\destructpath {\pathelem{}} {\keype{\k{}}}}
+&=&
+{\HMapc {\mandatory}}
+& {\notinmandatory{\k{}}{\t{}}{\mandatory{}}}
+\\
+\update{\t{}}{\s{}}{\emptypath{}}
+&=&
+\restrict{\t{}}{\s{}}
+\\
+\update{\t{}}{\nottype{\s{}}}{\emptypath{}}
+&=&
+\remove{\t{}}{\nottype{\s{}}}
+
+
+\\\\
+
+\restrict{\t{}} {\s{}} &=& \Bot{}
+                       & \text{if} \not\exists \v{}.\  
+                          {\judgement {} {\hastype {\v{}} {\t{}}} {\prop{1}}{\object{1}}}
+                          \ \text{and}\ 
+                          {\judgement {} {\hastype {\v{}} {\s{}}} {\prop{2}}{\object{2}}}
+                          \\
+\restrict{\Unionsplice{\overrightarrow{{\t{}}}}}{\s{}} &=& 
+\Unionsplice{\overrightarrow{\restrict{{\t{}}}{\s{}}}}
+\\
+\restrict{\t{}}{\s{}} &=& {\t{}} & \text{if}\ {\issubtypein {} {\t{}} {\s{}}}
+\\
+\restrict{\t{}}{\s{}} &=& {\s{}} & \text{otherwise}
+\\\\
+\remove{\t{}}{\s{}} &=& {\Bot{}} & \text{if}\ {\issubtypein {} {\t{}} {\s{}}}
+\\
+\remove{\Unionsplice{\overrightarrow{{\t{}}}}}{\s{}} &=& 
+\Unionsplice{\overrightarrow{\remove{{\t{}}}{\s{}}}}
+\\
+\remove{\t{}}{\s{}} &=& {\t{}} & \text{otherwise}
+
+
 \end{array}
 
 \end{mathpar}
