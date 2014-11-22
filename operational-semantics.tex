@@ -199,6 +199,15 @@
         {\multi {\v{d}} {\disptablep{}}}
       }
 
+\infer [B-IsA]
+{ \opsem {\openv{}} {\e{1}} {\v{1}}
+  \\\\
+  \opsem {\openv{}} {\e{2}} {\v{2}}
+  \\\\
+  \isaopsem{\v{1}}{\v{2}} = {\v{}}
+}
+{\opsem {\openv{}} {\isaapp {\e{1}} {\e{2}}} {\v{}}}
+
 \infer [B-MethodRefl]
 {}
 {\opsem {\openv{}} {\methodexp {mth} {\e{}} {\overrightarrow{\e{}}}}
@@ -545,6 +554,17 @@
 {\opsem {\openv{}} {\throwexp {\e{}}}
         {\errorval{\v{}}}}
 
+\infer [BE-IsA1]
+{ \opsem {\openv{}} {\e{1}} {\errorval{\v{}}}
+}
+{\opsem {\openv{}} {\isaapp {\e{1}} {\e{2}}} {\errorval{\v{}}}}
+
+\infer [BE-IsA2]
+{ \opsem {\openv{}} {\e{1}} {\v{1}}
+  \\\\
+  \opsem {\openv{}} {\e{2}} {\errorval{\v{}}}
+}
+{\opsem {\openv{}} {\isaapp {\e{1}} {\e{2}}} {\errorval{\v{}}}}
 
 \end{mathpar}
 \caption{Runtime Error Propagation}

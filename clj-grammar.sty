@@ -32,6 +32,8 @@
 \newmeta\ReflectiveExp{R}
 \newmeta\NonReflectiveExp{E}
 \newmeta\MultimethodExp{M}
+\newmeta\HintedExp{H}
+\newmeta\HashMapExp{G}
 
 % we write a macro for every bit of abstract syntax.  That way they
 % will all look the same!
@@ -174,7 +176,7 @@
 \newbfop\ccclass{class}
 \newcommand\instanceliteral[0]{\operatorfont{instance?}}
 \newcommand\isaliteral[0]{{\operatorfont{isa?}}}
-\newcommand\instanceapp[2]{(\instanceliteral\ #1\ #2)}
+\newcommand\instanceapp[2]{{(\instanceliteral\ #1\ #2)}}
 \newcommand\isaapp[2]{(\isaliteral\ #1\ #2)}
 
 % differences from TR
@@ -207,6 +209,7 @@
 \newcommand\hastypesmall[2]{\ma{#1 {:} #2}}
 \newcommand\issubtype[2]{\ma{#1 \mathbin{<:} #2}}
 \newcommand\issubtypein[3]{\ma{{\inpropenv{#1} {#2 \mathbin{<:} #3}}}}
+\newcommand\issubobjin[3]{\ma{{\inpropenv{#1} {#2 \mathbin{<:} #3}}}}
 \newcommand\notsubtypein[3]{\ma{{\inpropenv{#1} {#2 \mathbin{\not<:} #3}}}}
 % 4 place relation (TR formalism)
 \newcommand\judgement[4]{\ma{#1 \vdash #2\ ;\ #3\ ;\ #4}}
@@ -274,9 +277,11 @@
 \newcommand\metafnfont[1]{{\metafunctionfont{#1}}}
 
 % isa? special functions
-\newcommand\isacompareliteral[0]{\metafnfont{IsA}}
+\newcommand\isacompareliteral[0]{\metafnfont{IsAProps}}
 \newcommand\isacompare[4]{\ma{\isacompareliteral(#1,\ #2,\ #3)\ =\ {#4}}}
 \newcommand\isacomparealign[4]{\ma{\isacompareliteral(#1,\ #2,\ #3)\ &=&\ {#4}}}
+\newcommand\isaopsemliteral[0]{\metafnfont{IsA}}
+\newcommand\isaopsem[2]{\ma{\isaopsemliteral(#1,\ #2)}}
 
 % new special functions
 % Type -> [Type]

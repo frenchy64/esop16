@@ -10,16 +10,6 @@
                    {\x{}}
                    }
 
-\infer [T-LocalHint]
-{ \inpropenv {\propenv{}} {\isprop {\t{}} {\x{}}}
-  \\
-  \s{} = {\falsydiff} }
-{ \judgementfillcol {\propenv{}} 
-                   {\hastype {\hinted {\classhint{}} {\x{}}} {\t{}}}
-                   {\filterset {{\notprop {\s{}} {\x{}}}} {{\isprop {\s{}} {\x{}}}}}
-                   {\x{}}
-                   }
-
 \infer [T-True]
 {}
 { \judgementfillcol {\propenv{}}
@@ -103,30 +93,6 @@
                           {\x{}}}
              }
 
-%\infer [T-LetHint]
-%{ 
-%  \judgementfillcol {\propenv{}} {\hastype {\e{1}} {\s{}}} {\filterset {\thenprop {\prop{1}}} {\elseprop {\prop{1}}}}
-%             {\object{1}}
-%   \\
-%  \sp{} = {\falsydiff}
-%  \\\\
-%  \judgementfillmmcol 
-%      {\taenv{}, {\hastype {\x{}} {\classhint{}}}}
-%       {\propenv{}, {\isprop {\s{}} {\x{}}},
-%                    {\impprop {\notprop {\sp{}} {\x{}}} {\thenprop {\prop{1}}}},
-%                    {\impprop {\isprop {\sp{}} {\x{}}} {\elseprop {\prop{1}}}}}
-%             {\hastype {\e{}} {\t{}}} {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}}
-%             {\object{}} 
-%             }
-%{ \judgementfillcol {\propenv{}} {\hastype {\letexp {\hinted {\classhint{}} {\x{}}} {\e{1}} {\e{}}} {\t{}}}
-%             {\replacefor {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}}
-%                          {\object{1}}
-%                          {\x{}}}
-%             {\replacefor {\object{}} 
-%                          {\object{1}}
-%                          {\x{}}}
-%             }
-
 \infer [T-App]
 { \judgementfillcol {\propenv{}} {\hastype {\e{}} {\ArrowOne {\x{}} {\s{}}
                                                        {\t{}}
@@ -195,6 +161,48 @@
              {\objectp}}
 \end{mathpar}
 \caption{Standard Typing Rules}
+\end{figure*}
+
+\begin{figure*}
+\begin{mathpar}
+
+\infer [T-LocalHint]
+{ \inpropenv {\propenv{}} {\isprop {\t{}} {\x{}}}
+  \\
+  \s{} = {\falsydiff} }
+{ \judgementfillcol {\propenv{}} 
+                   {\hastype {\hinted {\classhint{}} {\x{}}} {\t{}}}
+                   {\filterset {{\notprop {\s{}} {\x{}}}} {{\isprop {\s{}} {\x{}}}}}
+                   {\x{}}
+                   }
+
+\infer [T-LetHint]
+{ \judgementfillcol {\propenv{}} {\hastype {\e{1}} {\s{}}} {\filterset {\thenprop {\prop{1}}} {\elseprop {\prop{1}}}}
+             {\object{1}}
+             \\\\
+             \propp{} = {\impprop {\notprop {\falsydiff{}} {\x{}}} {\thenprop {\prop{1}}}}
+             \\\\
+             \proppp{} = {\impprop {\isprop {\falsydiff{}} {\x{}}} {\elseprop {\prop{1}}}}
+  \\\\
+  \judgementfillmmcol 
+      {\taenv{}, {\hastype {\x{}} {\tatype{}}}}
+       {\propenv{}, {\isprop {\s{}} {\x{}}},
+         {\propp{}},
+         {\proppp{}}}
+             {\hastype {\e{}} {\t{}}} {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}}
+             {\object{}} 
+             }
+{ \judgementfillcol {\propenv{}} {\hastype {\letexp {\hinted{\classhint{}{\x{}}}} {\e{1}} {\e{}}} {\t{}}}
+             {\replacefor {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}}
+                          {\object{1}}
+                          {\x{}}}
+             {\replacefor {\object{}} 
+                          {\object{1}}
+                          {\x{}}}
+             }
+
+\end{mathpar}
+\caption{Type Hint Rules}
 \end{figure*}
 
 \begin{figure*}

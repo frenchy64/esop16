@@ -3,43 +3,43 @@
 
 \infer [SO-Refl]
 {}
-{ \inpropenv {} {\issubtype {\object{}} {\object{}}}}
+{ \issubobjin {} {\object{}} {\object{}}}
 
 
 \infer [SO-Top]
 {}
-{ \inpropenv {} {\issubtype {\object{}} {\emptyobject{}}}}
+{ \issubobjin {} {\object{}} {\emptyobject{}}}
 
 \infer [S-Refl]
 {}
-{ \inpropenv {} {\issubtype {\t{}} {\t{}}}}
+{ \issubtypein {} {\t{}} {\t{}}}
 
 \infer [S-Top]
 {}
-{ \inpropenv {} {\issubtype {\t{}} {\Top{}}}}
+{ \issubtypein {} {\t{}} {\Top{}}}
 
 % FIXME fix overrightarrow caption
 \infer [S-IntersectSuper]
-{ {\overrightarrow {\inpropenv {} {\issubtype {\t{}} {\s{i}}}}}^{i}}
-{ \inpropenv {} {\issubtype {\t{}} {\In{{\overrightarrow{\s{}}}^{i}}}}}
+{ {\overrightarrow {\issubtypein {} {\t{}} {\s{i}}}}^{i}}
+{ \issubtypein {} {\t{}} {\In{{\overrightarrow{\s{}}}^{i}}}}
 
 \infer [S-IntersectSub]
-{ \exists i.\ {\inpropenv {} {\issubtype {\t{i}} {\s{}}}}}
-{ \inpropenv {} {\issubtype {\In{{\overrightarrow{\t{}}}^{i}}} {\s{}}}}
+{ \exists i.\ {\issubtypein {} {\t{i}} {\s{}}}}
+{ \issubtypein {} {\In{{\overrightarrow{\t{}}}^{i}}} {\s{}}}
 
 \infer [S-UnionSuper]
-{ \exists i.\ {\inpropenv {} {\issubtype {\t{}} {\s{i}}}}}
-{ \inpropenv {} {\issubtype {\t{}} {\Unionsplice{{\overrightarrow{\s{}}}^{i}}}}}
+{ \exists i.\ {\issubtypein {} {\t{}} {\s{i}}}}
+{ \issubtypein {} {\t{}} {\Unionsplice{{\overrightarrow{\s{}}}^{i}}}}
 
 % FIXME fix overrightarrow caption
 \infer [S-UnionSub]
-{ {\overrightarrow {\inpropenv {} {\issubtype {\t{i}} {\s{}}}}}^{i}}
-{ \inpropenv {} {\issubtype {\Unionsplice{\overrightarrow{\t{}}^{i}}} {\s{}}}}
+{ {\overrightarrow {\issubtypein {} {\t{i}} {\s{}}}}^{i}}
+{ \issubtypein {} {\Unionsplice{\overrightarrow{\t{}}^{i}}} {\s{}}}
 
 \infer [S-Fun]
-{ \inpropenv {} {\issubtype {\sp{}} {\s{}}}
+{ \issubtypein {} {\sp{}} {\s{}}
   \\
-  \inpropenv {} {\issubtype {\t{}} {\tp{}}}
+  \issubtypein {} {\t{}} {\tp{}}
   \\\\
   \inpropenv {\thenprop {\prop{}}} {\thenprop {\propp{}}}
   \\
@@ -47,8 +47,7 @@
   \\
   \inpropenv {\object{}} {\objectp{}}
 }
-{ \inpropenv {}
-  {\issubtype
+{ \issubtypein {}
     {\ArrowOne {\x{}} {\s{}}
               {\t{}}
               {\filterset {\thenprop {\prop{}}}
@@ -58,22 +57,22 @@
               {\tp{}}
               {\filterset {\thenprop {\propp{}}}
                           {\elseprop {\propp{}}}}
-              {\objectp{}}}}}
+              {\objectp{}}}}
 
 \infer [S-Instance]
 { \assignable {\class{}} {\classp{}}}
-{ \inpropenv {} {\issubtype {\Instance {\class{}}} {\Instance {\classp{}}}} }
+{ \issubtypein {} {\Instance {\class{}}} {\Instance {\classp{}}}} 
 
 \infer [S-PMulti]
-{ \inpropenv {} {\issubtype {\s{}} {\sp{}}}
+{ \issubtypein {} {\s{}} {\sp{}}
   \\
-  \inpropenv {} {\issubtype {\t{}} {\tp{}}}}
-{ \inpropenv {} {\issubtype {\MultiFntype {\s{}} {\t{}}}{\MultiFntype {\sp{}} {\tp{}}}}}
+  \issubtypein {} {\t{}} {\tp{}}}
+{ \issubtypein {} {\MultiFntype {\s{}} {\t{}}}{\MultiFntype {\sp{}} {\tp{}}}}
 
 \infer [S-PMultiFn]
-{ \inpropenv {} {\issubtype {\sp{}} {\s{}}}
+{ \issubtypein {} {\sp{}} {\s{}}
   \\
-  \inpropenv {} {\issubtype {\t{}} {\tp{}}}
+  \issubtypein {} {\t{}} {\tp{}}
   \\\\
   \inpropenv {\thenprop {\prop{}}} {\thenprop {\propp{}}}
   \\
@@ -81,7 +80,7 @@
   \\
   \inpropenv {\object{}} {\objectp{}}
 }
-{ \inpropenv {} {\issubtype {\MultiFntype {\ArrowOne {\x{}} {\s{}} {\t{}}
+{ \issubtypein {} {\MultiFntype {\ArrowOne {\x{}} {\s{}} {\t{}}
                                             {\filterset {\thenprop {\prop{}}}
                                                         {\elseprop {\prop{}}}}
                                             {\object{}}}
@@ -90,7 +89,7 @@
                                             {\filterset {\thenprop {\propp{}}}
                                                         {\elseprop {\propp{}}}}
                                                 {\objectp{}}}}
-                                              }
+
 
 \end{mathpar}
 \caption{Subtyping rules}

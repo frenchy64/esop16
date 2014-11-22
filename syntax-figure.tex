@@ -8,33 +8,37 @@ $$
                 &\mbox{Values} \\
   \expd{}, \e{} &::=& \x{}
                       \alt
-                      \hinted{\classhint{}} {\x{}}
-                      \alt
                       \v{} \alt
                       {\comb {\e{}} {\e{}}} \alt {\abs {\x{}} {\t{}} {\e{}}}
                       \alt 
                       {\ifexp {\e{}} {\e{}} {\e{}}}
                       \alt 
                       {\doexp {\e{}} {\e{}}}
-                      \alt {\curlymap {\overrightarrow{\e{}\ \e{}}}}
-                      \alt {\assocexp {\e{}}{\e{}}{\e{}}}
-                      \alt {\getexp {\e{}} {\e{}}}
-                      \\ &\alt& 
-                      %{\fnexp {\overrightarrow{\hastype {\x{}} {\t{}}}} {\e{}}}
-                      {\letexp {\x{}} {\e{}} {\e{}}}
                       \alt
-                      {\letexp {\hinted {\classhint{}} {\x{}}} {\e{}} {\e{}}}
-                      \alt {\throwexp {\e{}}}
-                      \alt {\isaapp {\e{}} {\e{}}}
-                      \alt {\instanceapp {\e{}} {\e{}}}
+                      {\letexp {\x{}} {\e{}} {\e{}}}
                       \alt {\ReflectiveExp{}}
                       \alt {\NonReflectiveExp{}}
                       \alt {\MultimethodExp{}}
+                      \alt {\HintedExp{}}
+                      \alt {\HashMapExp{}}
                 &\mbox{Expressions} \\
+  \HintedExp{}             &::=&
+
+                      \hinted{\classhint{}} {\x{}}
+                      \alt
+                      {\letexp {\hinted {\classhint{}} {\x{}}} {\e{}} {\e{}}}
+                &\mbox{Typed Hinted Expressions} \\
+  \HashMapExp{}                &::=&
+                      {\getexp {\e{}} {\e{}}}
+                      \alt {\assocexp {\e{}}{\e{}}{\e{}}}
+                      \alt {\curlymap {\overrightarrow{\e{}\ \e{}}}}
+                &\mbox{Hash Maps} \\
   \ReflectiveExp{}     &::=&
                       {\fieldstaticexp {\classhint{}} {\classhint{}} {fld} {\e{}}}
                       \alt {\methodstaticexp {\classhint{}} {\overrightarrow{\classhint{}}} {\classhint{}} {mth} {\e{}} {\overrightarrow{\e{}}}}
                       \alt {\newstaticexp {\overrightarrow {\classhint{}}} {\classhint{}} {\class{}} {\overrightarrow{\e{}}}}
+                      \alt {\throwexp {\e{}}}
+                      \alt {\instanceapp {\e{}} {\e{}}}
                 &\mbox{Non-Reflective Java Interop} \\
   \NonReflectiveExp{}     &::=&
                       {\fieldexp {fld} {\e{}}}
@@ -44,6 +48,7 @@ $$
   \MultimethodExp{}     &::=& {\createmultiexp {\t{}} {\e{}}}
                       \alt
                               {\extendmultiexp {\e{}} {\e{}} {\e{}}}
+                      \alt {\isaapp {\e{}} {\e{}}}
                 &\mbox{Immutable First-Class Multimethods} \\
                       \\\\
   \s{}, \t{}    &::=& \Top \alt (\class{}\ \overrightarrow{\t{}})
