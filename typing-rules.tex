@@ -127,13 +127,6 @@
 %                          {\x{}}}
 %             }
 
-\infer [T-Throw]
-{ \judgementfillcol {\propenv{}} {\hastype {\e{}} {\Throwable}} {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}}
-                 {\object{}}
-}
-{ \judgementfillcol {\propenv{}} {\hastype {\throwexp {\e{}}} {\Bottom}} {\trdiff {\filterset {\botprop{}} {\botprop{}}}}
-             {\emptyobject{}} }
-
 \infer [T-App]
 { \judgementfillcol {\propenv{}} {\hastype {\e{}} {\ArrowOne {\x{}} {\s{}}
                                                        {\t{}}
@@ -181,6 +174,31 @@
                 {\filterset {\topprop{}}
                             {\botprop{}}}
                 {\emptyobject{}}}
+
+\infer [T-Subsume]
+{ \judgementfillcol {\propenv{}} {\hastype {\e{}} {\t{}}}
+             {\filterset {\thenprop {\prop{}}}
+                         {\elseprop {\prop{}}}}
+             {\object}
+\\\\
+\inpropenv {\propenv{}, {\thenprop {\prop{}}}} {\thenprop {\propp{}}}
+\\
+\inpropenv {\propenv{}, {\elseprop {\prop{}}}} {\elseprop {\propp{}}}
+\\\\
+\inpropenv {} {\issubtype {\t{}} {\tp{}}}
+\\
+\inpropenv {} {\issubtype {\object{}} {\objectp{}}}
+}
+{ \judgementfillcol {\propenv{}} {\hastype {\e{}} {\tp{}}}
+             {\filterset {\thenprop {\propp{}}}
+                         {\elseprop {\propp{}}}}
+             {\objectp}}
+\end{mathpar}
+\caption{Standard Typing Rules}
+\end{figure*}
+
+\begin{figure*}
+\begin{mathpar}
 
 \infer [T-NewStatic]
 { 
@@ -244,24 +262,37 @@
              {\filterset {\topprop{}} {\topprop{}}}
              {\emptyobject{}}}
 
-\infer [T-Subsume]
-{ \judgementfillcol {\propenv{}} {\hastype {\e{}} {\t{}}}
-             {\filterset {\thenprop {\prop{}}}
-                         {\elseprop {\prop{}}}}
+\infer [T-InstanceOf]
+{ \judgement {\propenv{}} 
+             {\hastype {\e{}} {\t{}}}
+             {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}}
              {\object}
-\\\\
-\inpropenv {\propenv{}, {\thenprop {\prop{}}}} {\thenprop {\propp{}}}
-\\
-\inpropenv {\propenv{}, {\elseprop {\prop{}}}} {\elseprop {\propp{}}}
-\\\\
-\inpropenv {} {\issubtype {\t{}} {\tp{}}}
-\\
-\inpropenv {} {\issubtype {\object{}} {\objectp{}}}
+             \\
+             \s{} = {\Instance {\class{}}}
 }
-{ \judgementfillcol {\propenv{}} {\hastype {\e{}} {\tp{}}}
-             {\filterset {\thenprop {\propp{}}}
-                         {\elseprop {\propp{}}}}
-             {\objectp}}
+{ \judgement {\propenv{}} {\hastype {\instanceapp {\class{}} {\e{}}}
+                                    {\Boolean}}
+             {\replacefor
+               {\filterset {\isprop  {\s{}} {\x{}}}
+                           {\notprop {\s{}} {\x{}}}}
+               {\object{}}
+               {\x{}}}
+             {\emptyobject}
+}
+\\
+\infer [T-Throw]
+{ \judgementfillcol {\propenv{}} {\hastype {\e{}} {\Throwable}} {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}}
+                 {\object{}}
+}
+{ \judgementfillcol {\propenv{}} {\hastype {\throwexp {\e{}}} {\Bottom}} {\trdiff {\filterset {\botprop{}} {\botprop{}}}}
+             {\emptyobject{}} }
+
+\end{mathpar}
+\caption{Java Interop Typing Rules}
+\end{figure*}
+
+\begin{figure*}
+\begin{mathpar}
 
 \infer [T-DefMulti]
 { \t{} = {\ArrowOne {\x{p}} {\t{p}} {\t{m}}
@@ -343,6 +374,13 @@
              {\filterset {\thenprop {\prop{}}}
                          {\elseprop {\prop{}}}}
              {\emptyobject}}
+\end{mathpar}
+\caption{Multimethod Typing Rules}
+\end{figure*}
+
+\begin{figure*}
+\begin{mathpar}
+
 
 
 %\infer [T-KwInvoke]
@@ -365,12 +403,6 @@
              %\t{k} %= {\Value {k}}
          %}
 % invoke complete HMap with present key
-\end{mathpar}
-\caption{Typing Rules 1}
-\end{figure*}
-
-\begin{figure*}
-\begin{mathpar}
 
 \infer [T-AppHMapComplete]
 { \judgement {\propenv{}} {\hastype {\e{m}} {\HMapc {\mandatory{}}}}
@@ -485,21 +517,48 @@
              {\filterset {\topprop{}} {\botprop{}}}
              {\emptyobject}}
 
-\infer [T-InstanceOf]
-{ \judgement {\propenv{}} 
-             {\hastype {\e{}} {\t{}}}
-             {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}}
-             {\object}
-             \\
-             \s{} = {\Instance {\class{}}}
+\infer [T-AssocPartial]
+{ 
+  \judgement {\propenv{}} {\hastype {\e{m}} {\HMapp {\mandatory{}} {\absent}}}
+             {\filterset {\thenprop {\prop{m}}} {\elseprop {\prop{m}}}}
+             {\object{m}}
+  \\\\
+  \judgement {\propenv{}} {\hastype {\e{k}} {\Value{\k{}}}}
+             {\filterset {\thenprop {\prop{k}}} {\elseprop {\prop{k}}}}
+             {\object{k}}
+  \\\\
+  \judgement {\propenv{}} {\hastype {\e{v}} {\t{v}}}
+             {\filterset {\thenprop {\prop{v}}} {\elseprop {\prop{v}}}}
+             {\object{v}}
 }
-{ \judgement {\propenv{}} {\hastype {\instanceapp {\class{}} {\e{}}}
-                                    {\Boolean}}
-             {\filterset {\isprop  {\s{}} {\object{}}}
-                         {\notprop {\s{}} {\object{}}}}
-             {\emptyobject}
+{ \judgement {\propenv{}} 
+             {\hastype {\assoc {\e{m}} {\e{k}} {\e{v}}}
+                       {\HMapp {\extendmandatoryset {\mandatory{}}{\k{}}{\t{v}}} {\absent}}}
+             {\filterset {\topprop{}} {\topprop{}}}
+             {\emptyobject{}}
+}
+
+\infer [T-AssocComplete]
+{ 
+  \judgement {\propenv{}} {\hastype {\e{m}} {\HMapc {\mandatory{}}}}
+             {\filterset {\thenprop {\prop{m}}} {\elseprop {\prop{m}}}}
+             {\object{m}}
+  \\\\
+  \judgement {\propenv{}} {\hastype {\e{k}} {\Value{\k{}}}}
+             {\filterset {\thenprop {\prop{k}}} {\elseprop {\prop{k}}}}
+             {\object{k}}
+  \\\\
+  \judgement {\propenv{}} {\hastype {\e{v}} {\t{v}}}
+             {\filterset {\thenprop {\prop{v}}} {\elseprop {\prop{v}}}}
+             {\object{v}}
+}
+{ \judgement {\propenv{}} 
+             {\hastype {\assoc {\e{m}} {\e{k}} {\e{v}}}
+                       {\HMapc {\extendmandatoryset {\mandatory{}}{\k{}}{\t{v}}}}}
+             {\filterset {\topprop{}} {\topprop{}}}
+             {\emptyobject{}}
 }
 
 \end{mathpar}
-\caption{Typing rules 2}
+\caption{HMap Typing Rules}
 \end{figure*}

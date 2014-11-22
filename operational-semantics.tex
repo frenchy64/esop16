@@ -222,3 +222,330 @@
 \end{mathpar}
 \caption{Operational Semantics}
 \end{figure*}
+\begin{figure*}
+\begin{mathpar}
+\infer [BE-Let1]
+{ \opsem {\openv{}} {\e{a}} {\errorval{\v{}}}
+ }
+{ \opsem {\openv{}} 
+         {\letexp {\x{}} {\e{a}} {\e{}}}
+       {\errorval{\v{}}}}
+
+\infer [BE-Let2]
+{ \opsem {\openv{}} {\e{a}} {\v{a}}
+  \\\\
+  \opsem {\extendopenv{\openv{}}{\x{}}{\v{a}}}
+         {\e{}}
+         {\errorval{\v{}}}
+ }
+{ \opsem {\openv{}} 
+         {\letexp {\x{}} {\e{a}} {\e{}}}
+         {\errorval{\v{}}}}
+
+\infer [BE-If1]
+{  \opsem {\openv{}} {\e{1}} {\errorval{\v{}}}
+}
+{ \opsem {\openv{}}
+         {\ifexp {\e1} {\e2} {\e3}}
+         {\errorval{\v{}}}
+       }
+
+\infer [BE-IfTrue]
+{  \opsem {\openv{}} {\e{1}} {\v{1}}
+  \\\\
+  {\v{1}} \not= {\false{}}
+  \\
+  {\v{1}} \not= {\nil{}}
+  \\\\
+  \opsem {\openv{}} {\e{2}} {\errorval{\v{}}}
+}
+{ \opsem {\openv{}}
+         {\ifexp {\e1} {\e2} {\e3}}
+         {\errorval{\v{}}}
+       }
+
+\infer [BE-IfFalse]
+{ \opsem {\openv{}} {\e{1}} {\false{}}
+  \ \ \text{or}\ \ 
+  \opsem {\openv{}} {\e{1}} {\nil{}}
+  \\\\
+  \opsem {\openv{}} {\e{3}} {\errorval{\v{}}}
+}
+{ \opsem {\openv{}}
+         {\ifexp {\e1} {\e2} {\e3}}
+         {\errorval{\v{}}}
+       }
+
+\infer [BE-Beta1]
+{ \opsem {\openv{}}
+         {\e{f}}
+         {\errorval{\v{}}}
+       }
+{ \opsem {\openv{}}
+         {\appexp {\e{f}} {\e{a}}}
+         {\errorval{\v{}}}
+       }
+
+\infer [BE-Beta2]
+{ \opsem {\openv{}}
+         {\e{f}}
+         {\v{f}}
+         \\\\
+  \opsem {\openv{}}
+         {\e{a}}
+         {\errorval{\v{}}}
+       }
+{ \opsem {\openv{}}
+         {\appexp {\e{f}} {\e{a}}}
+         {\errorval{\v{}}}
+       }
+
+\infer [BE-BetaClosure]
+{ \opsem {\openv{}}
+         {\e{f}}
+         {\closure {\openv{c}} {\abs {\x{}} {\t{}} {\e{b}}}}
+         \\\\
+  \opsem {\openv{}}
+         {\e{a}}
+         {\v{a}}
+         \\\\
+  \opsem {\extendopenv {\openv{c}} {\x{}} {\v{a}}}
+         {\e{b}}
+         {\errorval{\v{}}}
+       }
+{ \opsem {\openv{}}
+         {\appexp {\e{f}} {\e{a}}}
+         {\errorval{\v{}}}
+       }
+
+\infer [BE-BetaMulti1]
+{ \opsem {\openv{}}
+         {\e{f}}
+         {\multi {\v{d}} {m}}
+         \\\\
+  \opsem {\openv{}}
+         {\e{a}}
+         {\v{a}}
+         \\\\
+  \opsem {\openv{}}
+         {\appexp {\v{d}} {\v{a}}}
+         {\errorval{\v{}}}
+       }
+{ \opsem {\openv{}}
+         {\appexp {\e{f}} {\e{a}}}
+         {\errorval{\v{}}}
+       }
+
+\infer [BE-BetaMulti2]
+{ \opsem {\openv{}}
+         {\e{f}}
+         {\multi {\v{d}} {m}}
+         \\\\
+  \opsem {\openv{}}
+         {\e{a}}
+         {\v{a}}
+         \\\\
+  \opsem {\openv{}}
+         {\appexp {\v{d}} {\v{a}}}
+         {\v{e}}
+         \\\\
+  \getmethod {\multi {\v{d}} {m}}
+             {\v{e}}
+             {\v{f}}
+         \\\\
+  \opsem {\openv{}}
+         {\appexp {\v{f}} {\v{a}}}
+         {\errorval{\v{}}}
+       }
+{ \opsem {\openv{}}
+         {\appexp {\e{f}} {\e{a}}}
+         {\errorval{\v{}}}
+       }
+
+\infer [BE-Field]
+{ \opsem {\openv{}}
+         {\e{}} 
+         {\errorval{\v{}}}
+       }
+{ \opsem {\openv{}}
+         {\fieldstaticexp {\classhint{1}} {\classhint{2}} {fld} {\e{}}}
+         {\errorval{\v{}}}
+   }
+
+\infer [BE-Method1]
+{ \opsem {\openv{}}
+         {\e{m}}
+         {\errorval{\v{}}}
+}
+{\opsem {\openv{}}
+        {\methodstaticexp {\classhint{1}} {\overrightarrow{\classhint{a}}} {\classhint{2}} {mth} {\e{m}} {\overrightarrow{\e{}}}}
+        {\errorval{\v{}}}
+      }
+
+\infer [BE-Method2]
+{ \opsem {\openv{}}
+         {\e{m}}
+         {\v{m}}
+  \\\\
+  \overrightarrow{
+  \opsem {\openv{}}
+         {\e{n-1}}
+         {\v{n-1}}
+       }
+         \\\\
+  \opsem {\openv{}}
+         {\e{n}}
+         {\errorval{\v{}}}
+}
+{\opsem {\openv{}}
+        {\methodstaticexp {\classhint{1}} {\overrightarrow{\classhint{a}}} {\classhint{2}} {mth} {\e{m}} {\overrightarrow{\e{}}}}
+        {\errorval{\v{}}}
+      }
+
+\infer [BE-Method3]
+{ \opsem {\openv{}}
+         {\e{m}}
+         {\v{m}}
+  \\\\
+  \overrightarrow{
+  \opsem {\openv{}}
+         {\e{a}}
+         {\v{a}}
+       }
+  \\\\
+  \invokejavamethod {\classhint{1}} {\v{m}} {mth}
+                    {\overrightarrow{\classhint{a}}} {\overrightarrow{\v{a}}}
+                    {\classhint{2}}
+                    {\errorval{\v{}}}
+}
+{\opsem {\openv{}}
+        {\methodstaticexp {\classhint{1}} {\overrightarrow{\classhint{a}}} {\classhint{2}} {mth} {\e{m}} {\overrightarrow{\e{}}}}
+        {\errorval{\v{}}}
+      }
+
+\infer [BE-New1]
+{ \overrightarrow{
+  \opsem {\openv{}}
+         {\e{n-1}}
+         {\v{n-1}}
+       }
+       \\\\
+  \opsem {\openv{}}
+         {\e{n}}
+         {\errorval{\v{}}}
+       }
+{ \opsem {\openv{}}
+         {\newstaticexp {\overrightarrow{\classhint{i}}} {\classhint{1}} 
+                        {\class{}} {\overrightarrow{\e{}}}}
+         {\errorval{\v{}}}
+       }
+
+\infer [BE-New2]
+{ \overrightarrow{
+  \opsem {\openv{}}
+         {\e{i}}
+         {\v{i}}
+       }
+         \\\\
+         \newjava {\classhint{1}}
+                  {\overrightarrow{\classhint{i}}}
+                  {\overrightarrow{\v{i}}}
+                  {\errorval{\v{}}}
+       }
+{ \opsem {\openv{}}
+         {\newstaticexp {\overrightarrow{\classhint{i}}} {\classhint{1}} 
+                        {\class{}} {\overrightarrow{\e{i}}}}
+         {\errorval{\v{}}}}
+
+\infer [BE-Map1]
+{ 
+  \overrightarrow {\opsem {\openv{}} {\e{k_{n-1}}} {\v{k_{n-1}}}}
+  \\\\
+  \opsem {\openv{}} {\e{k_{n}}} {\errorval{\v{}}}
+}
+{\opsem {\openv{}}
+        {\curlymap {\overrightarrow{{e_{k}}\ {\e{v}}}}}
+        {\errorval{\v{}}}
+      }
+
+
+\infer [BE-Map2]
+{ \overrightarrow {\opsem {\openv{}} {\e{k}} {\v{k}}}
+  \\\\
+  \overrightarrow {\opsem {\openv{}} {\e{v_{n-1}}} {\v{v_{n-1}}}}
+  \\\\
+  \opsem {\openv{}} {\e{v_{n}}} {\v{v_{n}}}
+}
+{\opsem {\openv{}}
+        {\curlymap {\overrightarrow{{e_{k}}\ {\e{v}}}}}
+        {\errorval{\v{}}}
+      }
+
+\infer [BE-InstanceOf]
+{ \opsem {\openv{}} {\e{}} {\errorval{\v{}}}
+}
+{ \opsem {\openv{}} 
+         {\instanceapp {\class{}} {\e{}}}
+         {\errorval{\v{}}}
+}
+
+\infer [BE-DefMulti]
+{ \opsem {\openv{}} {\e{d}} {\errorval{\v{}}}
+}
+{\opsem {\openv{}}
+        {\createmultiexp {\t{}}
+                         {\e{d}}}
+        {\errorval{\v{}}}
+}
+
+\infer [BE-DefMethod1]
+{ \opsem {\openv{}}
+         {\e{m}}
+         {\errorval{\v{}}}
+}
+{\opsem {\openv{}}
+        {\extendmultiexp {\e{m}} {\e{v}} {\e{f}}}
+        {\errorval{\v{}}}
+      }
+
+\infer [BE-DefMethod2]
+{ \opsem {\openv{}}
+         {\e{m}}
+         {\multi {\v{d}} {\disptable{}}}
+         \\\\
+  \opsem {\openv{}}
+         {\e{v}}
+         {\errorval{\v{}}}
+}
+{\opsem {\openv{}}
+        {\extendmultiexp {\e{m}} {\e{v}} {\e{f}}}
+        {\errorval{\v{}}}
+      }
+
+\infer [BE-DefMethod3]
+{ \opsem {\openv{}}
+         {\e{m}}
+         {\multi {\v{d}} {\disptable{}}}
+         \\\\
+  \opsem {\openv{}}
+         {\e{v}}
+         {\v{v}}
+         \\\\
+  \opsem {\openv{}}
+         {\e{f}}
+         {\errorval{\v{}}}
+}
+{\opsem {\openv{}}
+        {\extendmultiexp {\e{m}} {\e{v}} {\e{f}}}
+         {\errorval{\v{}}}
+      }
+
+\infer [BE-Throw]
+{ \opsem {\openv{}} {\e{}} {\errorval{\v{}}}}
+{\opsem {\openv{}} {\throwexp {\e{}}}
+        {\errorval{\v{}}}}
+
+
+\end{mathpar}
+\caption{Runtime Error Propagation}
+\end{figure*}

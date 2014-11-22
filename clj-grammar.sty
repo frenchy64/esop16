@@ -89,6 +89,7 @@
 \newcommand\HMapc[1]{(\ma{\HMapliteral^{complete}\ #1})}
 \newcommand\HMapp[2]{(\ma{\HMapliteral\ #1\ #2})}
 \newcommand\mandatoryset[1]{\ma{\{#1\}}}
+\newcommand\extendmandatoryset[3]{(#1, (#2\ #3))}
 \newmeta\mandatory{p}
 \newmeta\absent{a}
 \newbfop\Satisfiesliteral{Satisfies}
@@ -104,39 +105,34 @@
 \newmeta\classp{C{'}}
 \newmeta\protocol{P}
 \newmeta\k{k}
-\newmeta\nil{{\mathsf{nil}}}
-\newmeta\true{{\mathsf{true}}}
-\newmeta\false{{\mathsf{false}}}
-\newmeta\assoc{assoc}
+\newcommand\operatorfont[1]{\ma{{\mathsf{#1}}}}
+\newcommand\literalfont[1]{\ma{{\mathsf{#1}}}}
+\newcommand\nil[0]{{\literalfont{nil}}}
+\newcommand\true[0]{{\literalfont{true}}}
+\newcommand\false[0]{{\literalfont{false}}}
+\newcommand\assocliteral[0]{{\operatorfont{assoc}}}
+\newcommand\assoc[3]{(\assocliteral{}\ #1\ #2\ #3)}
 \newmeta\dissoc{dissoc}
 \newmeta\get{get}
-\newmeta\tryliteral{{\bf try}}
-\newmeta\catchliteral{{\bf catch}}
-\newmeta\finallyliteral{{\mathrm{\bf finally}}}
-\newmeta\ifliteral{{\bf{if}}}
-\newmeta\doliteral{{\bf do}}
-\newmeta\fnliteral{{\bf fn}}
-\newmeta\letliteral{{\mathsf{\bf{let}}}}
-\newmeta\throwliteral{{\bf throw}}
-\newmeta\newliteral{{\bf new}}
-\newmeta\defmultiliteral{{\bf defmulti}}
-\newmeta\createmultiliteral{new\_multi}
-\newmeta\extendmultiliteral{extend\_multi}
-\newmeta\defmethodliteral{{\bf defmethod}}
+\newcommand\ifliteral[0]{{\operatorfont{if}}}
+\newcommand\doliteral[0]{{\operatorfont{do}}}
+\newcommand\letliteral[0]{{\operatorfont{let}}}
+\newcommand\throwliteral[0]{{\operatorfont{throw}}}
+\newcommand\newliteral[0]{{\operatorfont{new}}}
+\newcommand\defmultiliteral[0]{{\operatorfont{defmulti}}}
+\newcommand\defmethodliteral[0]{{\operatorfont{defmethod}}}
 \newcommand\abs[3]{\ma{\l #1^{#2} . #3}}
 \newcommand\absoverright[3]{\ma{\l \overrightarrow{#1^{#2}} . #3}}
 \newcommand\curlymap[1]{\ma{\{#1\}}}
 \newcommand\comb[2]{\ma{(#1\ #2)}}
-\newcommand\tryexp[5]{(\ma{\tryliteral{}\ #1\ (\ma{\catchliteral{}\ #2\ #3\ #4})\ (\ma{\finallyliteral{}\ #5})})}
 \newcommand\ifexp[3]{(\ma{\ifliteral{}\ #1\ #2\ #3})}
 \newcommand\doexp[2]{(\ma{\doliteral{}\ #1\ #2})}
-\newcommand\fnexp[2]{(\ma{\fnliteral{}\ [#1]\ #2})}
 \newcommand\letexp[3]{(\ma{\letliteral{}\ [\ma{#1\ #2}]\ #3})}
 \newcommand\appexp[2]{(\ma{#1\ #2})}
 \newcommand\throwexp[1]{(\ma{\throwliteral{}\ #1})}
 \newcommand\newexp[2]{(\ma{\newliteral{}\ #1\ #2})}
 \newcommand\newstaticexp[4]{(\ma{\newliteral{[[#1], #2]}\ #3\ #4})}
-\newmeta\dotliteral{{\bf .}}
+\newcommand\dotliteral[0]{{\operatorfont{.}}}
 \newcommand\fieldexp[2]{(\ma{\dotliteral\ #2\ #1})}
 \newcommand\fieldstaticexp[4]{(\ma{\dotliteral\ #4\ #3^{#1}_{#2}})}
 \newcommand\methodexp[3]{(\ma{\dotliteral\ #2\ (#1\ #3)})}
@@ -147,6 +143,7 @@
 \newcommand\extendmultiexp[3]{(\ma{\defmethodliteral{}\ #1\ #2\ #3})}
 \newmeta\defliteral{{\bf def}}
 \newcommand\defexp[2]{(\ma{\defliteral{}\ #1\ #2})}
+\newcommand\errorval[1]{\ma{error_{#1}}}
 
 % Java primitives
 \newmeta\pint{int}
@@ -168,12 +165,10 @@
 
 % constant calls
 \newbfop\ccclass{class}
-\newbfop\instanceop{instance?}
-\newbfop\satisfiesop{satisfies?}
-\newbfop\isaop{isa?}
-\newcommand\instanceapp[2]{(\instanceop\ #1\ #2)}
-\newcommand\satisfiesapp[2]{(\satisfiesop\ #1\ #2)}
-\newcommand\isaapp[2]{(\isaop\ #1\ #2)}
+\newcommand\instanceliteral[0]{\operatorfont{instance?}}
+\newcommand\isaliteral[0]{{\operatorfont{isa?}}}
+\newcommand\instanceapp[2]{(\instanceliteral\ #1\ #2)}
+\newcommand\isaapp[2]{(\isaliteral\ #1\ #2)}
 
 % differences from TR
 \newcommand\trdiff[1]{\mathbin{\textcolor{blue}{#1}}}
