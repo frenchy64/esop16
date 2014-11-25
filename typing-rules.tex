@@ -163,47 +163,6 @@
 \caption{Standard Typing Rules}
 \end{figure*}
 
-\begin{figure*}
-\begin{mathpar}
-
-\infer [T-LocalHint]
-{ \inpropenv {\propenv{}} {\isprop {\t{}} {\x{}}}
-  \\
-  \s{} = {\falsydiff} }
-{ \judgementfillcol {\propenv{}} 
-                   {\hastype {\hinted {\classhint{}} {\x{}}} {\t{}}}
-                   {\filterset {{\notprop {\s{}} {\x{}}}} {{\isprop {\s{}} {\x{}}}}}
-                   {\x{}}
-                   }
-
-\infer [T-LetHint]
-{ \judgementfillcol {\propenv{}} {\hastype {\e{1}} {\s{}}} {\filterset {\thenprop {\prop{1}}} {\elseprop {\prop{1}}}}
-             {\object{1}}
-             \\\\
-             \propp{} = {\impprop {\notprop {\falsydiff{}} {\x{}}} {\thenprop {\prop{1}}}}
-             \\\\
-             \proppp{} = {\impprop {\isprop {\falsydiff{}} {\x{}}} {\elseprop {\prop{1}}}}
-  \\\\
-  \judgementfillmmcol 
-      {\taenv{}, {\hastype {\x{}} {\tatype{}}}}
-       {\propenv{}, {\isprop {\s{}} {\x{}}},
-         {\propp{}},
-         {\proppp{}}}
-             {\hastype {\e{}} {\t{}}} {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}}
-             {\object{}} 
-             }
-{ \judgementfillcol {\propenv{}} {\hastype {\letexp {\hinted{\classhint{}{\x{}}}} {\e{1}} {\e{}}} {\t{}}}
-             {\replacefor {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}}
-                          {\object{1}}
-                          {\x{}}}
-             {\replacefor {\object{}} 
-                          {\object{1}}
-                          {\x{}}}
-             }
-
-\end{mathpar}
-\caption{Type Hint Rules}
-\end{figure*}
 
 \begin{figure*}
 \begin{mathpar}
@@ -270,24 +229,6 @@
              {\filterset {\topprop{}} {\topprop{}}}
              {\emptyobject{}}}
 
-\infer [T-InstanceOf]
-{ \judgement {\propenv{}} 
-             {\hastype {\e{}} {\t{}}}
-             {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}}
-             {\object}
-             \\
-             \s{} = {\Instance {\class{}}}
-}
-{ \judgement {\propenv{}} {\hastype {\instanceapp {\class{}} {\e{}}}
-                                    {\Boolean}}
-             {\replacefor
-               {\filterset {\isprop  {\s{}} {\x{}}}
-                           {\notprop {\s{}} {\x{}}}}
-               {\object{}}
-               {\x{}}}
-             {\emptyobject}
-}
-\\
 \infer [T-Throw]
 { \judgementfillcol {\propenv{}} {\hastype {\e{}} {\Throwable}} {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}}
                  {\object{}}
@@ -334,7 +275,7 @@
                                                 {\elseprop {\prop{m}}}}
                                     {\object{m}}}
 \\
-\t{d} = {\ArrowOne {\x{}} {\t{}} {\t{r}}
+\t{d} = {\ArrowOne {\x{}} {\t{}} {\s{}}
                                     {\filterset {\thenprop {\prop{d}}}
                                                 {\elseprop {\prop{d}}}}
                                     {\object{d}}}
@@ -350,11 +291,7 @@
                        {\elseprop {\prop{v}}}}
            {\object{v}}
 \\\\
-\isacompare {\t{v}} {\x{}} {\t{r}}
-             {\filterset {\thenprop {\prop{}}}
-                         {\elseprop {\prop{}}}}
-\\\\
-\judgementfillcol {\propenv{}, {\isprop{\t{}} {\x{}}}, {\thenprop {\prop{}}}}
+\judgementfillcol {\propenv{}, {\isprop{\t{}} {\x{}}}, {\isprop {\s{}}{\x{}}}}
            {\hastype {\e{b}} {\s{b}}}
            {\filterset {\thenprop {\prop{m}}}
                        {\elseprop {\prop{m}}}}
@@ -368,19 +305,25 @@
 }
 
 \infer [T-Isa]
-{ \forall i.\ \judgementfillcol {\propenv{}} {\hastype {\e{i}} {\t{i}}}
-             {\filterset {\thenprop {\prop{i}}}
-                         {\elseprop {\prop{i}}}}
-                       {\object{i}}
+{ 
+  \judgementfillcol 
+             {\propenv{}} {\hastype {\e{1}} {\t{1}}}
+             {\filterset {\thenprop {\prop{1}}}
+                         {\elseprop {\prop{1}}}}
+                       {\object{}}
   \\\\
-\isacompare {\t{1}} {\object{1}} {\t{2}}
-             {\filterset {\thenprop {\prop{}}}
-                         {\elseprop {\prop{}}}}
+  \judgementfillcol 
+             {\propenv{}} {\hastype {\e{2}} {\t{}}}
+             {\filterset {\thenprop {\prop{2}}}
+                         {\elseprop {\prop{2}}}}
+                       {\object{2}}
 }
 { \judgementfillcol {\propenv{}} {\hastype {\isaapp {\e{1}} {\e{2}}}
                                     {\Boolean{}}}
-             {\filterset {\thenprop {\prop{}}}
-                         {\elseprop {\prop{}}}}
+            {\replacefor{\filtersetparen {\isprop {\t{}} {\x{}}}
+                                         {\notprop {\t{}} {\x{}}}}
+                        {\object{}}
+                        {\x{}}}
              {\emptyobject}}
 \end{mathpar}
 \caption{Multimethod Typing Rules}
@@ -389,31 +332,8 @@
 \begin{figure*}
 \begin{mathpar}
 
-
-
-%\infer [T-KwInvoke]
-%{}
-%{ TODO }
-
-%{ \judgement {\propenv{}} {\hastype {\e{m}} {\t{m}}}
-%             {\filterset {\prop{}} {\prop{}}}
-%           {\object{m}}}
-%             \\
-%  \judgement {\propenv{}} {\hastype {\e{k}} {\t{k}}}
-%             {\filterset {\prop{}} {\prop{}}}
-%             {\object{}}
-             %\\\\
-%  \judgement {\propenv{}} {\hastype {\e{d}} {\t{d}}}
-%             {\filterset {\prop{}} {\prop{}}}
-%             {\object{}}
-
-             %\\
-             %\t{k} %= {\Value {k}}
-         %}
-% invoke complete HMap with present key
-
-\infer [T-GetHMapComplete]
-{ \judgement {\propenv{}} {\hastype {\e{m}} {\HMapc {\mandatory{}}}}
+\infer [T-GetHMap]
+{ \judgement {\propenv{}} {\hastype {\e{m}} {\HMapgeneric {\mandatory{}} {\absent{}}}}
            {\filterset {\thenprop {\prop{m}}} {\elseprop {\prop{m}}}}
            {\object{m}}
          \\\\
@@ -428,41 +348,8 @@
              {\path {\keype{k}} {\object{m}}}
                                   }
 
-\infer [T-GetHMapCompleteDefault]
-{ \judgement {\propenv{}} {\hastype {\e{m}} {\HMapc {\mandatory{}}}}
-           {\filterset {\thenprop {\prop{m}}} {\elseprop {\prop{m}}}}
-           {\object{m}}
-         \\\\
-  \judgement {\propenv{}} {\hastype {\e{k}} {\Value {k}}}
-             {\filterset {\thenprop {\prop{k}}} {\elseprop {\prop{k}}}}
-             {\object{k}}
-             \\\\
-             {\notinmandatory{\k{}}{\t{}}{\mandatory{}}}
-       }
-{ \judgement {\propenv{}} {\hastype {\getexp {\e{m}} {\e{k}}}
-                                    {\Nil{}}}
-             {\filterset {\topprop{}} {\topprop{}}}
-             {\path {\keype{k}} {\object{m}}}}
-
-\infer [T-GetHMapPartial]
-{ \judgement {\propenv{}} {\hastype {\e{m}} {\HMapp {\mandatory{}} {\absent}}}
-           {\filterset {\thenprop {\prop{m}}} {\elseprop {\prop{m}}}}
-           {\object{m}}
-         \\\\
-  \judgement {\propenv{}} {\hastype {\e{k}} {\Value {k}}}
-             {\filterset {\thenprop {\prop{k}}} {\elseprop {\prop{k}}}}
-             {\object{k}}
-             \\\\
-             {\inmandatory{\k{}}{\t{}}{\mandatory{}}}
-       }
-{ \judgement {\propenv{}} {\hastype {\getexp {\e{m}} {\e{k}}}
-                                    {\t{}}}
-             {\filterset {\topprop{}} {\topprop{}}}
-             {\path {\keype{k}} {\object{m}}}}
-                                  
-
-\infer [T-GetHMapPartialAbsent]
-{ \judgement {\propenv{}} {\hastype {\e{m}} {\HMapp {\mandatory{}} {\absent}}}
+\infer [T-GetHMapAbsent]
+{ \judgement {\propenv{}} {\hastype {\e{m}} {\HMapgeneric {\mandatory{}} {\absent}}}
            {\filterset {\thenprop {\prop{m}}} {\elseprop {\prop{m}}}}
            {\object{m}}
          \\\\
@@ -495,18 +382,16 @@
              {\filterset {\topprop{}} {\topprop{}}}
              {\path {\keype{k}} {\object{m}}}}
 
-\infer [T-KeywordMap]
-{ \judgement {\propenv{}} {\hastype {\overrightarrow{{\e{v}}}} {\overrightarrow {{\t{v}}}}}
-             {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}}
-             {\object}}
-{ \judgement {\propenv{}} {\hastype {\curlymap {\overrightarrow{{k_{v}}\ {\e{v}}}}}
-  {\HMapc {\mandatoryset {{\overrightarrow{({k_{v}}\ {\t{v}})}}}}}}
+\infer [T-EmptyMap]
+{}
+{ \judgement {\propenv{}} {\hastype {\emptymap{}}
+  {\HMapc {\mandatoryset {}}}}
              {\filterset {\topprop{}} {\botprop{}}}
              {\emptyobject}}
 
-\infer [T-AssocPartial]
+\infer [T-Assoc]
 { 
-  \judgement {\propenv{}} {\hastype {\e{m}} {\HMapp {\mandatory{}} {\absent}}}
+  \judgement {\propenv{}} {\hastype {\e{m}} {\HMapgeneric {\mandatory{}} {\absent}}}
              {\filterset {\thenprop {\prop{m}}} {\elseprop {\prop{m}}}}
              {\object{m}}
   \\\\
@@ -520,28 +405,7 @@
 }
 { \judgement {\propenv{}} 
              {\hastype {\assocexp {\e{m}} {\e{k}} {\e{v}}}
-                       {\HMapp {\extendmandatoryset {\mandatory{}}{\k{}}{\t{v}}} {\absent}}}
-             {\filterset {\topprop{}} {\topprop{}}}
-             {\emptyobject{}}
-}
-
-\infer [T-AssocComplete]
-{ 
-  \judgement {\propenv{}} {\hastype {\e{m}} {\HMapc {\mandatory{}}}}
-             {\filterset {\thenprop {\prop{m}}} {\elseprop {\prop{m}}}}
-             {\object{m}}
-  \\\\
-  \judgement {\propenv{}} {\hastype {\e{k}} {\Value{\k{}}}}
-             {\filterset {\thenprop {\prop{k}}} {\elseprop {\prop{k}}}}
-             {\object{k}}
-  \\\\
-  \judgement {\propenv{}} {\hastype {\e{v}} {\t{v}}}
-             {\filterset {\thenprop {\prop{v}}} {\elseprop {\prop{v}}}}
-             {\object{v}}
-}
-{ \judgement {\propenv{}} 
-             {\hastype {\assocexp {\e{m}} {\e{k}} {\e{v}}}
-                       {\HMapc {\extendmandatoryset {\mandatory{}}{\k{}}{\t{v}}}}}
+                       {\HMapgeneric {\extendmandatoryset {\mandatory{}}{\k{}}{\t{v}}} {\absent}}}
              {\filterset {\topprop{}} {\topprop{}}}
              {\emptyobject{}}
 }

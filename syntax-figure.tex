@@ -5,6 +5,7 @@ $$
                       \true{} \alt \false{} \alt \nil{}
                       \alt \class{} \alt \classvaluemeta{}
                       \alt \k{}
+                      \alt {\emptymap{}}
                 &\mbox{Values} \\
   \expd{}, \e{} &::=& \x{}
                       \alt
@@ -27,18 +28,16 @@ $$
                       \hinted{\classhint{}} {\x{}}
                       \alt
                       {\letexp {\hinted {\classhint{}} {\x{}}} {\e{}} {\e{}}}
-                &\mbox{Typed Hinted Expressions} \\
+                &\mbox{Type Hinted Expressions} \\
   \HashMapExp{}                &::=&
                       {\getexp {\e{}} {\e{}}}
                       \alt {\assocexp {\e{}}{\e{}}{\e{}}}
-                      \alt {\curlymap {\overrightarrow{\e{}\ \e{}}}}
                 &\mbox{Hash Maps} \\
   \ReflectiveExp{}     &::=&
                       {\fieldstaticexp {\classhint{}} {\classhint{}} {fld} {\e{}}}
                       \alt {\methodstaticexp {\classhint{}} {\overrightarrow{\classhint{}}} {\classhint{}} {mth} {\e{}} {\overrightarrow{\e{}}}}
                       \alt {\newstaticexp {\overrightarrow {\classhint{}}} {\classhint{}} {\class{}} {\overrightarrow{\e{}}}}
                       \alt {\throwexp {\e{}}}
-                      \alt {\instanceapp {\e{}} {\e{}}}
                 &\mbox{Non-Reflective Java Interop} \\
   \NonReflectiveExp{}     &::=&
                       {\fieldexp {fld} {\e{}}}
@@ -51,33 +50,27 @@ $$
                       \alt {\isaapp {\e{}} {\e{}}}
                 &\mbox{Immutable First-Class Multimethods} \\
                       \\\\
-  \s{}, \t{}    &::=& \Top \alt (\class{}\ \overrightarrow{\t{}})
+  \s{}, \t{}    &::=& \Top 
                       \alt \class\ 
-                      \alt {\Instance {\class}}
                       \alt
                       {\Value \k{}} 
                       \alt {\Nil{}}
                       \alt {\True{}}
                       \alt {\False{}}
-                      \\ &\alt&
+                      \alt
                       {\Unionsplice {\overrightarrow{\t{}}}}
                       \alt
-                      {\In {\t{}\ \overrightarrow{\t{}}}}
-                      \alt 
-                      %\alt (\Not\ \t{})
-                      {\All {\overrightarrow{\x{}}} {\t{}}}
-                      \alt
-                      {\TFn {\overrightarrow{\x{}}} \t{}}
-                      \\ &\alt&
                       {\ArrowOne {\x{}} {\t{}}
                                    {\t{}}
                                    {\filterset {\prop{}} {\prop{}}}
                                    {\object{}}}
-                      \alt {\HMapp {\mandatory} {\absent}}
-                      \alt
-                      {\HMapc {\mandatory}}
+                                   \alt {\HMapgeneric {\mandatory{}} {\absent{}}}
+                      \alt \Number{}
+                      \alt \Keyword{}
                       
                 &\mbox{Typed Clojure Types} \\
+  \completenessmeta{} &::=& {\complete{}} \alt {\partial{}}
+                &\mbox{HMap completeness} \\
   \tatype{}     &::=& \unknownhint{} \alt \classhint{}
                 &\mbox{tools.analyzer Types} \\ \\
   \prop{}       &::=& {\isprop {\t{}} {\path {\pathelem{}} {\x{}}}}

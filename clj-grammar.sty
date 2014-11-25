@@ -78,9 +78,9 @@
 \newbfop\Top{\ma{\top}}
 \newbfop\Bottom{\ma{\bot}}
 \newbfop\Bot{\ma{\bot}}
-\newbfop\Keyword{Keyword}
+\newbfop\Keyword{K}
 \newbfop\Symbol{Symbol}
-\newbfop\Number{Number}
+\newbfop\Number{N}
 \newbfop\Nil{nil}
 \newbfop\True{true}
 \newbfop\False{false}
@@ -89,8 +89,12 @@
 \newcommand\IPersistentMap[2]{(\ma{\IPersistentMapLiteral\ #1\ #2})}
 \newcommand\Map[2]{(\ma{\MapLiteral\ #1\ #2})}
 \newbfop\HMapliteral{HMap}
-\newcommand\HMapc[1]{(\ma{\HMapliteral^{complete}\ #1})}
-\newcommand\HMapp[2]{(\ma{\HMapliteral\ #1\ #2})}
+\newmeta\completenessmeta{\mathcal{A}}
+\newmeta\complete{\mathcal{C}}
+\newmeta\partial{\mathcal{P}}
+\newcommand\HMapgeneric[2]{(\ma{\HMapliteral^{\completenessmeta{}} #1\ #2})}
+\newcommand\HMapc[1]{(\ma{\HMapliteral^{\complete{}} #1})}
+\newcommand\HMapp[2]{(\ma{\HMapliteral^{\partial{}} #1\ #2})}
 \newcommand\mandatoryset[1]{\ma{\{#1\}}}
 \newcommand\notinmandatory[3]{\ma{(#1\ #2)} \not\in {#3}}
 \newcommand\inmandatory[3]{\ma{(#1\ #2)} \in {#3}}
@@ -133,6 +137,7 @@
 \newcommand\abs[3]{\ma{\l #1^{#2} . #3}}
 \newcommand\absoverright[3]{\ma{\l \overrightarrow{#1^{#2}} . #3}}
 \newcommand\curlymap[1]{\ma{\{#1\}}}
+\newcommand\emptymap[1]{\ma{\{\}}}
 \newcommand\comb[2]{\ma{(#1\ #2)}}
 \newcommand\ifexp[3]{(\ma{\ifliteral{}\ #1\ #2\ #3})}
 \newcommand\doexp[2]{(\ma{\doliteral{}\ #1\ #2})}
@@ -322,6 +327,7 @@
 \newmeta\topprop{\mathbbm{tt}}
 \newmeta\botprop{\mathbbm{ff}}
 \newcommand\filterset[2]{\ma{#1 | #2}}
+\newcommand\filtersetparen[2]{\ma{(\filterset{#1}{#2})}}
 \newcommand\thenprop[1]{\ma{{#1}_+}}
 \newcommand\elseprop[1]{\ma{{#1}_-}}
 \newcommand\flowprop[1]{\ma{{#1}_\rightarrow}}

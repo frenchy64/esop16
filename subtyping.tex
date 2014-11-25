@@ -18,15 +18,6 @@
 {}
 { \issubtypein {} {\t{}} {\Top{}}}
 
-% FIXME fix overrightarrow caption
-\infer [S-IntersectSuper]
-{ {\overrightarrow {\issubtypein {} {\t{}} {\s{i}}}}^{i}}
-{ \issubtypein {} {\t{}} {\In{{\overrightarrow{\s{}}}^{i}}}}
-
-\infer [S-IntersectSub]
-{ \exists i.\ {\issubtypein {} {\t{i}} {\s{}}}}
-{ \issubtypein {} {\In{{\overrightarrow{\t{}}}^{i}}} {\s{}}}
-
 \infer [S-UnionSuper]
 { \exists i.\ {\issubtypein {} {\t{}} {\s{i}}}}
 { \issubtypein {} {\t{}} {\Unionsplice{{\overrightarrow{\s{}}}^{i}}}}
@@ -58,10 +49,6 @@
               {\filterset {\thenprop {\propp{}}}
                           {\elseprop {\propp{}}}}
               {\objectp{}}}}
-
-\infer [S-Instance]
-{ \assignable {\class{}} {\classp{}}}
-{ \issubtypein {} {\Instance {\class{}}} {\Instance {\classp{}}}} 
 
 \infer [S-PMulti]
 { \issubtypein {} {\s{}} {\sp{}}

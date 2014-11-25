@@ -1,26 +1,10 @@
 \begin{figure*}
 $$
 \begin{array}{lclr}
-
-\isacomparealign {\s{}} {\object{}} {\t{}}
-                {\replacefor
-                  {\filterset {\isprop{\t{}}  {\x{}}}
-                              {\notprop{\t{}} {\x{}}}}
-                  {\object{}}
-                  {\x{}}}
-                            %\\
-                            % Other case: 2 equal sized HVecs
-%\isacomparealign {} {\x{}} {\t{}}
-%                {\filterset {\isprop{\t{}}  {\x{}}}
-%                            {\notprop{\t{}} {\x{}}}}
-\end{array}
-$$
-$$
-\begin{array}{lclr}
+  \isaopsem{\classvaluemeta{}}{\classvaluemeta{}} &=& {\true{}}\\
   \isaopsem{\classvaluemeta{1}}{\classvaluemeta{2}} &=& {\true{}} & \classvaluemeta{1}\ \text{is a subclass of}\ \classvaluemeta{2}\\
-  \isaopsem{\classvaluemeta{1}}{\classvaluemeta{2}} &=& {\false{}}\\
-  \isaopsem{\v{}}{\v{}} &=& {\true{}}\\
-  \isaopsem{\v{1}}{\v{2}} &=& {\false{}} & \v{1} \not= \v{2}
+  \isaopsem{\k{}}{\k{}} &=& {\true{}}\\
+  \isaopsem{\v{1}}{\v{2}} &=& {\false{}} & \text{otherwise}
 \end{array}
 $$
 \caption{Definition of isa}
