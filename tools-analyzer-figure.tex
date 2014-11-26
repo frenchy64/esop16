@@ -8,24 +8,24 @@
 { \tajudgement {\taenv{}} {\hastype {\x{}} {\tatype{}}}
 }
 
-\infer [TA-LocalHint]
-{}
-{ \tajudgement {\taenv{}} {\hastype {\hinted {\classhint{}} {\x{}}} {\classhint{}}}
-}
-
-\infer [TA-Nil]
-{}
-{ \tajudgement {\taenv{}} {\hastype {\nil{}} {\unknownhint{}}}
-}
+%\infer [TA-Nil]
+%{}
+%{ \tajudgement {\taenv{}} {\hastype {\nil{}} {\unknownhint{}}}
+%}
 
 \infer [TA-True]
 {}
-{ \tajudgement {\taenv{}} {\hastype {\true{}} {\Boolean{}}}
+{ \tajudgement {\taenv{}} {\hastype {\true{}} {\Booleanhint{}}}
 }
 
 \infer [TA-False]
 {}
-{ \tajudgement {\taenv{}} {\hastype {\false{}} {\Boolean{}}}
+{ \tajudgement {\taenv{}} {\hastype {\false{}} {\Booleanhint{}}}
+}
+
+\infer [TA-Kw]
+{}
+{ \tajudgement {\taenv{}} {\hastype {\k{}} {\Keyword{}}}
 }
 
 \infer [TA-NewStatic]
@@ -35,18 +35,18 @@
                            {\classhint{1}}}
 }
 
-\infer [TA-NewRefl]
-{}
-{ \tajudgement {\taenv{}}
-  {\hastype {\newexp {\class{}} {\overrightarrow {\e{}}}}
-                     {\unknownhint{}}}
-}
+%\infer [TA-NewRefl]
+%{}
+%{ \tajudgement {\taenv{}}
+%  {\hastype {\newexp {\class{}} {\overrightarrow {\e{}}}}
+%                     {\unknownhint{}}}
+%}
 
 \infer [TA-Abs]
 {}
 { \tajudgement {\taenv{}}
                {\hastype {\abs {\x{}} {\t{}} {\e{}}}
-                         {\IFn{}}}
+                         {\unknownhint{}}}
                        }
 
 \infer [TA-LetHint]
@@ -74,12 +74,12 @@
                          {\tatype{}}}
 }
 
-\infer [TA-FieldRefl]
-{}
-{ \tajudgement {\taenv{}}
-               {\hastype {\fieldexp {\fld} {\e{}}}
-                         {\unknownhint{}}}
-  }
+%\infer [TA-FieldRefl]
+%{}
+%{ \tajudgement {\taenv{}}
+%               {\hastype {\fieldexp {\fld} {\e{}}}
+%                         {\unknownhint{}}}
+%  }
 
 \infer [TA-FieldStatic]
 {}
@@ -88,12 +88,12 @@
                          {\classhint{}}}
   }
 
-\infer [TA-MethodRefl]
-{}
-{ \tajudgement {\taenv{}}
-               {\hastype {\methodexp {\mth} {\e{}} {\overrightarrow {\e{i}}}}
-                         {\unknownhint{}}}
-  }
+%\infer [TA-MethodRefl]
+%{}
+%{ \tajudgement {\taenv{}}
+%               {\hastype {\methodexp {\mth} {\e{}} {\overrightarrow {\e{i}}}}
+%                         {\unknownhint{}}}
+%  }
 
 \infer [TA-MethodStatic]
 {}
@@ -108,7 +108,7 @@
 \infer [TA-App]
 {}
 { \tajudgement {\taenv}
-               {\hastype {\appexp {\e{}} {\overrightarrow {\e{i}}}}
+               {\hastype {\appexp {\e{}} {\ep{}}}
                          {\unknownhint{}}}
                        }
 
@@ -116,7 +116,7 @@
 { \intaenv {\taenv{}} {\x{}} {\tatype{}}
 }
 { \tajudgement {\taenv}
-               {\hastype {\appexp {\x{}} {\overrightarrow {\e{i}}}}
+               {\hastype {\appexp {\x{}} {\ep{}}}
                          {\tatype{}}}
                        }
 
@@ -126,17 +126,13 @@
 { \tajudgement {\taenv{}} {\hastype {\doexp {\e1} {\e{}}} {\tatype{}}}
 }
 
-\infer [TA-Throw]
-{}
-{ \tajudgement {\taenv{}} {\hastype {\throwexp {\e{}}} {\unknownhint{}}}}
-
 \infer [TA-DefMulti]
 {}
 { \tajudgement {\taenv{}} {\hastype {\createmultiexp {\t{}} {\e{}}} {\unknownhint{}}}}
 
 \infer [TA-DefMethod]
 {}
-{ \tajudgement {\taenv{}} {\hastype {\extendmultiexp {\e{}} {\e{}} {\e{}}} {\unknownhint{}}}}
+{ \tajudgement {\taenv{}} {\hastype {\extendmultiexp {\e{1}} {\e{2}} {\e{3}}} {\unknownhint{}}}}
 
 \infer [TA-If]
 { \tajudgement {\taenv{}} {\hastype {\e{2}} {\classhint{}}}
@@ -151,8 +147,11 @@
 
 \infer [TA-Isa]
 {}
-{ \tajudgement {\taenv{}} {\hastype {\isaapp {\e{}} {\e{}}} {\Boolean{}}}}
+{ \tajudgement {\taenv{}} {\hastype {\isaapp {\e{}} {\e{}}} {\Booleanhint{}}}}
 
+\infer [TA-Const]
+{}
+{ \tajudgement {\taenv{}} {\hastype {\const{}} {\unknownhint{}}}}
 
 \end{mathpar}
 \caption{tools.analyzer Type Hints}
@@ -168,32 +167,18 @@
            {\x{}}
          }
 
-\infer [R-LocalHint]
-{}
-{ \rewrite {\taenv{}}
-  {\hinted {\classhint{}} {\x{}}}
-  {\hinted {\classhint{}} {\x{}}}
-         }
+%\infer [R-LocalHint]
+%{}
+%{ \rewrite {\taenv{}}
+%  {\hinted {\classhint{}} {\x{}}}
+%  {\hinted {\classhint{}} {\x{}}}
+%         }
 
-\infer [R-Nil]
+\infer [R-Val]
 {}
 { \rewrite {\taenv{}}
-  {\nil{}}
-  {\nil{}}
-}
-
-\infer [R-True]
-{}
-{ \rewrite {\taenv{}}
-  {\true{}}
-  {\true{}}
-}
-
-\infer [R-False]
-{}
-{ \rewrite {\taenv{}}
-  {\false{}}
-  {\false{}}
+  {\v{}}
+  {\v{}}
 }
 
 \infer [R-NewRefl]
@@ -377,18 +362,13 @@
 
 \infer [R-App]
 { \rewrite {\taenv{}} {\e{}} {\ep{}}
-  \\\\\overrightarrow {
+  \\\\
   \rewrite {\taenv{}} {\e{i}} {\e{j}}
 }
-}
 { \rewrite {\taenv{}}
-           {\appexp {\e{}} {\overrightarrow {\e{i}}}}
-           {\appexp {\ep{}} {\overrightarrow {\e{j}}}}
+           {\appexp {\e{}} {\e{i}}}
+           {\appexp {\ep{}} {\e{j}}}
          }
-
-\infer [R-Throw]
-{ \rewrite {\taenv{}} {\e{}} {\ep{}}}
-{ \rewrite {\taenv{}} {\throwexp {\e{}}} {\throwexp {\ep{}}}}
 
 \end{mathpar}
 \caption{Java Reflection Resolution}

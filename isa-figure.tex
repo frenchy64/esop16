@@ -1,9 +1,13 @@
 \begin{figure*}
 $$
+\begin{array}{llr}
+  \isacompare{\s{}}{\object{}}{\t{}}{\replacefor{\filtersetparen{\isprop{\t{}}{\x{}}}{\notprop{\t{}}{\x{}}}}{\object{}}{\x{}}}
+\end{array}
+$$
+$$
 \begin{array}{lclr}
-  \isaopsem{\classvaluemeta{}}{\classvaluemeta{}} &=& {\true{}}\\
+  \isaopsem{\v{}}{\v{}} &=& {\true{}}\\
   \isaopsem{\classvaluemeta{1}}{\classvaluemeta{2}} &=& {\true{}} & \classvaluemeta{1}\ \text{is a subclass of}\ \classvaluemeta{2}\\
-  \isaopsem{\k{}}{\k{}} &=& {\true{}}\\
   \isaopsem{\v{1}}{\v{2}} &=& {\false{}} & \text{otherwise}
 \end{array}
 $$

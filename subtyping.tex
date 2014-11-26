@@ -77,6 +77,23 @@
                                                         {\elseprop {\propp{}}}}
                                                 {\objectp{}}}}
 
+\infer [S-HMap]
+{ \forall i.\ ({\k{i}},\ \s{i}) \in \mandatory{} \text{ and } \issubtypein {} {\s{i{}}} {\t{i{}}}
+  \\\\
+  {\absent{1}} \supseteq {\absent{2}}
+}
+{\issubtypein {} {\HMapgeneric {\mandatory{}} {\absent{1}}}
+  {\HMapgeneric {\overrightarrow{(\k{},\ \t{})}^i} {\absent{2}}}
+               }
+
+\infer [S-HMapP]
+{ \forall i.\ ({\k{i}},\ \s{i}) \in \mandatory{} \text{ and } \issubtypein {} {\s{i{}}} {\t{i{}}}
+}
+{\issubtypein {} 
+  {\HMapc {\mandatory{}}}
+  {\HMapp {\overrightarrow{(\k{},\ \t{})}^i} {\absent{}}}
+               }
+
 
 \end{mathpar}
 \caption{Subtyping rules}

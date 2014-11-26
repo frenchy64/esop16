@@ -72,6 +72,18 @@
          {\v{}}
        }
 
+\infer [B-Delta]
+{ \opsem {\openv{}} {\e{}} {\const{}}
+  \\
+  \opsem {\openv{}} {\ep{}} {\v{}}
+  \\\\
+  \constantopsem{\const{}}{\v{}} = \vp{}
+}
+{ \opsem {\openv{}}
+         {\appexp {\e{}} {\ep{}}}
+         {\vp{}}
+       }
+
 \infer [B-BetaMulti]
 { \opsem {\openv{}}
          {\e{f}}
@@ -85,7 +97,7 @@
          {\appexp {\v{d}} {\v{a}}}
          {\v{e}}
          \\\\
-  \getmethod {\multi {\v{d}} {m}}
+  \getmethod {\disptable{}}
              {\v{e}}
              {\v{f}}
          \\\\
@@ -191,22 +203,69 @@
 \infer [B-MethodRefl]
 {}
 {\opsem {\openv{}} {\methodexp {mth} {\e{}} {\overrightarrow{\e{}}}}
-        {refl\ error}}
+        {\reflerror{}}}
 
 \infer [B-FieldRefl]
 {}
 {\opsem {\openv{}} {\fieldexp {fld} {\e{}}}
-        {refl\ error}}
+        {\reflerror{}}}
 
 \infer [B-NewRefl]
 {}
 {\opsem {\openv{}} {\fieldexp {fld} {\e{}}}
-        {refl\ error}}
+        {\reflerror{}}}
 
-\infer [B-Throw]
-{ \opsem {\openv{}} {\e{}} {\v{}}}
-{\opsem {\openv{}} {\throwexp {\e{}}}
-        {error_{v}}}
+\infer [B-Assoc]
+{\opsem {\openv{}}
+        {\e{m}} {\curlymap{\overrightarrow{({\v{a}}\ {\v{b}})}}}
+        \\
+ \opsem {\openv{}}
+        {\e{k}} {\v{k}}
+        \\
+ \opsem {\openv{}}
+        {\e{v}} {\v{v}}
+}
+{
+ \opsem {\openv{}}
+        {\assocexp {\e{m}} {\e{k}} {\e{v}}} 
+        {\extendmap{\curlymap{\overrightarrow{({\v{a}}\ {\v{b}})}}}
+                {\v{k}}{\v{v}}}
+                }
+
+\infer [B-Get]
+{\opsem {\openv{}}
+        {\e{m}} {\curlymap{\overrightarrow{({\v{a}}\ {\v{b}})}}}
+        \\
+ \opsem {\openv{}}
+        {\e{k}} {\v{k}}
+        \\\\
+ \keyinmap{\v{k}}{\curlymap{\overrightarrow{({\v{a}}\ {\v{b}})}}}
+        \\
+ \getmap{\curlymap{\overrightarrow{({\v{a}}\ {\v{b}})}}}
+        {\v{k}}
+        =
+        {\v{}}
+}
+{
+ \opsem {\openv{}}
+        {\getexp {\e{m}} {\e{k}}}
+        {\v{}}
+}
+
+\infer [B-GetMissing]
+{\opsem {\openv{}}
+        {\e{m}} {\curlymap{\overrightarrow{({\v{a}}\ {\v{b}})}}}
+        \\
+ \opsem {\openv{}}
+        {\e{k}} {\v{k}}
+        \\\\
+ \keynotinmap{\v{k}}{\curlymap{\overrightarrow{({\v{a}}\ {\v{b}})}}}
+}
+{
+ \opsem {\openv{}}
+        {\getexp {\e{m}} {\e{k}}}
+        {\nil{}}
+}
 
 \end{mathpar}
 \caption{Operational Semantics}
@@ -301,7 +360,7 @@
          {\appexp {\v{d}} {\v{a}}}
          {\v{e}}
          \\\\
-  \getmethod {\multi {\v{d}} {m}}
+  \getmethod {\disptable{}}
              {\v{e}}
              {\errorval{\v{}}}
        }
@@ -419,11 +478,6 @@
          {\errorval{\v{}}}
       }
 
-\infer [BE-Throw]
-{ \opsem {\openv{}} {\e{}} {\errorval{\v{}}}}
-{\opsem {\openv{}} {\throwexp {\e{}}}
-        {\errorval{\v{}}}}
-
 \infer [BE-IsA1]
 { \opsem {\openv{}} {\e{1}} {\errorval{\v{}}}
 }
@@ -435,6 +489,68 @@
   \opsem {\openv{}} {\e{2}} {\errorval{\v{}}}
 }
 {\opsem {\openv{}} {\isaapp {\e{1}} {\e{2}}} {\errorval{\v{}}}}
+
+\infer [BE-Assoc1]
+{\opsem {\openv{}}
+        {\e{m}}{\errorvalv{}} 
+}
+{
+ \opsem {\openv{}}
+        {\assocexp {\e{m}} {\e{k}} {\e{v}}} 
+        {\errorvalv{}}
+                }
+
+\infer [BE-Assoc2]
+{\opsem {\openv{}}
+        {\e{m}} {\curlymap{\overrightarrow{({\v{a}}\ {\v{b}})}}}
+        \\
+ \opsem {\openv{}}
+        {\e{k}}{\errorvalv{}}
+}
+{
+ \opsem {\openv{}}
+        {\assocexp {\e{m}} {\e{k}} {\e{v}}} 
+        {\errorvalv{}}
+                }
+
+\infer [BE-Assoc3]
+{\opsem {\openv{}}
+        {\e{m}} {\curlymap{\overrightarrow{({\v{a}}\ {\v{b}})}}}
+        \\
+ \opsem {\openv{}}
+        {\e{k}} {\v{k}}
+        \\
+ \opsem {\openv{}}
+        {\e{v}} {\errorvalv{}}
+}
+{
+ \opsem {\openv{}}
+        {\assocexp {\e{m}} {\e{k}} {\e{v}}} 
+        {\errorvalv{}}
+                }
+
+\infer [BE-Get1]
+{\opsem {\openv{}}
+        {\e{m}} {\errorvalv{}}
+}
+{
+ \opsem {\openv{}}
+        {\getexp {\e{m}} {\e{k}}}
+        {\errorvalv{}}
+}
+
+\infer [BE-Get2]
+{\opsem {\openv{}}
+        {\e{m}} {\curlymap{\overrightarrow{({\v{a}}\ {\v{b}})}}}
+        \\
+ \opsem {\openv{}}
+        {\e{k}} {\errorvalv{}}
+}
+{
+ \opsem {\openv{}}
+        {\getexp {\e{m}} {\e{k}}}
+        {\errorvalv{}}
+}
 
 \end{mathpar}
 \caption{Runtime Error Propagation}

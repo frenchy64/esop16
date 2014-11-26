@@ -13,13 +13,14 @@
 %% metavariables
 
 % constants
-\newmeta\c{c}
+\newmeta\const{c}
 
 % types
 \newmeta\s{\sigma}              % these are automatically wrapped in \ma
 \newmeta\sp{\sigma{'}}
 \newmeta\t{\tau}
 \newmeta\tp{\tau{'}}
+\newmeta\tpp{\tau{''}}
 \newmeta\T{T}
 
 % expressions
@@ -41,9 +42,10 @@
 % types
 \newbfop\int{int}
 \newbfop\Boolean{Boolean}
+\newbfop\Booleanhint{Boolean}
 \newbfop\IFn{IFn}
 \newbfop\MultiFn{MultiFn}
-\newbfop\PMulti{PMulti}
+\newbfop\PMulti{Multi}
 \newbfop\IPersistentMapLiteral{IPersistentMap}
 \newbfop\MapLiteral{Map}
 \newbfop\Uliteral{\ma{\bigcup}}
@@ -56,7 +58,7 @@
 \newbfop\ArrayLiteral{Array}
 \newbfop\ArrayPLiteral{ArrayP}
 \newbfop\Throwable{Throwable}
-\newbfop\Class{java.lang.Class}
+\newbfop\Class{Class}
 \newcommand\MultiFntype[2]{(\PMulti\ #1\ #2)}
 \newcommand\proctype[2]{(#1 \to #2)}
 \newcommand\Unionsplice[1]{(\ma{\Uliteral\ #1})}
@@ -71,6 +73,8 @@
 % TODO figure out how to make #1 : #2 closer to the :
 \newcommand\ArrowOne[5]{\ma{{\hastypesmall {#1} {#2}} \xrightarrow[#5]{#4} #3}}
 \newcommand\ArrowOverright[5]{\ma{{\overrightarrow{\hastypesmall {#1} {#2}}} \xrightarrow[#5]{#4} #3}}
+% minus filters and object, implicitly tt | tt; empty
+\newcommand\ArrowTwo[3]{\ma{{\hastypesmall {#1} {#2}} \xrightarrow\ {#3}}}
 
 \newcommand\All[2]{(\ma{\Allliteral\ [#1]\ #2})}
 \newcommand\TFn[2]{(\ma{\TFnliteral\ [#1]\ #2})}
@@ -78,7 +82,8 @@
 \newbfop\Top{\ma{\top}}
 \newbfop\Bottom{\ma{\bot}}
 \newbfop\Bot{\ma{\bot}}
-\newbfop\Keyword{K}
+\newbfop\Keyword{Keyword}
+\newbfop\Keywordhint{Keyword}
 \newbfop\Symbol{Symbol}
 \newbfop\Number{N}
 \newbfop\Nil{nil}
@@ -88,6 +93,7 @@
 \newbfop\falsydiff{\ma{\trdiff{\falsy}}}
 \newcommand\IPersistentMap[2]{(\ma{\IPersistentMapLiteral\ #1\ #2})}
 \newcommand\Map[2]{(\ma{\MapLiteral\ #1\ #2})}
+\newcommand\HMapInstance[0]{\ma{\IPersistentMapLiteral}}
 \newbfop\HMapliteral{HMap}
 \newmeta\completenessmeta{\mathcal{A}}
 \newmeta\complete{\mathcal{C}}
@@ -113,10 +119,13 @@
 \newmeta\x{x}                   % not sure if \x is reserved...
 \newmeta\xp{x{'}}                   % not sure if \x is reserved...
 \newmeta\v{v}
+\newmeta\vp{v'}
 \newmeta\class{C}
 \newmeta\classp{C{'}}
 \newmeta\protocol{P}
 \newmeta\k{k}
+\newmeta\num{n}
+\newmeta\b{b}
 \newcommand\operatorfont[1]{\ma{{\mathsf{#1}}}}
 \newcommand\literalfont[1]{\ma{{\mathsf{#1}}}}
 \newcommand\nil[0]{{\literalfont{nil}}}
@@ -138,6 +147,10 @@
 \newcommand\absoverright[3]{\ma{\l \overrightarrow{#1^{#2}} . #3}}
 \newcommand\curlymap[1]{\ma{\{#1\}}}
 \newcommand\emptymap[1]{\ma{\{\}}}
+\newcommand\extendmap[3]{\ma{#1[#2 \rightarrow #3]}}
+\newcommand\getmap[2]{\ma{#1[#2]}}
+\newcommand\keyinmap[2]{\ma{{#1} \in dom({#2})}}
+\newcommand\keynotinmap[2]{\ma{{#1} \not\in dom({#2})}}
 \newcommand\comb[2]{\ma{(#1\ #2)}}
 \newcommand\ifexp[3]{(\ma{\ifliteral{}\ #1\ #2\ #3})}
 \newcommand\doexp[2]{(\ma{\doliteral{}\ #1\ #2})}
@@ -145,7 +158,7 @@
 \newcommand\appexp[2]{(\ma{#1\ #2})}
 \newcommand\throwexp[1]{(\ma{\throwliteral{}\ #1})}
 \newcommand\newexp[2]{(\ma{\newliteral{}\ #1\ #2})}
-\newcommand\newstaticexp[4]{(\ma{\newliteral{[[#1], #2]}\ #3\ #4})}
+\newcommand\newstaticexp[4]{(\ma{{\newliteral}_{[[#1], #2]}\ #3\ #4})}
 \newcommand\dotliteral[0]{{\operatorfont{.}}}
 \newcommand\fieldexp[2]{(\ma{\dotliteral\ #2\ #1})}
 \newcommand\fieldstaticexp[4]{(\ma{\dotliteral\ #4\ #3^{#1}_{#2}})}
@@ -158,6 +171,9 @@
 \newmeta\defliteral{{\bf def}}
 \newcommand\defexp[2]{(\ma{\defliteral{}\ #1\ #2})}
 \newcommand\errorval[1]{\ma{error_{#1}}}
+\newcommand\errorvalv[0]{\errorval{\v{}}}
+\newcommand\reflerror[0]{\errorval{refl}}
+\newcommand\mmerror[0]{\errorval{mm}}
 
 % Java primitives
 \newmeta\pint{int}
@@ -183,6 +199,12 @@
 \newcommand\isaliteral[0]{{\operatorfont{isa?}}}
 \newcommand\instanceapp[2]{{(\instanceliteral\ #1\ #2)}}
 \newcommand\isaapp[2]{(\isaliteral\ #1\ #2)}
+
+% constant typing
+\newcommand\constanttype[1]{{\delta}_{\t{}}(#1)}
+\newcommand\constantopsem[2]{{\delta}(#1, #2)}
+\newcommand\classconst[0]{class}
+\newcommand\throwconst[0]{throw}
 
 % differences from TR
 \newcommand\trdiff[1]{\mathbin{\textcolor{blue}{#1}}}
@@ -228,6 +250,8 @@
 % expects everything except mmenv
 \newcommand\judgementfillmmcol[5]{\judgementsevcol {\mmenv} {#1} {#2} {#3} {#4} {#5} {\mmenv}}
 % lookuping props in the env
+% 2 place relation (same as tt | tt; empty)
+\newcommand\judgementtwo[2]{\ma{#1 \vdash #2}}
 \newcommand\inpropenv[2]{\ma{#1 \vdash #2}}
 
 % operational semantics
@@ -243,8 +267,8 @@
 \newmeta\disptablep{m'}
 \newcommand\extenddisptable[3]{\ma{#1[#2 \rightarrow #3]}}
 \newcommand\getmethodliteral[0]{\metafunctionfont{GetMethod}}
-\newcommand\getmethod[3]{\getmethodliteral(#1,\ #2)\ =\ #3}
-\newcommand\getmethodalign[3]{\getmethodliteral(#1,\ #2)\ &=&\ #3}
+\newcommand\getmethod[3]{\getmethodliteral(#1, #2) = #3}
+\newcommand\getmethodalign[3]{\getmethodliteral(#1, #2) &=& #3}
 
 % java reflection rewrite 
 \newcommand\rewrite[3]{\ma{#1\ \vdash #2 \Rightarrow #3}}
@@ -283,10 +307,10 @@
 
 % isa? special functions
 \newcommand\isacompareliteral[0]{\metafnfont{IsAProps}}
-\newcommand\isacompare[4]{\ma{\isacompareliteral(#1,\ #2,\ #3)\ =\ {#4}}}
-\newcommand\isacomparealign[4]{\ma{\isacompareliteral(#1,\ #2,\ #3)\ &=&\ {#4}}}
+\newcommand\isacompare[4]{\ma{\isacompareliteral(#1, #2, #3) = {#4}}}
+\newcommand\isacomparealign[4]{\ma{\isacompareliteral(#1, #2, #3) &=& {#4}}}
 \newcommand\isaopsemliteral[0]{\metafnfont{IsA}}
-\newcommand\isaopsem[2]{\ma{\isaopsemliteral(#1,\ #2)}}
+\newcommand\isaopsem[2]{\ma{\isaopsemliteral(#1, #2)}}
 
 % new special functions
 % Type -> [Type]
