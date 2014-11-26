@@ -1,0 +1,45 @@
+\begin{figure*}
+\begin{mathpar}
+
+\begin{array}{lllr}
+
+  \constanttype{\classconst} &=& {\ArrowOne {\x{}} {\Top{}}
+                                      {\Union{\nil{}}{\class{}}}
+                                      {\filterset {\topprop{}}
+                                                  {\topprop{}}}
+                                      {\path {\classpe{}} {\x{}}}}
+                                      \\
+
+  \constanttype{\throwconst} &=& {\ArrowOne {\x{}} {\Top{}}
+                                      {\Bot{}}
+                                      {\filterset {\botprop{}}
+                                                  {\botprop{}}}
+                                      {\emptyobject{}}}
+
+\end{array}
+\end{mathpar}
+\caption{Constant Typing}
+\end{figure*}
+
+\begin{figure*}
+\begin{mathpar}
+
+\begin{array}{lllr}
+
+\constantopsem{\classconst}{\classvalue{\class{}} {\overrightarrow {\classfieldpair{fld} {\v{}}}}} &=& \class{}\\
+\constantopsem{\classconst}{\true{}} &=& \Boolean{}\\
+\constantopsem{\classconst}{\false{}} &=& \Boolean{}\\
+\constantopsem{\classconst}{\const{}} &=& \IFn{}\\
+\constantopsem{\classconst}{\curlymap{\overrightarrow{({\v{}}\ {\v{}})}}} &=& \HMapInstance{}\\
+\constantopsem{\classconst}{\class{}} &=& \Class{}\\
+\constantopsem{\classconst}{\k{}} &=& \Keyword{}\\
+\constantopsem{\classconst}{\nil{}} &=& \nil{}
+                                      \\\\
+
+\constantopsem{\throwconst}{\v{}} &=& \errorval{\v{}}
+
+
+\end{array}
+\end{mathpar}
+\caption{Primitives}
+\end{figure*}

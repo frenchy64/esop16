@@ -114,6 +114,7 @@
 \newcommand\Satisfies[1]{(\ma{\Satisfiesliteral\ #1})}
 \newbfop\Instanceliteral{InstanceOf}
 \newcommand\Instance[1]{(\ma{\Instanceliteral\ #1})}
+\newcommand\HVec[1]{[{#1}]}
 
 % terms
 \newmeta\x{x}                   % not sure if \x is reserved...
@@ -174,6 +175,7 @@
 \newcommand\errorvalv[0]{\errorval{\v{}}}
 \newcommand\reflerror[0]{\errorval{refl}}
 \newcommand\mmerror[0]{\errorval{mm}}
+\newcommand\rtvector[1]{[{#1}]}
 
 % Java primitives
 \newmeta\pint{int}
@@ -308,6 +310,7 @@
 % isa? special functions
 \newcommand\isacompareliteral[0]{\metafnfont{IsAProps}}
 \newcommand\isacompare[4]{\ma{\isacompareliteral(#1, #2, #3) = {#4}}}
+\newcommand\isacomparethree[3]{\ma{\isacompareliteral(#1, #2, #3)}}
 \newcommand\isacomparealign[4]{\ma{\isacompareliteral(#1, #2, #3) &=& {#4}}}
 \newcommand\isaopsemliteral[0]{\metafnfont{IsA}}
 \newcommand\isaopsem[2]{\ma{\isaopsemliteral(#1, #2)}}
