@@ -1,14 +1,6 @@
 \begin{figure*}
 $$
 \begin{altgrammar}
-  v &::=&
-                      \true{} \alt \false{} \alt \nil{}
-                      \alt \class{} \alt \classvaluemeta{}
-                      \alt \k{}
-                      \alt {\emptymap{}}
-                      \alt {\const{}}
-                      \alt {\num{}}
-                &\mbox{Values} \\
   \expd{}, \e{} &::=& \x{}
                       \alt
                       \v{} \alt
@@ -25,6 +17,17 @@ $$
                       \alt {\HintedExp{}}
                       \alt {\HashMapExp{}}
                 &\mbox{Expressions} \\
+  \v{} &::=&
+                      \true{} \alt \false{} \alt \nil{}
+                      \alt \class{} \alt \classvaluemeta{}
+                      \alt \k{}
+                      \alt {\emptymap{}}
+                      \alt {\const{}}
+                      \alt {\num{}}
+                &\mbox{Values} \\
+  {\const{}}           &::=& \classconst \alt \throwconst
+
+                &\mbox{Constants} \\
   \HintedExp{}             &::=&
 
                       \hinted{\classhint{}} {\x{}}
