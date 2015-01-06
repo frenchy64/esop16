@@ -64,6 +64,13 @@
 
 \newcommand\smallsection[1]{\bf \emph{#1}}
 
+\usepackage{amsthm}
+
+\newtheorem{lemma}{Lemma}
+
+\theoremstyle{remark}
+\newtheorem*{case}{Case}
+
 \begin{document}
 
 \special{papersize=8.5in,11in}
@@ -176,6 +183,8 @@ static portion of Typed Racket.
 \input{overview}
 
 \input{formal-model}
+
+\input{proof}
 
 \input{syntax-figure}
 
