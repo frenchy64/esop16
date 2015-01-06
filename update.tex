@@ -43,12 +43,15 @@
 
 % ClassPE
 \\
-\update{\t{}}{\s{}}{\destructpath {\pathelem{}} {\classpe{}}}
+\update{\t{}}{\s{}}{\classpe{}}
 &=& \restrict{\t{}}{\s{}}
 
 \\
-\update{\t{}}{\nottype{\s{}}}{\destructpath {\pathelem{}} {\classpe{}}}
+\update{\t{}}{\nottype{\s{}}}{\classpe{}}
 &=& \remove{\t{}}{\s{}}
+\\
+\update{\t{}}{\propisnotmeta{}}{\destructpath {\pathelem{}} {\classpe{}}}
+&=& {\t{}}
 
 \\
 \update{\t{}}{\s{}}{\emptypath{}}
