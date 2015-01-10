@@ -5,6 +5,13 @@
 { \inopenv {\openv{}} {\x{}} {\v{}} }
 { \opsem {\openv{}} {\x{}} {\v{}} }
 
+\infer [B-Do]
+{ \opsem {\openv{}} {\e{1}} {\v{1}} 
+  \\
+  \opsem {\openv{}} {\e{}} {\v{}} 
+}
+{ \opsem {\openv{}} {\doexp{\e{1}}{\e{}}} {\v{}} }
+
 \infer [B-Let]
 { \opsem {\openv{}} {\e{a}} {\v{a}}
   \\\\
@@ -278,6 +285,10 @@
 { \opsem {\openv{}} 
          {\letexp {\x{}} {\e{a}} {\e{}}}
        {\errorval{\v{}}}}
+
+\infer [BE-Do]
+{ \opsem {\openv{}} {\e{1}} {\errorval{\v{}}} }
+{ \opsem {\openv{}} {\doexp{\e{1}}{\e{}}} {\errorval{\v{}}}}
 
 \infer [BE-If]
 {  \opsem {\openv{}} {\e{1}} {\errorval{\v{}}}

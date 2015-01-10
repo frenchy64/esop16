@@ -2,7 +2,9 @@
 
 \begin{lemma}
 If \judgement{\propenv{}}{\hastype{\e{}}{\t{}}}{\filterset{\thenprop{\prop{}}}{\elseprop{\prop{}}}}{\object{}},
-\satisfies{\openv{}}{\propenv{}} and \opsem {\openv{}} {\e{}} {\v{}} then all of the following hold:
+\satisfies{\openv{}}{\propenv{}} 
+and \opsem {\openv{}} {\e{}} {\v{}} 
+then all of the following hold:
 \begin{enumerate}
   \item either \object{} = \emptyobject{} or \inopenv {\openv{}} {\object{}} {\v{}},
   \item either \v{} $\not=$ \false\ (or \nil) and {\satisfies{\openv{}}{\thenprop{\prop{}}}} or 
@@ -14,16 +16,17 @@ If \judgement{\propenv{}}{\hastype{\e{}}{\t{}}}{\filterset{\thenprop{\prop{}}}{\
 By induction on the derivation of the typing judgement.
 
 \begin{case}[T-True]
-\e{} = \true
+\e{} = \true, \t{} = \True, \thenprop{\prop{}} = \topprop{}, \elseprop{\prop{}} = \botprop{}, \object{} = \emptyobject{}
 
-Proving part 1 is trivial: \object{} is \emptyobject. To prove part 2, we note that \v{} = \true\ 
+Proving part 1 is trivial: \object{} is \emptyobject. 
+To prove part 2, we note that \v{} = \true\ 
 and \thenprop{\prop{}} = \topprop{}, so \satisfies{\openv{}}{\thenprop{\prop{}}} by M-Top. Part 3 
 holds trivially with \t{} = \True via B-True.
 
 \end{case}
 
 \begin{case}[T-False]
-\e{} = \false
+\e{} = \false, \t{} = \False, \thenprop{\prop{}} = \botprop{}, \elseprop{\prop{}} = \topprop{}, \object{} = \emptyobject{}
 
 Proving part 1 is trivial: \object{} is \emptyobject. To prove part 2, we note that \v{} = \false\ 
 and \elseprop{\prop{}} = \topprop{}, so \satisfies{\openv{}}{\elseprop{\prop{}}} by M-Top. Part 3 
@@ -32,7 +35,7 @@ holds trivially with \t{} = \False via B-False.
 \end{case}
 
 \begin{case}[T-Nil]
-\e{} = \nil
+\e{} = \nil, \t{} = \Nil, \thenprop{\prop{}} = \botprop{}, \elseprop{\prop{}} = \topprop{}, \object{} = \emptyobject{}
 
 Proving part 1 is trivial: \object{} is \emptyobject. To prove part 2, we note that \v{} = \nil\ 
 and \elseprop{\prop{}} = \topprop{}, so \satisfies{\openv{}}{\elseprop{\prop{}}} by M-Top. Part 3 
@@ -41,42 +44,89 @@ holds trivially with \t{} = \Nil via B-Nil.
 \end{case}
 
 \begin{case}[T-Local]
-\e{} = \x{}, \object{} = \x{}, \inpropenv{\propenv{}}{\isprop{\t{}}{\x{}}}
+  \e{} = \x{}, \thenprop{\prop{}} = {\notprop {\falsy{}} {\x{}}},
+  \elseprop{\prop{}} = {\isprop {\falsy{}} {\x{}}},
+\object{} = \x{}, 
+\inpropenv{\propenv{}}{\isprop{\t{}}{\x{}}},
+\satisfies{\openv{}}{\propenv{}},
+{ \inopenv {\openv{}} {\x{}} {\v{}} },
+{ \opsem {\openv{}} {\x{}} {\v{}} }
 
-Part 1 follows from \inopenv{\openv{}}{\x{}} {\v{}} via B-Local.
+Part 1 follows from \inopenv{\openv{}}{\x{}} {\v{}} by B-Local.
 Part 2 considers two cases: if \v{} is not \false\ or \nil, then 
-\satisfies{\openv{}}{\notprop{\falsy}{\x{}}} holds via M-NotType; if \v{} is \false\ or \nil, then 
-\satisfies{\openv{}}{\isprop{\falsy}{\x{}}} holds via M-Type.
-Part 3 holds trivially as \x{} reduces directly to \v{} via B-Local.
+\satisfies{\openv{}}{\notprop{\falsy}{\x{}}} holds by M-NotType; if \v{} is \false\ or \nil, then 
+\satisfies{\openv{}}{\isprop{\falsy}{\x{}}} holds by M-Type.
+We prove part 3 by observing
+\inpropenv{\propenv{}}{\isprop{\t{}}{\x{}}}
+and
+\satisfies{\openv{}}{\propenv{}},
+so
+{ \inopenv {\openv{}} {\x{}} {\v{}} }
+by B-Local
+gives us the desired result
 
 \end{case}
 
 \begin{case}[T-Do]
-\e{} = {\doexp {\e1} {\e2}}
+\e{} = {\doexp {\e1} {\e2}},
+  \judgement {\propenv{}} 
+             {\hastype {\e1} {\t1}} 
+             {\filterset {\thenprop {\prop{1}}} {\elseprop {\prop1}}} 
+             {\object{1}},
+\judgement {\propenv{}, {\orprop {\thenprop {\prop{1}}} {\elseprop {\prop{1}}}}}
+           {\hastype {\e{2}} {\t{}}} 
+           {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}} 
+           {\object{}},
 
-Proving part 1 is trivial: \e{} uses the same object as \e{2} and \e{}
-evaluates to the result of \e{2}.
-Part 2 follows as the propositions of \e{2} are always used and its
-result is always used.
+\begin{itemize}
+  \item[] \begin{subcase}[B-Do]
+  \opsem {\openv{}} {\e{1}} {\v{1}},
+  \opsem {\openv{}} {\e{2}} {\v{}}
+
+Proving part 1 is trivial: \object{} is the same object as \e{2}.
+Part 2 assumes \e{}
 Part 3 is similar as the type of \e{2} is always used.
 
+
+    \end{subcase}
+  \item[]
+\begin{subcase}[BE-Do]
+\opsem {\openv{}} {\e{1}} {\errorval{\v{}}},
+\opsem {\openv{}} {\e{}} {\errorval{\v{}}}
+
+Proving part 1 is trivial: \object{} is the same object as \e{2}.
+
+
+\end{subcase}
+\end{itemize}
 \end{case}
 
 \begin{case}[T-NewStatic]
   \e{} = {\newstaticexp {\overrightarrow{\classhint{i}}} {\classhint{}} 
                                                           {\class{}} {\overrightarrow{\e{i}}}}
 
+\begin{itemize}
+  \item[]
+\begin{subcase}[B-New]
 Part 1 is trivial as \object{} is always \emptyobject{}.
 Part 2 requires some explanation. The two false values in Typed Clojure
 cannot be constructed with \newliteral, so the only case is \v{} $\not=$ \false\ (or \nil)
 where \thenprop{\prop{}} = \topprop{} so \satisfies{\openv{}}{\thenprop{\prop{}}}.
 Part 3 holds as B-New reduces to a \emph{non-nilable}
 instance of \class{} via \newjavaliteral, and \javatotc{\classhint{}}{\t{}}.
+\end{subcase}
+  \item[]
+\begin{subcase}[BE-New]
+\end{subcase}
+\end{itemize}
 \end{case}
 
 \begin{case}[T-FieldStatic]
-  \e{} = {\fieldstaticexp {\classhint{1}} {\classhint{2}} {fld} {\e{}}}
+  \e{} = {\fieldstaticexp {\classhint{1}} {\classhint{2}} {fld} {\e{1}}}
 
+\begin{itemize}
+  \item[]
+\begin{subcase}[B-Field]
 Part 1 is trivial as \object{} is always \emptyobject{}.
 Part 2 holds trivially, \v{} can be either a true or false value
 and both {\thenprop{\prop{}}} and {\elseprop{\prop{}}}
@@ -84,6 +134,11 @@ are \topprop{}.
 Part 3 relies on the semantics of \getfieldliteral 
 in B-Field, which returns a \emph{nilable} instance of \classhint{2},
 and \javatotcnil{\classhint{2}} {\t{}}.
+\end{subcase}
+  \item[]
+\begin{subcase}[BE-Field]
+\end{subcase}
+\end{itemize}
 \end{case}
 
 \begin{case}[T-MethodStatic]
@@ -92,6 +147,10 @@ and \javatotcnil{\classhint{2}} {\t{}}.
                           {\classhint{2}}
                           {\mth{}} {\e{}} {\overrightarrow{\e{i}}}}
 
+\begin{itemize}
+  \item[]
+\begin{subcase}[B-Method]
+
 Part 1 is trivial as \object{} is always \emptyobject{}.
 Part 2 holds trivially, \v{} can be either a true or false value
 and both {\thenprop{\prop{}}} and {\elseprop{\prop{}}}
@@ -99,6 +158,234 @@ are \topprop{}.
 Part 3 relies on the semantics of \invokejavamethodliteral 
 in B-Method, which returns a \emph{nilable} instance of \classhint{2},
 and \javatotcnil{\classhint{2}} {\t{}}.
+\end{subcase}
+  \item[]
+\begin{subcase}[BE-Method1]
+\end{subcase}
+  \item[]
+\begin{subcase}[BE-Method2]
+\end{subcase}
+\end{itemize}
+
+\end{case}
+
+\begin{case}[T-DefMulti]
+  \e{} = {\createmultiexp {\s{}} {\e{1}}}
+
+
+\begin{itemize}
+  \item[]
+\begin{subcase}[B-DefMulti]
+Part 1 is trivial as \object{} is always \emptyobject{}.
+Part 2 holds because B-DefMulti always returns a multimethod, which
+is neither \false or \nil, so {\thenprop{\prop{}}} = \topprop{}
+and \satisfies{\openv{}}{\thenprop{\prop{}}}.
+Part 3 holds trivially as B-DefMulti always returns the multimethod.
+\end{subcase}
+  \item[]
+\begin{subcase}[BE-DefMulti]
+\end{subcase}
+\end{itemize}
+\end{case}
+
+\begin{case}[T-DefMethod]
+
+  \begin{itemize}
+    \item[]
+      \begin{subcase}[B-DefMethod]
+      \end{subcase}
+    \item[]
+      \begin{subcase}[BE-DefMethod1]
+      \end{subcase}
+    \item[]
+      \begin{subcase}[BE-DefMethod2]
+      \end{subcase}
+    \item[]
+      \begin{subcase}[BE-DefMethod3]
+      \end{subcase}
+  \end{itemize}
+\end{case}
+
+\begin{case}[T-App]
+\begin{itemize}
+  \item[]
+\begin{subcase}[B-BetaClosure]
+\end{subcase}
+  \item[]
+\begin{subcase}[B-BetaMulti]
+\end{subcase}
+  \item[]
+\begin{subcase}[B-Delta]
+\end{subcase}
+  \item[]
+\begin{subcase}[BE-Beta1]
+\end{subcase}
+  \item[]
+\begin{subcase}[BE-Beta2]
+\end{subcase}
+  \item[]
+\begin{subcase}[BE-BetaClosure]
+\end{subcase}
+  \item[]
+\begin{subcase}[BE-BetaMulti1]
+\end{subcase}
+  \item[]
+\begin{subcase}[BE-BetaMulti2]
+\end{subcase}
+\end{itemize}
+\end{case}
+
+\begin{case}[T-IsA]
+
+  \begin{itemize}
+    \item[]
+      \begin{subcase}[B-IsA]
+      \end{subcase}
+    \item[]
+      \begin{subcase}[BE-IsA1]
+      \end{subcase}
+    \item[]
+      \begin{subcase}[BE-IsA2]
+      \end{subcase}
+  \end{itemize}
+\end{case}
+
+\begin{case}[T-GetHMap]
+
+  \begin{itemize}
+    \item[]
+      \begin{subcase}[B-Get]
+      \end{subcase}
+    \item[]
+      %needed?
+      \begin{subcase}[B-GetMissing]
+      \end{subcase}
+    \item[]
+      \begin{subcase}[BE-Get1]
+      \end{subcase}
+    \item[]
+      \begin{subcase}[BE-Get2]
+      \end{subcase}
+  \end{itemize}
+\end{case}
+
+\begin{case}[T-GetHMapAbsent]
+
+  \begin{itemize}
+    \item[]
+      \begin{subcase}[B-Get]
+      \end{subcase}
+    \item[]
+      %needed?
+      \begin{subcase}[B-GetMissing]
+      \end{subcase}
+    \item[]
+      \begin{subcase}[BE-Get1]
+      \end{subcase}
+    \item[]
+      \begin{subcase}[BE-Get2]
+      \end{subcase}
+  \end{itemize}
+\end{case}
+
+\begin{case}[T-GetHMapPartialDefault]
+
+  \begin{itemize}
+    \item[]
+      \begin{subcase}[B-Get]
+      \end{subcase}
+    \item[]
+      %needed?
+      \begin{subcase}[B-GetMissing]
+      \end{subcase}
+    \item[]
+      \begin{subcase}[BE-Get1]
+      \end{subcase}
+    \item[]
+      \begin{subcase}[BE-Get2]
+      \end{subcase}
+  \end{itemize}
+\end{case}
+
+\begin{case}[T-EmptyMap]
+
+  \begin{itemize}
+    \item[]
+      \begin{subcase}[B-Val]
+      \end{subcase}
+  \end{itemize}
+\end{case}
+
+\begin{case}[T-Kw]
+
+  \begin{itemize}
+    \item[]
+      \begin{subcase}[B-Val]
+      \end{subcase}
+  \end{itemize}
+\end{case}
+
+\begin{case}[T-Assoc]
+
+  \begin{itemize}
+    \item[]
+      \begin{subcase}[B-Assoc]
+      \end{subcase}
+    \item[]
+      \begin{subcase}[BE-Assoc1]
+      \end{subcase}
+    \item[]
+      \begin{subcase}[BE-Assoc2]
+      \end{subcase}
+    \item[]
+      \begin{subcase}[BE-Assoc3]
+      \end{subcase}
+  \end{itemize}
+\end{case}
+
+\begin{case}[T-If]
+
+  \begin{itemize}
+    \item[]
+      \begin{subcase}[B-If]
+      \end{subcase}
+    \item[]
+      \begin{subcase}[BE-If]
+      \end{subcase}
+  \end{itemize}
+\end{case}
+
+\begin{case}[T-Let]
+
+  \begin{itemize}
+    \item[]
+      \begin{subcase}[B-Let]
+      \end{subcase}
+    \item[]
+      \begin{subcase}[BE-Let]
+      \end{subcase}
+  \end{itemize}
+\end{case}
+
+
+\begin{case}[T-Abs]
+
+  \begin{itemize}
+    \item[]
+      \begin{subcase}[B-Abs]
+      \end{subcase}
+  \end{itemize}
+\end{case}
+
+\begin{case}[T-Error]
+
+\end{case}
+
+\begin{case}[T-Subsume]
+
+\end{case}
+
+\begin{case}[T-Const]
 
 \end{case}
 

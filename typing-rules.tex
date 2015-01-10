@@ -43,20 +43,21 @@
     }
 
 \infer [T-Do]
-{ \judgementsevcol {\mmenv} {\taenv} {\propenv{}} {\hastype {\e1} {\t1}} {\filterset {\thenprop {\prop{1}}} {\elseprop {\prop1}}} {\object{1}} {\mmenv{}} 
+{ 
+  \judgement {\propenv{}} 
+             {\hastype {\e1} {\t1}} 
+             {\filterset {\thenprop {\prop{1}}} {\elseprop {\prop1}}} 
+             {\object{1}}
 \\\\
-\judgementsevcol {\mmenv{}}
-                  {\taenv}
-                   {\propenv{}, {\trdiff {\orprop {\thenprop {\prop{1}}} {\elseprop {\prop{1}}}}}}
-                   {\hastype {\e{2}} {\t{2}}} {\filterset {\thenprop {\prop{2}}} {\elseprop {\prop{2}}}} 
-                   {\object{2}}
-                   {\mmenv{}}
+\judgement {\propenv{}, {\trdiff {\orprop {\thenprop {\prop{1}}} {\elseprop {\prop{1}}}}}}
+           {\hastype {\e{}} {\t{}}} 
+           {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}} 
+           {\object{}}
   }
-{ \judgementsevcol 
-  {\mmenv{}}
-  {\taenv{}}
-    {\propenv{}} {\hastype {\doexp {\e1} {\e{2}}} {\t{2}}} {\filterset {\thenprop {\prop{2}}} {\elseprop {\prop{2}}}} {\object{2}} 
-       {\mmenv{}}
+{ \judgement
+    {\propenv{}} 
+    {\hastype {\doexp {\e1} {\e{}}} {\t{}}} 
+    {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}} {\object{}} 
              }
 
 \infer [T-If]
@@ -149,6 +150,12 @@
                             {\botprop{}}}
                 {\emptyobject{}}}
 
+\infer [T-Error]
+{}
+{ \judgement {\propenv{}} {\hastype {\errorvalv} {\Bot}}
+            {\filterset {\botprop{}} {\botprop{}}}
+           {\emptyobject{}}}
+
 \infer [T-Subsume]
 { \judgementfillcol {\propenv{}} {\hastype {\e{}} {\t{}}}
              {\filterset {\thenprop {\prop{}}}
@@ -201,9 +208,9 @@
              \\\\
   \javatotcnil {\classhint{2}} {\t{}}
   \\\\
-  \judgementtwo {\propenv{}} {\hastype {\e{}} {\class{}}}
+  \judgementtwo {\propenv{}} {\hastype {\e{1}} {\class{}}}
            }
-{ \judgementfillcol {\propenv{}} {\hastype {\fieldstaticexp {\classhint{1}} {\classhint{2}} {fld} {\e{}}} {\t{}}}
+{ \judgementfillcol {\propenv{}} {\hastype {\fieldstaticexp {\classhint{1}} {\classhint{2}} {fld} {\e{1}}} {\t{}}}
              {\filterset {\topprop{}} {\topprop}}
              {\emptyobject{}}}
 
