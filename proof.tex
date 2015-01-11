@@ -455,11 +455,12 @@ Part 3 holds trivially as B-DefMulti always returns the multimethod.
          We note by the definition of path translation
          {\openv{}}({\path {\keype{k}} {\object{m}}}) =
          {\getexp {{\openv{}}(\object{m})}{\k{}}}
-         and by the induction hypothesis {{\openv{}}(\object{m})} = {\curlymap{\overrightarrow{({\v{a}}\ {\v{b}})}}},
+         and by the induction hypothesis on \e{m}
+         {{\openv{}}(\object{m})} = {\curlymap{\overrightarrow{({\v{a}}\ {\v{b}})}}},
          which together imply 
          \inopenv {\openv{}} {\object{}} {\getexp {\curlymap{\overrightarrow{({\v{a}}\ {\v{b}})}}} {\k{}}}.
-         Since \opsem {\openv{}}{\e{}}{\getexp {\curlymap{\overrightarrow{({\v{a}}\ {\v{b}})}}} {\k{}}}
-         we can apply the third inductive hypothesis
+         Since this is the same form as B-Get, we can apply the premise
+         \getmap{\curlymap{\overrightarrow{({\v{a}}\ {\v{b}})}}} {\k{}} = {\v{}}
          to derive \inopenv {\openv{}} {\object{}} {\v{}}.
          \end{itemize}
          
@@ -476,16 +477,15 @@ Part 3 holds trivially as B-DefMulti always returns the multimethod.
       \end{subcase}
     \item[]
       \begin{subcase}[B-GetMissing]
+        \v{} = \nil,
         $\opsem {\openv{}}
         {\e{m}} {\curlymap{\overrightarrow{({\v{a}}\ {\v{b}})}}}$,
-       \opsem {\openv{}} {\e{k}} {\v{k}},
-       \keynotinmap{\v{k}}{\curlymap{\overrightarrow{({\v{a}}\ {\v{b}})}}}
+       \opsem {\openv{}} {\e{k}} {\k{}},
+       \keynotinmap{\k{}}{\curlymap{\overrightarrow{({\v{a}}\ {\v{b}})}}}
 
        Unreachable subcase because 
-       \keynotinmap{\v{k}}{\curlymap{\overrightarrow{({\v{a}}\ {\v{b}})}}}
-       contradicts ${\inmandatory{\k{}}{\t{}}{\mandatory{}}}$, noting that
-       \opsem {\openv{}} {\e{k}} {\v{k}} and
-  $\judgementtwo {\propenv{}} {\hastype {\e{k}} {\Value {k}}}$.
+       \keynotinmap{\k{}}{\curlymap{\overrightarrow{({\v{a}}\ {\v{b}})}}}
+       contradicts ${\inmandatory{\k{}}{\t{}}{\mandatory{}}}$.
       \end{subcase}
     \item[]
       \begin{subcase}[BE-Get1]
@@ -497,14 +497,73 @@ Part 3 holds trivially as B-DefMulti always returns the multimethod.
 \end{case}
 
 \begin{case}[T-GetHMapAbsent]
+  \e{} = {\getexp {\e{m}} {\e{k}}},
+  \t{} = \Nil,
+  \thenprop{\prop{}} = {\topprop{}},
+  \elseprop{\prop{}} = {\topprop{}},
+  \object{} = {\replacefor
+               {\path {\keype{k}} {\x{}}}
+                          {\object{m}}
+                          {\x{}}},
+  \judgement {\propenv{}} {\hastype {\e{m}} {\HMapgeneric {\mandatory{}} {\absent}}}
+           {\filterset {\thenprop {\prop{m}}} {\elseprop {\prop{m}}}}
+           {\object{m}},
+  \judgementtwo {\propenv{}} {\hastype {\e{k}} {\Value {k}}},
+  {\inabsent{\k{}}{\absent{}}}
+
 
   \begin{itemize}
     \item[]
       \begin{subcase}[B-Get]
+        $\opsem {\openv{}}
+        {\e{m}} {\curlymap{\overrightarrow{({\v{a}}\ {\v{b}})}}}$
+        ,
+         \opsem {\openv{}} {\e{k}} {\k{}},
+         $\keyinmap{\k{}}{\curlymap{\overrightarrow{({\v{a}}\ {\v{b}})}}}$,
+         \getmap{\curlymap{\overrightarrow{({\v{a}}\ {\v{b}})}}} {\k{}} = {\v{}}
+
+       Unreachable subcase because 
+         $\keyinmap{\k{}}{\curlymap{\overrightarrow{({\v{a}}\ {\v{b}})}}}$,
+         contradicts
+                {\inabsent{\k{}}{\absent{}}}.
       \end{subcase}
     \item[]
-      %needed?
       \begin{subcase}[B-GetMissing]
+        \v{} = \nil,
+        $\opsem {\openv{}}
+        {\e{m}} {\curlymap{\overrightarrow{({\v{a}}\ {\v{b}})}}}$,
+       \opsem {\openv{}} {\e{k}} {\k{}},
+       \keynotinmap{\k{}}{\curlymap{\overrightarrow{({\v{a}}\ {\v{b}})}}}
+
+         To prove part 1 we consider two cases on the form of \object{m}: 
+         \begin{itemize}
+           \item
+         if {\object{m}} = \emptyobject{}
+         then \object{} = \emptyobject{} by substitution, which gives the desired result;
+           \item
+         if \object{m} = {\path {\pathelem{m}} {\x{m}}}
+         then \object{} = {\path {\keype{k}} {\object{m}}} by substitution.
+         We note by the definition of path translation
+         {\openv{}}({\path {\keype{k}} {\object{m}}}) =
+         {\getexp {{\openv{}}(\object{m})}{\k{}}}
+         and by the induction hypothesis on \e{m}
+         {{\openv{}}(\object{m})} = {\curlymap{\overrightarrow{({\v{a}}\ {\v{b}})}}},
+         which together imply 
+         \inopenv {\openv{}} {\object{}} {\getexp {\curlymap{\overrightarrow{({\v{a}}\ {\v{b}})}}} {\k{}}}.
+         Since this is the same form as B-GetMissing, we can apply the premise
+        \v{} = \nil\ 
+         to derive \inopenv {\openv{}} {\object{}} {\v{}}.
+         \end{itemize}
+         
+         Part 2 holds trivially as \thenprop{\prop{}} = {\topprop{}}
+         and \elseprop{\prop{}} = {\topprop{}}.
+         To prove part 3 we note that \e{m} has type {\HMapgeneric {\mandatory{}} {\absent{}}}
+         where {\inabsent{\k{}}{\absent{}}}, and
+         the premises of B-GetMissing
+         \keynotinmap{\k{}}{\curlymap{\overrightarrow{({\v{a}}\ {\v{b}})}}}
+         and
+          \v{} = \nil\ 
+         tell us {\v{}} must be of type {\t{}}.
       \end{subcase}
     \item[]
       \begin{subcase}[BE-Get1]
@@ -516,14 +575,41 @@ Part 3 holds trivially as B-DefMulti always returns the multimethod.
 \end{case}
 
 \begin{case}[T-GetHMapPartialDefault]
+  \e{} = {\getexp {\e{m}} {\e{k}}},
+  \t{} = \Top,
+  \thenprop{\prop{}} = {\topprop{}},
+  \elseprop{\prop{}} = {\topprop{}},
+  \object{} = {\replacefor
+               {\path {\keype{k}} {\x{}}}
+                          {\object{m}}
+                          {\x{}}},
+ \judgement {\propenv{}} {\hastype {\e{m}} {\HMapp {\mandatory{}} {\absent}}}
+           {\filterset {\thenprop {\prop{m}}} {\elseprop {\prop{m}}}}
+           {\object{m}},
+  \judgementtwo {\propenv{}} {\hastype {\e{k}} {\Value {k}}},
+             ${\notinmandatory{\k{}}{\t{}}{\mandatory{}}}$,
+             {\notinabsent{\k{}}{\absent{}}}
 
   \begin{itemize}
     \item[]
       \begin{subcase}[B-Get]
+        $\opsem {\openv{}}
+        {\e{m}} {\curlymap{\overrightarrow{({\v{a}}\ {\v{b}})}}}$
+        ,
+         \opsem {\openv{}}
+                 {\e{k}} {\k{}},
+         $\keyinmap{\k{}}{\curlymap{\overrightarrow{({\v{a}}\ {\v{b}})}}}$,
+         \getmap{\curlymap{\overrightarrow{({\v{a}}\ {\v{b}})}}} {\k{}} = {\v{}}
+
       \end{subcase}
     \item[]
-      %needed?
       \begin{subcase}[B-GetMissing]
+        \v{} = \nil,
+        $\opsem {\openv{}}
+        {\e{m}} {\curlymap{\overrightarrow{({\v{a}}\ {\v{b}})}}}$,
+       \opsem {\openv{}} {\e{k}} {\k{}},
+       \keynotinmap{\k{}}{\curlymap{\overrightarrow{({\v{a}}\ {\v{b}})}}}
+
       \end{subcase}
     \item[]
       \begin{subcase}[BE-Get1]
@@ -535,10 +621,29 @@ Part 3 holds trivially as B-DefMulti always returns the multimethod.
 \end{case}
 
 \begin{case}[T-Assoc]
+  \e{} = {\assocexp {\e{m}} {\e{k}} {\e{v}}},
+  \t{} = ${\HMapgeneric {\extendmandatoryset {\mandatory{}}{\k{}}{\t{}}} {\absent}}$,
+  \thenprop{\prop{}} = {\topprop{}},
+  \elseprop{\prop{}} = {\botprop{}},
+  \object{} = \emptyobject,
+  \judgementtwo {\propenv{}} {\hastype {\e{m}} {\HMapgeneric {\mandatory{}} {\absent}}},
+  \judgementtwo {\propenv{}} {\hastype {\e{k}} {\Value{\k{}}}},
+  \judgementtwo {\propenv{}} {\hastype {\e{v}} {\t{}}},
+  {\k{}} $\not\in$ {\absent{}}
 
   \begin{itemize}
     \item[]
       \begin{subcase}[B-Assoc]
+        \v{} = 
+        {\extendmap{\curlymap{\overrightarrow{({\v{a}}\ {\v{b}})}}}
+                {\k{}}{\v{v}}},
+        \opsem {\openv{}}
+        {\e{m}} {\curlymap{\overrightarrow{({\v{a}}\ {\v{b}})}}},
+        \opsem {\openv{}} {\e{k}} {\k{}},
+        \opsem {\openv{}} {\e{v}} {\v{v}}
+
+        We prove parts 1 and 2 for similar reasons as T-True.
+        %TODO part 3
       \end{subcase}
     \item[]
       \begin{subcase}[BE-Assoc1]
@@ -565,10 +670,37 @@ Part 3 holds trivially as B-DefMulti always returns the multimethod.
 \end{case}
 
 \begin{case}[T-Let]
+  \e{} = {\letexp {\x{}} {\e{1}} {\e{2}}},
+  \judgement {\propenv{}} {\hastype {\e{1}} {\s{}}} {\filterset {\thenprop {\prop{1}}} {\elseprop {\prop{1}}}}
+             {\object{1}},
+             \propp{} = {\impprop {\notprop {\falsy{}} {\x{}}} {\thenprop {\prop{1}}}},
+             \proppp{} = {\impprop {\isprop {\falsy{}} {\x{}}} {\elseprop {\prop{1}}}},
+  \judgement
+       {\propenv{}, {\isprop {\s{}} {\x{}}},
+         {\propp{}},
+         {\proppp{}}}
+             {\hastype {\e{2}} {\t{}}} {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}}
+             {\object{}} 
+
 
   \begin{itemize}
     \item[]
       \begin{subcase}[B-Let]
+        \opsem {\openv{}} {\e{1}} {\v{1}},
+        \opsem {\extendopenv{\openv{}}{\x{}}{\v{1}}} {\e{2}} {\v{}}
+
+        For all the following cases (with a reminder that \x{} is fresh)
+        we apply the induction hypothesis on \e{2}. We justify this by noting
+        that occurrences of \x{} inside \e{2} have the same type as \e{1} and 
+        simulate the propositions of \e{1}
+        because 
+        \opsem {\openv{}} {\e{1}} {\v{1}},
+        and
+        \opsem {\extendopenv{\openv{}}{\x{}}{\v{1}}} {\e{2}} {\v{}},
+        so \satisfies{\openv{}}{\propenv{}, {\isprop {\s{}} {\x{}}}, \propp{}, \proppp{}},
+        by M-And.
+
+        We prove parts 1, 2 and 3 by directly using the induction hypothesis on \e{2}.
       \end{subcase}
     \item[]
       \begin{subcase}[BE-Let]

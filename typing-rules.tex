@@ -78,22 +78,21 @@
                  {\object{}} }
 
 \infer [T-Let]
-{ \judgementfillcol {\propenv{}} {\hastype {\e{1}} {\s{}}} {\filterset {\thenprop {\prop{1}}} {\elseprop {\prop{1}}}}
+{ \judgement {\propenv{}} {\hastype {\e{1}} {\s{}}} {\filterset {\thenprop {\prop{1}}} {\elseprop {\prop{1}}}}
              {\object{1}}
              \\\\
              \propp{} = {\impprop {\notprop {\falsydiff{}} {\x{}}} {\thenprop {\prop{1}}}}
              \\\\
              \proppp{} = {\impprop {\isprop {\falsydiff{}} {\x{}}} {\elseprop {\prop{1}}}}
   \\\\
-  \judgementfillmmcol 
-      {\taenv{}, {\hastype {\x{}} {\tatype{}}}}
+  \judgement
        {\propenv{}, {\isprop {\s{}} {\x{}}},
          {\propp{}},
          {\proppp{}}}
              {\hastype {\e{}} {\t{}}} {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}}
              {\object{}} 
              }
-{ \judgementfillcol {\propenv{}} {\hastype {\letexp {\x{}} {\e{1}} {\e{}}} {\t{}}}
+{ \judgement {\propenv{}} {\hastype {\letexp {\x{}} {\e{1}} {\e{}}} {\t{}}}
              {\replacefor {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}}
                           {\object{1}}
                           {\x{}}}
