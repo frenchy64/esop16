@@ -25,9 +25,7 @@
 
 \infer [B-Val]
 {}
-{ \opsem {\openv{}} 
-         {\v{}}
-         {\v{}}}
+{ \opsem {\openv{}} {\v{}} {\v{}}}
 
 \infer [B-IfTrue]
 {  \opsem {\openv{}} {\e{1}} {\v{1}}
@@ -151,7 +149,8 @@
       }
 
 \infer [B-New]
-{ \overrightarrow{
+{ 
+  \overrightarrow{
   \opsem {\openv{}}
          {\e{i}}
          {\v{i}}
@@ -562,7 +561,19 @@
         {\getexp {\e{m}} {\e{k}}}
         {\errorvalv{}}
 }
-
 \end{mathpar}
 \caption{Runtime Error Propagation}
+\end{figure*}
+
+\begin{figure*}
+\begin{mathpar}
+
+\begin{array}{lllll}
+  {\openv{}}({\x{}}) &=& {\v{}}  & (\x{}\ \v{}) \in \openv{}\\
+  {\openv{}}({\path {\keype{k}} {\object{}}}) &=& {\getexp {{\openv{}}(\object{})}{\k{}}}
+
+\end{array}
+
+\end{mathpar}
+\caption{Path translation}
 \end{figure*}
