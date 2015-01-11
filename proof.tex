@@ -1,8 +1,8 @@
 \section{Soundness for Typed Clojure}
 
 % TODO
-\begin{assumption}[\newjavaliteral]
-        If $\forall i.\ {\opsem{}{\v{i}}{\classvalue{\classhint{i}}{\overrightarrow{\classfieldpair{\fld{j}} {\v{j}}}}}}$
+\begin{assumption}[\newjavaliteral] \label{assumption:new}
+  If\ $\forall i.\ {\opsem{}{\v{i}}{\classvalue{\classhint{i}}{\overrightarrow{\classfieldpair{\fld{j}} {\v{j}}}}}}\ or\ {\opsem{}{\v{i}}{\nil}}$
                   then
          $\newjava {\classhint{}}
                   {\overrightarrow{\classhint{i}}}
@@ -19,7 +19,7 @@ then all of the following hold:
 \begin{enumerate}
   \item either \object{} = \emptyobject{} or \inopenv {\openv{}} {\object{}} {\v{}},
   \item either \v{} $\not=$ \false\ (or \nil) and {\satisfies{\openv{}}{\thenprop{\prop{}}}} or 
-               \v{}     = \false\ (or \nil) and {\satisfies{\openv{}}{\elseprop{\prop{}}}}, and
+               \v{}       = \false\ (or \nil) and {\satisfies{\openv{}}{\elseprop{\prop{}}}}, and
   \item \judgement{}{\hastype{\v{}}{\t{}}}{\filterset{\thenprop{\propp{}}}{\elseprop{\propp{}}}}{\objectp{}}
         for some \thenprop{\propp{}}, \elseprop{\propp{}} and {\objectp{}}.
 
@@ -41,6 +41,26 @@ holds trivially with \t{} = \True via B-Val.
 \end{subcase}
 
 \end{itemize}
+
+\begin{case}[T-EmptyMap]
+
+  \begin{itemize}
+    \item[]
+      \begin{subcase}[B-Val]
+        Similar to T-True.
+      \end{subcase}
+  \end{itemize}
+\end{case}
+
+\begin{case}[T-Kw]
+
+  \begin{itemize}
+    \item[]
+      \begin{subcase}[B-Val]
+        Similar to T-True.
+      \end{subcase}
+  \end{itemize}
+\end{case}
 
 \end{case}
 
@@ -121,21 +141,40 @@ gives us the desired result
 \begin{itemize}
   \item[] \begin{subcase}[B-Do]
   \opsem {\openv{}} {\e{1}} {\v{1}},
-  \opsem {\openv{}} {\e{2}} {\v{}},\ 
-  \satisfies{\openv{}}{\propenv{}, {\orprop {\thenprop {\prop{1}}} {\elseprop {\prop{1}}}}}
+  \opsem {\openv{}} {\e{2}} {\v{}}
 
-Proving part 1 is trivial: \object{} is the same object as \e{2}.
-Part 2 assumes \e{}
-Part 3 is similar as the type of \e{2} is always used.
+For all parts we note 
+    since {\e{1}} can be either a true or false value
+    then
+    {\satisfies{\openv{}}{{\propenv{}},{\orprop {\thenprop {\prop{1}}} {\elseprop {\prop{1}}}}}}
+    by M-Or,
+    which together with 
+\judgement {\propenv{}, {\orprop {\thenprop {\prop{1}}} {\elseprop {\prop{1}}}}}
+           {\hastype {\e{2}} {\t{}}} 
+           {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}} 
+           {\object{}},
+    and
+  \opsem {\openv{}} {\e{2}} {\v{}}
+    allows us to apply the induction hypothesis on \e{2}.
 
+To prove part 1 we use the induction hypothesis on \e{2}
+to show either \object{} = \emptyobject{} 
+or \inopenv {\openv{}} {\object{}} {\v{}}.
 
+For part 2 we use the induction hypothesis on \e{2}
+to show if \v{} $\not=$ \false\ (or \nil) then
+        {\satisfies{\openv{}}{\thenprop{\prop{}}}}
+        or
+  if \v{} = \false\ (or \nil) then
+        {\satisfies{\openv{}}{\elseprop{\prop{}}}}.
+
+Part 3 follows from the induction hypothesis on \e{2}.
     \end{subcase}
   \item[]
 \begin{subcase}[BE-Do]
-\opsem {\openv{}} {\e{1}} {\errorval{\v{}}},
-\opsem {\openv{}} {\e{}} {\errorval{\v{}}}
+  \v{} = {\errorval{\v{e}}},
+\opsem {\openv{}} {\e{1}} {\errorval{\v{e}}},
 
-Proving part 1 is trivial: \object{} is the same object as \e{2}.
 
 
 \end{subcase}
@@ -145,8 +184,10 @@ Proving part 1 is trivial: \object{} is the same object as \e{2}.
 \begin{case}[T-NewStatic]
   \e{} = {\newstaticexp {\overrightarrow{\classhint{i}}} {\classhint{}} 
                                                           {\class{}} {\overrightarrow{\e{i}}}},
-                                                          $
-  \overrightarrow{
+  \object{} = \emptyobject{},
+\thenprop{\prop{}} = \topprop{},
+\elseprop{\prop{}} = \botprop{},
+   $\overrightarrow{
 \javatotc {\classhint{i}}
           {\t{i}}
           }$,
@@ -172,12 +213,12 @@ Proving part 1 is trivial: \object{} is the same object as \e{2}.
                   {\overrightarrow{\v{i}}}
                   {\v{}}$
 
-Part 1 is trivial as \object{} is always \emptyobject{}.
+Part 1 follows \object{} = \emptyobject{}.
 Part 2 requires some explanation. The two false values in Typed Clojure
 cannot be constructed with \newliteral, so the only case is \v{} $\not=$ \false\ (or \nil)
 where \thenprop{\prop{}} = \topprop{} so \satisfies{\openv{}}{\thenprop{\prop{}}}.
 Part 3 holds as B-New reduces to a \emph{non-nilable}
-instance of \class{} via \newjavaliteral, and \javatotc{\classhint{}}{\t{}}.
+instance of \class{} via \newjavaliteral (by Assumption \ref{assumption:new}), and \javatotc{\classhint{}}{\t{}}.
 \end{subcase}
   \item[]
 \begin{subcase}[BE-New]
@@ -187,10 +228,18 @@ instance of \class{} via \newjavaliteral, and \javatotc{\classhint{}}{\t{}}.
 
 \begin{case}[T-FieldStatic]
   \e{} = {\fieldstaticexp {\classhint{1}} {\classhint{2}} {fld} {\e{1}}}
+  \javatotc {\classhint{1}} {\class{}},
+  \javatotcnil {\classhint{2}} {\t{}},
+  \judgementtwo {\propenv{}} {\hastype {\e{1}} {\class{}}}
 
 \begin{itemize}
   \item[]
 \begin{subcase}[B-Field]
+  \opsem {\openv{}}
+         {\e{1}} 
+         {\classvalue{\classhint{1}} {\classfieldpair{\fld{}} {\v{}}}}
+
+
 Part 1 is trivial as \object{} is always \emptyobject{}.
 Part 2 holds trivially, \v{} can be either a true or false value
 and both {\thenprop{\prop{}}} and {\elseprop{\prop{}}}
@@ -240,10 +289,7 @@ and \javatotcnil{\classhint{2}} {\t{}}.
 \begin{itemize}
   \item[]
 \begin{subcase}[B-DefMulti]
-Part 1 is trivial as \object{} is always \emptyobject{}.
-Part 2 holds because B-DefMulti always returns a multimethod, which
-is neither \false or \nil, so {\thenprop{\prop{}}} = \topprop{}
-and \satisfies{\openv{}}{\thenprop{\prop{}}}.
+Part 1 and 2 hold for the same reasons as T-True.
 Part 3 holds trivially as B-DefMulti always returns the multimethod.
 \end{subcase}
   \item[]
@@ -271,15 +317,74 @@ Part 3 holds trivially as B-DefMulti always returns the multimethod.
 \end{case}
 
 \begin{case}[T-App]
+  \e{} = {\appexp {\e{1}} {\e{2}}},
+  \t{} = {\replacefor {\t{f}}
+                      {\object{2}}
+                      {\x{}}},
+  {\thenprop {\prop{}}} = 
+                 {\replacefor {\thenprop {\prop{f}}}
+                              {\object{2}}
+                              {\x{}}},
+  {\elseprop {\prop{}}} = 
+                 {\replacefor {\elseprop {\prop{f}}}
+                              {\object{2}}
+                              {\x{}}},
+  \object{} = {\replacefor {\object{f}}
+                              {\object{2}}
+                              {\x{}}},
+  \judgement {\propenv{}} {\hastype {\e{1}} {\ArrowOne {\x{}} {\s{}}
+                                                       {\t{f}}
+                                                       {\filterset {\thenprop {\prop{f}}}
+                                                                   {\elseprop {\prop{f}}}}
+                                                       {\object{f}}}}
+                {\filterset {\thenprop {\prop{1}}}
+                            {\elseprop {\prop{1}}}}
+                {\object{1}},
+  \judgement {\propenv{}}
+                 {\hastype {\e{2}} {\s{}}}
+                 {\filterset {\thenprop {\prop{2}}}
+                             {\elseprop {\prop{2}}}}
+                 {\object{2}} 
+
 \begin{itemize}
   \item[]
 \begin{subcase}[B-BetaClosure]
+  \opsem {\openv{}}
+         {\e{1}}
+         {\closure {\openv{c}} {\abs {\x{}} {\s{}} {\e{b}}}},
+  \opsem {\openv{}}
+         {\e{2}}
+         {\v{2}},
+  \opsem {\extendopenv {\openv{c}} {\x{}} {\v{2}}}
+         {\e{b}}
+         {\v{}}
+
 \end{subcase}
   \item[]
 \begin{subcase}[B-BetaMulti]
+  \opsem {\openv{}}
+         {\e{1}}
+         {\multi {\v{d}} {m}},
+  \opsem {\openv{}}
+         {\e{2}}
+         {\v{2}},
+  \opsem {\openv{}}
+         {\appexp {\v{d}} {\v{2}}}
+         {\v{e}},
+  \getmethod {\disptable{}}
+             {\v{e}}
+             {\v{f}},
+  \opsem {\openv{}}
+         {\appexp {\v{f}} {\v{2}}}
+         {\v{}}
+
 \end{subcase}
   \item[]
 \begin{subcase}[B-Delta]
+  \opsem {\openv{}} {\e{1}} {\const{}},
+  \opsem {\openv{}} {\e{2}} {\v{2}},
+  \constantopsem{\const{}}{\v{2}} = \v{}
+
 \end{subcase}
   \item[]
 \begin{subcase}[BE-Beta1]
@@ -354,8 +459,7 @@ Part 3 holds trivially as B-DefMulti always returns the multimethod.
          which together imply 
          \inopenv {\openv{}} {\object{}} {\getexp {\curlymap{\overrightarrow{({\v{a}}\ {\v{b}})}}} {\k{}}}.
          Since \opsem {\openv{}}{\e{}}{\getexp {\curlymap{\overrightarrow{({\v{a}}\ {\v{b}})}}} {\k{}}}
-         we can apply the premise 
-         \getmap{\curlymap{\overrightarrow{({\v{a}}\ {\v{b}})}}} {\k{}} = {\v{}}
+         we can apply the third inductive hypothesis
          to derive \inopenv {\openv{}} {\object{}} {\v{}}.
          \end{itemize}
          
@@ -430,24 +534,6 @@ Part 3 holds trivially as B-DefMulti always returns the multimethod.
   \end{itemize}
 \end{case}
 
-\begin{case}[T-EmptyMap]
-
-  \begin{itemize}
-    \item[]
-      \begin{subcase}[B-Val]
-      \end{subcase}
-  \end{itemize}
-\end{case}
-
-\begin{case}[T-Kw]
-
-  \begin{itemize}
-    \item[]
-      \begin{subcase}[B-Val]
-      \end{subcase}
-  \end{itemize}
-\end{case}
-
 \begin{case}[T-Assoc]
 
   \begin{itemize}
@@ -491,17 +577,45 @@ Part 3 holds trivially as B-DefMulti always returns the multimethod.
 \end{case}
 
 
-\begin{case}[T-Abs]
+\begin{case}[T-Abs] \e{} = {\abs {\x{}} {\s{}} {\e{1}}},
+  \t{} = {\ArrowOne {\x{}} {\s{}}
+                                                      {\t{1}}
+                                                      {\filterset {\thenprop {\prop{1}}}
+                                                                  {\elseprop {\prop{1}}}}
+                                                      {\object{1}}},
+{ \judgement {\propenv{}, {\isprop {\s{}} {\x{}}}}
+            {\hastype {\e{1}} {\t{}}}
+             {\filterset {\thenprop {\prop{1}}}
+                         {\elseprop {\prop{1}}}}
+             {\object{1}}}
 
   \begin{itemize}
     \item[]
       \begin{subcase}[B-Abs]
+        \v{} = ${\closure {\openv{}} {\abs {\x{}} {\s{}} {\e{1}}}}$
+
+        Parts 1 and 2 hold for the same reasons as T-True.
+        Part 3 %TODO
       \end{subcase}
   \end{itemize}
 \end{case}
 
 \begin{case}[T-Error]
+  \e{} = \errorval{\v{1}},
+  \t{} = \Bot,
+  \thenprop{\prop{}} = \botprop{}, \elseprop{\prop{}} = \botprop{}, \object{} = \emptyobject{}
 
+
+  \begin{itemize}
+    \item[]
+      \begin{subcase}[BE-Error] 
+        \v{} = \errorval{\v{1}}
+
+        Parts 1 holds as \object{} = \emptyobject{}.
+        Part 2 holds vaculously as \thenprop{\prop{}} = \botprop{} and \elseprop{\prop{}} = \botprop{}.
+        Part 3 holds as \errorval{\v{1}} is of type \Bot by the premises of T-Error.
+      \end{subcase}
+  \end{itemize}
 \end{case}
 
 \begin{case}[T-Subsume]

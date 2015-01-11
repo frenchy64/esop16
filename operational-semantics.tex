@@ -118,12 +118,12 @@
 \infer [B-Field]
 { \opsem {\openv{}}
          {\e{}} 
-         {\classvalue{\classhint{1}} {\classfieldpair{fld} {\v{}}}}
+         {\classvalue{\classhint{1}} {\classfieldpair{\fld{}} {\v{}}}}
          \\\\
-         \getfieldjava{\classhint{1}} {\classvalue{\classhint{1}} {\classfieldpair{fld} {\v{}}}} {fld} {\classhint{2}} {\v{}}
+         \getfieldjava{\classhint{1}} {\classvalue{\classhint{1}} {\classfieldpair{\fld{}} {\v{}}}} {\fld{}} {\classhint{2}} {\v{}}
        }
 { \opsem {\openv{}}
-         {\fieldstaticexp {\classhint{1}} {\classhint{2}} {fld} {\e{}}}
+         {\fieldstaticexp {\classhint{1}} {\classhint{2}} {\fld{}} {\e{}}}
          {\v{}}
    }
 
@@ -278,6 +278,12 @@
 \end{figure*}
 \begin{figure*}
 \begin{mathpar}
+\infer [BE-Error]
+{}
+{ \opsem {\openv{}} 
+        {\errorval{\v{}}} 
+       {\errorval{\v{}}}}
+
 \infer [BE-Let]
 { \opsem {\openv{}} {\e{a}} {\errorval{\v{}}}
  }

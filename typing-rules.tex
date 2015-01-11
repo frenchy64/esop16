@@ -103,7 +103,7 @@
              }
 
 \infer [T-App]
-{ \judgementfillcol {\propenv{}} {\hastype {\e{}} {\ArrowOne {\x{}} {\s{}}
+{ \judgement {\propenv{}} {\hastype {\e{}} {\ArrowOne {\x{}} {\s{}}
                                                        {\t{}}
                                                        {\filterset {\thenprop {\prop{f}}}
                                                                    {\elseprop {\prop{f}}}}
@@ -135,12 +135,12 @@
 
 
 \infer [T-Abs]
-{ \judgementfillcol {\propenv{}, {\isprop {\s{}} {\x{}}}}
+{ \judgement {\propenv{}, {\isprop {\s{}} {\x{}}}}
             {\hastype {\e{}} {\t{}}}
              {\filterset {\thenprop {\prop{}}}
                          {\elseprop {\prop{}}}}
              {\object{}}}
-{ \judgementfillcol {\propenv{}} {\hastype {\abs {\x{}} {\s{}} {\e{}}}
+{ \judgement {\propenv{}} {\hastype {\abs {\x{}} {\s{}} {\e{}}}
                                            {\ArrowOne {\x{}} {\s{}}
                                                       {\t{}}
                                                       {\filterset {\thenprop {\prop{}}}
@@ -405,7 +405,7 @@
 { \judgement {\propenv{}} 
              {\hastype {\assocexp {\e{m}} {\e{k}} {\e{v}}}
                        {\HMapgeneric {\extendmandatoryset {\mandatory{}}{\k{}}{\t{}}} {\absent}}}
-             {\filterset {\topprop{}} {\topprop{}}}
+             {\filterset {\topprop{}} {\botprop{}}}
              {\emptyobject{}}
 }
 
