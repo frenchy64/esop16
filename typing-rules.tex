@@ -149,6 +149,21 @@
                             {\botprop{}}}
                 {\emptyobject{}}}
 
+\infer [T-Clos]
+{ \exists {\propenv{}}. \satisfies{\openv{}}{\propenv{}}
+  \ \text{and}\ 
+\judgement {\propenv{}} {\hastype {\abs {\x{}} {\t{}} {\e{}}} {\s{}}}
+                 {\filterset {\thenprop {\prop{}}}
+                             {\elseprop {\prop{}}}}
+                 {\object{}}
+              }
+{ \judgement {}
+            {\hastype {\closure {\openv{}} {\abs {\x{}} {\t{}} {\e{}}}} 
+                      {\s{}}}
+             {\filterset {\thenprop {\prop{}}}
+                         {\elseprop {\prop{}}}}
+             {\object{}}}
+
 \infer [T-Error]
 {}
 { \judgement {\propenv{}} {\hastype {\errorvalv} {\Bot}}
