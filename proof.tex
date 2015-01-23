@@ -760,33 +760,30 @@ Part 3 holds trivially as B-DefMulti always returns the multimethod.
                                                       {\filterset {\thenprop {\prop{1}}}
                                                                   {\elseprop {\prop{1}}}}
                                                       {\object{1}}},
+  {\thenprop{\prop{}}}= {\topprop{}},
+  {\elseprop{\prop{}}}= {\botprop{}},
+  {\object{}}= {\emptyobject{}},
 { \judgement {\propenv{}, {\isprop {\s{}} {\x{}}}}
             {\hastype {\e{1}} {\t{}}}
              {\filterset {\thenprop {\prop{1}}}
                          {\elseprop {\prop{1}}}}
-             {\object{1}}}
+             {\object{1}}},
+\judgement {\propenv{}} {\hastype {\abs {\x{}} {\s{}} {\e{1}}} {\t{}}}
+                 {\filterset {\thenprop {\prop{}}}
+                             {\elseprop {\prop{}}}}
+                 {\object{}}
 
   \begin{itemize}
     \item[]
+      %TODO
       \begin{subcase}[B-Abs]
-        \v{} = ${\closure {\openv{}} {\abs {\x{}} {\s{}} {\e{1}}}}$
+        \v{} = ${\closure {\openv{}} {\abs {\x{}} {\s{}} {\e{1}}}}$,
+          { \opsem {\openv{}}
+                   {\abs {\x{}} {\t{}} {\e{1}}}
+                   {\closure {\openv{}} {\abs {\x{}} {\s{}} {\e{1}}}}}
 
         Parts 1 and 2 hold for the same reasons as T-True.
-        Part 3 holds because by inversion of the typing judgement,
-        if \e{} = {\abs {\x{}} {\s{}} {\e{1}}}
-        and 
-  \t{} = {\ArrowOne {\x{}} {\s{}}
-                                                      {\t{1}}
-                                                      {\filterset {\thenprop {\prop{1}}}
-                                                                  {\elseprop {\prop{1}}}}
-                                                      {\object{1}}},
-                                                      then
-{ \judgement {\propenv{}, {\isprop {\s{}} {\x{}}}}
-            {\hastype {\e{1}} {\t{}}}
-             {\filterset {\thenprop {\prop{1}}}
-                         {\elseprop {\prop{1}}}}
-             {\object{1}}}
-             must hold.
+        Part 3 holds directly via T-Clos, since \v{} must be a closure.
       \end{subcase}
   \end{itemize}
 \end{case}
