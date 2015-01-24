@@ -262,9 +262,9 @@
 \newcommand\inopenv[3]{\ma{#1 (#2) = #3}}
 \newcommand\extendopenv[3]{\ma{#1[#2 \rightarrow #3]}}
 \newcommand\opsem[3]{\ma{#1 \vdash #2 \Downarrow #3}}
-\newcommand\closure[2]{[#1, #2]_{closure}}
+\newcommand\closure[2]{\ma{[#1, #2]_{closure}}}
 % multimethod semantics
-\newcommand\multi[2]{[#1, #2]_{multi}}
+\newcommand\multi[2]{\ma{[#1, #2]_{multi}}}
 \newcommand\emptydisptable[0]{\{\}}
 \newmeta\disptable{m}
 \newmeta\disptablep{m'}
@@ -294,7 +294,8 @@
 \newcommand\tatotc[2]{\ma{[[#1]]\ =\ #2}}
 
 % environment
-\newcommand\propenv{\Gamma}
+\newcommand\propenv{\ma{\Gamma}}
+\newcommand\propenvp{\ma{\Gamma'}}
 \newcommand\mmenv{\Delta}
 \newcommand\mmenvp{\mmenv'}
 \newcommand\mmenvpp{\mmenvp'}
@@ -309,11 +310,11 @@
 \newcommand\metafnfont[1]{{\metafunctionfont{#1}}}
 
 % isa? special functions
-\newcommand\isacompareliteral[0]{\metafnfont{IsAProps}}
+\newcommand\isacompareliteral[0]{\ma{\metafnfont{IsAProps}}}
 \newcommand\isacompare[4]{\ma{\isacompareliteral(#1, #2, #3) = {#4}}}
 \newcommand\isacomparethree[3]{\ma{\isacompareliteral(#1, #2, #3)}}
 \newcommand\isacomparealign[4]{\ma{\isacompareliteral(#1, #2, #3) &=& {#4}}}
-\newcommand\isaopsemliteral[0]{\metafnfont{IsA}}
+\newcommand\isaopsemliteral[0]{\ma{\metafnfont{IsA}}}
 \newcommand\isaopsem[2]{\ma{\isaopsemliteral(#1, #2)}}
 
 % new special functions

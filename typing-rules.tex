@@ -271,13 +271,12 @@
 \judgementtwo {\propenv{}} {\hastype {\e{}} {\sp{}}}
 }
 {
-  \judgementsevcol {\mmenv{}} {\taenv{}} {\propenv{}} 
+  \judgement {\propenv{}}  
       {\hastype {\createmultiexp {\s{}}
                                  {\e{}}} 
                 {\MultiFntype {\s{}} {\sp{}}}}
              {\filterset {\topprop{}} {\botprop{}}}
-             {\emptyobject}
-             {\mmenv{}}
+             {\emptyobject{}}
 }
 
 \infer [T-DefMethod]
@@ -315,8 +314,7 @@
 
 \infer [T-IsA]
 {
-  \judgementfillcol 
-             {\propenv{}} {\hastype {\e{}} {\s{}}}
+  \judgement {\propenv{}} {\hastype {\e{}} {\s{}}}
              {\filterset {\thenprop {\propp{}}}
                          {\elseprop {\propp{}}}}
                        {\object{}}
@@ -326,10 +324,20 @@
              \\
   \isacompare{\s{}}{\object{}}{\t{}}{\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}}
 }
-{ \judgementfillcol {\propenv{}} {\hastype {\isaapp {\e{}} {\ep{}}}
+{ \judgement {\propenv{}} {\hastype {\isaapp {\e{}} {\ep{}}}
                                     {\Boolean{}}}
              {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}}
              {\emptyobject}}
+
+\infer [T-Multi]
+{ \judgementtwo {} {\hastype {\e{}} {\t{}}} 
+}
+{ \judgement {}
+            {\hastype {\multi {\e{}} {\disptable{}}}
+                      {\MultiFntype {\s{}} {\t{}}}}
+             {\filterset {\topprop{}} {\botprop{}}}
+           {\emptyobject{}}}
+
 \end{mathpar}
 \caption{Multimethod Typing Rules}
 \end{figure*}
