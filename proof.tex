@@ -11,6 +11,61 @@
 
 \end{assumption}
 
+ \label{lemma:delta}
+\begin{lemma}[Delta]
+  If {\constanttype{\const{}}} = {\ArrowOne {\x{}} {\s{}}
+                                      {\t{}}
+                                      {\filterset {\thenprop{\prop{}}}
+                                                  {\elseprop{\prop{}}}}
+                                                  {\object{}}}
+ and {\judgement {} {\hastype {\v{}} {\s{}}}
+                    {\filterset {\thenprop{\propp{}}}
+                                {\elseprop{\propp{}}}}
+                    {\object{1}}}
+                                      then
+                                      {\judgement {} {\hastype {\constantopsem{\const{}}{\v{}}}
+                 {\replacefor
+                         {\constanttype{\const{}}}
+                 {\object{1}}
+             {\x{}}}}
+               {\replacefor
+                 {\filtersetparen {\thenprop{\prop{}}}
+                                  {\elseprop{\prop{}}}}
+                 {\object{1}}
+                 {\x{}}}
+               {\replacefor
+                 {\object{}}
+                 {\object{1}}
+                 {\x{}}}}.
+
+\begin{proof}
+  By cases on {\constantopsem{\const{}}{\v{}}}.
+
+  \begin{case}[\classconst] \const{} = \classconst,
+    {\constanttype{\const{}}}
+    = {\ArrowOne {\x{}} {\Top{}}
+                 {\Union{\nil{}}{\class{}}}
+                 {\filterset {\topprop{}}
+                             {\topprop{}}}
+                 {\path {\classpe{}} {\x{}}}}
+
+   \begin{itemize}
+     \item[] \begin{subcase}[Class value]
+               \v{} = {\classvalue{\class{}} {\overrightarrow {\classfieldpair{fld} {\v{}}}}},
+               {\constantopsem{\const{}}{\v{}}} = \class{}
+             \end{subcase}
+   \end{itemize}
+
+  \end{case}
+\end{proof}
+\end{lemma}
+
+ \label{lemma:delta}
+\begin{lemma}[Const]
+\begin{proof}
+\end{proof}
+\end{lemma}
+
 \begin{lemma}
 If \judgement{\propenv{}}{\hastype{\e{}}{\t{}}}{\filterset{\thenprop{\prop{}}}{\elseprop{\prop{}}}}{\object{}},
 \satisfies{\openv{}}{\propenv{}} 
@@ -889,8 +944,18 @@ Part 3 holds trivially as B-DefMulti always returns the multimethod.
 
 \end{case}
 
-\begin{case}[T-Const]
+\begin{case}[T-Const]\e{} = {\const{}},
+  \t{} = {\constanttype{\const{}}},
+{\thenprop{\prop{}}} = {\topprop{}},
+{\elseprop{\prop{}}} = {\botprop{}},
+{\object{}} = {\emptyobject{}}
 
+  \begin{itemize}
+    \item[] 
+      \begin{subcase}[B-Val]
+        Parts 1, 2 and 3 hold for the same reasons as T-True. 
+      \end{subcase}
+  \end{itemize}
 \end{case}
 
 \end{proof}

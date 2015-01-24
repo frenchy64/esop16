@@ -204,7 +204,8 @@
 \newcommand\isaapp[2]{(\isaliteral\ #1\ #2)}
 
 % constant typing
-\newcommand\constanttype[1]{\ma{{\delta}_{\t{}}(#1)}}
+\newcommand\constanttypetwo[2]{\ma{{\delta}_{#1}(#2)}}
+\newcommand\constanttype[1]{\constanttypetwo{\t{}}{#1}}
 \newcommand\constantopsem[2]{\ma{{\delta}(#1, #2)}}
 \newcommand\classconst[0]{class}
 \newcommand\throwconst[0]{throw}
@@ -389,7 +390,7 @@
 % ## Runtime class syntax
 \newmeta\classvaluemeta{CV}
 \newcommand\classfieldpair[2]{#1 : #2}
-\newcommand\classvalue[2]{#1\ \{#2\}}
+\newcommand\classvalue[2]{\ma{#1\ \{#2\}}}
 
 % ## metafunction to invoke java
 % Class Target Method ArgTypes Args ReturnType ReturnValue
