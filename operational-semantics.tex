@@ -213,12 +213,12 @@
 
 \infer [B-FieldRefl]
 {}
-{\opsem {\openv{}} {\fieldexp {fld} {\e{}}}
+{\opsem {\openv{}} {\fieldexp {\fld{}} {\e{}}}
         {\reflerror{}}}
 
 \infer [B-NewRefl]
 {}
-{\opsem {\openv{}} {\fieldexp {fld} {\e{}}}
+{\opsem {\openv{}} {\fieldexp {\fld{}} {\e{}}}
         {\reflerror{}}}
 
 \infer [B-Assoc]
@@ -390,7 +390,7 @@
          {\errorval{\v{}}}
        }
 { \opsem {\openv{}}
-         {\fieldstaticexp {\classhint{1}} {\classhint{2}} {fld} {\e{}}}
+         {\fieldstaticexp {\classhint{1}} {\classhint{2}} {\fld{}} {\e{}}}
          {\errorval{\v{}}}
    }
 
@@ -574,7 +574,8 @@
 
 \begin{array}{lllll}
   {\openv{}}({\x{}}) &=& {\v{}}  & (\x{}\ \v{}) \in \openv{}\\
-  {\openv{}}({\path {\keype{k}} {\object{}}}) &=& {\getexp {{\openv{}}(\object{})}{\k{}}}
+  {\openv{}}({\path {\keype{k}} {\object{}}}) &=& {\getexp {{\openv{}}(\object{})}{\k{}}}\\
+  {\openv{}}({\path {\classpe{}} {\object{}}}) &=& {\appexp {\classconst{}} {{\openv{}}(\object{})}}
 
 \end{array}
 

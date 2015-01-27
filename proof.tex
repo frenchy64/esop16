@@ -11,61 +11,6 @@
 
 \end{assumption}
 
- \label{lemma:delta}
-\begin{lemma}[Delta]
-  If {\constanttype{\const{}}} = {\ArrowOne {\x{}} {\s{}}
-                                      {\t{}}
-                                      {\filterset {\thenprop{\prop{}}}
-                                                  {\elseprop{\prop{}}}}
-                                                  {\object{}}}
- and {\judgement {} {\hastype {\v{}} {\s{}}}
-                    {\filterset {\thenprop{\propp{}}}
-                                {\elseprop{\propp{}}}}
-                    {\object{1}}}
-                                      then
-                                      {\judgement {} {\hastype {\constantopsem{\const{}}{\v{}}}
-                 {\replacefor
-                         {\constanttype{\const{}}}
-                 {\object{1}}
-             {\x{}}}}
-               {\replacefor
-                 {\filtersetparen {\thenprop{\prop{}}}
-                                  {\elseprop{\prop{}}}}
-                 {\object{1}}
-                 {\x{}}}
-               {\replacefor
-                 {\object{}}
-                 {\object{1}}
-                 {\x{}}}}.
-
-\begin{proof}
-  By cases on {\constantopsem{\const{}}{\v{}}}.
-
-  \begin{case}[\classconst] \const{} = \classconst,
-    {\constanttype{\const{}}}
-    = {\ArrowOne {\x{}} {\Top{}}
-                 {\Union{\nil{}}{\class{}}}
-                 {\filterset {\topprop{}}
-                             {\topprop{}}}
-                 {\path {\classpe{}} {\x{}}}}
-
-   \begin{itemize}
-     \item[] \begin{subcase}[Class value]
-               \v{} = {\classvalue{\class{}} {\overrightarrow {\classfieldpair{fld} {\v{}}}}},
-               {\constantopsem{\const{}}{\v{}}} = \class{}
-             \end{subcase}
-   \end{itemize}
-
-  \end{case}
-\end{proof}
-\end{lemma}
-
- \label{lemma:delta}
-\begin{lemma}[Const]
-\begin{proof}
-\end{proof}
-\end{lemma}
-
 \begin{lemma}
 If \judgement{\propenv{}}{\hastype{\e{}}{\t{}}}{\filterset{\thenprop{\prop{}}}{\elseprop{\prop{}}}}{\object{}},
 \satisfies{\openv{}}{\propenv{}} 
@@ -282,7 +227,7 @@ instance of \class{} via \newjavaliteral (by Assumption \ref{assumption:new}), a
 \end{case}
 
 \begin{case}[T-FieldStatic]
-  \e{} = {\fieldstaticexp {\classhint{1}} {\classhint{2}} {fld} {\e{1}}}
+  \e{} = {\fieldstaticexp {\classhint{1}} {\classhint{2}} {\fld{}} {\e{1}}}
   \javatotc {\classhint{1}} {\class{}},
   \javatotcnil {\classhint{2}} {\t{}},
   \judgementtwo {\propenv{}} {\hastype {\e{1}} {\class{}}}
@@ -484,6 +429,48 @@ Part 3 holds trivially as B-DefMulti always returns the multimethod.
   \opsem {\openv{}} {\e{1}} {\const{}},
   \opsem {\openv{}} {\e{2}} {\v{2}},
   \constantopsem{\const{}}{\v{2}} = \v{}
+
+  % TODO do I need to prove anything about the argument in the definition
+  % of the constant being under \s{}?
+
+  Prove by induction on \const{} and \v{2}.
+  \begin{itemize}
+    \item[] \begin{subcase}[\const{} = \classconst]
+    ${\ArrowOne {\x{}} {\s{}}
+                                                       {\t{f}}
+                                                       {\filterset {\thenprop {\prop{f}}}
+                                                                   {\elseprop {\prop{f}}}}
+                                                       {\object{f}}}$
+                                                       =
+  ${\ArrowOne {\x{}} {\Top{}}
+                                      {\Union{\nil{}}{\class{}}}
+                                      {\filterset {\topprop{}}
+                                                  {\topprop{}}}
+                                      {\path {\classpe{}} {\x{}}}}$
+
+        \begin{itemize}
+          \item[] \begin{subcase}[\v{2} = \classvalue{\class{}} {\overrightarrow {\classfieldpair{\fld{i}} {\v{i}}}}]
+                    \v{} = \class{}
+
+                    To prove part 1, note \object{} = {\replacefor {\object{f}}{\object{2}}{\x{}}} 
+                    and \object{f} = {\path {\classpe{}} {\x{}}}.
+                    There are two cases defined by substitution: if \object{2} = \emptyobject{} then \object{} = \emptyobject{}
+                    and we are done,
+                    or if \object{2} = {\path {\pathelem{}} {\xp{}}} then \object{} = 
+                    {\path {\classpe{}}{\object{2}}},
+                     by the induction hypothesis \inopenv {\openv{}} {\object{2}} {\v{2}}
+                    and by the definition of path translation
+                    {\openv{}}({\path {\classpe{}} {\object{2}}}) = {\appexp {\classconst{}} {{\openv{}}(\object{2})}},
+                    so we can deduce \inopenv {\openv{}} {\object{}} {\appexp {\classconst{}} {{\openv{}}(\object{2})}}
+                    where {\appexp {\classconst{}} {{\openv{}}(\object{2})}} = \v{}, and we are done.
+
+                    Part 2 is trivial since both propositions are \topprop{} by substitution.
+                    
+                    Part 3 
+                  \end{subcase}
+        \end{itemize}
+            \end{subcase}
+  \end{itemize}
 
 \end{subcase}
   \item[]

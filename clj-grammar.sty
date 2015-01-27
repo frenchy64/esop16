@@ -207,8 +207,8 @@
 \newcommand\constanttypetwo[2]{\ma{{\delta}_{#1}(#2)}}
 \newcommand\constanttype[1]{\constanttypetwo{\t{}}{#1}}
 \newcommand\constantopsem[2]{\ma{{\delta}(#1, #2)}}
-\newcommand\classconst[0]{class}
-\newcommand\throwconst[0]{throw}
+\newcommand\classconst[0]{\emph{class}}
+\newcommand\throwconst[0]{\emph{throw}}
 
 % differences from TR
 \newcommand\trdiff[1]{\mathbin{\textcolor{blue}{#1}}}
@@ -370,9 +370,8 @@
 \newmeta\pathelem{\pi}
 % abstract syntax for pathelem
 \newmeta\pesyntax{pe}
-\newmeta\classpe{{\bf Class}}
-\newmeta\countpe{{\bf Count}}
-\newcommand\keype[1]{{\bf Key}_{\ma{#1}}}
+\newmeta\classpe{{\bf class}}
+\newcommand\keype[1]{{\bf key}_{\ma{#1}}}
 
 \newcommand\destructpath[2]{\ma{#1 :: #2}}
 
@@ -382,7 +381,7 @@
 % Java type conversion functions
 \newcommand\javatotcliteral[0]{\ma{\metafnfont{JavaToTC}}}
 \newcommand\javatotc[2]{\javatotcliteral(\ma{#1})\ =\ #2}
-\newcommand\javatotcnil[2]{\ma{\javatotcliteral_{\Nil{}}(\ma{#1})\ =\ #2}}
+\newcommand\javatotcnil[2]{\ma{\javatotcliteral_{\nil{}}(\ma{#1})\ =\ #2}}
 \newcommand\javatotcalign[2]{\javatotcliteral(\ma{#1})\ &=&\ #2}
 \newcommand\javatotcalignnil[2]{\javatotcliteral_{\nil{}}(\ma{#1})\ &=&\ #2}
 

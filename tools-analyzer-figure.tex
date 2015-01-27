@@ -84,7 +84,7 @@
 \infer [TA-FieldStatic]
 {}
 { \tajudgement {\taenv{}}
-               {\hastype {\fieldstaticexp {\classhint{1}} {\classhint{}} {fld} {\e{}}}
+               {\hastype {\fieldstaticexp {\classhint{1}} {\classhint{}} {\fld{}} {\e{}}}
                          {\classhint{}}}
   }
 
@@ -276,8 +276,8 @@
            {\ep{}}
          }
 { \rewrite {\taenv{}}
-           {\fieldexp {\fld} {\e{}}}
-           {\fieldexp {\fld} {\ep{}}}
+           {\fieldexp {\fld{}} {\e{}}}
+           {\fieldexp {\fld{}} {\ep{}}}
          }
 
 \infer [R-FieldElimRefl]
@@ -292,7 +292,7 @@
          }
 { \rewrite {\taenv{}}
            {\fieldexp {\fld{}} {\e{}}}
-           {\fieldstaticexp {\classhint{1}} {\classhint{2}} {fld} {\ep{}}}
+           {\fieldstaticexp {\classhint{1}} {\classhint{2}} {\fld{}} {\ep{}}}
          }
 
 \infer [R-FieldStatic]
@@ -301,8 +301,8 @@
            {\ep{}}
          }
 { \rewrite {\taenv{}}
-           {\fieldstaticexp {\classhint{1}} {\classhint{2}} {fld} {\e{}}}
-           {\fieldstaticexp {\classhint{1}} {\classhint{2}} {fld} {\ep{}}}
+           {\fieldstaticexp {\classhint{1}} {\classhint{2}} {\fld{}} {\e{}}}
+           {\fieldstaticexp {\classhint{1}} {\classhint{2}} {\fld{}} {\ep{}}}
          }
 
 \infer [R-MethodRefl]
