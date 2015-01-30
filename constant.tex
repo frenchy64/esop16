@@ -27,12 +27,14 @@
 \begin{array}{lllr}
 
 \constantopsem{\classconst}{\classvalue{\class{}} {\overrightarrow {\classfieldpair{\fld{}} {\v{}}}}} &=& \class{}\\
+\constantopsem{\classconst}{\class{}} &=& \Class{}\\
 \constantopsem{\classconst}{\true{}} &=& \Boolean{}\\
 \constantopsem{\classconst}{\false{}} &=& \Boolean{}\\
-\constantopsem{\classconst}{\const{}} &=& \IFn{}\\
-\constantopsem{\classconst}{\curlymap{\overrightarrow{({\v{}}\ {\v{}})}}} &=& \HMapInstance{}\\
-\constantopsem{\classconst}{\class{}} &=& \Class{}\\
+\constantopsem{\classconst}{\closure {\openv{}} {\abs {\x{}} {\t{}} {\e{}}}} &=& \IFn{}\\
+\constantopsem{\classconst}{\multi {\v{d}} {\disptable{}}} &=& \PMulti{}\\
+\constantopsem{\classconst}{\curlymapvaloverright{\v{1}}{\v{2}}} &=& \HMapInstance{}\\
 \constantopsem{\classconst}{\k{}} &=& \Keyword{}\\
+\constantopsem{\classconst}{\num{}} &=& \Number{}\\
 \constantopsem{\classconst}{\nil{}} &=& \nil{}
                                       \\\\
 

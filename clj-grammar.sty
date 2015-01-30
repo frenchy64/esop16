@@ -85,7 +85,7 @@
 \newbfop\Keyword{Keyword}
 \newbfop\Keywordhint{Keyword}
 \newbfop\Symbol{Symbol}
-\newbfop\Number{N}
+\newbfop\Number{Number}
 \newbfop\Nil{nil}
 \newbfop\True{true}
 \newbfop\False{false}
@@ -148,7 +148,7 @@
 \newcommand\absoverright[3]{\ma{\l \overrightarrow{#1^{#2}} . #3}}
 \newcommand\curlymap[1]{\ma{\{#1\}}}
 \newcommand\emptymap[1]{\ma{\{\}}}
-\newcommand\curlymapvaloverright[2]{\ma{\{{\overrightarrow{({\v{}}\ {\v{}})}}\}}}
+\newcommand\curlymapvaloverright[2]{\ma{\{{\overrightarrow{(#1\ #2)}}\}}}
 \newcommand\extendmap[3]{\ma{#1[#2 \rightarrow #3]}}
 \newcommand\getmap[2]{\ma{#1[#2]}}
 \newcommand\keyinmap[2]{\ma{{#1} \in dom({#2})}}
@@ -188,7 +188,7 @@
 \newmeta\pchar{char}
 \newbfop\Character{java.lang.Character}
 \newmeta\pvoid{void}
-\newbfop\Void{java.lang.Void}
+\newbfop\Void{Void}
 \newmeta\mth{mth}
 \newmeta\fld{fld}
 

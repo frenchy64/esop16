@@ -94,6 +94,26 @@
   {\HMapp {\overrightarrow{(\k{},\ \t{})}^i} {\absent{}}}
                }
 
+\infer [S-Class]
+{}
+{\issubtypein {}
+  {\class{}}
+  {\Class}}
+
+\infer [S-MultiMono]
+{}
+{\issubtypein {}
+  {\MultiFntype {\ArrowOne {\x{}} {\Bot{}} {\Top{}}
+                          {\filterset {\topprop{}}
+                                      {\topprop{}}}
+                          {\emptyobject{}}}
+                {\ArrowOne {\x{}} {\Bot{}} {\Top{}}
+                          {\filterset {\topprop{}}
+                                      {\topprop{}}}
+                          {\emptyobject{}}}}
+  {\PMulti{}}
+}
+
 \end{mathpar}
 \caption{Subtyping rules}
 \end{figure*}

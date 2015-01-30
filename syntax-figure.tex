@@ -59,7 +59,7 @@ $$
                 &\mbox{Immutable First-Class Multimethods}
                       \\\\
   \s{}, \t{}    &::=& \Top 
-                      \alt \class\ 
+                      \alt \class{}
                       \alt
                       {\Value \k{}} 
                       \alt {\Nil{}}
@@ -72,9 +72,8 @@ $$
                                    {\t{}}
                                    {\filterset {\prop{}} {\prop{}}}
                                    {\object{}}}
-                                   \alt {\HMapgeneric {\mandatory{}} {\absent{}}}
-                      \alt \Number{}
-                      \alt \Keyword{}
+                      \alt {\HMapgeneric {\mandatory{}} {\absent{}}}
+                      \alt {\MultiFntype{\t{}}{\t{}}}
                       
                 &\mbox{Typed Clojure Types} \\
   \completenessmeta{} &::=& {\complete{}} \alt {\partial{}}
@@ -96,7 +95,7 @@ $$
                 &\mbox{Paths} \\
   \pesyntax{}   &::=& \classpe{} \alt \keype{\k{}}
                 &\mbox{Path Elements} \\ \\
- \disptable{}   &::=& \{ \overrightarrow{\classvaluemeta{} \Rightarrow \v{}} \}
+ \disptable{}   &::=& \{ \overrightarrow{\v{} \Rightarrow \v{}} \}
                &\mbox{Multimethod dispatch table} \\
   \propenv{}   &::=& \overrightarrow{\prop{}}
                &\mbox{Proposition Environment} \\
@@ -108,7 +107,16 @@ $$
                &\mbox{Class Table} \\
   \classvaluemeta{} 
           &::=& {\classvalue{\classhint} {\overrightarrow {\classfieldpair{\fld{}} {\v{}}}}}
-               &\mbox{Class Values}
+               &\mbox{Class Values}\\
+  \class{}      &::=& \Number{}
+                      \alt \Keyword{}
+                      \alt \Class{}
+                      \alt \Boolean{}
+                      \alt \IFn{}
+                      \alt \PMulti{}
+                      \alt \HMapInstance{}
+                      \alt \Void{}
+                &\mbox{Class literals}
 \end{altgrammar}
 $$
 \caption{Syntax of Terms, Types, Propositions, and Objects}
