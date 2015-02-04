@@ -359,28 +359,48 @@ Part 3 holds trivially as B-DefMulti always returns the multimethod.
          {\e{b}}
          {\v{}}
 
-         To prove part 1 we note by inversion of the typing and evaluation
-         judgements if
+         To prove part 1 we note by inversion of the typing relation (by T-Closure) if
+         \begin{itemize}
+           \item 
   \judgement {\propenv{}} {\hastype {\e{1}} {\ArrowOne {\x{}} {\s{}}
                                                        {\t{f}}
                                                        {\filterset {\thenprop {\prop{f}}}
                                                                    {\elseprop {\prop{f}}}}
-                                                       {\object{f}}}}
+                                                               {\object{f}}}}
                 {\filterset {\thenprop {\prop{1}}}
                             {\elseprop {\prop{1}}}}
-                {\object{1}}
-                and 
-  \opsem {\openv{}}
-         {\e{1}}
-         {\closure {\openv{c}} {\abs {\x{}} {\s{}} {\e{b}}}},
+                          {\object{1}} and
+              \item 
+                \opsem {\openv{}}
+                       {\e{1}}
+                       {\closure {\openv{c}} {\abs {\x{}} {\s{}} {\e{b}}}},
+         \end{itemize}
 
-         then
-{ \judgement {\propenv_{c}, {\isprop {\s{}} {\x{}}}}
-            {\hastype {\e{b}} {\t{f}}}
-             {\filterset {\thenprop {\prop{f}}}
-                         {\elseprop {\prop{f}}}}
-             {\object{f}}}
-         where \satisfies{\propenv_{c}, {\isprop {\s{}} {\x{}}}}{\extendopenv {\openv{c}} {\x{}} {\v{2}}}.
+         then there is some environment {\propenvc{}} such that
+         \begin{itemize}
+           \item
+              \satisfies{\openv{c}}{\propenvc{}} and
+            \item
+              \judgement {\propenvc{}} {\hastype {\abs {\x{}} {\s{}} {\e{b}}} {\t{f}}}
+                               {\filterset {\thenprop {\prop{f}}}
+                                           {\elseprop {\prop{f}}}}
+                               {\object{f}}.
+         \end{itemize}
+
+         By \judgementtwo{\propenv{}}{\hastype {\e{2}} {\s{}}},
+            {\opsem {\openv{}}
+                    {\e{2}}
+                    {\v{2}}}
+         and
+         the inductive hypothesis 
+         \begin{itemize}
+           \item
+             \opsem {\openv{}}
+                    {\e{2}}
+                    {\v{2}},
+         \end{itemize}
+         
+         \satisfies{\propenv_{c}, {\isprop {\s{}} {\x{}}}}{\extendopenv {\openv{c}} {\x{}} {\v{2}}}.
          Since 
   \opsem {\extendopenv {\openv{c}} {\x{}} {\v{2}}}
          {\e{b}}
@@ -399,9 +419,7 @@ Part 3 holds trivially as B-DefMulti always returns the multimethod.
                                                 {\object{2}}
                                                 {\x{}}}
                                                 where
-         \inopenv {\openv{}} {\replacefor {\object{f}}
-                              {\object{2}}
-                              {\x{}}} {\v{}}
+   \inopenv {\openv{}} {\object{}} {\v{}}
                               or \object{} = \emptyobject{}.
 
 \end{subcase}
