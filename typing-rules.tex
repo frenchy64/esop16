@@ -346,15 +346,18 @@
 \begin{mathpar}
 
 \infer [T-GetHMap]
-{ \judgement {\propenv{}} {\hastype {\e{m}} {\HMapgeneric {\mandatory{}} {\absent{}}}}
+{ \judgement {\propenv{}} 
+  {\hastype {\e{m}} {\Union {{\overrightarrow {\HMapgeneric {\mandatory{}} {\absent{}}}}^i}}}
            {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}}
            {\object{}}
-         \\\\
+           \\\\
   \judgementtwo {\propenv{}} {\hastype {\e{k}} {\Value {k}}}
              \\
-             {\inmandatory{\k{}}{\t{}}{\mandatory{}}}
+             {\overrightarrow{\inmandatory{\k{}}{\t{}}{\mandatory{}}}}^i
+         \\
+           i \ge 1
        }
-{ \judgement {\propenv{}} {\hastype {\getexp {\e{m}} {\e{k}}} {\t{}}}
+{ \judgement {\propenv{}} {\hastype {\getexp {\e{m}} {\e{k}}} {\Union {{\overrightarrow {\t{}}}^i}}}
              {\filterset {\topprop{}} {\topprop{}}}
              {\replacefor {\path {\keype{k}} {\x{}}}
                           {\object{}}

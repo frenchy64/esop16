@@ -162,6 +162,34 @@ Clojure
 Typed Clojure is a gradual type system for Clojure, based on the
 static portion of Typed Racket.
 
+\begin{lstlisting}
+(defn grandparent [^File f]
+  (when f
+    (let [f (. f (getParent))]
+      (when f
+        (. (new File f) (getParent))))))
+\end{lstlisting}
+%(some-> f (.getParent) (File.) (.getParent))
+
+\begin{lstlisting}
+(ann parent [(U nil File) -> (U nil String)])
+(defn parent [^File f]
+  (when f
+    (.getParent f)))
+\end{lstlisting}
+
+\begin{lstlisting}
+(defalias Expr
+  (U '{:op :if :test Expr :then Expr :else Expr}
+     '{:op :const :val Any} ...))
+(defmulti tree-str (fn [e :- Expr] (:op e)))
+(defmethod tree-str :if [{:keys [test then else]}] 
+  (str (tree-str test) (tree-str then) (tree-str else)))
+(defmethod tree-str :const [{:keys [val]}] 
+  (str val))
+\end{lstlisting}
+
+
 % what are the goals of Typed Clojure?
 % where do they differ from Typed Racket? why?
 
