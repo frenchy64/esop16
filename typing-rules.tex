@@ -299,7 +299,7 @@
 \judgementtwo {\propenv{}}
            {\hastype {\e{v}} {\t{v}}}
            \\
-\judgementfillcol {\propenv{}, {\isprop{\t{}} {\x{}}}, {\thenprop {\proppp{}}}}
+\judgement {\propenv{}, {\isprop{\t{}} {\x{}}}, {\thenprop {\proppp{}}}}
            {\hastype {\e{b}} {\s{}}}
            {\filterset {\thenprop {\prop{}}}
                        {\elseprop {\prop{}}}}
@@ -309,7 +309,7 @@
                                                             {\abs {\x{}} {\t{}} {\e{b}}}}
                                            {\MultiFntype {\t{m}} {\t{d}}}}
              {\filterset {\topprop{}} {\botprop{}}}
-             {\emptyobject}
+             {\emptyobject{}}
 }
 
 \infer [T-IsA]
@@ -344,6 +344,44 @@
 
 \begin{figure*}
 \begin{mathpar}
+
+\infer [T-Get]
+{ \judgementtwo {\propenv{}} {\hastype {\e{m}} {\Map {\t{k}}{\t{v}}}}
+  \\
+  \judgementtwo {\propenv{}} {\hastype {\e{k}} {\Top}}}
+{ \judgement {\propenv{}} {\hastype {\getexp {\e{m}} {\e{k}}} {\Union{\t{v}}{\nil{}}}}
+             {\filterset {\topprop{}} {\topprop{}}}
+           {\emptyobject{}}}
+
+\infer [T-Assoc]
+{ 
+  \judgementtwo {\propenv{}} {\hastype {\e{m}} {\Map{\t{k}}{\t{v}}}}
+  \\
+  \judgementtwo {\propenv{}} {\hastype {\e{k}} {\t{k}}}
+  \\
+  \judgementtwo {\propenv{}} {\hastype {\e{v}} {\t{v}}}
+}
+{ \judgement {\propenv{}} 
+             {\hastype {\assocexp {\e{m}} {\e{k}} {\e{v}}} {\Map {\t{k}}{\t{v}}}}
+             {\filterset {\topprop{}} {\botprop{}}}
+             {\emptyobject{}}
+}
+
+\infer [T-EmptyMap]
+{}
+{ \judgement {\propenv{}} {\hastype {\emptymap{}}
+  {\HMapc {\mandatoryset {}}}}
+             {\filterset {\topprop{}} {\botprop{}}}
+             {\emptyobject}}
+
+\infer [T-Kw]
+{}
+{ \judgementfillcol {\propenv{}} 
+      {{\hastype {\k{}} {\Value{\k{}}}}}
+      {\filterset {\topprop{}}{\botprop{}}}
+      {\emptyobject{}} 
+    }
+             \\
 
 \infer [T-GetHMap]
 { \judgement {\propenv{}} 
@@ -402,22 +440,7 @@
                           {\x{}}}
                         }
 
-\infer [T-EmptyMap]
-{}
-{ \judgement {\propenv{}} {\hastype {\emptymap{}}
-  {\HMapc {\mandatoryset {}}}}
-             {\filterset {\topprop{}} {\botprop{}}}
-             {\emptyobject}}
-
-\infer [T-Kw]
-{}
-{ \judgementfillcol {\propenv{}} 
-      {{\hastype {\k{}} {\Value{\k{}}}}}
-      {\filterset {\topprop{}}{\botprop{}}}
-      {\emptyobject{}} 
-    }
-
-\infer [T-Assoc]
+\infer [T-AssocHMap]
 { 
   \judgementtwo {\propenv{}} {\hastype {\e{m}} {\HMapgeneric {\mandatory{}} {\absent}}}
   \\
@@ -435,5 +458,5 @@
 }
 
 \end{mathpar}
-\caption{HMap Typing Rules}
+\caption{Map Typing Rules}
 \end{figure*}
