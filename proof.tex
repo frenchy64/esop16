@@ -227,7 +227,7 @@ instance of \class{} via \newjavaliteral (by Assumption \ref{assumption:new}), a
 \end{case}
 
 \begin{case}[T-FieldStatic]
-  \e{} = {\fieldstaticexp {\classhint{1}} {\classhint{2}} {\fld{}} {\e{1}}}
+  \e{} = {\fieldstaticexp {\classhint{1}} {\classhint{2}} {\fld{}} {\e{1}}},
   \javatotc {\classhint{1}} {\class{}},
   \javatotcnil {\classhint{2}} {\t{}},
   \judgementtwo {\propenv{}} {\hastype {\e{1}} {\class{}}}
@@ -283,14 +283,30 @@ and \javatotcnil{\classhint{2}} {\t{}}.
 \end{case}
 
 \begin{case}[T-DefMulti]
-  \e{} = {\createmultiexp {\s{}} {\e{1}}}
+  \e{} = {\createmultiexp {\s{}} {\e{1}}},
+  \t{} = {\MultiFntype {\s{}} {\sp{}}},
+  \thenprop{\prop{}} = {\topprop{}},
+  \elseprop{\prop{}} = {\botprop{}},
+  \s{} = {\ArrowOne {\x{}} {\t{1}} {\t{2}}
+                          {\filterset {\thenprop {\prop{1}}}
+                                      {\elseprop {\prop{1}}}}
+                          {\object{1}}},
+  \sp{} = {\ArrowOne {\x{}} {\t{1}} {\t{3}}
+                          {\filterset {\thenprop {\prop{2}}}
+                                      {\elseprop {\prop{2}}}}
+                          {\object{2}}},
+  \judgementtwo {\propenv{}} {\hastype {\e{1}} {\sp{}}}
 
 
 \begin{itemize}
   \item[]
 \begin{subcase}[B-DefMulti]
+  \v{} = {\multi {\v{d}} {\emptydisptable}},
+  \opsem {\openv{}} {\e{d}} {\v{d}}
+
+
 Part 1 and 2 hold for the same reasons as T-True.
-Part 3 holds trivially as B-DefMulti always returns the multimethod.
+Part 3 holds by T-Multi.
 \end{subcase}
   \item[]
 \begin{subcase}[BE-DefMulti]
@@ -299,10 +315,49 @@ Part 3 holds trivially as B-DefMulti always returns the multimethod.
 \end{case}
 
 \begin{case}[T-DefMethod]
+  \e{} = {\extendmultiexp {\e{m}} {\e{v}} 
+                          {\abs {\x{}} {\t{1}} {\e{b}}}},
+  \t{} = {\MultiFntype {\t{m}} {\t{d}}},
+  \thenprop{\prop{}} = {\topprop{}},
+  \elseprop{\prop{}} = {\botprop{}},
+  \object{} = {\emptyobject{}},
+  \t{m} = {\ArrowOne {\x{}} {\t{1}} {\s{}}
+                     {\filterset {\thenprop {\prop{m}}}
+                                 {\elseprop {\prop{m}}}}
+                     {\object{m}}},
+  \t{d} = {\ArrowOne {\x{}} {\t{1}} {\sp{}}
+                     {\filterset {\thenprop {\prop{d}}}
+                                 {\elseprop {\prop{d}}}}
+                     {\object{d}}},
+  \judgementtwo {\propenv{}} {\hastype {\e{m}} {\MultiFntype {\t{m}} {\t{d}}}},
+  \isacompare{\sp{}}{\object{d}}{\t{v}}{\filterset {\thenprop {\prop{i}}} {\elseprop {\prop{i}}}},
+  \judgementtwo {\propenv{}}
+               {\hastype {\e{v}} {\t{v}}},
+  \judgement {\propenv{}, {\isprop{\t{1}} {\x{}}}, {\thenprop {\prop{i}}}}
+           {\hastype {\e{b}} {\s{}}}
+           {\filterset {\thenprop {\prop{m}}}
+                       {\elseprop {\prop{m}}}}
+           {\object{m}}
 
   \begin{itemize}
     \item[]
       \begin{subcase}[B-DefMethod]
+       \v{} = {\multi {\v{d}} {\disptablep{}}},
+        \opsem {\openv{}}
+               {\e{m}}
+               {\multi {\v{d}} {\disptable{}}},
+  \opsem {\openv{}}
+         {\e{v}}
+         {\v{v}},
+  \opsem {\openv{}}
+         {\e{f}}
+         {\v{f}},
+         \disptablep{} = {\extenddisptable {\disptable{}} 
+                                {\v{v}}
+                                {\v{f}}}
+
+Part 1 and 2 hold for the same reasons as T-True.
+
       \end{subcase}
     \item[]
       \begin{subcase}[BE-DefMethod1]
@@ -344,7 +399,56 @@ Part 3 holds trivially as B-DefMulti always returns the multimethod.
                  {\hastype {\e{2}} {\s{}}}
                  {\filterset {\thenprop {\prop{2}}}
                              {\elseprop {\prop{2}}}}
-                 {\object{2}} 
+                 {\object{2}} ,
+                 IHe1 = $\forall{\openv{1}},
+                               {\v{1}},
+                               {\thenprop {\prop{1}}},
+                               {\elseprop {\prop{1}}},
+                               {\object{1}}.
+                               {\judgement
+                                 {\propenv{}}
+                                 {\hastype
+                                   {\e{1}}
+                                   {\ArrowOne {\x{}} {\s{}}
+                                     {\t{f}}
+                                     {\filterset 
+                                       {\thenprop {\prop{f}}}
+                                       {\elseprop {\prop{f}}}}
+                                     {\object{f}}}}
+                                {\filterset {\thenprop {\prop{1}}}
+                                            {\elseprop {\prop{1}}}}
+                                {\object{1}}}
+\Rightarrow
+                                                       {\satisfies{\openv{1}}{\propenv{}}}
+                                                       \Rightarrow
+  \opsem {\openv{}}
+         {\e{1}}
+         {\v{1}}
+         \Rightarrow
+         (1: \object{1} = \emptyobject{} \vee \inopenv{\openv{1}}{\object{1}}{\v{1}})
+         \wedge
+       (2: (\v{1} \not= \false\ (or\ \nil) \wedge \satisfies{\openv{1}}{\thenprop{\prop{1}}})
+          \vee
+            (\v{1} = \false\ (or\ \nil) \wedge \satisfies{\openv{1}}{\elseprop{\prop{1}}}))
+            \wedge
+          (3: \exists {\thenprop{\propp{1}}},{\elseprop{\propp{1}}},{\objectp{1}}.
+          \judgement{}{\hastype{\v{1}}{\ArrowOne {\x{}} {\s{}}
+                                     {\t{f}}
+                                     {\filterset 
+                                       {\thenprop {\prop{f}}}
+                                       {\elseprop {\prop{f}}}}
+                                   {\object{f}}}}
+                        {\filterset{\thenprop{\propp{1}}}{\elseprop{\propp{1}}}}
+                      {\objectp{1}})
+                                                       $
+
+
+
+
+
+
+
+
 
 \begin{itemize}
   \item[]
@@ -755,7 +859,7 @@ Part 3 holds trivially as B-DefMulti always returns the multimethod.
   \end{itemize}
 \end{case}
 
-\begin{case}[T-Assoc]
+\begin{case}[T-AssocHMap]
   \e{} = {\assocexp {\e{m}} {\e{k}} {\e{v}}},
   \t{} = ${\HMapgeneric {\extendmandatoryset {\mandatory{}}{\k{}}{\t{}}} {\absent}}$,
   \thenprop{\prop{}} = {\topprop{}},
