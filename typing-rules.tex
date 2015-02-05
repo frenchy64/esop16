@@ -330,10 +330,14 @@
              {\emptyobject}}
 
 \infer [T-Multi]
-{ \judgementtwo {} {\hastype {\e{}} {\t{}}} 
+{ \judgementtwo {} {\hastype {\v{}} {\t{}}}
+  \\
+  \overrightarrow{\judgementtwo{}{\hastype{\v{k}}{\Top{}}}}
+  \\
+  \overrightarrow{\judgementtwo{}{\hastype{\v{v}}{\s{}}}}
 }
 { \judgement {}
-            {\hastype {\multi {\e{}} {\disptable{}}}
+  {\hastype {\multi {\v{}} {\curlymapvaloverright{\v{k}}{\v{v}}}}
                       {\MultiFntype {\s{}} {\t{}}}}
              {\filterset {\topprop{}} {\botprop{}}}
            {\emptyobject{}}}
@@ -345,27 +349,27 @@
 \begin{figure*}
 \begin{mathpar}
 
-\infer [T-Get]
-{ \judgementtwo {\propenv{}} {\hastype {\e{m}} {\Map {\t{k}}{\t{v}}}}
-  \\
-  \judgementtwo {\propenv{}} {\hastype {\e{k}} {\Top}}}
-{ \judgement {\propenv{}} {\hastype {\getexp {\e{m}} {\e{k}}} {\Union{\t{v}}{\nil{}}}}
-             {\filterset {\topprop{}} {\topprop{}}}
-           {\emptyobject{}}}
-
-\infer [T-Assoc]
-{ 
-  \judgementtwo {\propenv{}} {\hastype {\e{m}} {\Map{\t{k}}{\t{v}}}}
-  \\
-  \judgementtwo {\propenv{}} {\hastype {\e{k}} {\t{k}}}
-  \\
-  \judgementtwo {\propenv{}} {\hastype {\e{v}} {\t{v}}}
-}
-{ \judgement {\propenv{}} 
-             {\hastype {\assocexp {\e{m}} {\e{k}} {\e{v}}} {\Map {\t{k}}{\t{v}}}}
-             {\filterset {\topprop{}} {\botprop{}}}
-             {\emptyobject{}}
-}
+%\infer [T-Get]
+%{ \judgementtwo {\propenv{}} {\hastype {\e{m}} {\Map {\t{k}}{\t{v}}}}
+%  \\
+%  \judgementtwo {\propenv{}} {\hastype {\e{k}} {\Top}}}
+%{ \judgement {\propenv{}} {\hastype {\getexp {\e{m}} {\e{k}}} {\Union{\t{v}}{\nil{}}}}
+%             {\filterset {\topprop{}} {\topprop{}}}
+%           {\emptyobject{}}}
+%
+%\infer [T-Assoc]
+%{ 
+%  \judgementtwo {\propenv{}} {\hastype {\e{m}} {\Map{\t{k}}{\t{v}}}}
+%  \\
+%  \judgementtwo {\propenv{}} {\hastype {\e{k}} {\t{k}}}
+%  \\
+%  \judgementtwo {\propenv{}} {\hastype {\e{v}} {\t{v}}}
+%}
+%{ \judgement {\propenv{}} 
+%             {\hastype {\assocexp {\e{m}} {\e{k}} {\e{v}}} {\Map {\t{k}}{\t{v}}}}
+%             {\filterset {\topprop{}} {\botprop{}}}
+%             {\emptyobject{}}
+%}
 
 \infer [T-EmptyMap]
 {}
@@ -381,7 +385,6 @@
       {\filterset {\topprop{}}{\botprop{}}}
       {\emptyobject{}} 
     }
-             \\
 
 \infer [T-GetHMap]
 { \judgement {\propenv{}} 
@@ -392,8 +395,6 @@
   \judgementtwo {\propenv{}} {\hastype {\e{k}} {\Value {k}}}
              \\
              {\overrightarrow{\inmandatory{\k{}}{\t{}}{\mandatory{}}}}^i
-         \\
-           i \ge 1
        }
 { \judgement {\propenv{}} {\hastype {\getexp {\e{m}} {\e{k}}} {\Union {{\overrightarrow {\t{}}}^i}}}
              {\filterset {\topprop{}} {\topprop{}}}

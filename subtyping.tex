@@ -57,25 +57,18 @@
 { \issubtypein {} {\MultiFntype {\s{}} {\t{}}}{\MultiFntype {\sp{}} {\tp{}}}}
 
 \infer [S-PMultiFn]
-{ \issubtypein {} {\sp{}} {\s{}}
-  \\
-  \issubtypein {} {\t{}} {\tp{}}
-  \\\\
-  \inpropenv {\thenprop {\prop{}}} {\thenprop {\propp{}}}
-  \\
-  \inpropenv {\elseprop {\prop{}}} {\elseprop {\propp{}}}
-  \\
-  \inpropenv {\object{}} {\objectp{}}
+{ \issubtypein {}
+  {\s{}}
+  {\ArrowOne {\xp{}} {\sp{}} {\tp{}}
+                                  {\filterset {\thenprop {\propp{}}}
+                                              {\elseprop {\propp{}}}}
+                                      {\objectp{}}}
 }
-{ \issubtypein {} {\MultiFntype {\ArrowOne {\x{}} {\s{}} {\t{}}
-                                            {\filterset {\thenprop {\prop{}}}
-                                                        {\elseprop {\prop{}}}}
-                                            {\object{}}}
-                                          {\s{d}}}
-                            {\ArrowOne {\xp{}} {\sp{}} {\tp{}}
-                                            {\filterset {\thenprop {\propp{}}}
-                                                        {\elseprop {\propp{}}}}
-                                                {\objectp{}}}}
+{ \issubtypein {} {\MultiFntype{\s{}}{\s{d}}}
+                  {\ArrowOne {\xp{}} {\sp{}} {\tp{}}
+                                  {\filterset {\thenprop {\propp{}}}
+                                              {\elseprop {\propp{}}}}
+                                      {\objectp{}}}}
 
 \infer [S-HMap]
 { \forall i.\ ({\k{i}},\ \s{i}) \in \mandatory{} \text{ and } \issubtypein {} {\s{i{}}} {\t{i{}}}
@@ -113,12 +106,6 @@
                           {\emptyobject{}}}}
   {\PMulti{}}
 }
-
-\infer [S-EMap]
-{}
-{\issubtypein {}
-  {\Map {\Bot} {\Bot}}
-  {\HMapc {\{\}}}}
 
 \end{mathpar}
 \caption{Subtyping rules}
