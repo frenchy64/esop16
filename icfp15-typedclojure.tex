@@ -166,8 +166,8 @@ static portion of Typed Racket.
 (defn grandparent [^File f]
   (when f
     (let [f (. f (getParent))]
-      (when f
-        (. (new File f) (getParent))))))
+      (assert f "Expected parent string, got nil")
+      (. (new File f) (getParent)))))
 \end{lstlisting}
 %(some-> f (.getParent) (File.) (.getParent))
 

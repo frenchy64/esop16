@@ -59,7 +59,7 @@
 \newbfop\ArrayPLiteral{ArrayP}
 \newbfop\Throwable{Throwable}
 \newbfop\Class{Class}
-\newcommand\MultiFntype[2]{(\PMulti\ #1\ #2)}
+\newcommand\MultiFntype[2]{(\PMulti #1\ #2)}
 \newcommand\proctype[2]{(#1 \to #2)}
 \newcommand\Unionsplice[1]{(\ma{\Uliteral\ #1})}
 \newcommand\Union[2]{(\ma{\Uliteral\ #1\ #2})}
@@ -78,7 +78,7 @@
 
 \newcommand\All[2]{(\ma{\Allliteral\ [#1]\ #2})}
 \newcommand\TFn[2]{(\ma{\TFnliteral\ [#1]\ #2})}
-\newcommand\Value[1]{(\ma{\Valueliteral\ #1})}
+\newcommand\Value[1]{(\ma{\Valueliteral #1})}
 \newbfop\Top{\ma{\top}}
 \newbfop\Bottom{\ma{\bot}}
 \newbfop\Bot{\ma{\bot}}
@@ -92,7 +92,7 @@
 \newbfop\falsy{(\ma{\cup\ \Nil\ \False})}
 \newbfop\falsydiff{\ma{\trdiff{\falsy}}}
 \newcommand\IPersistentMap[2]{(\ma{\IPersistentMapLiteral\ #1\ #2})}
-\newcommand\Map[2]{(\ma{\MapLiteral\ #1\ #2})}
+\newcommand\Map[2]{(\ma{\MapLiteral #1\ #2})}
 \newcommand\HMapInstance[0]{\ma{\IPersistentMapLiteral}}
 \newbfop\HMapliteral{HMap}
 \newmeta\completenessmeta{\mathcal{A}}
@@ -163,7 +163,7 @@
 \newcommand\newstaticexp[4]{(\ma{{\newliteral}_{[[#1], #2]}\ #3\ #4})}
 \newcommand\dotliteral[0]{{\operatorfont{.}}}
 \newcommand\fieldexp[2]{(\ma{\dotliteral\ #2\ #1})}
-\newcommand\fieldstaticexp[4]{(\ma{\dotliteral\ #4\ #3^{{#1}_{#2}}})}
+\newcommand\fieldstaticexp[4]{(\ma{\dotliteral\ #4\ {#3}^{#1}_{#2}})}
 \newcommand\methodexp[3]{(\ma{\dotliteral\ #2\ (#1\ #3)})}
 \newcommand\methodstaticexp[6]{(\ma{\dotliteral\ #5\ ({#4}^{#1}_{[[#2], #3]}\ #6)})}
 \newcommand\createmultiexp[2]{(\ma{\defmultiliteral{}\ #1\ #2})}

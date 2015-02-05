@@ -981,12 +981,14 @@ Part 1 and 2 hold for the same reasons as T-True.
   \end{itemize}
 \end{case}
 
-\begin{case}[T-Multi] \e{} = {\multi {\e{1}} {\disptable{}}},
+\begin{case}[T-Multi] \e{} = {\multi {\v{1}} {\curlymapvaloverright{\v{k}}{\v{v}}}},
   \t{} = {\MultiFntype {\s{}} {\t{1}}},
   {\thenprop {\prop{}}} = {\topprop{}},
   {\elseprop{\prop{}}} = {\botprop{}},
   {\object{}} = {\emptyobject{}},
-  \judgementtwo {} {\hastype {\e{1}} {\t{1}}} 
+  \judgementtwo {} {\hastype {\v{1}} {\t{1}}},
+  $\overrightarrow{\judgementtwo{}{\hastype{\v{k}}{\Top{}}}}$,
+  $\overrightarrow{\judgementtwo{}{\hastype{\v{v}}{\s{}}}}$
 
   \begin{itemize}
     \item[]
