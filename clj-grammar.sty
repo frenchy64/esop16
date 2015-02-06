@@ -388,21 +388,21 @@
 
 % # Runtime semantics
 % ## Runtime class syntax
-\newmeta\classvaluemeta{CV}
+\newmeta\classvaluemeta{I}
 \newcommand\classfieldpair[2]{#1 : #2}
 \newcommand\classvalue[2]{\ma{#1\ \{#2\}}}
 
 % ## metafunction to invoke java
 % Class Target Method ArgTypes Args ReturnType ReturnValue
 \newcommand\invokejavamethodliteral[0]{\ma{JVM_{invokestatic}}}
-\newcommand\invokejavamethod[7]{\invokejavamethodliteral[#1, #2, #3, [#4], [#5], #6] = #7} % Class Args ReturnValue
+\newcommand\invokejavamethod[7]{\ma{\invokejavamethodliteral[#1, #2, #3, [#4], [#5], #6] = #7}} % Class Args ReturnValue
 % Class ArgTypes Args ReturnValue
 \newcommand\newjavaliteral[0]{\ma{JVM_{new}}}
-\newcommand\newjava[4]{\newjavaliteral[#1, [#2], [#3]] = #4}
+\newcommand\newjava[4]{\ma{\newjavaliteral[#1, [#2], [#3]] = #4}}
 % Class Target Field FieldType ReturnValue
 \newcommand\getfieldliteral[0]{\ma{JVM_{getstatic}}}
-\newcommand\getfieldjava[5]{\getfieldliteral[#1, #2, #3, #4] = #5}
+\newcommand\getfieldjava[5]{\ma{\getfieldliteral[#1, #2, #3, #4] = #5}}
 % Class Target Bool
-\newcommand\instanceofjava[3]{JVM_{instanceof}[#1, #2] = #3}
+\newcommand\instanceofjava[3]{\ma{JVM_{instanceof}[#1, #2] = #3}}
 
 \newcommand\satisfies[2]{\ma{{#1} \models {#2}}}

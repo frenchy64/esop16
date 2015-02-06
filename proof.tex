@@ -2,13 +2,54 @@
 
 % TODO
 \begin{assumption}[\newjavaliteral] \label{assumption:new}
-  If\ $\forall i.\ {\opsem{}{\v{i}}{\classvalue{\classhint{i}}{\overrightarrow{\classfieldpair{\fld{j}} {\v{j}}}}}}\ or\ {\opsem{}{\v{i}}{\nil}}$
-                  then
-         $\newjava {\classhint{}}
-                  {\overrightarrow{\classhint{i}}}
-                  {\overrightarrow{\v{i}}}
-                  {\classvalue{\classhint{}}{\overrightarrow {\classfieldpair{\fld{k}} {\v{k}}}}}$
+  If\ $\forall i.\ {\v{i}} = {\classvalue{\classhint{i}}{\overrightarrow{\classfieldpair{\fld{j}} {\v{j}}}}}\ or\ {\v{i}}= {\nil}$
+  and $\newjava {\classhint{}}
+                {\overrightarrow{\classhint{i}}}
+                {\overrightarrow{\v{i}}}
+                {\v{}}$
+                  then either
+                  \begin{itemize}
+                    \item
+                      \v{} = 
+                  ${\classvalue{\classhint{}}{\overrightarrow {\classfieldpair{\fld{k}} {\v{k}}}}}$
+                  or
+                \item
+                  \v{} = 
+                  {\errorval{\v{e}}}.
+                  \end{itemize}
+\end{assumption}
 
+\begin{assumption}[\getfieldliteral] \label{assumption:field}
+  If\ {\v{1}} = ${\classvalue{\classhint{1}}{{\classfieldpair{\fld{}}{\v{f}}, {\overrightarrow{\classfieldpair{\fld{l}} {\v{l}}}}}}}$,
+         and \getfieldjava{\classhint{1}} {\v{1}} {\fld{}} {\classhint{2}} {\v{}}
+                  then either
+                  \begin{itemize}
+                    \item \v{} = \v{f} and either 
+                  \v{f} = ${\classvalue{\classhint{2}}{\overrightarrow{\classfieldpair{\fld{m}} {\v{m}}}}}$
+                  \ or\ 
+                  \v{f} = \nil,  or
+                \item
+                  \v{} = {\errorval{\v{e}}}.
+                  \end{itemize}
+\end{assumption}
+
+\begin{assumption}[\invokejavamethodliteral] \label{assumption:method}
+  If\ {\v{1}} = {\classvalue{\classhint{1}}{\overrightarrow{\classfieldpair{\fld{l}} {\v{l}}}}},
+  $\forall i.\ {\v{i}}={\classvalue{\classhint{i}}{\overrightarrow{\classfieldpair{\fld{j}} {\v{j}}}}}\ or\ {\v{i}}={\nil}$
+         and 
+  \invokejavamethod {\classhint{1}} {\v{m}} {mth}
+                    {\overrightarrow{\classhint{i}}} {\overrightarrow{\v{i}}}
+                    {\classhint{2}}
+                    {\v{}}
+                  then either
+                  \begin{itemize}
+                    \item
+                  \v{} = ${\classvalue{\classhint{2}}{\overrightarrow{\classfieldpair{\fld{m}} {\v{m}}}}}$
+                  or\ 
+                  \v{} = \nil,  or
+                \item
+                  \v{} = {\errorval{\v{e}}}.
+                  \end{itemize}
 \end{assumption}
 
 \begin{lemma}
@@ -120,7 +161,7 @@ and
 so
 { \inopenv {\openv{}} {\x{}} {\v{}} }
 by B-Local
-gives us the desired result
+gives us the desired result.
 \end{subcase}
 \end{itemize}
 
@@ -947,27 +988,29 @@ Part 1 and 2 hold for the same reasons as T-True.
   \end{itemize}
 \end{case}
 
-\begin{case}[T-Clos] \e{} = {\closure {\openv{}} {\abs {\x{}} {\sp{}} {\e{1}}}},
+\begin{case}[T-Clos] \e{} = {\closure {\openv{}} {\abs {\x{}} {\s{}} {\e{1}}}},
+  {\thenprop {\prop{}}}
   $\exists {\propenvp{}}. \satisfies{\openv{}}{\propenvp{}}$
   \ \text{and}\ 
-\judgement {\propenvp{}} {\hastype {\abs {\x{}} {\sp{}} {\e{1}}} {\t{}}}
+\judgement {\propenvp{}} {\hastype {\abs {\x{}} {\s{}} {\e{1}}} {\t{}}}
                  {\filterset {\thenprop {\prop{}}}
                              {\elseprop {\prop{}}}}
                  {\object{}}
+
   \begin{itemize}
     \item[]
-      \begin{subcase}[B-Abs] \v{} = {\closure {\openv{}} {\abs {\x{}} {\sp{}} {\e{1}}}}
+      \begin{subcase}[B-Abs] \v{} = {\closure {\openv{}} {\abs {\x{}} {\s{}} {\e{1}}}}
 
-        We assume \propenv{} substitutes for \propenvp{}, so 
+        We assume some \propenvp{}, such that
         \begin{itemize}
-          \item \satisfies{\openv{}}{\propenv{}}
-          \item \judgement {\propenv{}} {\hastype {\abs {\x{}} {\sp{}} {\e{1}}} {\t{}}}
+          \item \satisfies{\openv{}}{\propenvp{}}
+          \item \judgement {\propenvp{}} {\hastype {\abs {\x{}} {\s{}} {\e{1}}} {\t{}}}
                            {\filterset {\thenprop {\prop{}}}
                                        {\elseprop {\prop{}}}}
                            {\object{}}.
        \end{itemize}
        Note the last rule in the derivation of
-          \judgement {\propenv{}} {\hastype {\abs {\x{}} {\sp{}} {\e{1}}} {\t{}}}
+          \judgement {\propenvp{}} {\hastype {\abs {\x{}} {\s{}} {\e{1}}} {\t{}}}
                            {\filterset {\thenprop {\prop{}}}
                                        {\elseprop {\prop{}}}}
                            {\object{}}
@@ -975,7 +1018,9 @@ Part 1 and 2 hold for the same reasons as T-True.
                            {\thenprop {\prop{}}} = {\topprop{}},
                            {\elseprop {\prop{}}} = {\botprop{}}
                            and {\object{}} = {\emptyobject{}}.
-         Thus parts 1, 2 and 3 hold for the same reasons as T-True.
+         Thus parts 1 and 2 hold for the same reasons as T-True.
+         Part 3 holds as \v{} has the same type as {\abs {\x{}} {\s{}} {\e{1}}}
+         under \propenvp{}.
 
       \end{subcase} 
   \end{itemize}

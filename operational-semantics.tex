@@ -7,7 +7,7 @@
 
 \infer [B-Do]
 { \opsem {\openv{}} {\e{1}} {\v{1}} 
-  \\
+  \\\\
   \opsem {\openv{}} {\e{}} {\v{}} 
 }
 { \opsem {\openv{}} {\doexp{\e{1}}{\e{}}} {\v{}} }
@@ -79,7 +79,7 @@
 
 \infer [B-Delta]
 { \opsem {\openv{}} {\e{}} {\const{}}
-  \\
+  \\\\
   \opsem {\openv{}} {\ep{}} {\v{}}
   \\\\
   \constantopsem{\const{}}{\v{}} = \vp{}
@@ -118,9 +118,9 @@
 \infer [B-Field]
 { \opsem {\openv{}}
          {\e{}} 
-         {\classvalue{\classhint{1}} {\classfieldpair{\fld{}} {\v{}}}}
+       {\v{1}}
          \\\\
-         \getfieldjava{\classhint{1}} {\classvalue{\classhint{1}} {\classfieldpair{\fld{}} {\v{}}}} {\fld{}} {\classhint{2}} {\v{}}
+         \getfieldjava{\classhint{1}} {\v{1}} {\fld{}} {\classhint{2}} {\v{}}
        }
 { \opsem {\openv{}}
          {\fieldstaticexp {\classhint{1}} {\classhint{2}} {\fld{}} {\e{}}}
@@ -131,7 +131,7 @@
 { \opsem {\openv{}}
          {\e{m}}
          {\v{m}}
-  \\\\
+  \\
   \overrightarrow{
   \opsem {\openv{}}
          {\e{a}}
@@ -144,7 +144,7 @@
                     {\v{}}
 }
 {\opsem {\openv{}}
-        {\methodstaticexp {\classhint{1}} {\overrightarrow{\classhint{a}}} {\classhint{2}} {mth} {\e{m}} {\overrightarrow{\e{}}}}
+        {\methodstaticexp {\classhint{1}} {\overrightarrow{\classhint{a}}} {\classhint{2}} {mth} {\e{m}} {\overrightarrow{\e{a}}}}
         {\v{}}
       }
 
@@ -179,7 +179,7 @@
 { \opsem {\openv{}}
          {\e{m}}
          {\multi {\v{d}} {\disptable{}}}
-         \\\\
+         \\
   \opsem {\openv{}}
          {\e{v}}
          {\v{v}}
@@ -187,7 +187,7 @@
   \opsem {\openv{}}
          {\e{f}}
          {\v{f}}
-         \\\\
+         \\
          \disptablep{} = {\extenddisptable {\disptable{}} 
                                 {\v{v}}
                                 {\v{f}}}
@@ -226,7 +226,7 @@
         {\e{m}} {\curlymap{\overrightarrow{({\v{a}}\ {\v{b}})}}}
         \\
  \opsem {\openv{}} {\e{k}} {\v{k}}
-        \\
+        \\\\
  \opsem {\openv{}} {\e{v}} {\v{v}}
 }
 {
@@ -239,12 +239,12 @@
 \infer [B-Get]
 {\opsem {\openv{}}
         {\e{m}} {\curlymap{\overrightarrow{({\v{a}}\ {\v{b}})}}}
-        \\
+        \\\\
  \opsem {\openv{}}
         {\e{k}} {\v{k}}
         \\\\
  \keyinmap{\v{k}}{\curlymap{\overrightarrow{({\v{a}}\ {\v{b}})}}}
-        \\
+        \\\\
  \getmap{\curlymap{\overrightarrow{({\v{a}}\ {\v{b}})}}}
         {\v{k}}
         =
@@ -259,7 +259,7 @@
 \infer [B-GetMissing]
 {\opsem {\openv{}}
         {\e{m}} {\curlymap{\overrightarrow{({\v{a}}\ {\v{b}})}}}
-        \\
+        \\\\
  \opsem {\openv{}}
         {\e{k}} {\v{k}}
         \\\\
