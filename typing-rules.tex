@@ -61,18 +61,18 @@
              }
 
 \infer [T-If]
-{ \judgementfillcol {\propenv{}} {\hastype {\e1} {\t{1}}} {\filterset {\thenprop {\prop{1}}} {\elseprop {\prop{1}}}}
+{ \judgement {\propenv{}} {\hastype {\e1} {\t{1}}} {\filterset {\thenprop {\prop{1}}} {\elseprop {\prop{1}}}}
                  {\object{1}} 
              \\\\
-  \judgementfillcol {\propenv{}, {\thenprop {\prop{1}}}}
+  \judgement {\propenv{}, {\thenprop {\prop{1}}}}
                  {\hastype {\e2} {\t{}}} {\filterset {\thenprop {\prop{2}}} {\elseprop {\prop{2}}}}
                  {\object{}}
   \\\\
-  \judgementfillcol {\propenv{}, {\elseprop {\prop{1}}}}
+  \judgement {\propenv{}, {\elseprop {\prop{1}}}}
                  {\hastype {\e3} {\t{}}} {\filterset {\thenprop {\prop{3}}} {\elseprop {\prop{3}}}}
                  {\object{}}
              }
-{ \judgementfillcol {\propenv{}} {\hastype {\ifexp {\e1} {\e2} {\e3}} {\t{}}} 
+{ \judgement {\propenv{}} {\hastype {\ifexp {\e1} {\e2} {\e3}} {\t{}}} 
                  {\filterset {\orprop {\thenprop {\prop{2}}} {\thenprop {\prop{3}}}} 
                              {\orprop {\elseprop {\prop{2}}} {\elseprop {\prop{3}}}}}
                  {\object{}} }
@@ -374,18 +374,18 @@
 \infer [T-HMap]
 { \overrightarrow{\judgementtwo {} {\hastype{\v{k}}{\Value \k{}}}}\\
   \overrightarrow{\judgementtwo {} {\hastype{\v{v}}{\t{v}}}}\\
-\mandatory{} = \mandatorysetoverright{\k{}}{\t{v}}
+  \mandatory{} = \mandatorysetoverright{\k{}}{\t{v}}
 }
 { \judgement {}
              {\hastype {\curlymapvaloverright{\v{k}}{\v{v}}}
-                       {\HMapc {\mandatory}}}
+                       {\HMapc {\mandatory{}}}}
              {\filterset {\topprop{}} {\botprop{}}}
-             {\emptyobject}}
+             {\emptyobject{}}}
 
 \infer [T-Kw]
 {}
 { \judgementfillcol {\propenv{}} 
-      {{\hastype {\k{}} {\Value{\k{}}}}}
+      {\hastype {\k{}} {\Value{\k{}}}}
       {\filterset {\topprop{}}{\botprop{}}}
       {\emptyobject{}} 
     }

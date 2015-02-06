@@ -83,21 +83,34 @@ Part 3 holds as \e{} can only be reduced to itself via B-Val.
 
 \end{itemize}
 
-\begin{case}[T-EmptyMap]
+\begin{case}[T-HMap] \e{} = {\curlymapvaloverright{\v{k}}{\v{v}}},
+  \t{} = {\HMapc {\mandatory{}}},
+  \thenprop{\prop{}} = {\topprop{}},
+  \elseprop{\prop{}} = {\botprop{}},
+  \object{} = {\emptyobject{}},
+  $\overrightarrow{\judgementtwo {} {\hastype{\v{k}}{\Value \k{}}}}$,
+  $\overrightarrow{\judgementtwo {} {\hastype{\v{v}}{\t{v}}}}$,
+  \mandatory{} = \mandatorysetoverright{\k{}}{\t{v}}
 
   \begin{itemize}
     \item[]
-      \begin{subcase}[B-Val]
+      \begin{subcase}[B-Val] \v{} = {\curlymapvaloverright{\v{k}}{\v{v}}}
+
         Similar to T-True.
       \end{subcase}
   \end{itemize}
 \end{case}
 
-\begin{case}[T-Kw]
+\begin{case}[T-Kw] \e{} = {\k{}},
+  \t{} = {\Value{\k{}}},
+  \thenprop{\prop{}} = {\topprop{}},
+  \elseprop{\prop{}} = {\botprop{}},
+  \object{} = {\emptyobject{}}
 
   \begin{itemize}
     \item[]
-      \begin{subcase}[B-Val]
+      \begin{subcase}[B-Val] \v{} = {\k{}}
+
         Similar to T-True.
       \end{subcase}
   \end{itemize}
@@ -129,9 +142,7 @@ Part 3 holds as \e{} can only be reduced to itself via B-Val.
     \begin{subcase}[B-Val] 
       \v{} = \nil{}
 
-Proving part 1 is trivial: \object{} is \emptyobject. To prove part 2, we note that \v{} = \nil\ 
-and \elseprop{\prop{}} = \topprop{}, so \satisfies{\openv{}}{\elseprop{\prop{}}} by M-Top. 
-Part 3 holds as \e{} can only be reduced to itself via B-Val.
+      Similar to T-False.
 \end{subcase}
 
 \end{itemize}
@@ -959,11 +970,72 @@ by noting \judgementtwo {} {\hastype {\v{d}} {\t{d}}},
   \end{itemize}
 \end{case}
 
-\begin{case}[T-If]
+\begin{case}[T-If] \e{} = {\ifexp {\e1} {\e2} {\e3}},
+  \judgement {\propenv{}} {\hastype {\e1} {\t{1}}} {\filterset {\thenprop {\prop{1}}} {\elseprop {\prop{1}}}}
+                 {\object{1}},
+  \judgement {\propenv{}, {\thenprop {\prop{1}}}}
+                 {\hastype {\e2} {\t{}}} {\filterset {\thenprop {\prop{2}}} {\elseprop {\prop{2}}}}
+                 {\object{}},
+  \judgement {\propenv{}, {\elseprop {\prop{1}}}}
+                 {\hastype {\e3} {\t{}}} {\filterset {\thenprop {\prop{3}}} {\elseprop {\prop{3}}}}
+                 {\object{}},
+  \thenprop{\prop{}} = {\orprop {\thenprop {\prop{2}}} {\thenprop {\prop{3}}}},
+  \elseprop{\prop{}} = {\orprop {\elseprop {\prop{2}}} {\elseprop {\prop{3}}}}
 
   \begin{itemize}
     \item[]
-      \begin{subcase}[B-If]
+      \begin{subcase}[B-IfTrue]
+        \opsem {\openv{}} {\e{1}} {\v{1}},
+              ${\v{1}} \not= {\false}$,
+              ${\v{1}} \not= {\nil}$,
+              \opsem {\openv{}} {\e{2}} {\v{}}
+
+              For part 1, either \object{} = \emptyobject{}, or \e{} evaluates to the
+              result of \e{2}.
+
+              To prove part 2, we consider two cases:
+              \begin{itemize}
+                \item if \v{} = \false\ (or \nil)
+                  then \e{2} evaluates to a false value so {\satisfies{\openv{}}{\elseprop {\prop{2}}}}, and thus
+                  {\satisfies{\openv{}}{\orprop {\elseprop {\prop{2}}} {\elseprop {\prop{3}}}}} by M-Or, 
+                \item otherwise
+                  ${\v{}} \not= {\false}$ and
+                  ${\v{}} \not= {\nil}$,
+                  so \e{2} evaluates to a true value so {\satisfies{\openv{}}{\thenprop {\prop{2}}}}, and thus
+                  {\satisfies{\openv{}}{\orprop {\thenprop {\prop{2}}} {\thenprop {\prop{3}}}}} by M-Or.
+              \end{itemize}
+
+              Part 3 is trivial as
+              \opsem {\openv{}} {\e{2}} {\v{}}
+              and {\judgementtwo{}{\hastype{\v{}}{\t{}}}} by the induction hypothesis on {\e{2}}.
+
+
+      \end{subcase}
+    \item[]
+      \begin{subcase}[B-IfFalse]
+        \opsem {\openv{}} {\e{1}} {\false}
+        \ \ \text{or}\ \ 
+        \opsem {\openv{}} {\e{1}} {\nil},
+        \opsem {\openv{}} {\e{3}} {\v{}}
+
+              For part 1, either \object{} = \emptyobject{}, or \e{} evaluates to the
+              result of \e{3}.
+
+              To prove part 2, we consider two cases:
+              \begin{itemize}
+                \item if \v{} = \false\ (or \nil)
+                  then \e{3} evaluates to a false value so {\satisfies{\openv{}}{\elseprop {\prop{3}}}}, and thus
+                  {\satisfies{\openv{}}{\orprop {\elseprop {\prop{2}}} {\elseprop {\prop{3}}}}} by M-Or, 
+                \item otherwise
+                  ${\v{}} \not= {\false}$ and
+                  ${\v{}} \not= {\nil}$,
+                  so \e{3} evaluates to a true value so {\satisfies{\openv{}}{\thenprop {\prop{3}}}}, and thus
+                  {\satisfies{\openv{}}{\orprop {\thenprop {\prop{2}}} {\thenprop {\prop{3}}}}} by M-Or.
+              \end{itemize}
+
+              Part 3 is trivial as
+              \opsem {\openv{}} {\e{3}} {\v{}}
+              and {\judgementtwo{}{\hastype{\v{}}{\t{}}}} by the induction hypothesis on {\e{3}}.
       \end{subcase}
     \item[]
       \begin{subcase}[BE-If]
@@ -1059,7 +1131,8 @@ by noting \judgementtwo {} {\hastype {\v{d}} {\t{d}}},
 
   \begin{itemize}
     \item[]
-      \begin{subcase}[B-Val]
+      \begin{subcase}[B-Val] \v{} = {\multi {\v{1}} {\curlymapvaloverright{\v{k}}{\v{v}}}}
+
         Similar to T-True.
       \end{subcase}
   \end{itemize}
