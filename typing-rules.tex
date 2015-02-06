@@ -388,7 +388,7 @@
 
 \infer [T-GetHMap]
 { \judgement {\propenv{}} 
-  {\hastype {\e{m}} {\Union {{\overrightarrow {\HMapgeneric {\mandatory{}} {\absent{}}}}^i}}}
+  {\hastype {\e{m}} {\Unionsplice {{\overrightarrow {\HMapgeneric {\mandatory{}} {\absent{}}}}^i}}}
            {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}}
            {\object{}}
            \\\\
@@ -396,7 +396,7 @@
              \\
              {\overrightarrow{\inmandatory{\k{}}{\t{}}{\mandatory{}}}}^i
        }
-{ \judgement {\propenv{}} {\hastype {\getexp {\e{m}} {\e{k}}} {\Union {{\overrightarrow {\t{}}}^i}}}
+{ \judgement {\propenv{}} {\hastype {\getexp {\e{m}} {\e{k}}} {\Unionsplice {{\overrightarrow {\t{}}}^i}}}
              {\filterset {\topprop{}} {\topprop{}}}
              {\replacefor {\path {\keype{k}} {\x{}}}
                           {\object{}}

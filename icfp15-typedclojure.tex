@@ -182,7 +182,7 @@ static portion of Typed Racket.
 (defalias Expr
   (U '{:op :if :test Expr :then Expr :else Expr}
      '{:op :const :val Any} ...))
-(defmulti tree-str (fn [e :- Expr] (:op e)))
+(defmulti tree-str (fn [e :- Expr] (get :op e)))
 (defmethod tree-str :if [{:keys [test then else]}] 
   (str (tree-str test) (tree-str then) (tree-str else)))
 (defmethod tree-str :const [{:keys [val]}] 

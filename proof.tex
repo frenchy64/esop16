@@ -324,19 +324,19 @@ and \javatotcnil{\classhint{2}} {\t{}}.
 \end{case}
 
 \begin{case}[T-DefMulti]
-  \e{} = {\createmultiexp {\s{}} {\e{1}}},
-  \t{} = {\MultiFntype {\s{}} {\sp{}}},
+  \e{} = {\createmultiexp {\s{}} {\e{d}}},
+  \t{} = {\MultiFntype {\s{}} {\t{d}}},
   \thenprop{\prop{}} = {\topprop{}},
   \elseprop{\prop{}} = {\botprop{}},
   \s{} = {\ArrowOne {\x{}} {\t{1}} {\t{2}}
                           {\filterset {\thenprop {\prop{1}}}
                                       {\elseprop {\prop{1}}}}
                           {\object{1}}},
-  \sp{} = {\ArrowOne {\x{}} {\t{1}} {\t{3}}
+  \t{d} = {\ArrowOne {\x{}} {\t{1}} {\t{3}}
                           {\filterset {\thenprop {\prop{2}}}
                                       {\elseprop {\prop{2}}}}
                           {\object{2}}},
-  \judgementtwo {\propenv{}} {\hastype {\e{1}} {\sp{}}}
+  \judgementtwo {\propenv{}} {\hastype {\e{d}} {\t{d}}}
 
 
 \begin{itemize}
@@ -347,7 +347,10 @@ and \javatotcnil{\classhint{2}} {\t{}}.
 
 
 Part 1 and 2 hold for the same reasons as T-True.
-Part 3 holds by T-Multi.
+For part 3 we show \judgementtwo{}{\hastype{\multi {\v{d}} {\emptydisptable}}{\MultiFntype {\s{}} {\t{d}}}}
+by T-Multi, since \judgementtwo {} {\hastype {\v{d}} {\t{d}}} by the inductive hypothesis on {\e{d}}
+and {\emptydisptable} vacuously satisfies the other premises of T-Multi, so we are done.
+
 \end{subcase}
   \item[]
 \begin{subcase}[BE-DefMulti]
@@ -400,9 +403,17 @@ Part 3 holds by T-Multi.
                                 Part 1 and 2 hold for the same reasons as T-True, noting that the propositions
                                 and object agree with T-Multi.
 
-For part 3, 
+For part 3 we show
+\judgementtwo{}{\hastype{\multi {\v{d}} {\extenddisptable {\disptable{}}{\v{v}}{\v{f}}}}{\MultiFntype {\t{m}} {\t{d}}}}
+by noting \judgementtwo {} {\hastype {\v{d}} {\t{d}}},
+  \judgementtwo{}{\hastype{\v{v}}{\Top{}}}
+  and
+  \judgementtwo{}{\hastype{\v{f}}{\t{m}}}, and since \disptable{} is in the correct form by the inductive
+  hypothesis on {\e{m}} we can satisfy all premises of T-Multi, so we are done.
+
 
       \end{subcase}
+
     \item[]
       \begin{subcase}[BE-DefMethod1]
       \end{subcase}
@@ -704,26 +715,23 @@ For part 3,
 
 \begin{case}[T-GetHMap]
   \e{} = {\getexp {\e{m}} {\e{k}}},
+  $\t{} = {\Unionsplice {\overrightarrow {\t{i}}}}$
   \thenprop{\prop{}} = {\topprop{}},
   \elseprop{\prop{}} = {\topprop{}},
   \object{} = {\replacefor {\path {\keype{k}} {\x{}}}
                           {\object{m}}
                           {\x{}}},
-  $\judgement {\propenv{}} {\hastype {\e{m}} {\HMapgeneric {\mandatory{}} {\absent{}}}}
-           {\filterset {\thenprop {\prop{m}}} {\elseprop {\prop{m}}}}
-           {\object{m}}$,
+  $\judgementtwo {\propenv{}} {\hastype {\e{m}} {\Unionsplice {\overrightarrow {\HMapgeneric {\mandatory{}} {\absent{}}}}}}$,
   $\judgementtwo {\propenv{}} {\hastype {\e{k}} {\Value {k}}}$,
-             ${\inmandatory{\k{}}{\t{}}{\mandatory{}}}$
+  $\overrightarrow{\inmandatory{\k{}}{\t{i}}{\mandatory{}}}$
 
 
   \begin{itemize}
     \item[]
       \begin{subcase}[B-Get]
-        $\opsem {\openv{}}
-        {\e{m}} {\curlymap{\overrightarrow{({\v{a}}\ {\v{b}})}}}$
-        ,
-         \opsem {\openv{}}
-                 {\e{k}} {\k{}},
+      $\opsem {\openv{}} {\e{m}}{\v{m}}$,
+        $\v{m} = {\curlymap{\overrightarrow{({\v{a}}\ {\v{b}})}}}$,
+         \opsem {\openv{}} {\e{k}} {\k{}},
          $\keyinmap{\k{}}{\curlymap{\overrightarrow{({\v{a}}\ {\v{b}})}}}$,
          \getmap{\curlymap{\overrightarrow{({\v{a}}\ {\v{b}})}}} {\k{}} = {\v{}}
 
@@ -749,13 +757,15 @@ For part 3,
          
          Part 2 holds trivially as \thenprop{\prop{}} = {\topprop{}}
          and \elseprop{\prop{}} = {\topprop{}}.
-         To prove part 3 we note that \e{m} has type {\HMapgeneric {\mandatory{}} {\absent{}}}
-         where ${\inmandatory{\k{}}{\t{}}{\mandatory{}}}$, and 
-         the premises of B-Get
+
+         To prove part 3 we note that (by the induction hypothesis on \e{m})
+         $\judgementtwo{}{\hastype{\v{m}}{\Unionsplice{\overrightarrow {\HMapgeneric {\mandatory{}} {\absent{}}}}}}$,
+         where $\overrightarrow{\inmandatory{\k{}}{\t{i}}{\mandatory{}}}$, and 
+         both
          $\keyinmap{\k{}}{\curlymap{\overrightarrow{({\v{a}}\ {\v{b}})}}}$
          and
          \getmap{\curlymap{\overrightarrow{({\v{a}}\ {\v{b}})}}} {\k{}} = {\v{}}
-         tell us {\v{}} must be of type {\t{}}.
+         imply \judgementtwo{}{\hastype{\v{}}{\Unionsplice {\overrightarrow {\t{i}}}}}.
 
       \end{subcase}
     \item[]
