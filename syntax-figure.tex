@@ -76,6 +76,10 @@ $$
                       \alt {\MultiFntype{\t{}}{\t{}}}
                       
                 &\mbox{Typed Clojure Types} \\
+  \mandatory{} &::=& \mandatorysetoverright{\k{}}{\t{}}
+                &\mbox{HMap mandatory entries} \\
+  \absent{} &::=& \absentoverright{\k{}}
+                &\mbox{HMap absent entries} \\
   \completenessmeta{} &::=& {\complete{}} \alt {\partial{}}
                 &\mbox{HMap completeness} \\
   \tatype{}     &::=& \unknownhint{} \alt \classhint{}

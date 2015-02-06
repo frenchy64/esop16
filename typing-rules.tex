@@ -371,10 +371,14 @@
 %             {\emptyobject{}}
 %}
 
-\infer [T-EmptyMap]
-{}
-{ \judgement {\propenv{}} {\hastype {\emptymap{}}
-  {\HMapc {\mandatoryset {}}}}
+\infer [T-HMap]
+{ \overrightarrow{\judgementtwo {} {\hastype{\v{k}}{\Value \k{}}}}\\
+  \overrightarrow{\judgementtwo {} {\hastype{\v{v}}{\t{v}}}}\\
+\mandatory{} = \mandatorysetoverright{\k{}}{\t{v}}
+}
+{ \judgement {}
+             {\hastype {\curlymapvaloverright{\v{k}}{\v{v}}}
+                       {\HMapc {\mandatory}}}
              {\filterset {\topprop{}} {\botprop{}}}
              {\emptyobject}}
 

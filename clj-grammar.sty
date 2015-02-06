@@ -102,11 +102,13 @@
 \newcommand\HMapc[1]{(\ma{\HMapliteral^{\complete{}} #1})}
 \newcommand\HMapp[2]{(\ma{\HMapliteral^{\partial{}} #1\ #2})}
 \newcommand\mandatoryset[1]{\ma{\{#1\}}}
+\newcommand\mandatorysetoverright[2]{\ma{\{\overrightarrow{(#1,\ #2)}\}}}
 \newcommand\notinmandatory[3]{\ma{(#1\ #2)} \not\in {#3}}
 \newcommand\inmandatory[3]{\ma{(#1\ #2)} \in {#3}}
 \newcommand\extendmandatoryset[3]{(#1, (#2\ #3))}
 \newmeta\mandatory{p}
 \newmeta\absent{a}
+\newcommand\absentoverright[1]{\ma{\{{\overrightarrow{#1}}\}}}
 \newcommand\inabsent[2]{\ma{#1 \in #2}}
 \newcommand\notinabsent[2]{\ma{#1 \not\in #2}}
 \newcommand\extendabsentset[2]{(#1, #2)}

@@ -721,8 +721,10 @@ by noting \judgementtwo {} {\hastype {\v{d}} {\t{d}}},
   \object{} = {\replacefor {\path {\keype{k}} {\x{}}}
                           {\object{m}}
                           {\x{}}},
-  $\judgementtwo {\propenv{}} {\hastype {\e{m}} {\Unionsplice {\overrightarrow {\HMapgeneric {\mandatory{}} {\absent{}}}}}}$,
   $\judgementtwo {\propenv{}} {\hastype {\e{k}} {\Value {k}}}$,
+  $\judgement {\propenv{}} {\hastype {\e{m}} {\Unionsplice {\overrightarrow {\HMapgeneric {\mandatory{}} {\absent{}}}}}}
+           {\filterset {\thenprop {\prop{m}}} {\elseprop {\prop{m}}}}
+           {\object{m}}$,
   $\overrightarrow{\inmandatory{\k{}}{\t{i}}{\mandatory{}}}$
 
 
@@ -798,10 +800,10 @@ by noting \judgementtwo {} {\hastype {\v{d}} {\t{d}}},
                {\path {\keype{k}} {\x{}}}
                           {\object{m}}
                           {\x{}}},
+  \judgementtwo {\propenv{}} {\hastype {\e{k}} {\Value {k}}},
   \judgement {\propenv{}} {\hastype {\e{m}} {\HMapgeneric {\mandatory{}} {\absent}}}
            {\filterset {\thenprop {\prop{m}}} {\elseprop {\prop{m}}}}
            {\object{m}},
-  \judgementtwo {\propenv{}} {\hastype {\e{k}} {\Value {k}}},
   {\inabsent{\k{}}{\absent{}}}
 
 
@@ -876,10 +878,10 @@ by noting \judgementtwo {} {\hastype {\v{d}} {\t{d}}},
                {\path {\keype{k}} {\x{}}}
                           {\object{m}}
                           {\x{}}},
+  \judgementtwo {\propenv{}} {\hastype {\e{k}} {\Value {k}}},
  \judgement {\propenv{}} {\hastype {\e{m}} {\HMapp {\mandatory{}} {\absent}}}
            {\filterset {\thenprop {\prop{m}}} {\elseprop {\prop{m}}}}
            {\object{m}},
-  \judgementtwo {\propenv{}} {\hastype {\e{k}} {\Value {k}}},
              ${\notinmandatory{\k{}}{\t{}}{\mandatory{}}}$,
              {\notinabsent{\k{}}{\absent{}}}
 
@@ -894,6 +896,10 @@ by noting \judgementtwo {} {\hastype {\v{d}} {\t{d}}},
          $\keyinmap{\k{}}{\curlymap{\overrightarrow{({\v{a}}\ {\v{b}})}}}$,
          \getmap{\curlymap{\overrightarrow{({\v{a}}\ {\v{b}})}}} {\k{}} = {\v{}}
 
+         Parts 1 and 2 are the same as the B-Get subcase of T-GetHMap.
+         Part 3 is trivial as \t{} = \Top.
+
+
       \end{subcase}
     \item[]
       \begin{subcase}[B-GetMissing]
@@ -902,6 +908,9 @@ by noting \judgementtwo {} {\hastype {\v{d}} {\t{d}}},
         {\e{m}} {\curlymap{\overrightarrow{({\v{a}}\ {\v{b}})}}}$,
        \opsem {\openv{}} {\e{k}} {\k{}},
        \keynotinmap{\k{}}{\curlymap{\overrightarrow{({\v{a}}\ {\v{b}})}}}
+
+         Parts 1 and 2 are the same as the B-GetMissing subcase of T-GetHMapAbsent.
+         Part 3 is trivial as \t{} = \Top.
 
       \end{subcase}
     \item[]
@@ -935,7 +944,7 @@ by noting \judgementtwo {} {\hastype {\v{d}} {\t{d}}},
         \opsem {\openv{}} {\e{k}} {\k{}},
         \opsem {\openv{}} {\e{v}} {\v{v}}
 
-        We prove parts 1 and 2 for similar reasons as T-True.
+        Parts 1 and 2 hold for the same reasons as T-True.
         %TODO part 3
       \end{subcase}
     \item[]
