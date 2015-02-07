@@ -621,7 +621,7 @@ by noting \judgementtwo {} {\hastype {\v{d}} {\t{d}}},
   % TODO do I need to prove anything about the argument in the definition
   % of the constant being under \s{}?
 
-  Prove by induction on \const{} and \v{2}.
+  Prove by cases on \const{}.
   \begin{itemize}
     \item[] \begin{subcase}[\const{} = \classconst]
     ${\ArrowOne {\x{}} {\s{}}
@@ -631,10 +631,12 @@ by noting \judgementtwo {} {\hastype {\v{d}} {\t{d}}},
                                                        {\object{f}}}$
                                                        =
   ${\ArrowOne {\x{}} {\Top{}}
-                                      {\Union{\nil{}}{\class{}}}
+                                      {\Union{\nil{}}{\Class{}}}
                                       {\filterset {\topprop{}}
                                                   {\topprop{}}}
                                       {\path {\classpe{}} {\x{}}}}$
+
+    Prove by cases on \v{2}.
 
         \begin{itemize}
           \item[] \begin{subcase}[\v{2} = \classvalue{\class{}} {\overrightarrow {\classfieldpair{\fld{i}} {\v{i}}}}]
@@ -646,18 +648,69 @@ by noting \judgementtwo {} {\hastype {\v{d}} {\t{d}}},
                     and we are done,
                     or if \object{2} = {\path {\pathelem{}} {\xp{}}} then \object{} = 
                     {\path {\classpe{}}{\object{2}}},
-                     by the induction hypothesis \inopenv {\openv{}} {\object{2}} {\v{2}}
+                    by the induction hypothesis on \e{2} \inopenv {\openv{}} {\object{2}} {\v{2}}
                     and by the definition of path translation
                     {\openv{}}({\path {\classpe{}} {\object{2}}}) = {\appexp {\classconst{}} {{\openv{}}(\object{2})}},
-                    so we can deduce \inopenv {\openv{}} {\object{}} {\appexp {\classconst{}} {{\openv{}}(\object{2})}}
-                    where {\appexp {\classconst{}} {{\openv{}}(\object{2})}} = \v{}, and we are done.
+                    which evaluates to \v{}.
 
                     Part 2 is trivial since both propositions are \topprop{} by substitution.
                     
-                    Part 3 
+                    Part 3 holds because {\judgementtwo{}{\hastype{\v{2}}{\Class{}}}}.
+                  \end{subcase}
+          \item[] \begin{subcase}[\v{2} = \class{}] \v{} = \Class{}
+
+              As above.
+                  \end{subcase}
+          \item[] \begin{subcase}[\v{2} = \true{}] \v{} = \Boolean{}
+
+              As above.
+                  \end{subcase}
+          \item[] \begin{subcase}[\v{2} = \false{}] \v{} = \Boolean{}
+
+
+              As above.
+                  \end{subcase}
+          \item[] \begin{subcase}[\v{2} = {\closure {\openv{}} {\abs {\x{}} {\t{}} {\e{}}}}] \v{} = \IFn{}
+
+
+              As above.
+                  \end{subcase}
+          \item[] \begin{subcase}[\v{2} = {\multi {\v{d}} {\disptable{}}}] \v{} = \HMapInstance{}
+
+
+              As above.
+                  \end{subcase}
+          \item[] \begin{subcase}[\v{2} = {\curlymapvaloverright{\v{1}}{\v{2}}}] \v{} = \Keyword{}
+
+
+              As above.
+                  \end{subcase}
+          \item[] \begin{subcase}[\v{2} = {\nil{}}] \v{} = \nil{}
+
+             Parts 1 and 2 as above.
+                    Part 3 holds because {\judgementtwo{}{\hastype{\v{2}}{\Nil}}}.
                   \end{subcase}
         \end{itemize}
-            \end{subcase}
+      \end{subcase}
+    \item[]
+      \begin{subcase}[\const{} = \throwconst]
+        {\ArrowOne {\x{}} {\s{}}
+                                                       {\t{f}}
+                                                       {\filterset {\thenprop {\prop{f}}}
+                                                                   {\elseprop {\prop{f}}}}
+                                                       {\object{f}}}
+                                                       =
+        {\ArrowOne {\x{}} {\Top{}}
+                                      {\Bot{}}
+                                      {\filterset {\botprop{}}
+                                                  {\botprop{}}}
+                                      {\emptyobject{}}}
+
+                                      Part 1 is trivial since \object{} = \emptyobject{} after substition.
+                                      Part 2 holds vacuously as both propositions are \botprop{} after substition.
+                                      Finally part 3 holds since {\judgementtwo{}{\hastype{\errorval{\v{2}}}{\Bot{}}}}.
+
+      \end{subcase}
   \end{itemize}
 
 \end{subcase}
