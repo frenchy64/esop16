@@ -163,25 +163,41 @@ Typed Clojure is a gradual type system for Clojure, based on the
 static portion of Typed Racket.
 
 \begin{lstlisting}
-(defn grandparent [^File f]
-  (when f
-    (let [f (. f (getParent))]
-      (assert f "Expected parent string, got nil")
-      (. (new File f) (getParent)))))
-\end{lstlisting}
-%(some-> f (.getParent) (File.) (.getParent))
-
-\begin{lstlisting}
-(ann parent [(U nil File) -> (U nil String)])
+(ann parent [(U nil File) -> (U nil File)])
 (defn parent [^File f]
   (when f
-    (.getParent f)))
+    (let [s (. f (getParent))]
+      (assert s "Expected parent string, got nil")
+      (new File s))))
 \end{lstlisting}
+
+$$
+\abs{\x{}}{\Union{\Nil}{\File}}
+{\letexp {\hinted{\File{}}{f}} {f}
+  {\ifexp {f} 
+    {\letexp {s} {\methodstaticexp {\File{}} {\String{}} {\String{}} {getParent} {f}}
+      {\doexp {\ifexp {s}
+                {\nil{}}
+                {\errorval{input}}}
+              {\newstaticexp {\String{}} {\File{}} {\File{}} {s}}}}
+    {\nil{}}
+}}
+              $$
+
+%(some-> f (.getParent) (File.) (.getParent))
+
+%\begin{lstlisting}
+%(ann parent [(U nil File) -> (U nil String)])
+%(defn parent [^File f]
+%  (when f
+%    (.getParent f)))
+%\end{lstlisting}
 
 \begin{lstlisting}
 (defalias Expr
   (U '{:op :if :test Expr :then Expr :else Expr}
      '{:op :const :val Any} ...))
+(ann tree-str [Expr -> String])
 (defmulti tree-str (fn [e :- Expr] (get :op e)))
 (defmethod tree-str :if [{:keys [test then else]}] 
   (str (tree-str test) (tree-str then) (tree-str else)))

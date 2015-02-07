@@ -2,15 +2,12 @@
 $$
 \begin{altgrammar}
   \expd{}, \e{} &::=& \x{}
-                      \alt
-                      \v{} \alt
-                      {\comb {\e{}} {\e{}}} \alt {\abs {\x{}} {\t{}} {\e{}}}
-                      \alt 
-                      {\ifexp {\e{}} {\e{}} {\e{}}}
-                      \alt 
-                      {\doexp {\e{}} {\e{}}}
-                      \alt
-                      {\letexp {\x{}} {\e{}} {\e{}}}
+                      \alt \v{} 
+                      \alt {\comb {\e{}} {\e{}}} 
+                      \alt {\abs {\x{}} {\t{}} {\e{}}}
+                      \alt {\ifexp {\e{}} {\e{}} {\e{}}}
+                      \alt {\doexp {\e{}} {\e{}}}
+                      \alt {\letexp {\x{}} {\e{}} {\e{}}}
                       \alt {\ReflectiveExp{}}
                       \alt {\NonReflectiveExp{}}
                       \alt {\MultimethodExp{}}
@@ -42,12 +39,12 @@ $$
                       {\getexp {\e{}} {\e{}}}
                       \alt {\assocexp {\e{}}{\e{}}{\e{}}}
                 &\mbox{Hash Maps} \\
-  \ReflectiveExp{}     &::=&
+  \NonReflectiveExp{}     &::=&
                       {\fieldstaticexp {\classhint{}} {\classhint{}} {\fld{}} {\e{}}}
                       \alt {\methodstaticexp {\classhint{}} {\overrightarrow{\classhint{}}} {\classhint{}} {mth} {\e{}} {\overrightarrow{\e{}}}}
                       \alt {\newstaticexp {\overrightarrow {\classhint{}}} {\classhint{}} {\class{}} {\overrightarrow{\e{}}}}
                 &\mbox{Non-Reflective Java Interop} \\
-  \NonReflectiveExp{}     &::=&
+  \ReflectiveExp{}     &::=&
                       {\fieldexp {\fld{}} {\e{}}}
                       \alt {\methodexp {mth} {\e{}} {\overrightarrow{\e{}}}}
                       \alt {\newexp {\class{}} {\overrightarrow{\e{}}}}
@@ -116,6 +113,8 @@ $$
                       %\alt \Number{}
                       \alt \Class{}
                       \alt \Boolean{}
+                      %\alt \File{}
+                      %\alt \String{}
                       \alt \IFn{}
                       \alt \PMulti{}
                       \alt \HMapInstance{}
