@@ -1,6 +1,5 @@
 \section{Soundness for Typed Clojure}
 
-% TODO
 \begin{assumption}[\newjavaliteral] \label{assumption:new}
   If\ $\forall i.\ {\v{i}} = {\classvalue{\classhint{i}}{\overrightarrow{\classfieldpair{\fld{j}} {\v{j}}}}}\ or\ {\v{i}}= {\nil}$
   and $\newjava {\classhint{}}
@@ -211,7 +210,8 @@ For all parts we note
 
 To prove part 1 we use the induction hypothesis on \e{2}
 to show either \object{} = \emptyobject{} 
-or \inopenv {\openv{}} {\object{}} {\v{}}.
+or \inopenv {\openv{}} {\object{}} {\v{}}, since \e{} always
+evaluates to the result of \e{2}.
 
 For part 2 we use the induction hypothesis on \e{2}
 to show if \v{} $\not=$ \false\ (or \nil) then
@@ -296,7 +296,7 @@ Part 1 is trivial as \object{} is always \emptyobject{}.
 Part 2 holds trivially, \v{} can be either a true or false value
 and both {\thenprop{\prop{}}} and {\elseprop{\prop{}}}
 are \topprop{}.
-Part 3 relies on the semantics of \getfieldliteral 
+Part 3 relies on the semantics of \getfieldliteral (Assumption \ref{assumption:field})
 in B-Field, which returns a \emph{nilable} instance of \classhint{2},
 and \javatotcnil{\classhint{2}} {\t{}}.
 \end{subcase}
@@ -320,7 +320,7 @@ Part 1 is trivial as \object{} is always \emptyobject{}.
 Part 2 holds trivially, \v{} can be either a true or false value
 and both {\thenprop{\prop{}}} and {\elseprop{\prop{}}}
 are \topprop{}.
-Part 3 relies on the semantics of \invokejavamethodliteral 
+Part 3 relies on the semantics of \invokejavamethodliteral (Assumption \ref{assumption:method})
 in B-Method, which returns a \emph{nilable} instance of \classhint{2},
 and \javatotcnil{\classhint{2}} {\t{}}.
 \end{subcase}
@@ -1192,6 +1192,27 @@ by noting \judgementtwo {} {\hastype {\v{d}} {\t{d}}},
 \end{case}
 
 \begin{case}[T-Subsume]
+  \judgement {\propenv{}} {\hastype {\e{}} {\tp{}}}
+             {\filterset {\thenprop {\propp{}}}
+                         {\elseprop {\propp{}}}}
+             {\objectp{}},
+\inpropenv {\propenv{}, {\thenprop {\propp{}}}} {\thenprop {\prop{}}},
+\inpropenv {\propenv{}, {\elseprop {\propp{}}}} {\elseprop {\prop{}}},
+\inpropenv {} {\issubtype {\tp{}} {\t{}}},
+\inpropenv {} {\issubtype {\objectp{}} {\object{}}}
+
+Part 1 holds because \objectp{} is the object of \e{}
+and \inpropenv {} {\issubtype {\objectp{}} {\object{}}}.
+Part 2 holds because 
+the then and else propositions of \e{} are
+{\thenprop {\propp{}}} and 
+{\elseprop {\propp{}}} respectively, so
+{\thenprop {\prop{}}} and
+{\elseprop {\prop{}}} are also respectively as 
+\inpropenv {\propenv{}, {\thenprop {\propp{}}}} {\thenprop {\prop{}}} and
+\inpropenv {\propenv{}, {\elseprop {\propp{}}}} {\elseprop {\prop{}}}.
+Part 3 holds because \e{} is of type \tp{} and 
+\inpropenv {} {\issubtype {\tp{}} {\t{}}}.
 
 \end{case}
 

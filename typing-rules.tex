@@ -171,7 +171,7 @@
            {\emptyobject{}}}
 
 \infer [T-Subsume]
-{ \judgementfillcol {\propenv{}} {\hastype {\e{}} {\t{}}}
+{ \judgement {\propenv{}} {\hastype {\e{}} {\t{}}}
              {\filterset {\thenprop {\prop{}}}
                          {\elseprop {\prop{}}}}
              {\object}
@@ -184,10 +184,10 @@
 \\
 \inpropenv {} {\issubtype {\object{}} {\objectp{}}}
 }
-{ \judgementfillcol {\propenv{}} {\hastype {\e{}} {\tp{}}}
+{ \judgement {\propenv{}} {\hastype {\e{}} {\tp{}}}
              {\filterset {\thenprop {\propp{}}}
                          {\elseprop {\propp{}}}}
-             {\objectp}}
+             {\objectp{}}}
 \end{mathpar}
 \caption{Standard Typing Rules}
 \end{figure*}
