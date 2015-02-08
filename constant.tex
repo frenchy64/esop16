@@ -35,10 +35,12 @@
 \constantopsem{\classconst}{\curlymapvaloverright{\v{1}}{\v{2}}} &=& \HMapInstance{}\\
 \constantopsem{\classconst}{\k{}} &=& \Keyword{}\\
 %\constantopsem{\classconst}{\num{}} &=& \Number{}\\
-\constantopsem{\classconst}{\nil{}} &=& \nil{}
+\constantopsem{\classconst}{\nil{}} &=& \nil{}\\
+  \constantopsem{\classconst}{\e{}} &=& \wrong{} & otherwise\\
                                       \\\\
 
-\constantopsem{\throwconst}{\v{}} &=& \errorval{\v{}}
+\constantopsem{\throwconst}{\v{}} &=& \errorval{\v{}}\\
+\constantopsem{\throwconst}{\e{}} &=& \wrong{} & otherwise\\
 
 
 \end{array}
