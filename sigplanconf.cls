@@ -206,7 +206,7 @@
 \@setflag \@natbib = \@true
 \@setflag \@ninepoint = \@true
 \newcount{\@numheaddepth} \@numheaddepth = 3
-\@setflag \@onecolumn = \@false
+\@setflag \@onecolumn = \@true
 \@setflag \@preprint = \@false
 \@setflag \@reprint = \@false
 \@setflag \@tenpoint = \@false
@@ -266,7 +266,7 @@
 
 \DeclareOption{numbers}{\@setflag \@authoryear = \@false}
 
-%%%\DeclareOption{onecolumn}{\@setflag \@onecolumn = \@true}
+\DeclareOption{onecolumn}{\@setflag \@onecolumn = \@true}
 
 \DeclareOption{preprint}{\@setflag \@preprint = \@true}
 
@@ -276,7 +276,7 @@
 
 \DeclareOption{titlepage}{\@unsupportedoption{titlepage}}
 
-\DeclareOption{twocolumn}{\@setflag \@onecolumn = \@false}
+%%\DeclareOption{twocolumn}{\@setflag \@onecolumn = \@false}
 
 \DeclareOption*{\PassOptionsToClass{\CurrentOption}{article}}
 

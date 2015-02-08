@@ -57,7 +57,7 @@
                   \end{itemize}
 \end{assumption}
 
-\begin{lemma}
+\begin{lemma} \label{lemma:soundness}
 If \judgement{\propenv{}}{\hastype{\e{}}{\t{}}}{\filterset{\thenprop{\prop{}}}{\elseprop{\prop{}}}}{\object{}}
 and
 \satisfies{\openv{}}{\propenv{}} then
@@ -254,6 +254,16 @@ Part 3 follows from the induction hypothesis on \e{2}.
 
         As above.
 \end{subcase}
+  \item[]
+
+\begin{subcase}[BW-Do1]
+  Unreachable by the induction hypothesis on \e{1}.
+\end{subcase}
+  \item[]
+
+\begin{subcase}[BW-Do2]
+  Unreachable by the induction hypothesis on \e{2}.
+\end{subcase}
 \end{itemize}
 \end{case}
 
@@ -294,7 +304,7 @@ Part 2 requires some explanation. The two false values in Typed Clojure
 cannot be constructed with \newliteral, so the only case is \v{} $\not=$ \false\ (or \nil)
 where \thenprop{\prop{}} = \topprop{} so \satisfies{\openv{}}{\thenprop{\prop{}}}.
 Part 3 holds as B-New reduces to a \emph{non-nilable}
-instance of \class{} via \newjavaliteral (by Assumption \ref{assumption:new}), and \javatotc{\classhint{}}{\t{}}.
+instance of \class{} via \newjavaliteral (by assumption \ref{assumption:new}), and \javatotc{\classhint{}}{\t{}}.
 \end{subcase}
   \item[]
 
@@ -328,6 +338,11 @@ instance of \class{} via \newjavaliteral (by Assumption \ref{assumption:new}), a
         As above.
 
 \end{subcase}
+  \item[]
+
+\begin{subcase}[BW-New1]
+  Unreachable by the induction hypothesis on {\e{i}}.
+\end{subcase}
 \end{itemize}
 \end{case}
 
@@ -349,7 +364,7 @@ Part 1 is trivial as \object{} is always \emptyobject{}.
 Part 2 holds trivially, \v{} can be either a true or false value
 and both {\thenprop{\prop{}}} and {\elseprop{\prop{}}}
 are \topprop{}.
-Part 3 relies on the semantics of \getfieldliteral (Assumption \ref{assumption:field})
+Part 3 relies on the semantics of \getfieldliteral (assumption \ref{assumption:field})
 in B-Field, which returns a \emph{nilable} instance of \classhint{2},
 and \javatotcnil{\classhint{2}} {\t{}}.
 \end{subcase}
@@ -364,6 +379,11 @@ and \javatotcnil{\classhint{2}} {\t{}}.
 
          Trivially reduces to an error.
 
+\end{subcase}
+
+\item[]
+\begin{subcase}[BW-Field]
+  Unreachable by the induction hypothesis on \e{1}.
 \end{subcase}
 \end{itemize}
 \end{case}
@@ -402,7 +422,7 @@ Part 1 is trivial as \object{} is always \emptyobject{}.
 Part 2 holds trivially, \v{} can be either a true or false value
 and both {\thenprop{\prop{}}} and {\elseprop{\prop{}}}
 are \topprop{}.
-Part 3 relies on the semantics of \invokejavamethodliteral (Assumption \ref{assumption:method})
+Part 3 relies on the semantics of \invokejavamethodliteral (assumption \ref{assumption:method})
 in B-Method, which returns a \emph{nilable} instance of \classhint{2},
 and \javatotcnil{\classhint{2}} {\t{}}.
 \end{subcase}
@@ -455,6 +475,12 @@ and \javatotcnil{\classhint{2}} {\t{}}.
 
   As above.
 
+\end{subcase}
+  \item[]
+\begin{subcase}[BW-Method1]
+\end{subcase}
+  \item[]
+\begin{subcase}[BW-Method2]
 \end{subcase}
 \end{itemize}
 
@@ -1451,4 +1477,26 @@ Part 3 holds because \e{} is of type \tp{} and
 \end{lemma}
 
 \begin{theorem}[Well-typed programs don't go wrong] \label{theorem:wrong}
+  If {\judgement {} {\hastype {\e{}} {\t{}}} {\filterset {\thenprop{\prop{}}}{\elseprop{\prop{}}}} {\object{}}}
+  then \notopsem{}{\e{}}{\wrong{}}.
+
+\begin{proof}
+  Corollary of lemma \ref{lemma:soundness}, since 
+  when {\judgement {} {\hastype {\e{}} {\t{}}} {\filterset {\thenprop{\prop{}}}{\elseprop{\prop{}}}} {\object{}}}
+    , by lemma \ref{lemma:soundness}, either
+    \opsem {} {\e{}} {\v{}} or
+    \opsem {} {\e{}} {\errorvalv{}}, therefore \notopsem{}{\e{}}{\wrong{}}.
+\end{proof}
+\end{theorem}
+
+\begin{theorem}[Type soundness] \label{theorem:soundness}
+If \judgement{\propenv{}}{\hastype{\e{}}{\t{}}}{\filterset{\thenprop{\prop{}}}{\elseprop{\prop{}}}}{\object{}}
+and \opsem {\openv{}} {\e{}} {\v{}} 
+then \judgement{}{\hastype{\v{}}{\t{}}}{\filterset{\thenprop{\propp{}}}{\elseprop{\propp{}}}}{\objectp{}}
+        for some \thenprop{\propp{}}, \elseprop{\propp{}} and {\objectp{}}
+
+\begin{proof}
+  Corollary of lemma \ref{lemma:soundness}.
+\end{proof}
+
 \end{theorem}
