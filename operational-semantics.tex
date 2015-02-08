@@ -283,15 +283,15 @@
        {\errorval{\v{}}}}
 
 \infer [BE-Let]
-{ \opsem {\openv{}} {\e{a}} {\errorval{\v{}}}
+{ \opsem {\openv{}} {\e{a}} {\errorvalv{}}
  }
 { \opsem {\openv{}} 
          {\letexp {\x{}} {\e{a}} {\e{}}}
-       {\errorval{\v{}}}}
+       {\errorvalv{}}}
 
 \infer [BE-Do1]
-{ \opsem {\openv{}} {\e{1}} {\errorval{\v{}}} }
-{ \opsem {\openv{}} {\doexp{\e{1}}{\e{}}} {\errorval{\v{}}}}
+{ \opsem {\openv{}} {\e{1}} {\errorvalv{}} }
+{ \opsem {\openv{}} {\doexp{\e{1}}{\e{}}} {\errorvalv{}}}
 
 \infer [BE-Do2]
 { \opsem {\openv{}} {\e{1}} {\v{1}} 
@@ -301,11 +301,11 @@
 { \opsem {\openv{}} {\doexp{\e{1}}{\e{}}} {\errorvalv{}} }
 
 \infer [BE-If]
-{  \opsem {\openv{}} {\e{1}} {\errorval{\v{}}}
+{  \opsem {\openv{}} {\e{1}} {\errorvalv{}}
 }
 { \opsem {\openv{}}
          {\ifexp {\e1} {\e2} {\e3}}
-         {\errorval{\v{}}}
+         {\errorvalv{}}
        }
 
 \infer [BE-IfTrue]
@@ -337,11 +337,11 @@
 \infer [BE-Beta1]
 { \opsem {\openv{}}
          {\e{f}}
-         {\errorval{\v{}}}
+         {\errorvalv{}}
        }
 { \opsem {\openv{}}
          {\appexp {\e{f}} {\e{a}}}
-         {\errorval{\v{}}}
+         {\errorvalv{}}
        }
 
 \infer [BE-Beta2]
@@ -351,11 +351,11 @@
          \\\\
   \opsem {\openv{}}
          {\e{a}}
-         {\errorval{\v{}}}
+         {\errorvalv{}}
        }
 { \opsem {\openv{}}
          {\appexp {\e{f}} {\e{a}}}
-         {\errorval{\v{}}}
+         {\errorvalv{}}
        }
 
 \infer [BE-BetaClosure]
@@ -369,11 +369,11 @@
          \\\\
   \opsem {\extendopenv {\openv{c}} {\x{}} {\v{a}}}
          {\e{b}}
-         {\errorval{\v{}}}
+         {\errorvalv{}}
        }
 { \opsem {\openv{}}
          {\appexp {\e{f}} {\e{a}}}
-         {\errorval{\v{}}}
+         {\errorvalv{}}
        }
 
 \infer [BE-BetaMulti1]
@@ -387,11 +387,11 @@
          \\\\
   \opsem {\openv{}}
          {\appexp {\v{d}} {\v{a}}}
-         {\errorval{\v{}}}
+         {\errorvalv{}}
        }
 { \opsem {\openv{}}
          {\appexp {\e{f}} {\e{a}}}
-         {\errorval{\v{}}}
+         {\errorvalv{}}
        }
 
 \infer [BE-BetaMulti2]
@@ -409,32 +409,32 @@
          \\\\
   \getmethod {\disptable{}}
              {\v{e}}
-             {\errorval{\v{}}}
+             {\errorvalv{}}
        }
 { \opsem {\openv{}}
          {\appexp {\e{f}} {\e{a}}}
-         {\errorval{\v{}}}
+         {\errorvalv{}}
        }
 
 
 \infer [BE-Field]
 { \opsem {\openv{}}
          {\e{}} 
-         {\errorval{\v{}}}
+         {\errorvalv{}}
        }
 { \opsem {\openv{}}
          {\fieldstaticexp {\classhint{1}} {\classhint{2}} {\fld{}} {\e{}}}
-         {\errorval{\v{}}}
+         {\errorvalv{}}
    }
 
 \infer [BE-Method1]
 { \opsem {\openv{}}
          {\e{m}}
-         {\errorval{\v{}}}
+         {\errorvalv{}}
 }
 {\opsem {\openv{}}
         {\methodstaticexp {\classhint{1}} {\overrightarrow{\classhint{a}}} {\classhint{2}} {mth} {\e{m}} {\overrightarrow{\e{}}}}
-        {\errorval{\v{}}}
+        {\errorvalv{}}
       }
 
 \infer [BE-Method2]
@@ -450,11 +450,11 @@
          \\\\
   \opsem {\openv{}}
          {\e{n}}
-         {\errorval{\v{}}}
+         {\errorvalv{}}
 }
 {\opsem {\openv{}}
         {\methodstaticexp {\classhint{1}} {\overrightarrow{\classhint{a}}} {\classhint{2}} {mth} {\e{m}} {\overrightarrow{\e{}}}}
-        {\errorval{\v{}}}
+        {\errorvalv{}}
       }
 
 \infer [BE-Method3]
@@ -487,12 +487,12 @@
        \\\\
   \opsem {\openv{}}
          {\e{n}}
-         {\errorval{\v{}}}
+         {\errorvalv{}}
        }
 { \opsem {\openv{}}
          {\newstaticexp {\overrightarrow{\classhint{i}}} {\classhint{1}} 
                         {\class{}} {\overrightarrow{\e{}}}}
-         {\errorval{\v{}}}
+         {\errorvalv{}}
        }
 
 \infer [BE-New2]
@@ -514,22 +514,22 @@
          {\errorvalv{}}}
 
 \infer [BE-DefMulti]
-{ \opsem {\openv{}} {\e{d}} {\errorval{\v{}}}
+{ \opsem {\openv{}} {\e{d}} {\errorvalv{}}
 }
 {\opsem {\openv{}}
         {\createmultiexp {\t{}}
                          {\e{d}}}
-        {\errorval{\v{}}}
+        {\errorvalv{}}
 }
 
 \infer [BE-DefMethod1]
 { \opsem {\openv{}}
          {\e{m}}
-         {\errorval{\v{}}}
+         {\errorvalv{}}
 }
 {\opsem {\openv{}}
         {\extendmultiexp {\e{m}} {\e{v}} {\e{f}}}
-        {\errorval{\v{}}}
+        {\errorvalv{}}
       }
 
 \infer [BE-DefMethod2]
@@ -539,11 +539,11 @@
          \\\\
   \opsem {\openv{}}
          {\e{v}}
-         {\errorval{\v{}}}
+         {\errorvalv{}}
 }
 {\opsem {\openv{}}
         {\extendmultiexp {\e{m}} {\e{v}} {\e{f}}}
-        {\errorval{\v{}}}
+        {\errorvalv{}}
       }
 
 \infer [BE-DefMethod3]
@@ -557,24 +557,24 @@
          \\\\
   \opsem {\openv{}}
          {\e{f}}
-         {\errorval{\v{}}}
+         {\errorvalv{}}
 }
 {\opsem {\openv{}}
         {\extendmultiexp {\e{m}} {\e{v}} {\e{f}}}
-         {\errorval{\v{}}}
+         {\errorvalv{}}
       }
 
 \infer [BE-IsA1]
-{ \opsem {\openv{}} {\e{1}} {\errorval{\v{}}}
+{ \opsem {\openv{}} {\e{1}} {\errorvalv{}}
 }
-{\opsem {\openv{}} {\isaapp {\e{1}} {\e{2}}} {\errorval{\v{}}}}
+{\opsem {\openv{}} {\isaapp {\e{1}} {\e{2}}} {\errorvalv{}}}
 
 \infer [BE-IsA2]
 { \opsem {\openv{}} {\e{1}} {\v{1}}
   \\\\
-  \opsem {\openv{}} {\e{2}} {\errorval{\v{}}}
+  \opsem {\openv{}} {\e{2}} {\errorvalv{}}
 }
-{\opsem {\openv{}} {\isaapp {\e{1}} {\e{2}}} {\errorval{\v{}}}}
+{\opsem {\openv{}} {\isaapp {\e{1}} {\e{2}}} {\errorvalv{}}}
 
 \infer [BE-Assoc1]
 {\opsem {\openv{}}
@@ -640,6 +640,332 @@
 \end{mathpar}
 \caption{Runtime Error Propagation}
 \end{figure*}
+
+
+\begin{figure*}
+\begin{mathpar}
+\infer [BW-Let]
+{ \opsem {\openv{}} {\e{a}} {\wrong{}}
+ }
+{ \opsem {\openv{}} 
+         {\letexp {\x{}} {\e{a}} {\e{}}}
+       {\wrong{}}}
+
+\infer [BW-Do1]
+{ \opsem {\openv{}} {\e{1}} {\wrong{}} }
+{ \opsem {\openv{}} {\doexp{\e{1}}{\e{}}} {\wrong{}}}
+
+\infer [BW-Do2]
+{ \opsem {\openv{}} {\e{1}} {\v{1}} 
+  \\\\
+  \opsem {\openv{}} {\e{}}  {\wrong{}}
+}
+{ \opsem {\openv{}} {\doexp{\e{1}}{\e{}}} {\wrong{}} }
+
+\infer [BW-If]
+{  \opsem {\openv{}} {\e{1}} {\wrong{}}
+}
+{ \opsem {\openv{}}
+         {\ifexp {\e1} {\e2} {\e3}}
+         {\wrong{}}
+       }
+
+\infer [BW-IfTrue]
+{ \opsem {\openv{}} {\e{1}} {\v{1}}
+  \\\\
+  {\v{1}} \not= {\false{}}
+  \\
+  {\v{1}} \not= {\nil{}}
+  \\\\
+  \opsem {\openv{}} {\e{2}} {\wrong{}}
+}
+{ \opsem {\openv{}}
+         {\ifexp {\e1} {\e2} {\e3}}
+         {\wrong{}}
+       }
+
+\infer [BW-IfFalse]
+{  \opsem {\openv{}} {\e{1}} {\false{}}
+  \ \ \text{or}\ \ 
+  \opsem {\openv{}} {\e{1}} {\nil{}}
+  \\\\
+  \opsem {\openv{}} {\e{3}} {\wrong{}}
+}
+{ \opsem {\openv{}}
+         {\ifexp {\e1} {\e2} {\e3}}
+         {\wrong{}}
+       }
+
+\infer [BW-Beta1]
+{ \opsem {\openv{}}
+         {\e{f}}
+         {\wrong{}}
+       }
+{ \opsem {\openv{}}
+         {\appexp {\e{f}} {\e{a}}}
+         {\wrong{}}
+       }
+
+\infer [BW-Beta2]
+{ \opsem {\openv{}}
+         {\e{f}}
+         {\v{f}}
+         \\\\
+  \opsem {\openv{}}
+         {\e{a}}
+         {\wrong{}}
+       }
+{ \opsem {\openv{}}
+         {\appexp {\e{f}} {\e{a}}}
+         {\wrong{}}
+       }
+
+\infer [BW-BetaClosure]
+{ \opsem {\openv{}}
+         {\e{f}}
+         {\closure {\openv{c}} {\abs {\x{}} {\t{}} {\e{b}}}}
+         \\\\
+  \opsem {\openv{}}
+         {\e{a}}
+         {\v{a}}
+         \\\\
+  \opsem {\extendopenv {\openv{c}} {\x{}} {\v{a}}}
+         {\e{b}}
+         {\wrong{}}
+       }
+{ \opsem {\openv{}}
+         {\appexp {\e{f}} {\e{a}}}
+         {\wrong{}}
+       }
+
+\infer [BW-BetaMulti1]
+{ \opsem {\openv{}}
+         {\e{f}}
+         {\multi {\v{d}} {m}}
+         \\\\
+  \opsem {\openv{}}
+         {\e{a}}
+         {\v{a}}
+         \\\\
+  \opsem {\openv{}}
+         {\appexp {\v{d}} {\v{a}}}
+         {\wrong{}}
+       }
+{ \opsem {\openv{}}
+         {\appexp {\e{f}} {\e{a}}}
+         {\wrong{}}
+       }
+
+\infer [BW-BetaMulti2]
+{ \opsem {\openv{}}
+         {\e{f}}
+         {\multi {\v{d}} {m}}
+         \\\\
+  \opsem {\openv{}}
+         {\e{a}}
+         {\v{a}}
+         \\\\
+  \opsem {\openv{}}
+         {\appexp {\v{d}} {\v{a}}}
+         {\v{e}}
+         \\\\
+  \getmethod {\disptable{}}
+             {\v{e}}
+             {\wrong{}}
+       }
+{ \opsem {\openv{}}
+         {\appexp {\e{f}} {\e{a}}}
+         {\wrong{}}
+       }
+
+
+\infer [BW-Field]
+{ \opsem {\openv{}}
+         {\e{}} 
+         {\wrong{}}
+       }
+{ \opsem {\openv{}}
+         {\fieldstaticexp {\classhint{1}} {\classhint{2}} {\fld{}} {\e{}}}
+         {\wrong{}}
+   }
+
+\infer [BW-Method1]
+{ \opsem {\openv{}}
+         {\e{m}}
+         {\wrong{}}
+}
+{\opsem {\openv{}}
+        {\methodstaticexp {\classhint{1}} {\overrightarrow{\classhint{a}}} {\classhint{2}} {mth} {\e{m}} {\overrightarrow{\e{}}}}
+        {\wrong{}}
+      }
+
+\infer [BW-Method2]
+{ \opsem {\openv{}}
+         {\e{m}}
+         {\v{m}}
+  \\\\
+  \overrightarrow{
+  \opsem {\openv{}}
+         {\e{n-1}}
+         {\v{n-1}}
+       }
+         \\\\
+  \opsem {\openv{}}
+         {\e{n}}
+         {\wrong{}}
+}
+{\opsem {\openv{}}
+        {\methodstaticexp {\classhint{1}} {\overrightarrow{\classhint{a}}} {\classhint{2}} {mth} {\e{m}} {\overrightarrow{\e{}}}}
+        {\wrong{}}
+      }
+
+\infer [BW-New1]
+{ \overrightarrow{
+  \opsem {\openv{}}
+         {\e{n-1}}
+         {\v{n-1}}
+       }
+       \\\\
+  \opsem {\openv{}}
+         {\e{n}}
+         {\wrong{}}
+       }
+{ \opsem {\openv{}}
+         {\newstaticexp {\overrightarrow{\classhint{i}}} {\classhint{1}} 
+                        {\class{}} {\overrightarrow{\e{}}}}
+         {\wrong{}}
+       }
+
+\infer [BW-DefMulti]
+{ \opsem {\openv{}} {\e{d}} {\wrong{}}
+}
+{\opsem {\openv{}}
+        {\createmultiexp {\t{}}
+                         {\e{d}}}
+        {\wrong{}}
+}
+
+\infer [BW-DefMethod1]
+{ \opsem {\openv{}}
+         {\e{m}}
+         {\wrong{}}
+}
+{\opsem {\openv{}}
+        {\extendmultiexp {\e{m}} {\e{v}} {\e{f}}}
+        {\wrong{}}
+      }
+
+\infer [BW-DefMethod2]
+{ \opsem {\openv{}}
+         {\e{m}}
+         {\multi {\v{d}} {\disptable{}}}
+         \\\\
+  \opsem {\openv{}}
+         {\e{v}}
+         {\wrong{}}
+}
+{\opsem {\openv{}}
+        {\extendmultiexp {\e{m}} {\e{v}} {\e{f}}}
+        {\wrong{}}
+      }
+
+\infer [BW-DefMethod3]
+{ \opsem {\openv{}}
+         {\e{m}}
+         {\multi {\v{d}} {\disptable{}}}
+         \\\\
+  \opsem {\openv{}}
+         {\e{v}}
+         {\v{v}}
+         \\\\
+  \opsem {\openv{}}
+         {\e{f}}
+         {\wrong{}}
+}
+{\opsem {\openv{}}
+        {\extendmultiexp {\e{m}} {\e{v}} {\e{f}}}
+         {\wrong{}}
+      }
+
+\infer [BW-IsA1]
+{ \opsem {\openv{}} {\e{1}} {\wrong{}}
+}
+{\opsem {\openv{}} {\isaapp {\e{1}} {\e{2}}} {\wrong{}}}
+
+\infer [BW-IsA2]
+{ \opsem {\openv{}} {\e{1}} {\v{1}}
+  \\\\
+  \opsem {\openv{}} {\e{2}} {\wrong{}}
+}
+{\opsem {\openv{}} {\isaapp {\e{1}} {\e{2}}} {\wrong{}}}
+
+\infer [BW-Assoc1]
+{\opsem {\openv{}}
+        {\e{m}}{\wrong{}} 
+}
+{
+ \opsem {\openv{}}
+        {\assocexp {\e{m}} {\e{k}} {\e{v}}} 
+        {\wrong{}}
+                }
+
+\infer [BW-Assoc2]
+{\opsem {\openv{}}
+        {\e{m}} {\curlymap{\overrightarrow{({\v{a}}\ {\v{b}})}}}
+        \\
+ \opsem {\openv{}}
+        {\e{k}}{\wrong{}}
+}
+{
+ \opsem {\openv{}}
+        {\assocexp {\e{m}} {\e{k}} {\e{v}}} 
+        {\wrong{}}
+                }
+
+\infer [BW-Assoc3]
+{\opsem {\openv{}}
+        {\e{m}} {\curlymap{\overrightarrow{({\v{a}}\ {\v{b}})}}}
+        \\
+ \opsem {\openv{}}
+        {\e{k}} {\v{k}}
+        \\
+ \opsem {\openv{}}
+        {\e{v}} {\wrong{}}
+}
+{
+ \opsem {\openv{}}
+        {\assocexp {\e{m}} {\e{k}} {\e{v}}} 
+        {\wrong{}}
+                }
+
+\infer [BW-Get1]
+{\opsem {\openv{}}
+        {\e{m}} {\wrong{}}
+}
+{
+ \opsem {\openv{}}
+        {\getexp {\e{m}} {\e{k}}}
+        {\wrong{}}
+}
+
+\infer [BW-Get2]
+{\opsem {\openv{}}
+        {\e{m}} {\curlymap{\overrightarrow{({\v{a}}\ {\v{b}})}}}
+        \\
+ \opsem {\openv{}}
+        {\e{k}} {\wrong{}}
+}
+{
+ \opsem {\openv{}}
+        {\getexp {\e{m}} {\e{k}}}
+        {\wrong{}}
+}
+\end{mathpar}
+\caption{Propagating stuck programs}
+\end{figure*}
+
+
+
 
 \begin{figure*}
 \begin{mathpar}
