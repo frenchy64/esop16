@@ -26,22 +26,28 @@
 \begin{assumption}[\getfieldliteral] \label{assumption:field}
   If\ {\v{1}} = ${\classvalue{\classhint{1}}{{\classfieldpair{\fld{}}{\v{f}}, {\overrightarrow{\classfieldpair{\fld{l}} {\v{l}}}}}}}$,
   then 
-         and \getfieldjava{\classhint{1}} {\v{1}} {\fld{}} {\classhint{2}} {\v{}}
-                  then either
+  \begin{itemize}
+    \item
+         if \getfieldjava{\classhint{1}} {\v{1}} {\fld{}} {\classhint{2}} {\v{}}
+                  then \v{} = \v{f} and either
                   \begin{itemize}
-                    \item \v{} = \v{f} and either 
+                    \item
                   \v{f} = ${\classvalue{\classhint{2}}{\overrightarrow{\classfieldpair{\fld{m}} {\v{m}}}}}$
-                  \ or\ 
-                  \v{f} = \nil,  or
-                \item
-                  \v{} = {\errorval{\v{e}}}.
+                   or 
+                    \item
+                  \v{f} = \nil,
                   \end{itemize}
+    \item
+      otherwise \getfieldjava{\classhint{1}} {\v{1}} {\fld{}} {\classhint{2}} {\errorval{\v{e}}}.
+  \end{itemize}
 \end{assumption}
 
 \begin{assumption}[\invokejavamethodliteral] \label{assumption:method}
   If\ {\v{1}} = {\classvalue{\classhint{1}}{\overrightarrow{\classfieldpair{\fld{l}} {\v{l}}}}},
   $\forall i.\ {\v{i}}={\classvalue{\classhint{i}}{\overrightarrow{\classfieldpair{\fld{j}} {\v{j}}}}}\ or\ {\v{i}}={\nil}$
-         and 
+         then 
+         \begin{itemize}
+           \item if
   \invokejavamethod {\classhint{1}} {\v{m}} {mth}
                     {\overrightarrow{\classhint{i}}} {\overrightarrow{\v{i}}}
                     {\classhint{2}}
@@ -52,9 +58,13 @@
                   \v{} = ${\classvalue{\classhint{2}}{\overrightarrow{\classfieldpair{\fld{m}} {\v{m}}}}}$
                   or\ 
                   \v{} = \nil,  or
-                \item
-                  \v{} = {\errorval{\v{e}}}.
                   \end{itemize}
+          \item
+  \invokejavamethod {\classhint{1}} {\v{m}} {mth}
+                    {\overrightarrow{\classhint{i}}} {\overrightarrow{\v{i}}}
+                    {\classhint{2}}
+                    {\errorval{\v{e}}}.
+        \end{itemize}
 \end{assumption}
 
 \begin{lemma} \label{lemma:soundness}
