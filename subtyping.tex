@@ -96,25 +96,26 @@
 \infer [S-MultiMono]
 {}
 {\issubtypein {}
-  {\MultiFntype {\ArrowOne {\x{}} {\Bot{}} {\Top{}}
-                          {\filterset {\topprop{}}
-                                      {\topprop{}}}
-                          {\emptyobject{}}}
-                {\ArrowOne {\x{}} {\Bot{}} {\Top{}}
-                          {\filterset {\topprop{}}
-                                      {\topprop{}}}
-                          {\emptyobject{}}}}
+  {\MultiFntype {\ArrowOne {\x{}} {\s{1}} {\t{1}}
+                          {\filterset {\thenprop{\prop{1}}}
+                                      {\elseprop{\prop{1}}}}
+                          {\object{1}}}
+                {\ArrowOne {\x{}} {\s{2}} {\t{2}}
+                          {\filterset {\thenprop{\prop{2}}}
+                                      {\elseprop{\prop{2}}}}
+                          {\object{2}}}
+                }
   {\PMulti{}}
 }
 
 \infer [S-FunMono]
 {}
 {\issubtypein {}
-  {\ArrowOne {\x{}} {\Bot{}}
-             {\Top{}}
-             {\filterset {\topprop{}}
-                         {\topprop{}}}
-             {\emptyobject{}}}
+  {\ArrowOne {\x{}} {\s{}}
+             {\t{}}
+             {\filterset {\thenprop{\prop{}}}
+                         {\elseprop{\prop{}}}}
+             {\object{}}}
   {\IFn{}}}
 
 \end{mathpar}

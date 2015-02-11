@@ -8,7 +8,7 @@ $$
                       \alt {\ifexp {\e{}} {\e{}} {\e{}}}
                       \alt {\doexp {\e{}} {\e{}}}
                       \alt {\letexp {\x{}} {\e{}} {\e{}}}
-                      \alt {\errorvalv}
+                      \alt {\wrongorerror{}}
                       \alt {\ReflectiveExp{}}
                       \alt {\NonReflectiveExp{}}
                       \alt {\MultimethodExp{}}
@@ -120,6 +120,9 @@ $$
                       \alt \HMapInstance{}
                       \alt \Void{}
                 &\mbox{Class literals}
+                      \\
+  \wrongorerror{} &::=& \wrong{} \alt \errorvalv{}
+                &\mbox{Wrong and error}
 \end{altgrammar}
 $$
 \caption{Syntax of Terms, Types, Propositions, and Objects}

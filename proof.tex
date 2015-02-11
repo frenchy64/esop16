@@ -653,8 +653,8 @@ by noting \judgementtwo {} {\hastype {\v{d}} {\t{d}}},
                               {\object{2}}
                               {\x{}}},
   \object{} = {\replacefor {\object{f}}
-                              {\object{2}}
-                              {\x{}}},
+                           {\object{2}}
+                           {\x{}}},
   \judgement {\propenv{}} {\hastype {\e{1}} {\ArrowOne {\x{}} {\s{}}
                                                        {\t{f}}
                                                        {\filterset {\thenprop {\prop{f}}}
@@ -667,48 +667,49 @@ by noting \judgementtwo {} {\hastype {\v{d}} {\t{d}}},
                  {\hastype {\e{2}} {\s{}}}
                  {\filterset {\thenprop {\prop{2}}}
                              {\elseprop {\prop{2}}}}
-                 {\object{2}} ,
-                 IHe1 = $\forall{\openv{1}},
-                               {\v{1}},
-                               {\thenprop {\prop{1}}},
-                               {\elseprop {\prop{1}}},
-                               {\object{1}}.
-                               {\judgement
-                                 {\propenv{}}
-                                 {\hastype
-                                   {\e{1}}
-                                   {\ArrowOne {\x{}} {\s{}}
-                                     {\t{f}}
-                                     {\filterset 
-                                       {\thenprop {\prop{f}}}
-                                       {\elseprop {\prop{f}}}}
-                                     {\object{f}}}}
-                                {\filterset {\thenprop {\prop{1}}}
-                                            {\elseprop {\prop{1}}}}
-                                {\object{1}}}
-\Rightarrow
-                                                       {\satisfies{\openv{1}}{\propenv{}}}
-                                                       \Rightarrow
-  \opsem {\openv{}}
-         {\e{1}}
-         {\v{1}}
-         \Rightarrow
-         (1: \object{1} = \emptyobject{} \vee \inopenv{\openv{1}}{\object{1}}{\v{1}})
-         \wedge
-       (2: (\v{1} \not= \false\ (or\ \nil) \wedge \satisfies{\openv{1}}{\thenprop{\prop{1}}})
-          \vee
-            (\v{1} = \false\ (or\ \nil) \wedge \satisfies{\openv{1}}{\elseprop{\prop{1}}}))
-            \wedge
-          (3: \exists {\thenprop{\propp{1}}},{\elseprop{\propp{1}}},{\objectp{1}}.
-          \judgement{}{\hastype{\v{1}}{\ArrowOne {\x{}} {\s{}}
-                                     {\t{f}}
-                                     {\filterset 
-                                       {\thenprop {\prop{f}}}
-                                       {\elseprop {\prop{f}}}}
-                                   {\object{f}}}}
-                        {\filterset{\thenprop{\propp{1}}}{\elseprop{\propp{1}}}}
-                      {\objectp{1}})
-                                                       $
+                 {\object{2}},
+  \opsem{\openv{}}{\e{}}{\v{}}
+%                 IHe1 = $\forall{\openv{1}},
+%                               {\v{1}},
+%                               {\thenprop {\prop{1}}},
+%                               {\elseprop {\prop{1}}},
+%                               {\object{1}}.
+%                               {\judgement
+%                                 {\propenv{}}
+%                                 {\hastype
+%                                   {\e{1}}
+%                                   {\ArrowOne {\x{}} {\s{}}
+%                                     {\t{f}}
+%                                     {\filterset 
+%                                       {\thenprop {\prop{f}}}
+%                                       {\elseprop {\prop{f}}}}
+%                                     {\object{f}}}}
+%                                {\filterset {\thenprop {\prop{1}}}
+%                                            {\elseprop {\prop{1}}}}
+%                                {\object{1}}}
+%\Rightarrow
+%                                                       {\satisfies{\openv{1}}{\propenv{}}}
+%                                                       \Rightarrow
+%  \opsem {\openv{}}
+%         {\e{1}}
+%         {\v{1}}
+%         \Rightarrow
+%         (1: \object{1} = \emptyobject{} \vee \inopenv{\openv{1}}{\object{1}}{\v{1}})
+%         \wedge
+%       (2: (\v{1} \not= \false\ (or\ \nil) \wedge \satisfies{\openv{1}}{\thenprop{\prop{1}}})
+%          \vee
+%            (\v{1} = \false\ (or\ \nil) \wedge \satisfies{\openv{1}}{\elseprop{\prop{1}}}))
+%            \wedge
+%          (3: \exists {\thenprop{\propp{1}}},{\elseprop{\propp{1}}},{\objectp{1}}.
+%          \judgement{}{\hastype{\v{1}}{\ArrowOne {\x{}} {\s{}}
+%                                     {\t{f}}
+%                                     {\filterset 
+%                                       {\thenprop {\prop{f}}}
+%                                       {\elseprop {\prop{f}}}}
+%                                   {\object{f}}}}
+%                        {\filterset{\thenprop{\propp{1}}}{\elseprop{\propp{1}}}}
+%                      {\objectp{1}})
+%                                                       $
 
 
 
@@ -731,69 +732,59 @@ by noting \judgementtwo {} {\hastype {\v{d}} {\t{d}}},
          {\e{b}}
          {\v{}}
 
-         To prove part 1 we note by inversion of the typing relation (by T-Closure) if
-         \begin{itemize}
-           \item 
-  \judgement {\propenv{}} {\hastype {\e{1}} {\ArrowOne {\x{}} {\s{}}
-                                                       {\t{f}}
-                                                       {\filterset {\thenprop {\prop{f}}}
-                                                                   {\elseprop {\prop{f}}}}
-                                                               {\object{f}}}}
-                {\filterset {\thenprop {\prop{1}}}
-                            {\elseprop {\prop{1}}}}
-                          {\object{1}} and
-              \item 
-                \opsem {\openv{}}
-                       {\e{1}}
-                       {\closure {\openv{c}} {\abs {\x{}} {\s{}} {\e{b}}}},
-         \end{itemize}
-
-         then there is some environment {\propenvc{}} such that
+         To prove part 1, we know by inversion on \e{1} from T-Clos
+         there is some environment {\propenvc{}} such that
          \begin{itemize}
            \item
               \satisfies{\openv{c}}{\propenvc{}} and
             \item
-              \judgement {\propenvc{}} {\hastype {\abs {\x{}} {\s{}} {\e{b}}} {\t{f}}}
-                               {\filterset {\thenprop {\prop{f}}}
-                                           {\elseprop {\prop{f}}}}
-                               {\object{f}}.
+  \judgement {\propenvc{}} {\hastype {\abs {\x{}} {\s{}} {\e{b}}} {\ArrowOne {\x{}} {\s{}}
+                                                       {\t{f}}
+                                                       {\filterset {\thenprop {\prop{f}}}
+                                                                   {\elseprop {\prop{f}}}}
+                                                       {\object{f}}}}
+                {\filterset {\thenprop {\prop{1}}}
+                            {\elseprop {\prop{1}}}}
+                {\object{1}},
          \end{itemize}
-
-         By \judgementtwo{\propenv{}}{\hastype {\e{2}} {\s{}}},
-            {\opsem {\openv{}}
-                    {\e{2}}
-                    {\v{2}}}
-         and
-         the inductive hypothesis 
+         and also by inversion on \e{1} from T-Abs
          \begin{itemize}
            \item
-             \opsem {\openv{}}
-                    {\e{2}}
-                    {\v{2}},
+  { \judgement {\propenvc{}, {\isprop {\s{}} {\x{}}}}
+              {\hastype {\e{b}} {\t{f}}}
+               {\filterset {\thenprop {\prop{f}}}
+                           {\elseprop {\prop{f}}}}
+               {\object{f}}}.
          \end{itemize}
-         
-         \satisfies{\propenv_{c}, {\isprop {\s{}} {\x{}}}}{\extendopenv {\openv{c}} {\x{}} {\v{2}}}.
-         Since 
+
+         We consider cases on the form of \object{f}:
+
+         \begin{itemize}
+           \item if \object{f} = \emptyobject{}, then \object{} = \emptyobject{} by substitution,
+           \item if \object{f} = {\path {\pathelem{f}} {\x{}}}, 
+             we consider cases on the form of \object{2}:
+             \begin{itemize}
+               \item if \object{2} = \emptyobject{}, then \object{} = \emptyobject{},
+               \item otherwise \object{2} = {\path {\pathelem{2}} {\y{}}}, where,
+                 because
+                \object{} = {\replacefor {\path {\pathelem{f}} {\x{}}}
+                                         {\path {\pathelem{2}} {\y{}}}
+                                         {\x{}}},
+                                         by substitution
+                                         \object{} = {\path {\pathelem{f}} {\path {\pathelem{2}} {\y{}}}}.
+                                         To prove \inopenv{\openv{}}{\path {\pathelem{f}} {\path {\pathelem{2}} {\y{}}}}{\v{}}
+                                         we note by the induction hypothesis on {\e{2}} that 
+                                         \inopenv{\openv{}}{\path {\pathelem{2}} {\y{}}}{\v{2}}
   \opsem {\extendopenv {\openv{c}} {\x{}} {\v{2}}}
          {\e{b}}
-         {\v{}},
-  \judgement {\propenv{}}
-                 {\hastype {\e{2}} {\s{}}}
-                 {\filterset {\thenprop {\prop{2}}}
-                             {\elseprop {\prop{2}}}}
-                 {\object{2}} 
-         and
-  \opsem {\openv{}}
-         {\e{2}}
-         {\v{2}}
-         then either 
-                              \object{} = {\replacefor {\object{f}}
-                                                {\object{2}}
-                                                {\x{}}}
-                                                where
-   \inopenv {\openv{}} {\object{}} {\v{}}
-                              or \object{} = \emptyobject{}.
+         {\v{}}
 
+             \end{itemize}
+           \item otherwise \object{f} = {\path {\pathelem{f}} {\y{}}} where $\x{} \not= \y{}$
+         \end{itemize}
+
+
+         To prove part 2, if \v{} $\not=$ \false\ (or \nil)
 \end{subcase}
   \item[]
 \begin{subcase}[B-BetaMulti]
