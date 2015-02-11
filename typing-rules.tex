@@ -250,6 +250,14 @@
              {\filterset {\topprop{}} {\topprop{}}}
              {\emptyobject{}}}
 
+\infer [T-Class]
+{}
+{ \judgement {\propenv{}} {\hastype{\class{}}{\Class{}}}{\filterset{\topprop{}}{\botprop{}}}{\emptyobject{}}}
+
+\infer [T-Instance]
+{}
+{ \judgement {\propenv{}} {\hastype{\classvalue{\classhint{}} {\overrightarrow {\classfieldpair{\fld{}} {\v{}}}}}{\class{}}}{\filterset{\topprop{}}{\botprop{}}}{\emptyobject{}}}
+
 \end{mathpar}
 \caption{Java Interop Typing Rules}
 \end{figure*}

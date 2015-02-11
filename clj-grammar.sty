@@ -267,6 +267,7 @@
 % operational semantics
 \newmeta\openv{\rho}
 \newcommand\inopenv[3]{\ma{#1 (#2) = #3}}
+\newcommand\notinopenv[2]{\ma{#2 \not\in dom(#1)}}
 \newcommand\extendopenv[3]{\ma{#1[#2 \rightarrow #3]}}
 \newcommand\opsem[3]{\ma{#1 \vdash #2 \Downarrow #3}}
 \newcommand\notopsem[3]{\ma{#1 \not\vdash #2 \Downarrow #3}}

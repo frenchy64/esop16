@@ -8,10 +8,10 @@
 { \tajudgement {\taenv{}} {\hastype {\x{}} {\tatype{}}}
 }
 
-%\infer [TA-Nil]
-%{}
-%{ \tajudgement {\taenv{}} {\hastype {\nil{}} {\unknownhint{}}}
-%}
+\infer [TA-Nil]
+{}
+{ \tajudgement {\taenv{}} {\hastype {\nil{}} {\unknownhint{}}}
+}
 
 \infer [TA-True]
 {}
@@ -28,6 +28,15 @@
 { \tajudgement {\taenv{}} {\hastype {\k{}} {\Keyword{}}}
 }
 
+\infer [TA-Class]
+{}
+{ \tajudgement {\taenv{}} {\hastype{\class{}}{\Class{}}}}
+
+% never in user code
+%\infer [T-Instance]
+%{}
+%{ \tajudgement {\taenv{}} {\hastype{\classvalue{\classhint{}} {\overrightarrow {\classfieldpair{\fld{}} {\v{}}}}}{\unknownhint{}}}}
+
 \infer [TA-NewStatic]
 {}
 { \tajudgement {\taenv{}}
@@ -35,12 +44,12 @@
                            {\classhint{1}}}
 }
 
-%\infer [TA-NewRefl]
-%{}
-%{ \tajudgement {\taenv{}}
-%  {\hastype {\newexp {\class{}} {\overrightarrow {\e{}}}}
-%                     {\unknownhint{}}}
-%}
+\infer [TA-NewRefl]
+{}
+{ \tajudgement {\taenv{}}
+  {\hastype {\newexp {\class{}} {\overrightarrow {\e{}}}}
+                     {\unknownhint{}}}
+}
 
 \infer [TA-Abs]
 {}
@@ -74,12 +83,12 @@
                          {\tatype{}}}
 }
 
-%\infer [TA-FieldRefl]
-%{}
-%{ \tajudgement {\taenv{}}
-%               {\hastype {\fieldexp {\fld} {\e{}}}
-%                         {\unknownhint{}}}
-%  }
+\infer [TA-FieldRefl]
+{}
+{ \tajudgement {\taenv{}}
+               {\hastype {\fieldexp {\fld} {\e{}}}
+                         {\unknownhint{}}}
+  }
 
 \infer [TA-FieldStatic]
 {}
@@ -88,12 +97,12 @@
                          {\classhint{}}}
   }
 
-%\infer [TA-MethodRefl]
-%{}
-%{ \tajudgement {\taenv{}}
-%               {\hastype {\methodexp {\mth} {\e{}} {\overrightarrow {\e{i}}}}
-%                         {\unknownhint{}}}
-%  }
+\infer [TA-MethodRefl]
+{}
+{ \tajudgement {\taenv{}}
+               {\hastype {\methodexp {\mth} {\e{}} {\overrightarrow {\e{i}}}}
+                         {\unknownhint{}}}
+  }
 
 \infer [TA-MethodStatic]
 {}

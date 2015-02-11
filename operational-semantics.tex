@@ -206,21 +206,6 @@
 }
 {\opsem {\openv{}} {\isaapp {\e{1}} {\e{2}}} {\v{}}}
 
-\infer [B-MethodRefl]
-{}
-{\opsem {\openv{}} {\methodexp {mth} {\e{}} {\overrightarrow{\e{}}}}
-        {\reflerror{}}}
-
-\infer [B-FieldRefl]
-{}
-{\opsem {\openv{}} {\fieldexp {\fld{}} {\e{}}}
-        {\reflerror{}}}
-
-\infer [B-NewRefl]
-{}
-{\opsem {\openv{}} {\fieldexp {\fld{}} {\e{}}}
-        {\reflerror{}}}
-
 \infer [B-Assoc]
 {\opsem {\openv{}}
         {\e{m}} {\curlymap{\overrightarrow{({\v{a}}\ {\v{b}})}}}
@@ -274,6 +259,153 @@
 \end{mathpar}
 \caption{Operational Semantics}
 \end{figure*}
+
+\begin{figure*}
+\begin{mathpar}
+
+\infer [BS-MethodRefl]
+{}
+{\opsem {\openv{}} {\methodexp {mth} {\e{}} {\overrightarrow{\e{}}}}
+        {\wrong{}}}
+
+\infer [BS-FieldRefl]
+{}
+{\opsem {\openv{}} {\fieldexp {\fld{}} {\e{}}}
+        {\wrong{}}}
+
+\infer [BS-NewRefl]
+{}
+{\opsem {\openv{}} {\fieldexp {\fld{}} {\e{}}}
+        {\wrong{}}}
+
+
+\infer [BS-Beta]
+{ \opsem {\openv{}}
+         {\e{f}}
+         {\v{}}
+         \\\\
+  {\v{}} \not= {\const{}}
+  \\
+  {\v{}} \not= {\multi {\v{d}} {\disptable{}}}
+  \\\\
+  {\v{}} \not= {\closure {\openv{c}} {\abs {\x{}} {\t{}} {\e{b}}}}
+       }
+{ \opsem {\openv{}}
+         {\appexp {\e{f}} {\e{a}}}
+         {\wrong{}}
+       }
+
+\infer [BS-BetaMulti]
+{ \opsem {\openv{}}
+         {\e{f}}
+         {\multi {\v{}} {\disptable{}}}
+         \\\\
+  {\v{}} \not= {\const{}}
+  \\
+  {\v{}} \not= {\multi {\v{d}} {\disptable{}}}
+  \\\\
+  {\v{}} \not= {\closure {\openv{c}} {\abs {\x{}} {\t{}} {\e{b}}}}
+       }
+{ \opsem {\openv{}}
+         {\appexp {\e{f}} {\e{a}}}
+         {\wrong{}}
+       }
+
+\infer [BS-FieldTarget]
+{ \opsem {\openv{}}
+         {\e{}} 
+       {\v{1}}
+         \\\\
+         {\v{}} \not= {\classvalue{\classhint{1}} {\overrightarrow {\classfieldpair{\fld{i}} {\v{i}}}}}
+       }
+{ \opsem {\openv{}}
+         {\fieldstaticexp {\classhint{1}} {\classhint{2}} {\fld{}} {\e{}}}
+         {\wrong{}}
+   }
+
+
+\infer [BS-MethodTarget]
+{ \opsem {\openv{}}
+         {\e{m}}
+         {\v{}}
+  \\
+         {\v{}} \not= {\classvalue{\classhint{1}} {\overrightarrow {\classfieldpair{\fld{i}} {\v{i}}}}}
+}
+{\opsem {\openv{}}
+        {\methodstaticexp {\classhint{1}} {\overrightarrow{\classhint{a}}} {\classhint{2}} {mth} {\e{m}} {\overrightarrow{\e{a}}}}
+        {\wrong{}}
+      }
+
+\infer [BS-MethodArg]
+{ \opsem {\openv{}}
+         {\e{m}}
+         {\v{m}}
+  \\
+  \overrightarrow{
+  \opsem {\openv{}}
+         {\e{a}}
+         {\v{a}}
+       }
+       \\\\
+  \exists a.\ 
+  \overrightarrow{
+    \v{a} \not=\ {\classvalue{\classhint{a}} {\overrightarrow {\classfieldpair{\fld{i}} {\v{i}}}}}\ or\ \v{a} \not= \nil{}
+       }
+}
+{\opsem {\openv{}}
+        {\methodstaticexp {\classhint{1}} {\overrightarrow{\classhint{a}}} {\classhint{2}} {mth} {\e{m}} {\overrightarrow{\e{a}}}}
+        {\wrong{}}
+      }
+
+\infer [BS-NewArg]
+{ \overrightarrow{
+  \opsem {\openv{}}
+         {\e{i}}
+         {\v{i}}
+     }
+       \\\\
+  \exists i.\ 
+  \overrightarrow{
+    \v{i} \not=\ {\classvalue{\classhint{i}} {\overrightarrow {\classfieldpair{\fld{i}} {\v{i}}}}}\ or\ \v{i} \not= \nil{}
+       }
+}
+{\opsem {\openv{}}
+        {\newstaticexp {\overrightarrow{\classhint{i}}} {\classhint{1}} 
+                       {\class{}} {\overrightarrow{\e{i}}}}
+        {\wrong{}}
+      }
+
+\infer [BS-Assoc]
+{\opsem {\openv{}}
+        {\e{m}} {\v{}}
+        \\
+        \v{} \not= {\curlymap{\overrightarrow{({\v{a}}\ {\v{b}})}}}
+}
+{
+ \opsem {\openv{}}
+        {\assocexp {\e{m}} {\e{k}} {\e{v}}} 
+        {\wrong{}}
+                }
+
+\infer [BS-Get]
+{ \opsem {\openv{}}
+         {\e{m}} {\v{}}
+        \\
+        \v{} \not= {\curlymap{\overrightarrow{({\v{a}}\ {\v{b}})}}}
+}
+{\opsem {\openv{}}
+        {\getexp {\e{m}} {\e{k}}}
+        {\wrong{}}
+}
+
+\infer [BS-Local]
+{ \notinopenv {\openv{}} {\x{}}}
+{ \opsem {\openv{}} {\x{}} {\wrong{}} }
+
+\end{mathpar}
+\caption{Stuck programs}
+\end{figure*}
+
 \begin{figure*}
 \begin{mathpar}
 \infer [BE-ErrorWrong]
@@ -416,6 +548,17 @@
          {\wrongorerror{}}
        }
 
+\infer [BE-Delta]
+{ \opsem {\openv{}} {\e{}} {\const{}}
+  \\\\
+  \opsem {\openv{}} {\ep{}} {\v{}}
+  \\\\
+  \constantopsem{\const{}}{\v{}} = \wrongorerror{}
+}
+{ \opsem {\openv{}}
+         {\appexp {\e{}} {\ep{}}}
+         {\wrongorerror{}}
+       }
 
 \infer [BE-Field]
 { \opsem {\openv{}}
@@ -638,7 +781,7 @@
         {\wrongorerror{}}
 }
 \end{mathpar}
-\caption{Error and wrong propagation}
+\caption{Error and stuck propagation}
 \end{figure*}
 
 
