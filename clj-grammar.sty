@@ -266,6 +266,7 @@
 
 % operational semantics
 \newmeta\openv{\rho}
+\newcommand\inopenvnoeq[2]{\ma{#1 (#2)}}
 \newcommand\inopenv[3]{\ma{#1 (#2) = #3}}
 \newcommand\notinopenv[2]{\ma{#2 \not\in dom(#1)}}
 \newcommand\extendopenv[3]{\ma{#1[#2 \rightarrow #3]}}
@@ -416,3 +417,6 @@
 \newcommand\satisfies[2]{\ma{{#1} \models {#2}}}
 
 \newmeta\wrongorerror{b}
+
+\newcommand\consistentwith[2]{\ma{{#1}\ \text{is consistent with}\ {#2}}}
+\newcommand\isconsistent[1]{\ma{{#1}\ \text{is consistent}}}

@@ -68,21 +68,51 @@
         \end{itemize}
 \end{assumption}
 
+\begin{lemma}[Paths are independent] \label{lemma:pathindependent}
+  If \inopenv{\openv{}}{\object{}}{\v{}},
+     \inopenv{\openv{}}{\path{\pathelem{}}{\object{}}}{\vp{}},
+     and \inopenv{\openv{1}}{\objectp{}}{\v{}} then
+       \inopenv{\openv{1}}{\path{\pathelem{}}{\objectp{}}}{\vp{}}
+ \begin{proof}
+   TODO
+ \end{proof}
+\end{lemma}
+
+\begin{definition} \label{definition:consistentwith}
+  \consistentwith{\v{}}{\openv{}}
+  iff
+
+  $\forall$ \closure{\openv{1}}{\abs{\x{}}{\s{}}{\e{}}} in \v{}.
+
+  if \judgement{}{\hastype{\closure{\openv{1}}{\abs{\x{}}{\s{}}{\e{}}}}{\t{}}}{\filterset{\topprop{}}{\botprop{}}}{\emptyobject{}}
+  and $\forall$ \object{} in \t{}, either \object{} = \emptyobject{}, or \object{} = \x{} or 
+\inopenvnoeq{\openv{}}{\object{}} = {\inopenvnoeq{\openv{1}}{\object{}}}.
+\end{definition}
+
+\begin{definition} \label{definition:isconsistent}
+  \isconsistent{\openv{}}
+  iff
+
+  $\forall \v{} \in rng(\openv{})$, \consistentwith{\v{}}{\openv{}}.
+\end{definition}
+
 \begin{lemma} \label{lemma:soundness}
-If \judgement{\propenv{}}{\hastype{\e{}}{\t{}}}{\filterset{\thenprop{\prop{}}}{\elseprop{\prop{}}}}{\object{}}
-and
-\satisfies{\openv{}}{\propenv{}} then
+If \judgement{\propenv{}}{\hastype{\e{}}{\t{}}}{\filterset{\thenprop{\prop{}}}{\elseprop{\prop{}}}}{\object{}},
+\satisfies{\openv{}}{\propenv{}}, and 
+\isconsistent{\openv{}}
+then
 \begin{itemize}
   \item
     if
     \opsem {\openv{}} {\e{}} {\v{}} 
-then of the following hold:
+then all of the following hold:
 \begin{enumerate}
   \item either \object{} = \emptyobject{} or \inopenv {\openv{}} {\object{}} {\v{}},
   \item either \v{} $\not=$ \false\ (or \nil) and {\satisfies{\openv{}}{\thenprop{\prop{}}}} or 
-               \v{}       = \false\ (or \nil) and {\satisfies{\openv{}}{\elseprop{\prop{}}}}, and
+               \v{}       = \false\ (or \nil) and {\satisfies{\openv{}}{\elseprop{\prop{}}}},
   \item \judgement{}{\hastype{\v{}}{\t{}}}{\filterset{\thenprop{\propp{}}}{\elseprop{\propp{}}}}{\objectp{}}
-        for some \thenprop{\propp{}}, \elseprop{\propp{}} and {\objectp{}}
+        for some \thenprop{\propp{}}, \elseprop{\propp{}} and {\objectp{}}, and
+      \item \consistentwith{\v{}}{\openv{}}
 \end{enumerate}
 
   \item
@@ -159,6 +189,37 @@ Part 3 holds as \e{} can only be reduced to itself via B-Val.
 
 \end{itemize}
 \end{case}
+
+\begin{case}[T-Class] \e{} = {\class{}},
+  \t{} = {\Class{}},
+  \thenprop{\prop{}} = {\topprop{}},
+  \elseprop{\prop{}} = {\botprop{}},
+  \object{} = {\emptyobject{}}
+
+  \begin{itemize}
+    \item[]
+      \begin{subcase}[B-Val] \v{} = {\class{}}
+
+        Similar to T-True.
+      \end{subcase}
+  \end{itemize}
+\end{case}
+
+\begin{case}[T-Instance] \e{} = {\classvalue{\classhint{}} {\overrightarrow {\classfieldpair{\fld{}} {\v{}}}}},
+  \t{} = {\class{}},
+  \thenprop{\prop{}} = {\topprop{}},
+  \elseprop{\prop{}} = {\botprop{}},
+  \object{} = {\emptyobject{}}
+
+  \begin{itemize}
+    \item[]
+      \begin{subcase}[B-Val] \v{} = {\classvalue{\classhint{}} {\overrightarrow {\classfieldpair{\fld{}} {\v{}}}}}
+
+        Similar to T-True.
+      \end{subcase}
+  \end{itemize}
+\end{case}
+
 
 \begin{case}[T-Nil]
 \e{} = \nil, \t{} = \Nil, \thenprop{\prop{}} = \botprop{}, \elseprop{\prop{}} = \topprop{}, \object{} = \emptyobject{},
@@ -264,16 +325,6 @@ Part 3 follows from the induction hypothesis on \e{2}.
 
         As above.
 \end{subcase}
-  \item[]
-
-\begin{subcase}[BW-Do1]
-  Unreachable by the induction hypothesis on \e{1}.
-\end{subcase}
-  \item[]
-
-\begin{subcase}[BW-Do2]
-  Unreachable by the induction hypothesis on \e{2}.
-\end{subcase}
 \end{itemize}
 \end{case}
 
@@ -348,11 +399,6 @@ instance of \class{} via \newjavaliteral (by assumption \ref{assumption:new}), a
         As above.
 
 \end{subcase}
-  \item[]
-
-\begin{subcase}[BW-New1]
-  Unreachable by the induction hypothesis on {\e{i}}.
-\end{subcase}
 \end{itemize}
 \end{case}
 
@@ -391,10 +437,6 @@ and \javatotcnil{\classhint{2}} {\t{}}.
 
 \end{subcase}
 
-\item[]
-\begin{subcase}[BW-Field]
-  Unreachable by the induction hypothesis on \e{1}.
-\end{subcase}
 \end{itemize}
 \end{case}
 
@@ -485,12 +527,6 @@ and \javatotcnil{\classhint{2}} {\t{}}.
 
   As above.
 
-\end{subcase}
-  \item[]
-\begin{subcase}[BW-Method1]
-\end{subcase}
-  \item[]
-\begin{subcase}[BW-Method2]
 \end{subcase}
 \end{itemize}
 
@@ -640,21 +676,28 @@ by noting \judgementtwo {} {\hastype {\v{d}} {\t{d}}},
 
       %TODO
 \begin{case}[T-App]
+  \begin{itemize}
+    \item
   \e{} = {\appexp {\e{1}} {\e{2}}},
+    \item
   \t{} = {\replacefor {\t{f}}
                       {\object{2}}
                       {\x{}}},
+    \item
   {\thenprop {\prop{}}} = 
                  {\replacefor {\thenprop {\prop{f}}}
                               {\object{2}}
                               {\x{}}},
+    \item
   {\elseprop {\prop{}}} = 
                  {\replacefor {\elseprop {\prop{f}}}
                               {\object{2}}
                               {\x{}}},
+    \item
   \object{} = {\replacefor {\object{f}}
                            {\object{2}}
                            {\x{}}},
+    \item
   \judgement {\propenv{}} {\hastype {\e{1}} {\ArrowOne {\x{}} {\s{}}
                                                        {\t{f}}
                                                        {\filterset {\thenprop {\prop{f}}}
@@ -663,12 +706,13 @@ by noting \judgementtwo {} {\hastype {\v{d}} {\t{d}}},
                 {\filterset {\thenprop {\prop{1}}}
                             {\elseprop {\prop{1}}}}
                 {\object{1}},
+    \item
   \judgement {\propenv{}}
                  {\hastype {\e{2}} {\s{}}}
                  {\filterset {\thenprop {\prop{2}}}
                              {\elseprop {\prop{2}}}}
                  {\object{2}},
-  \opsem{\openv{}}{\e{}}{\v{}}
+  \end{itemize}
 %                 IHe1 = $\forall{\openv{1}},
 %                               {\v{1}},
 %                               {\thenprop {\prop{1}}},
@@ -722,17 +766,24 @@ by noting \judgementtwo {} {\hastype {\v{d}} {\t{d}}},
 \begin{itemize}
   \item[]
 \begin{subcase}[B-BetaClosure]
+  \begin{itemize}
+    \item
+  \opsem{\openv{}}{\e{}}{\v{}},
+    \item
   \opsem {\openv{}}
          {\e{1}}
          {\closure {\openv{c}} {\abs {\x{}} {\s{}} {\e{b}}}},
+    \item
   \opsem {\openv{}}
          {\e{2}}
          {\v{2}},
+    \item
   \opsem {\extendopenv {\openv{c}} {\x{}} {\v{2}}}
          {\e{b}}
          {\v{}}
+     \end{itemize}
 
-         To prove part 1, we know by inversion on \e{1} from T-Clos
+         By inversion on \e{1} from T-Clos
          there is some environment {\propenvc{}} such that
          \begin{itemize}
            \item
@@ -768,16 +819,23 @@ by noting \judgementtwo {} {\hastype {\v{d}} {\t{d}}},
                \item otherwise \object{2} = {\path {\pathelem{2}} {\y{}}}, where,
                  because
                 \object{} = {\replacefor {\path {\pathelem{f}} {\x{}}}
-                                         {\path {\pathelem{2}} {\y{}}}
+                                         {\object{2}}
                                          {\x{}}},
-                                         by substitution
-                                         \object{} = {\path {\pathelem{f}} {\path {\pathelem{2}} {\y{}}}}.
-                                         To prove \inopenv{\openv{}}{\path {\pathelem{f}} {\path {\pathelem{2}} {\y{}}}}{\v{}}
-                                         we note by the induction hypothesis on {\e{2}} that 
-                                         \inopenv{\openv{}}{\path {\pathelem{2}} {\y{}}}{\v{2}}
-  \opsem {\extendopenv {\openv{c}} {\x{}} {\v{2}}}
-         {\e{b}}
-         {\v{}}
+                 by substitution
+                 \object{} = {\path {\pathelem{f}} {\object{2}}}.
+                 To prove \inopenv{\openv{}}{\object{}}{\v{}}
+                 we note 
+                 \inopenv {\extendopenv {\openv{c}} {\x{}} {\v{2}}}
+                          {\x{}}
+                          {\v{2}},
+                 \inopenv {\extendopenv {\openv{c}} {\x{}} {\v{2}}}
+                          {\path {\pathelem{f}} {\x{}}}
+                          {\v{}}
+                 and by the induction hypothesis on {\e{2}} that 
+                 \inopenv{\openv{}}{\object{2}}{\v{2}},
+                 so we can apply lemma \ref{lemma:pathindependent}
+                 to derive
+                 \inopenv{\openv{}}{\path{\pathelem{f}}{\object{2}}}{\v{}},
 
              \end{itemize}
            \item otherwise \object{f} = {\path {\pathelem{f}} {\y{}}} where $\x{} \not= \y{}$
@@ -899,8 +957,8 @@ by noting \judgementtwo {} {\hastype {\v{d}} {\t{d}}},
                                                   {\botprop{}}}
                                       {\emptyobject{}}}
 
-                                      Part 1 is trivial since \object{} = \emptyobject{} after substition.
-                                      Part 2 holds vacuously as both propositions are \botprop{} after substition.
+                                      Part 1 is trivial since \object{} = \emptyobject{} after substitution.
+                                      Part 2 holds vacuously as both propositions are \botprop{} after substitution.
                                       Finally part 3 holds since {\judgementtwo{}{\hastype{\errorval{\v{2}}}{\Bot{}}}}.
 
       \end{subcase}
