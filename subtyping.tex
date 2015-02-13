@@ -58,17 +58,24 @@
 
 \infer [S-PMultiFn]
 { \issubtypein {}
-  {\s{}}
-  {\ArrowOne {\xp{}} {\sp{}} {\tp{}}
+  {\s{t}}
+  {\ArrowOne {\x{}} {\s{}} {\t{}}
+                                  {\filterset {\thenprop {\prop{}}}
+                                              {\elseprop {\prop{}}}}
+                                      {\object{}}}
+                                      \\
+  \issubtypein {}
+  {\s{d}}
+  {\ArrowOne {\x{}} {\s{}} {\tp{}}
                                   {\filterset {\thenprop {\propp{}}}
                                               {\elseprop {\propp{}}}}
                                       {\objectp{}}}
 }
-{ \issubtypein {} {\MultiFntype{\s{}}{\s{d}}}
-                  {\ArrowOne {\xp{}} {\sp{}} {\tp{}}
-                                  {\filterset {\thenprop {\propp{}}}
-                                              {\elseprop {\propp{}}}}
-                                      {\objectp{}}}}
+{ \issubtypein {} {\MultiFntype{\s{t}}{\s{d}}}
+                  {\ArrowOne {\x{}} {\s{}} {\t{}}
+                             {\filterset {\thenprop {\prop{}}}
+                                         {\elseprop {\prop{}}}}
+                             {\object{}}}}
 
 \infer [S-HMap]
 { \forall i.\ ({\k{i}},\ \s{i}) \in \mandatory{} \text{ and } \issubtypein {} {\s{i{}}} {\t{i{}}}
@@ -96,14 +103,14 @@
 \infer [S-MultiMono]
 {}
 {\issubtypein {}
-  {\MultiFntype {\ArrowOne {\x{}} {\s{1}} {\t{1}}
-                          {\filterset {\thenprop{\prop{1}}}
-                                      {\elseprop{\prop{1}}}}
-                          {\object{1}}}
-                {\ArrowOne {\x{}} {\s{2}} {\t{2}}
-                          {\filterset {\thenprop{\prop{2}}}
-                                      {\elseprop{\prop{2}}}}
-                          {\object{2}}}
+  {\MultiFntype {\ArrowOne {\x{}} {\s{}} {\t{}}
+                          {\filterset {\thenprop{\prop{}}}
+                                      {\elseprop{\prop{}}}}
+                          {\object{}}}
+                {\ArrowOne {\x{}} {\s{}} {\tp{}}
+                          {\filterset {\thenprop{\propp{}}}
+                                      {\elseprop{\propp{}}}}
+                          {\objectp{}}}
                 }
   {\PMulti{}}
 }
