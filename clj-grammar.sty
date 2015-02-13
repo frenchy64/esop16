@@ -122,6 +122,7 @@
 \newmeta\x{x}                   % not sure if \x is reserved...
 \newmeta\xp{x{'}}                   % not sure if \x is reserved...
 \newmeta\y{y}
+\newmeta\z{z}
 \newmeta\v{v}
 \newmeta\vp{v'}
 \newmeta\class{C}
@@ -371,8 +372,9 @@
 \newcommand\filterset[2]{\ma{#1 | #2}}
 \newcommand\filtersetparen[2]{\ma{(\filterset{#1}{#2})}}
 \newcommand\thenprop[1]{\ma{{#1}_+}}
+\newcommand\pluspolarity[1]{\ma{{#1}_{\pm}}}
 \newcommand\elseprop[1]{\ma{{#1}_-}}
-\newcommand\flowprop[1]{\ma{{#1}_\rightarrow}}
+\newcommand\minuspolarity[1]{\ma{{#1}_{\mp}}}
 
 % objects
 \newcommand\path[2]{\ma{#1(#2)}}
@@ -426,7 +428,7 @@
 
 \newcommand\consistentwith[2]{\ma{{#1}\ \text{is consistent with}\ {#2}}}
 \newcommand\isconsistent[1]{\ma{{#1}\ \text{is consistent}}}
-\newcommand\fv[1]{\ma{{\bf{fv}}(#1)}}
+\newcommand\fv[1]{\ma{{\metafunctionfont{fv}}(#1)}}
 
 \newcommand\istrueval[1]{\ma{\metafunctionfont{TrueVal}(#1)}}
 \newcommand\isfalseval[1]{\ma{\metafunctionfont{FalseVal}(#1)}}
