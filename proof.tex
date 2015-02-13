@@ -78,6 +78,18 @@
 \end{proof}
 \end{lemma}
 
+\begin{lemma} \label{lemma:isa}
+  If \judgement{\propenv{}}{\hastype{\e{1}}{\s{}}}{\filterset{\thenprop{\prop{1}}}{\elseprop{\prop{1}}}}{\object{1}},
+     \judgement{\propenv{}}{\hastype{\e{2}}{\t{}}}{\filterset{\thenprop{\prop{2}}}{\elseprop{\prop{2}}}}{\object{2}},
+     \
+     \opsem{\openv{}}
+  and \satisfies{\openv{}}{\prop{}}
+  then \satisfies{\openvp{}}{\prop{}}.
+\begin{proof}
+  TODO
+\end{proof}
+\end{lemma}
+
 \begin{lemma} \label{lemma:substfilter}
   If 
   \begin{itemize}
