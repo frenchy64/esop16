@@ -153,7 +153,7 @@
 \newcommand\emptymap[1]{\ma{\{\}}}
 \newcommand\roundpair[2]{\ma{(#1, #2)}}
 \newcommand\curlymapvaloverright[2]{\ma{\{{\overrightarrow{\roundpair{#1}{#2}}}\}}}
-\newcommand\extendmap[3]{\ma{#1[#2 \rightarrow #3]}}
+\newcommand\extendmap[3]{\ma{#1[#2 \mapsto #3]}}
 \newcommand\getmap[2]{\ma{#1[#2]}}
 \newcommand\keyinmap[2]{\ma{{#1} \in dom({#2})}}
 \newcommand\keynotinmap[2]{\ma{{#1} \not\in dom({#2})}}
@@ -271,7 +271,7 @@
 \newcommand\inopenvnoeq[2]{\ma{#1 (#2)}}
 \newcommand\inopenv[3]{\ma{#1 (#2) = #3}}
 \newcommand\notinopenv[2]{\ma{#2 \not\in dom(#1)}}
-\newcommand\extendopenv[3]{\ma{#1[#2 \rightarrow #3]}}
+\newcommand\extendopenv[3]{\ma{#1[#2 \mapsto #3]}}
 \newcommand\opsem[3]{\ma{#1 \vdash #2 \Downarrow #3}}
 \newcommand\notopsem[3]{\ma{#1 \not\vdash #2 \Downarrow #3}}
 \newcommand\closure[2]{\ma{[#1, #2]_{closure}}}
@@ -280,7 +280,7 @@
 \newcommand\emptydisptable[0]{\{\}}
 \newmeta\disptable{m}
 \newmeta\disptablep{m'}
-\newcommand\extenddisptable[3]{\ma{#1[#2 \rightarrow #3]}}
+\newcommand\extenddisptable[3]{\ma{#1[#2 \mapsto #3]}}
 \newcommand\getmethodliteral[0]{\ma{\metafunctionfont{GetMethod}}}
 \newcommand\getmethod[3]{\getmethodliteral(#1, #2) = #3}
 \newcommand\getmethodalign[3]{\getmethodliteral(#1, #2) &=& #3}
