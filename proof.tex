@@ -78,15 +78,72 @@
 \end{proof}
 \end{lemma}
 
-\begin{lemma} \label{lemma:isa}
-  If \judgement{\propenv{}}{\hastype{\e{1}}{\s{}}}{\filterset{\thenprop{\prop{1}}}{\elseprop{\prop{1}}}}{\object{1}},
+\begin{lemma}[Equal types] \label{lemma:equaltypes}
+  If
+  \begin{itemize}
+    \item
+      \judgement{\propenv{}}{\hastype{\e{1}}{\s{}}}{\filterset{\thenprop{\prop{1}}}{\elseprop{\prop{1}}}}{\object{1}},
+    \item
      \judgement{\propenv{}}{\hastype{\e{2}}{\t{}}}{\filterset{\thenprop{\prop{2}}}{\elseprop{\prop{2}}}}{\object{2}},
-     \
-     \opsem{\openv{}}
-  and \satisfies{\openv{}}{\prop{}}
-  then \satisfies{\openvp{}}{\prop{}}.
+    \item
+     \satisfies{\openv{}}{\propenv{}},
+    \item
+     \opsem{\openv{}}{\e{1}}{\v{1}},
+    \item
+     \opsem{\openv{}}{\e{2}}{\v{2}}, and
+    \item \v{1} = \v{2}
+  \end{itemize}
+  then
+  \begin{itemize}
+    \item
+      \judgement{}{\hastype{\v{2}}{\s{}}}{\filterset{\thenprop{\prop{1}}}{\elseprop{\prop{1}}}}{\object{1}}, and
+    \item
+     \judgement{}{\hastype{\v{1}}{\t{}}}{\filterset{\thenprop{\prop{2}}}{\elseprop{\prop{2}}}}{\object{2}}.
+  \end{itemize}
+
+  \begin{proof}
+    TODO
+  \end{proof}
+\end{lemma}
+
+\begin{lemma}[IsA] \label{lemma:isa}
+
+  If
+  \begin{itemize}
+    \item
+      \judgement{\propenv{}}{\hastype{\e{1}}{\s{}}}{\filterset{\thenprop{\prop{1}}}{\elseprop{\prop{1}}}}{\object{1}},
+    \item
+     \judgement{\propenv{}}{\hastype{\e{2}}{\t{}}}{\filterset{\thenprop{\prop{2}}}{\elseprop{\prop{2}}}}{\object{2}},
+    \item
+     \satisfies{\openv{}}{\propenv{}},
+    \item
+     \opsem{\openv{}}{\e{1}}{\v{1}},
+    \item
+     \opsem{\openv{}}{\e{2}}{\v{2}},
+    \item
+      \isaopsem{\v{1}}{\v{2}} = {\v{b}}, and
+    \item
+      \isacompare{\s{}}{\object{2}}{\t{}}{\filterset{\thenprop{\prop{}}}{\elseprop{\prop{}}}}
+  \end{itemize}
+  then
+  either {\istrueval{\v{b}}} and \satisfies{\openv{}}{\thenprop{\prop{}}}
+  or     {\isfalseval{\v{b}}} and \satisfies{\openv{}}{\elseprop{\prop{}}}.
 \begin{proof}
-  TODO
+  By cases on {\v{b}}.
+
+  \begin{case}[{\istrueval{\v{b}}}]
+    \thenprop{\prop{}} = {\replacefor{\isprop{\t{}}{\x{}}}{\object{2}}{\x{}}}
+
+  By cases on the definition of \isaopsemliteral.
+
+  \begin{subcase} \v{1} = \v{2}
+
+    By lemma \ref{lemma:equaltypes} we know
+     \judgement{}{\hastype{\v{1}}{\t{}}}{\filterset{\thenprop{\prop{2}}}{\elseprop{\prop{2}}}}{\object{2}},
+  \end{subcase}
+    \item \v{1} = \class{1} and \v{2} = \class{2} where \issubtype{}{1}{\class{1}}{\class{2}}
+   may be be safely upcast to the same type as down {\object{1}}.
+  \end{case}
 \end{proof}
 \end{lemma}
 
@@ -1283,7 +1340,7 @@ so we know $\forall v \in \fv{\thenprop{\prop{}}} - \x{}$,
   \begin{itemize}
     \item \v{1} = \v{2} so {\v{2}} must be the same type as down {\object{1}}, or
     \item \v{1} = \classvaluemeta{1} and \v{2} = \classvaluemeta{2} where \classvaluemeta{1}
-  is a subclass of \classvaluemeta{2}, so {\v{2}} may be be safely upcast to the same type as down {\object{1}}.
+    is a subclass of \classvaluemeta{2}, so {\v{2}} may be be safely upcast to the same type as down {\object{1}}.
   \end{itemize}
   Part 3 holds because by the definition of \isaopsemliteral
   \v{} can only be \true or \false, which are both subtypes of
