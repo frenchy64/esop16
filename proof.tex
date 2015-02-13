@@ -2,82 +2,143 @@
 
 \begin{assumption}[\newjavaliteral] \label{assumption:new}
   If\ $\forall i.\ {\v{i}} = {\classvalue{\classhint{i}}{\overrightarrow{\classfieldpair{\fld{j}} {\v{j}}}}}\ or\ {\v{i}}= {\nil}$
-  then
+  then either
   \begin{itemize}
-  \item if $\newjava {\classhint{}}
+  \item $\newjava {\classhint{}}
                 {\overrightarrow{\classhint{i}}}
                 {\overrightarrow{\v{i}}}
-                {\v{}}$
-                  then
-                  \begin{itemize}
-                    \item
-                      \v{} = 
-                  ${\classvalue{\classhint{}}{\overrightarrow {\classfieldpair{\fld{k}} {\v{k}}}}}$
-                  \end{itemize}
-  \item
-                  otherwise 
+                {\classvalue{\classhint{}}{\overrightarrow {\classfieldpair{\fld{k}} {\v{k}}}}}$, or
+  \item 
         $\newjava {\classhint{}}
                 {\overrightarrow{\classhint{i}}}
                 {\overrightarrow{\v{i}}}
-                {\errorval{\v{e}}}$.
-            \end{itemize}
+                {\errorval{\v{e}}}$, or
+  \item $\newjavanoeq {\classhint{}}
+                {\overrightarrow{\classhint{i}}}
+                {\overrightarrow{\v{i}}}$
+                is undefined.
+  \end{itemize}
 \end{assumption}
 
 \begin{assumption}[\getfieldliteral] \label{assumption:field}
   If\ {\v{1}} = ${\classvalue{\classhint{1}}{{\classfieldpair{\fld{}}{\v{f}}, {\overrightarrow{\classfieldpair{\fld{l}} {\v{l}}}}}}}$,
-  then 
+  then either
   \begin{itemize}
     \item
-         if \getfieldjava{\classhint{1}} {\v{1}} {\fld{}} {\classhint{2}} {\v{}}
-                  then \v{} = \v{f} and either
+      \getfieldjava{\classhint{1}} {\v{1}} {\fld{}} {\classhint{2}}{\v{f}},
+                  and either
                   \begin{itemize}
                     \item
                   \v{f} = ${\classvalue{\classhint{2}}{\overrightarrow{\classfieldpair{\fld{m}} {\v{m}}}}}$
                    or 
                     \item
-                  \v{f} = \nil,
+                  \v{f} = \nil, or
                   \end{itemize}
     \item
-      otherwise \getfieldjava{\classhint{1}} {\v{1}} {\fld{}} {\classhint{2}} {\errorval{\v{e}}}.
+      \getfieldjava{\classhint{1}} {\v{1}} {\fld{}} {\classhint{2}} {\errorval{\v{e}}}.
   \end{itemize}
 \end{assumption}
 
 \begin{assumption}[\invokejavamethodliteral] \label{assumption:method}
   If\ {\v{1}} = {\classvalue{\classhint{1}}{\overrightarrow{\classfieldpair{\fld{l}} {\v{l}}}}},
   $\forall i.\ {\v{i}}={\classvalue{\classhint{i}}{\overrightarrow{\classfieldpair{\fld{j}} {\v{j}}}}}\ or\ {\v{i}}={\nil}$
-         then 
+         then either
          \begin{itemize}
-           \item if
+           \item
   \invokejavamethod {\classhint{1}} {\v{m}} {mth}
                     {\overrightarrow{\classhint{i}}} {\overrightarrow{\v{i}}}
                     {\classhint{2}}
                     {\v{}}
-                  then either
+                  and either
                   \begin{itemize}
                     \item
                   \v{} = ${\classvalue{\classhint{2}}{\overrightarrow{\classfieldpair{\fld{m}} {\v{m}}}}}$
                   or\ 
-                  \v{} = \nil,  or
+                  \v{} = \nil, or
                   \end{itemize}
           \item
-            otherwise
   \invokejavamethod {\classhint{1}} {\v{m}} {mth}
                     {\overrightarrow{\classhint{i}}} {\overrightarrow{\v{i}}}
                     {\classhint{2}}
-                    {\errorval{\v{e}}}.
+                    {\errorval{\v{e}}}, or
+          \item 
+  \invokejavamethodnoeq {\classhint{1}} {\v{m}} {mth}
+                    {\overrightarrow{\classhint{i}}} {\overrightarrow{\v{i}}}
+                    {\classhint{2}}
+                    is undefined.
         \end{itemize}
 \end{assumption}
 
+\begin{lemma} \label{lemma:envagree}
+  If \openv{} and \openvp{} agree on \fv{\prop{}}
+  and \satisfies{\openv{}}{\prop{}}
+  then \satisfies{\openvp{}}{\prop{}}.
+\begin{proof}
+  Since the relevant parts of \openv{} and \openvp{} agree, the proof follows trivially.
+\end{proof}
+\end{lemma}
+
+\begin{lemma} \label{lemma:substfilter}
+  If 
+  \begin{itemize}
+    \item \prop{1} = {\replacefor {\prop{2}} {\object{}} {\x{}}},
+    \item
+  {\satisfies{\openv{2}}{\prop{2}}},
+    \item
+  $\forall v \in \fv{\prop{2}} - \x{}$.
+                              {\inopenvnoeq{\openv{1}}{v}} = {\inopenvnoeq {\openv{2}}{v}},
+    \item
+  and {\inopenvnoeq{\openv{2}}{\x{}}} = {\inopenvnoeq{\openv{1}}{\object{}}}
+  \end{itemize}
+  then \satisfies{\openv{1}}{\prop{1}}.
+
+  \begin{proof}
+    By induction on the derivation of the model judgement.
+  \end{proof}
+\end{lemma}
+
 \begin{lemma}[Paths are independent] \label{lemma:pathindependent}
-  If \inopenv{\openv{}}{\object{}}{\v{}},
-     \inopenv{\openv{}}{\path{\pathelem{}}{\object{}}}{\vp{}},
-     and \inopenv{\openv{1}}{\objectp{}}{\v{}} then
-       \inopenv{\openv{1}}{\path{\pathelem{}}{\objectp{}}}{\vp{}}
+  If \inopenvnoeq{\openv{}}{\object{}} = \inopenvnoeq{\openv{1}}{\objectp{}}
+  then \inopenvnoeq{\openv{}}{\path{\pathelem{}}{\object{}}} =
+       \inopenvnoeq{\openv{1}}{\path{\pathelem{}}{\objectp{}}}
  \begin{proof}
-   TODO
+   By induction on \pathelem{}.
+   \begin{case}[\pathelem{} = \emptypath{}]
+     \inopenvnoeq{\openv{}}{\object{}} = {\inopenvnoeq{\openv{}}{\objectp{}}}
+
+     As 
+     \inopenvnoeq{\openv{}}{\path{\emptypath{}}{\object{}}} = \inopenvnoeq{\openv{}}{\object{}}
+     and
+     \inopenvnoeq{\openv{}}{\path{\emptypath{}}{\objectp{}}} = \inopenvnoeq{\openv{}}{\objectp{}}
+     we can conclude 
+     \inopenvnoeq{\openv{}}{\path{\emptypath{}}{\object{}}} = \inopenvnoeq{\openv{}}{\path{\emptypath{}}{\objectp{}}}.
+   \end{case}
+   \begin{case}[\pathelem{} = {\destructpath{\pesyntax{}}{\pathelem{1}}}]
+     \inopenvnoeq{\openv{}}{\object{}} = {\inopenvnoeq{\openv{}}{\objectp{}}}
+
+     By cases on \pesyntax{}.
+
+     \begin{itemize}
+       \item[]
+   \begin{subcase}[\pesyntax{} = {\keype{\k{}}}] 
+
+     TODO
+     By the induction hypothesis on {\pathelem{1}}
+     we know {\inopenvnoeq{\openv{}}{\path{\pathelem{1}}{\object{}}}} =
+             {\inopenvnoeq{\openv{1}}{\path{\pathelem{1}}{\objectp{}}}}.
+             By the definition of path translation 
+             {\inopenvnoeq{\openv{}}{\path{\pathelem{1}}{\object{}}}} = {\getexp {{\openv{}}(\object{})}{\k{}}}
+             and 
+             {\inopenvnoeq{\openv{}}{\path{\pathelem{1}}{\objectp{}}}} = {\getexp {{\openv{}}(\objectp{})}{\k{}}}
+   \end{subcase} 
+     \end{itemize}
+     TODO
+   \end{case}
  \end{proof}
 \end{lemma}
 
+% TODO is this too strong? Should it include things to the left of the arrow? What if the argument type includes \x{}?
+% what does "either" here mean, and can it derive contradictory facts?
 \begin{definition} \label{definition:consistentwith}
   \consistentwith{\v{}}{\openv{}}
   iff
@@ -85,9 +146,21 @@
   $\forall$ \closure{\openv{1}}{\abs{\x{}}{\s{}}{\e{}}} in \v{}.
 
   if \judgement{}{\hastype{\closure{\openv{1}}{\abs{\x{}}{\s{}}{\e{}}}}{\t{}}}{\filterset{\topprop{}}{\botprop{}}}{\emptyobject{}}
-  and $\forall$ \object{} in \t{}, either \object{} = \emptyobject{}, or \object{} = \x{} or 
-\inopenvnoeq{\openv{}}{\object{}} = {\inopenvnoeq{\openv{1}}{\object{}}}.
+  and $\forall$ \objectp{} in \t{}, either \objectp{} = \emptyobject{}, or \objectp{} = {\path{\pathelemp{}}{\x{}}},
+  or 
+\inopenvnoeq{\openv{}}{\objectp{}} = {\inopenvnoeq{\openv{1}}{\objectp{}}}.
 \end{definition}
+
+\begin{definition} \label{definition:istrueval}
+  \istrueval{\v{}} iff {\v{}} $\not=$ \false\ and {\v{}} $\not=$ \nil.
+
+\end{definition}
+
+\begin{definition} \label{definition:isfalseval}
+  \isfalseval{\v{}} iff {\v{}} $=$ \false\ or {\v{}} $=$ \nil.
+
+\end{definition}
+
 
 \begin{definition} \label{definition:isconsistent}
   \isconsistent{\openv{}}
@@ -108,11 +181,11 @@ then
 then all of the following hold:
 \begin{enumerate}
   \item either \object{} = \emptyobject{} or \inopenv {\openv{}} {\object{}} {\v{}},
-  \item either \v{} $\not=$ \false\ (or \nil) and {\satisfies{\openv{}}{\thenprop{\prop{}}}} or 
-               \v{}       = \false\ (or \nil) and {\satisfies{\openv{}}{\elseprop{\prop{}}}},
+  \item either {\istrueval{\v{}}} and {\satisfies{\openv{}}{\thenprop{\prop{}}}} or 
+               {\isfalseval{\v{}}} and {\satisfies{\openv{}}{\elseprop{\prop{}}}},
   \item \judgement{}{\hastype{\v{}}{\t{}}}{\filterset{\thenprop{\propp{}}}{\elseprop{\propp{}}}}{\objectp{}}
         for some \thenprop{\propp{}}, \elseprop{\propp{}} and {\objectp{}}, and
-      \item \consistentwith{\v{}}{\openv{}}
+  \item \consistentwith{\v{}}{\openv{}}
 \end{enumerate}
 
   \item
@@ -572,46 +645,74 @@ and {\emptydisptable} vacuously satisfies the other premises of T-Multi, so we a
 \end{case}
 
 \begin{case}[T-DefMethod]
+        \ 
+
+        \begin{enumerate}
+          \item
   \e{} = {\extendmultiexp {\e{m}} {\e{v}} {\e{f}}},
+          \item
   \e{f} = {\abs {\x{}} {\t{1}} {\e{b}}},
+          \item
   \t{} = {\MultiFntype {\t{m}} {\t{d}}},
+          \item
   \thenprop{\prop{}} = {\topprop{}},
+          \item
   \elseprop{\prop{}} = {\botprop{}},
+          \item
   \object{} = {\emptyobject{}},
+          \item
   \t{m} = {\ArrowOne {\x{}} {\t{1}} {\s{}}
                      {\filterset {\thenprop {\prop{m}}}
                                  {\elseprop {\prop{m}}}}
                      {\object{m}}},
+          \item
   \t{d} = {\ArrowOne {\x{}} {\t{1}} {\sp{}}
                      {\filterset {\thenprop {\prop{d}}}
                                  {\elseprop {\prop{d}}}}
                      {\object{d}}},
+          \item
   \judgementtwo {\propenv{}} {\hastype {\e{m}} {\MultiFntype {\t{m}} {\t{d}}}},
+          \item
   \isacompare{\sp{}}{\object{d}}{\t{v}}{\filterset {\thenprop {\prop{i}}} {\elseprop {\prop{i}}}},
+          \item
   \judgementtwo {\propenv{}}
                {\hastype {\e{v}} {\t{v}}},
+          \item
   \judgement {\propenv{}, {\isprop{\t{1}} {\x{}}}, {\thenprop {\prop{i}}}}
            {\hastype {\e{b}} {\s{}}}
            {\filterset {\thenprop {\prop{m}}}
                        {\elseprop {\prop{m}}}}
            {\object{m}}
+        \end{enumerate}
 
   \begin{itemize}
     \item[]
       \begin{subcase}[B-DefMethod]
+        \ 
+        
+        \begin{enumerate}[resume]
+          \item
        \v{} = {\multi {\v{d}} {\disptablep{}}},
+          \item
         \opsem {\openv{}}
                {\e{m}}
                {\multi {\v{d}} {\disptable{}}},
+          \item
   \opsem {\openv{}}
          {\e{v}}
          {\v{v}},
+          \item
   \opsem {\openv{}}
          {\e{f}}
          {\v{f}},
+          \item
          \disptablep{} = {\extenddisptable {\disptable{}} 
                                 {\v{v}}
                                 {\v{f}}}
+        \end{enumerate}
+
+        Any callers of \e{f} must prove {\thenprop {\prop{i}}}, which by inversion on the operational semantics judgement
+        can only happen in B-BetaMulti, which we show satisfies this requirement in the B-BetaMulti subcase of T-App.
 
                                 Part 1 and 2 hold for the same reasons as T-True, noting that the propositions
                                 and object agree with T-Multi.
@@ -676,6 +777,8 @@ by noting \judgementtwo {} {\hastype {\v{d}} {\t{d}}},
 
       %TODO
 \begin{case}[T-App]
+  \ 
+
   \begin{itemize}
     \item
   \e{} = {\appexp {\e{1}} {\e{2}}},
@@ -766,6 +869,8 @@ by noting \judgementtwo {} {\hastype {\v{d}} {\t{d}}},
 \begin{itemize}
   \item[]
 \begin{subcase}[B-BetaClosure]
+  \ 
+
   \begin{itemize}
     \item
   \opsem{\openv{}}{\e{}}{\v{}},
@@ -808,7 +913,7 @@ by noting \judgementtwo {} {\hastype {\v{d}} {\t{d}}},
                {\object{f}}}.
          \end{itemize}
 
-         We consider cases on the form of \object{f}:
+         To prove part 1, we consider cases on the form of \object{f}:
 
          \begin{itemize}
            \item if \object{f} = \emptyobject{}, then \object{} = \emptyobject{} by substitution,
@@ -827,40 +932,195 @@ by noting \judgementtwo {} {\hastype {\v{d}} {\t{d}}},
                  we note 
                  \inopenv {\extendopenv {\openv{c}} {\x{}} {\v{2}}}
                           {\x{}}
-                          {\v{2}},
+                          {\v{2}}
+                          and 
+                 \inopenv{\openv{}}{\object{2}}{\v{2}},
+                 which implies 
+                 \inopenvnoeq {\extendopenv {\openv{c}} {\x{}} {\v{2}}}{\x{}} = 
+                 \inopenvnoeq{\openv{}}{\object{2}},
+                 and by applying lemma \ref{lemma:pathindependent}
+                 we can derive
+                 \inopenvnoeq{\openv{}}{\path{\pathelem{f}}{\object{2}}} =
+                 \inopenvnoeq{\extendopenv {\openv{c}} {\x{}} {\v{2}}}
+                             {\path {\pathelem{f}} {\x{}}}.
+                 By the induction hypothesis on {\e{b}}
+                 we know
                  \inopenv {\extendopenv {\openv{c}} {\x{}} {\v{2}}}
                           {\path {\pathelem{f}} {\x{}}}
                           {\v{}}
-                 and by the induction hypothesis on {\e{2}} that 
-                 \inopenv{\openv{}}{\object{2}}{\v{2}},
-                 so we can apply lemma \ref{lemma:pathindependent}
-                 to derive
-                 \inopenv{\openv{}}{\path{\pathelem{f}}{\object{2}}}{\v{}},
+                 so we can conclude
+                 \inopenv{\openv{}}{\path{\pathelem{f}}{\object{2}}}{\v{}}.
 
              \end{itemize}
-           \item otherwise \object{f} = {\path {\pathelem{f}} {\y{}}} where $\x{} \not= \y{}$
+           \item otherwise \object{f} = {\path {\pathelem{f}} {\y{}}} where $\x{} \not= \y{}$,
+             and \object{} = \object{f} by substitution.
+             We note \consistentwith{\closure {\openv{c}} {\abs {\x{}} {\s{}} {\e{b}}}}{\openv{}} 
+             by the induction hypothesis on {\e{1}},
+             so 
+             \inopenv{\openv{c}}{\y{}}{\inopenvnoeq{\openv{}}{\y{}}},
+           and because {\x{}} $\not=$ {\y{}}
+            we also know
+             \inopenvnoeq{\extendopenv {\openv{c}} {\x{}} {\v{2}}}{\y{}} = 
+             \inopenvnoeq{\openv{}}{\y{}}.
+
+             We apply lemma \ref{lemma:pathindependent} with this fact
+             to derive
+             \inopenvnoeq {\extendopenv {\openv{c}} {\x{}} {\v{2}}}
+                          {\path {\pathelem{f}} {\y{}}}
+                          = 
+             \inopenvnoeq{\openv{}}{\path{\pathelem{f}}{\y{}}},
+                      and since
+             \inopenv {\extendopenv {\openv{c}} {\x{}} {\v{2}}}
+                      {\path {\pathelem{f}} {\y{}}}{\v{}}
+                      by the induction hypothesis on \e{b}
+                      we can conclude 
+                      \inopenv{\openv{}}{\path{\pathelem{f}}{\object{2}}}{\v{}}.
          \end{itemize}
 
 
-         To prove part 2, if \v{} $\not=$ \false\ (or \nil)
+         To prove part 2, we consider both cases:
+         \begin{itemize}
+           \item if \v{} $\not=$ \false\ (or \nil) then \satisfies{\openv{}}{\thenprop{\prop{}}}.
+
+                              By the induction hypothesis on \e{b}
+                              we know
+              \satisfies{\extendopenv {\openv{c}} {\x{}} {\v{2}}}
+                        {\thenprop {\prop{f}}}.
+
+                        By the induction hypothesis on {\e{1}}
+                        we know
+\consistentwith{\closure {\openv{c}} {\abs {\x{}} {\s{}} {\e{b}}}}{\openv{}},
+so we know $\forall v \in \fv{\thenprop{\prop{}}} - \x{}$,
+                              {\inopenvnoeq{\openv{c}}{v}} = {\inopenvnoeq {\openv{}}{v}}.
+
+                              By the induction hypothesis on \e{2} we know {\inopenv {\openv{}}{\object{2}}{\v{2}}}
+                              and since {\inopenv {\extendopenv {\openv{c}} {\x{}} {\v{2}}}{\x{}}{\v{2}}}
+                              then 
+                            \inopenvnoeq{\extendopenv {\openv{c}} {\x{}} {\v{2}}}{\x{}} = \inopenvnoeq{\openv{}}{\object{2}}.
+
+                              Then with the premises
+                              \begin{enumerate}
+                                \item
+  {\thenprop {\prop{}}} =
+                 {\replacefor {\thenprop {\prop{f}}}
+                              {\object{2}}
+                              {\x{}}},
+                            \item
+                              \satisfies{\extendopenv {\openv{c}} {\x{}} {\v{2}}}{\thenprop {\prop{f}}},
+                            \item
+                              $\forall v \in \fv{\thenprop{\prop{}}} - \x{}$.
+                              {\inopenvnoeq{\extendopenv {\openv{c}} {\x{}} {\v{2}}}{v}} = {\inopenvnoeq {\openv{}}{v}},
+                            \item
+                              and
+                            \inopenvnoeq{\extendopenv {\openv{c}} {\x{}} {\v{2}}}{\x{}} = \inopenvnoeq{\openv{}}{\object{2}}
+                              \end{enumerate}
+                              we can apply
+                            lemma \ref{lemma:substfilter},
+                            to derive \satisfies{\openv{}}{\thenprop{\prop{}}}
+                            and we are done.
+           \item if \v{} $=$ \false\ (or \nil) then \satisfies{\openv{}}{\elseprop{\prop{}}}.
+
+             Like above, but using {\elseprop{\prop{}}} for {\thenprop{\prop{}}} and 
+             {\elseprop{\prop{f}}} for {\thenprop{\prop{f}}}.
+         \end{itemize}
+
+         For part 3 
+         \begin{itemize}
+           \item
+  \opsem{\openv{}}{\e{}}{\v{}},
+           \item
+  \opsem {\extendopenv {\openv{c}} {\x{}} {\v{2}}}
+         {\e{b}}
+         {\v{}},
+           \item
+  \t{} = {\replacefor {\t{f}}
+                      {\object{2}}
+                      {\x{}}},
+         \end{itemize}
 \end{subcase}
   \item[]
 \begin{subcase}[B-BetaMulti]
+  \ 
+
+  \begin{enumerate}
+    \item
   \opsem {\openv{}}
          {\e{1}}
          {\multi {\v{d}} {m}},
+    \item
   \opsem {\openv{}}
          {\e{2}}
          {\v{2}},
+    \item
   \opsem {\openv{}}
          {\appexp {\v{d}} {\v{2}}}
          {\v{e}},
+    \item
   \getmethod {\disptable{}}
              {\v{e}}
-             {\v{f}},
+             {\roundpair{\v{l}}{\v{g}}},
+    \item
   \opsem {\openv{}}
-         {\appexp {\v{f}} {\v{2}}}
-         {\v{}}
+         {\appexp {\v{g}} {\v{2}}}
+         {\v{}},
+       \item {\disptable{}} = {\curlymapvaloverright{\v{k}}{\v{v}}}
+     \end{enumerate}
+
+     By inversion on \e{1} via T-Multi we know 
+     \begin{enumerate}[resume]
+       \item
+         \judgement{\propenv{}}{\hastype{\e{1}}{\MultiFntype{\s{t}}{\s{d}}}}
+                {\filterset {\thenprop {\prop{1}}}
+                            {\elseprop {\prop{1}}}}
+                {\object{1}},
+           
+         \item \s{t} = {\ArrowOne {\x{}} {\s{}}
+                                                       {\t{f}}
+                                                       {\filterset {\thenprop {\prop{f}}}
+                                                                   {\elseprop {\prop{f}}}}
+                                                       {\object{f}}},
+         \item \s{d} = {\ArrowOne {\x{}} {\s{}}
+                                                       {\t{d}}
+                                                       {\filterset {\thenprop {\prop{d}}}
+                                                                   {\elseprop {\prop{d}}}}
+                                                       {\object{d}}},
+       \item
+         \judgement{}{\hastype{\v{d}}{\s{d}}}
+                {\filterset {\thenprop {\prop{3}}}
+                            {\elseprop {\prop{3}}}}
+                {\object{3}},
+              \item
+  $\overrightarrow{\judgementtwo{}{\hastype{\v{k}}{\Top{}}}}$, and 
+\item
+  $\overrightarrow{\judgementtwo{}{\hastype{\v{v}}{\s{t}}}}$.
+  \end{enumerate}
+
+  By the inductive hypothesis on \e{2} we know 
+  \begin{enumerate}[resume]
+    \item \judgementtwo{\propenv{}}{\hastype{\v{2}}{\s{}}}, and
+    \item \object{2} = \emptyobject{} or \inopenv{\openv{}}{\object{2}}{\v{2}}.
+  \end{enumerate}
+
+  We know by the definition of \getmethodliteral that
+  \begin{enumerate}[resume]
+    \item $\{ \v{v} | {\roundpair{\v{k}}{\v{v}}} \in \disptable{} \text{ and } \opsem{}{\isaapp{\v{k}}{\v{e}}}{\true{}} \} = {\roundpair{\v{l}}{\v{g}}}$, so
+    \item \opsem{}{\isaapp{\v{l}}{\v{e}}}{\true{}}
+  \end{enumerate}
+
+  and because ${\v{g}} \in \{\overrightarrow{\v{v}}\}$
+  that 
+  \begin{enumerate}[resume]
+    \item
+  {\judgementtwo{}{\hastype{\v{g}}{\s{t}}}}.
+  \end{enumerate}
+
+  For part 1, we note
+  \begin{enumerate}[resume]
+    \item
+  \object{} = {\replacefor {\object{f}}
+                           {\object{2}}
+                           {\x{}}},
+  \end{enumerate}
 
 \end{subcase}
   \item[]
@@ -1554,6 +1814,49 @@ If \judgement{\propenv{}}{\hastype{\e{}}{\t{}}}{\filterset{\thenprop{\prop{}}}{\
 and \opsem {\openv{}} {\e{}} {\v{}} 
 then \judgement{}{\hastype{\v{}}{\t{}}}{\filterset{\thenprop{\propp{}}}{\elseprop{\propp{}}}}{\objectp{}}
         for some \thenprop{\propp{}}, \elseprop{\propp{}} and {\objectp{}}
+
+\begin{proof}
+  Corollary of lemma \ref{lemma:soundness}.
+\end{proof}
+
+\end{theorem}
+
+\begin{theorem}[\nil{} cannot be accidentally introduced] \label{theorem:nullpointer}
+If \judgement{\propenv{}}{\hastype{\v{}}{\t{}}}{\filterset{\thenprop{\prop{}}}{\elseprop{\prop{}}}}{\object{}}
+and \notsubtypein{}{\Nil{}}{\t{}}
+then {\v{}} $\not=$ \nil{}.
+\begin{proof}
+  Corollary of lemma \ref{lemma:soundness}.
+\end{proof}
+
+\end{theorem}
+
+\begin{lemma}[Field lookup never fails] \label{lemma:fieldgood}
+  %If \judgement{\propenv{}}{\hastype{\
+
+\begin{proof}
+  Corollary of lemma \ref{lemma:soundness}.
+\end{proof}
+
+\end{lemma}
+
+\begin{theorem}[Field lookup on \nil{} is disallowed] \label{theorem:fieldnil}
+
+\begin{proof}
+  Corollary of lemma \ref{lemma:fieldgood}.
+\end{proof}
+
+\end{theorem}
+
+\begin{theorem}[Method invocation on \nil{} is disallowed] \label{theorem:methodnil}
+
+\begin{proof}
+  Corollary of lemma \ref{lemma:soundness}.
+\end{proof}
+
+\end{theorem}
+
+\begin{theorem}[\nil{} invocation is disallowed] \label{theorem:nilinvoke}
 
 \begin{proof}
   Corollary of lemma \ref{lemma:soundness}.

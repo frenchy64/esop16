@@ -104,7 +104,7 @@
          \\\\
   \getmethod {\disptable{}}
              {\v{e}}
-             {\v{f}}
+             {\roundpair{\v{k}}{\v{f}}}
          \\\\
   \opsem {\openv{}}
          {\appexp {\v{f}} {\v{a}}}
@@ -210,7 +210,7 @@
 {\opsem {\openv{}}
         {\e{m}} {\curlymap{\overrightarrow{({\v{a}}\ {\v{b}})}}}
         \\
- \opsem {\openv{}} {\e{k}} {\v{k}}
+ \opsem {\openv{}} {\e{k}} {\k{}}
         \\\\
  \opsem {\openv{}} {\e{v}} {\v{v}}
 }
@@ -218,7 +218,7 @@
  \opsem {\openv{}}
         {\assocexp {\e{m}} {\e{k}} {\e{v}}} 
         {\extendmap{\curlymap{\overrightarrow{({\v{a}}\ {\v{b}})}}}
-                {\v{k}}{\v{v}}}
+                {\k{}}{\v{v}}}
                 }
 
 \infer [B-Get]
@@ -226,12 +226,12 @@
         {\e{m}} {\curlymap{\overrightarrow{({\v{a}}\ {\v{b}})}}}
         \\\\
  \opsem {\openv{}}
-        {\e{k}} {\v{k}}
+        {\e{k}} {\k{}}
         \\\\
- \keyinmap{\v{k}}{\curlymap{\overrightarrow{({\v{a}}\ {\v{b}})}}}
+ \keyinmap{\k{}}{\curlymap{\overrightarrow{({\v{a}}\ {\v{b}})}}}
         \\\\
  \getmap{\curlymap{\overrightarrow{({\v{a}}\ {\v{b}})}}}
-        {\v{k}}
+        {\k{}}
         =
         {\v{}}
 }
@@ -246,9 +246,9 @@
         {\e{m}} {\curlymap{\overrightarrow{({\v{a}}\ {\v{b}})}}}
         \\\\
  \opsem {\openv{}}
-        {\e{k}} {\v{k}}
+        {\e{k}} {\k{}}
         \\\\
- \keynotinmap{\v{k}}{\curlymap{\overrightarrow{({\v{a}}\ {\v{b}})}}}
+ \keynotinmap{\k{}}{\curlymap{\overrightarrow{({\v{a}}\ {\v{b}})}}}
 }
 {
  \opsem {\openv{}}
@@ -323,6 +323,18 @@
          {\wrong{}}
    }
 
+\infer [BS-FieldMissing]
+{ \opsem {\openv{}}
+         {\e{}} 
+       {\classvalue{\classhint{1}} {\overrightarrow {\classfieldpair{\fld{i}} {\v{i}}}}}
+       \\
+       \fld{} \not\in \{\overrightarrow{\fld{i}}\}
+       }
+{ \opsem {\openv{}}
+         {\fieldstaticexp {\classhint{1}} {\classhint{2}} {\fld{}} {\e{}}}
+         {\wrong{}}
+   }
+
 
 \infer [BS-MethodTarget]
 { \opsem {\openv{}}
@@ -333,6 +345,14 @@
 }
 {\opsem {\openv{}}
         {\methodstaticexp {\classhint{1}} {\overrightarrow{\classhint{a}}} {\classhint{2}} {mth} {\e{m}} {\overrightarrow{\e{a}}}}
+        {\wrong{}}
+      }
+
+\infer [BS-MethodArity]
+{ i \not= a
+}
+{\opsem {\openv{}}
+        {\methodstaticexp {\classhint{1}} {\overrightarrow{\classhint{i}}} {\classhint{2}} {mth} {\e{m}} {\overrightarrow{\e{a}}}}
         {\wrong{}}
       }
 
@@ -348,9 +368,7 @@
        }
        \\\\
   \exists a.\ 
-  \overrightarrow{
     \v{a} \not=\ {\classvalue{\classhint{a}} {\overrightarrow {\classfieldpair{\fld{i}} {\v{i}}}}}\ or\ \v{a} \not= \nil{}
-       }
 }
 {\opsem {\openv{}}
         {\methodstaticexp {\classhint{1}} {\overrightarrow{\classhint{a}}} {\classhint{2}} {mth} {\e{m}} {\overrightarrow{\e{a}}}}
@@ -365,9 +383,7 @@
      }
        \\\\
   \exists i.\ 
-  \overrightarrow{
     \v{i} \not=\ {\classvalue{\classhint{i}} {\overrightarrow {\classfieldpair{\fld{i}} {\v{i}}}}}\ or\ \v{i} \not= \nil{}
-       }
 }
 {\opsem {\openv{}}
         {\newstaticexp {\overrightarrow{\classhint{i}}} {\classhint{1}} 
@@ -375,7 +391,16 @@
         {\wrong{}}
       }
 
-\infer [BS-Assoc]
+\infer [BS-NewArity]
+{ i \not= a
+}
+{\opsem {\openv{}}
+        {\newstaticexp {\overrightarrow{\classhint{i}}} {\classhint{1}} 
+                       {\class{}} {\overrightarrow{\e{a}}}}
+        {\wrong{}}
+      }
+
+\infer [BS-AssocMap]
 {\opsem {\openv{}}
         {\e{m}} {\v{}}
         \\
@@ -387,7 +412,21 @@
         {\wrong{}}
                 }
 
-\infer [BS-Get]
+\infer [BS-AssocKey]
+{\opsem {\openv{}}
+        {\e{m}} {\curlymap{\overrightarrow{({\v{a}}\ {\v{b}})}}}
+        \\
+ \opsem {\openv{}} {\e{k}} {\v{k}}
+ \\\\
+ {\v{k}} \not= \k{}
+}
+{
+ \opsem {\openv{}}
+        {\assocexp {\e{m}} {\e{k}} {\e{v}}} 
+        {\wrong{}}
+                }
+
+\infer [BS-GetMap]
 { \opsem {\openv{}}
          {\e{m}} {\v{}}
         \\
@@ -398,9 +437,35 @@
         {\wrong{}}
 }
 
+\infer [BS-GetKey]
+{ \opsem {\openv{}}
+         {\e{m}} {\v{}}
+        \\
+ \opsem {\openv{}}
+        {\e{k}} {\v{k}}
+        \\\\
+      \v{} \not= {\k{}}
+}
+{\opsem {\openv{}}
+        {\getexp {\e{m}} {\e{k}}}
+        {\wrong{}}
+}
+
 \infer [BS-Local]
 { \notinopenv {\openv{}} {\x{}}}
 { \opsem {\openv{}} {\x{}} {\wrong{}} }
+
+\infer [BS-DefMethod]
+{ \opsem {\openv{}}
+         {\e{m}}
+         {\v{m}}
+         \\
+         \v{m} \not= {\multi {\v{d}} {\disptable{}}}
+}
+{\opsem {\openv{}}
+        {\extendmultiexp {\e{m}} {\e{v}} {\e{f}}}
+        {\wrong{}}
+      }
 
 \end{mathpar}
 \caption{Stuck programs}
@@ -541,11 +606,11 @@
          \\\\
   \getmethod {\disptable{}}
              {\v{e}}
-             {\wrongorerror{}}
+             {\errorvalv{}}
        }
 { \opsem {\openv{}}
          {\appexp {\e{f}} {\e{a}}}
-         {\wrongorerror{}}
+         {\errorvalv{}}
        }
 
 \infer [BE-Delta]
@@ -614,11 +679,11 @@
   \invokejavamethod {\classhint{1}} {\v{m}} {mth}
                     {\overrightarrow{\classhint{a}}} {\overrightarrow{\v{a}}}
                     {\classhint{2}}
-                    {\wrongorerror{}}
+                    {\errorvalv{}}
 }
 {\opsem {\openv{}}
         {\methodstaticexp {\classhint{1}} {\overrightarrow{\classhint{a}}} {\classhint{2}} {mth} {\e{m}} {\overrightarrow{\e{a}}}}
-        {\wrongorerror{}}
+        {\errorvalv{}}
       }
 
 \infer [BE-New1]
@@ -649,12 +714,12 @@
          \newjava {\classhint{1}}
                   {\overrightarrow{\classhint{i}}}
                   {\overrightarrow{\v{i}}}
-                  {\wrongorerror{}}
+                  {\errorvalv{}}
        }
 { \opsem {\openv{}}
          {\newstaticexp {\overrightarrow{\classhint{i}}} {\classhint{1}} 
                         {\class{}} {\overrightarrow{\e{i}}}}
-         {\wrongorerror{}}}
+         {\errorvalv{}}}
 
 \infer [BE-DefMulti]
 { \opsem {\openv{}} {\e{d}} {\wrongorerror{}}
@@ -792,7 +857,7 @@
 \begin{mathpar}
 
 \begin{array}{lllll}
-  {\openv{}}({\x{}}) &=& {\v{}}  & (\x{}\ \v{}) \in \openv{}\\
+  {\openv{}}({\x{}}) &=& {\v{}}  & {\roundpair{\x{}}{\v{}}} \in \openv{}\\
   {\openv{}}({\path {\keype{k}} {\object{}}}) &=& {\getexp {{\openv{}}(\object{})}{\k{}}}\\
   {\openv{}}({\path {\classpe{}} {\object{}}}) &=& {\appexp {\classconst{}} {{\openv{}}(\object{})}}
 
