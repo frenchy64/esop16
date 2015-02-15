@@ -59,6 +59,7 @@
 \newbfop\ArrayPLiteral{ArrayP}
 \newbfop\Throwable{Throwable}
 \newbfop\Class{Class}
+\newbfop\Object{Object}
 \newcommand\MultiFntype[2]{(\PMulti #1\ #2)}
 \newcommand\proctype[2]{(#1 \to #2)}
 \newcommand\Unionsplice[1]{(\ma{\Uliteral\ #1})}
@@ -79,6 +80,7 @@
 \newcommand\All[2]{(\ma{\Allliteral\ [#1]\ #2})}
 \newcommand\TFn[2]{(\ma{\TFnliteral\ [#1]\ #2})}
 \newcommand\Value[1]{(\ma{\Valueliteral #1})}
+\newmeta\singletonmeta{s}
 \newbfop\Top{\ma{\top}}
 \newbfop\Bottom{\ma{\bot}}
 \newbfop\Bot{\ma{\bot}}
@@ -292,7 +294,7 @@
 % tools.analyzer judgements
 \newcommand\ta[0]{\mathcal{TA}}
 \newcommand\intaenv[3]{\ma{#1 (#2) = #3}}
-\newcommand\tajudgement[2]{\ma{#1 \vdash #2}}
+\newcommand\tajudgement[2]{\ma{#1 \vdash_{\metafunctionfont{h}} #2}}
 
 % type hints
 \newmeta\tatypeunknown{\gamma^{?}}
@@ -424,7 +426,7 @@
 
 \newcommand\satisfies[2]{\ma{{#1} \models {#2}}}
 
-\newmeta\wrongorerror{b}
+\newmeta\wrongorerror{\beta}
 
 \newcommand\consistentwith[2]{\ma{{#1}\ \text{is consistent with}\ {#2}}}
 \newcommand\isconsistent[1]{\ma{{#1}\ \text{is consistent}}}
@@ -432,3 +434,5 @@
 
 \newcommand\istrueval[1]{\ma{\metafunctionfont{TrueVal}(#1)}}
 \newcommand\isfalseval[1]{\ma{\metafunctionfont{FalseVal}(#1)}}
+
+\newmeta\definedreduction{\alpha}

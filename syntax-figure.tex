@@ -57,13 +57,8 @@ $$
                       \\\\
   \s{}, \t{}    &::=& \Top 
                       \alt \class{}
-                      \alt
-                      {\Value \k{}} 
-                      \alt {\Nil{}}
-                      \alt {\True{}}
-                      \alt {\False{}}
-                      \alt
-                      {\Unionsplice {\overrightarrow{\t{}}}}
+                      \alt {\Value \singletonmeta{}} 
+                      \alt {\Unionsplice {\overrightarrow{\t{}}}}
                       \alt
                       {\ArrowOne {\x{}} {\t{}}
                                    {\t{}}
@@ -79,6 +74,12 @@ $$
                 &\mbox{HMap absent entries} \\
   \completenessmeta{} &::=& {\complete{}} \alt {\partial{}}
                 &\mbox{HMap completeness} \\
+  \singletonmeta{}     &::=& \k{} 
+                             \alt \class{}
+                             \alt {\Nil}
+                             \alt {\True}
+                             \alt {\False}
+                &\mbox{Value types} \\ \\
   \tatype{}     &::=& \unknownhint{} \alt \classhint{}
                 &\mbox{tools.analyzer Types} \\ \\
   \prop{}       &::=& {\isprop {\t{}} {\path {\pathelem{}} {\x{}}}}
@@ -109,7 +110,8 @@ $$
   \classvaluemeta{} 
           &::=& {\classvalue{\classhint{}} {\overrightarrow {\classfieldpair{\fld{}} {\v{}}}}}
                &\mbox{Class Values}\\
-  \class{}      &::=& \Keyword{}
+   \class{}      &::=& \Object{}
+                      \alt \Keyword{}
                       %\alt \Number{}
                       \alt \Class{}
                       \alt \Boolean{}
@@ -122,8 +124,34 @@ $$
                 &\mbox{Class literals}
                       \\
   \wrongorerror{} &::=& \wrong{} \alt \errorvalv{}
-                &\mbox{Wrong and error}
+                &\mbox{Wrong or error}
+                      \\
+  \definedreduction{} &::=& \v{} \alt \wrongorerror{}
+                 &\mbox{Defined reductions}
 \end{altgrammar}
 $$
 \caption{Syntax of Terms, Types, Propositions, and Objects}
+\end{figure*}
+
+\begin{figure*}
+$$
+\begin{array}{lllr}
+  \Nil &\equiv& \Value{\Nil}\\
+  \True &\equiv& \Value{\True}\\
+  \False &\equiv& \Value{\False}\\
+\end{array}
+$$
+\caption{Type abbreviations}
+\end{figure*}
+
+\begin{figure*}
+$$
+\begin{array}{lllr}
+  \judgementtwo{\propenv{}}{\hastype{\e{}}{\t{}}} &\equiv& 
+  \judgement{\propenv{}}{\hastype{\e{}}{\t{}}}{\filterset{\thenprop{\prop{}}}{\elseprop{\prop{}}}}{\object{}}
+  & \text{for some}\ {\thenprop{\prop{}}}, {\elseprop{\prop{}}} \text{and}\ {\object{}}
+
+\end{array}
+$$
+\caption{Judgement abbreviations}
 \end{figure*}

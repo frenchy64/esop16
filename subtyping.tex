@@ -94,11 +94,24 @@
   {\HMapp {\overrightarrow{(\k{},\ \t{})}^i} {\absent{}}}
                }
 
-\infer [S-Class]
+\infer [S-SKw]
+{}
+{\issubtypein {}
+  {\Value{\k{}}}
+  {\Keyword}}
+
+\infer [S-SClass]
+{}
+{\issubtypein {}
+  {\Value{\class{}}}
+  {\Class{}}}
+
+\infer [S-Object]
 {}
 {\issubtypein {}
   {\class{}}
-  {\Class}}
+  {\Object{}}}
+
 
 \infer [S-MultiMono]
 {}

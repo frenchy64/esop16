@@ -53,12 +53,33 @@
 
 % ClassPE
 \\
-\update{\t{}}{\s{}}{\classpe{}}
-&=& \restrict{\t{}}{\s{}}
-
+\update{\t{}}{\Value{\class{}}}{\classpe{}}
+&=& \restrict{\t{}}{\class{}}
 \\
-\update{\t{}}{\nottype{\s{}}}{\classpe{}}
-&=& \remove{\t{}}{\s{}}
+\update{\t{}}{\nottype{\Value{\class{}}}}{\classpe{}}
+&=& \remove{\t{}}{\class{}}
+\\
+\update{\t{}}{\Class{}}{\classpe{}}
+&=& \restrict{\t{}}{\Object{}}
+\\
+\update{\t{}}{\nottype{\Class{}}}{\classpe{}}
+&=& \remove{\t{}}{\Object{}}
+\\
+\update{\t{}}{\Nil{}}{\classpe{}}
+&=& \restrict{\t{}}{\Nil{}}
+\\
+\update{\t{}}{\nottype{\Nil{}}}{\classpe{}}
+&=& \remove{\t{}}{\Nil{}}
+
+% What if \s{} is a union of class singletons?
+% this just seems wrong
+%\\
+%\update{\t{}}{\s{}}{\classpe{}}
+%&=& \restrict{\t{}}{\s{}}
+%
+%\\
+%\update{\t{}}{\nottype{\s{}}}{\classpe{}}
+%&=& \remove{\t{}}{\s{}}
 \\
 \update{\t{}}{\propisnotmeta{}}{\destructpath {\pathelem{}} {\classpe{}}}
 &=& {\t{}}

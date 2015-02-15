@@ -1,13 +1,27 @@
 \begin{figure*}
 $$
-\begin{array}{llr}
-  \isacompare{\s{}}{\object{}}{\t{}}{\replacefor{\filtersetparen{\isprop{\t{}}{\x{}}}{\notprop{\t{}}{\x{}}}}{\object{}}{\x{}}}
+\begin{array}{lllr}
+  \isacomparealign{\s{}}{\path{\classpe{}}{\path{\pathelem{}}{\x{}}}}{\t{}}
+             {\filterset{\isprop{\t{}} {\path{\classpe{}}{\path{\pathelem{}}{\x{}}}}}
+                        {\notprop{\t{}}{\path{\classpe{}}{\path{\pathelem{}}{\x{}}}}}}
+                        \\
+  \isacomparealign{\s{}}{\object{}}{\Value{\singletonmeta{}}}
+             {\replacefor
+               {\filtersetparen{\isprop{\Value{\singletonmeta{}}} {\x{}}}
+                   {\notprop{\Value{\singletonmeta{}}}{\x{}}}}
+                   {\object{}}
+                   {\x{}}}
+                   & \text{if}\ {\singletonmeta{}} \not= \class{}
+               \\
+  \isacomparealign{\s{}}{\object{}}{\t{}}
+                  {\filterset{\topprop{}}
+                             {\topprop{}}}
 \end{array}
 $$
 $$
-\begin{array}{lclr}
+\begin{array}{lllr}
   \isaopsem{\v{}}{\v{}} &=& {\true{}}\\
-  \isaopsem{\class{1}}{\class{2}} &=& {\true{}} & \issubtypein{}{\class{1}}{\class{2}}\\
+  \isaopsem{\class{1}}{\class{2}} &=& {\true{}} & \text{if}\ \issubtypein{}{\class{1}}{\class{2}}\\
   \isaopsem{\v{1}}{\v{2}} &=& {\false{}} & \text{otherwise}
 \end{array}
 $$
