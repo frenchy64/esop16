@@ -374,13 +374,15 @@
 \newcommand\filterset[2]{\ma{#1 | #2}}
 \newcommand\filtersetparen[2]{\ma{(\filterset{#1}{#2})}}
 \newcommand\thenprop[1]{\ma{{#1}_+}}
+\newcommand\elseprop[1]{\ma{{#1}_-}}
+
+% polarities
 \newmeta\polaritymeta{pol}
+\newcommand\withpolarity[2]{\ma{{#1}^{#2}}}
 \newcommand\pluspolarityliteral[0]{\metafunctionfont{pos}}
 \newcommand\minuspolarityliteral[0]{\metafunctionfont{neg}}
-\newcommand\withpolarity[2]{\ma{{#1}_{#2}}}
-\newcommand\pluspolarity[1]{\ma{{#1}_{\pluspolarityliteral}}}
-\newcommand\elseprop[1]{\ma{{#1}_-}}
-\newcommand\minuspolarity[1]{\ma{{#1}_{\minuspolarityliteral}}}
+\newcommand\pluspolarity[1]{\withpolarity{#1}{\pluspolarityliteral}}
+\newcommand\minuspolarity[1]{\withpolarity{#1}{\minuspolarityliteral}}
 
 \newcommand\notequal[0]{\ma{\not=}}
 
