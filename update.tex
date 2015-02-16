@@ -37,14 +37,14 @@
 \\
 \update{\HMapp {\mandatory} {\absent}}{\propisnotmeta{}}{\destructpath {\pathelem{}} {\keype{\k{}}}}
 &=&
-{\HMapp {\extendmandatoryset {\mandatory} {\k{}}{\update{\Top{}}{\propisnotmeta{}}{\pathelem{}}}} {\absent}}
+{\HMapp {\extendmandatoryset {\mandatory} {\k{}}{\update{\Top}{\propisnotmeta{}}{\pathelem{}}}} {\absent}}
 & 
 {\notinmandatory{\k{}}{\s{}}{\mandatory{}}}\ \text{and}\ {\notinabsent{\k{}}{\absent{}}}
 
 \\
 \update{\HMapp {\mandatory} {\absent}}{\propisnotmeta{}}{\destructpath {\pathelem{}} {\keype{\k{}}}}
 &=&
-{\HMapp {\extendmandatoryset {\mandatory} {\k{}}{\update{\Top{}}{\propisnotmeta{}}{\pathelem{}}}} {\absent}}
+{\HMapp {\extendmandatoryset {\mandatory} {\k{}}{\update{\Top}{\propisnotmeta{}}{\pathelem{}}}} {\absent}}
 \\
 \update{\Unionsplice{{\overrightarrow{\HMapgeneric {\mandatory} {\absent}}}^i}}{\propisnotmeta{}}{\destructpath {\pathelem{}} {\keype{\k{}}}}
 &=&
@@ -55,21 +55,21 @@
 \\
 \update{\t{}}{\Value{\class{}}}{\classpe{}}
 &=& \restrict{\t{}}{\class{}}
+%\\
+%\update{\t{}}{\nottype{\Value{\class{}}}}{\classpe{}}
+%&=& \remove{\t{}}{\class{}}
 \\
-\update{\t{}}{\nottype{\Value{\class{}}}}{\classpe{}}
-&=& \remove{\t{}}{\class{}}
+\update{\t{}}{\Object}{\classpe{}}
+&=& \restrict{\t{}}{\Object}
 \\
-\update{\t{}}{\Class{}}{\classpe{}}
-&=& \restrict{\t{}}{\Object{}}
+\update{\t{}}{\nottype{\Object}}{\classpe{}}
+&=& \remove{\t{}}{\Object}
 \\
-\update{\t{}}{\nottype{\Class{}}}{\classpe{}}
-&=& \remove{\t{}}{\Object{}}
+\update{\t{}}{\Nil}{\classpe{}}
+&=& \restrict{\t{}}{\Nil}
 \\
-\update{\t{}}{\Nil{}}{\classpe{}}
-&=& \restrict{\t{}}{\Nil{}}
-\\
-\update{\t{}}{\nottype{\Nil{}}}{\classpe{}}
-&=& \remove{\t{}}{\Nil{}}
+\update{\t{}}{\nottype{\Nil}}{\classpe{}}
+&=& \remove{\t{}}{\Nil}
 
 % What if \s{} is a union of class singletons?
 % this just seems wrong

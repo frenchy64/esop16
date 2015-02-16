@@ -2,30 +2,40 @@
 $$
 \begin{array}{lclr}
 
-{\replacefor
-  {\filterset {\thenprop {\prop{}}}{\elseprop {\prop{}}}}
-  {\object{}}
-  {\x{}}}
-  &=&
-{\filterset 
+{\withpolarity
   {\replacefor
-    {\thenprop {\prop{}}}
+    {\filterset {\thenprop {\prop{}}}{\elseprop {\prop{}}}}
     {\object{}}
     {\x{}}}
-  {\replacefor
-    {\elseprop {\prop{}}}
-    {\object{}}
-    {\x{}}}}
+  {\polaritymeta{}}}
+  &=&
+{\filterset 
+  {\withpolarity
+    {\replacefor
+      {\thenprop {\prop{}}}
+      {\object{}}
+      {\x{}}}
+    {\polaritymeta{}}}
+  {\withpolarity
+    {\replacefor
+      {\elseprop {\prop{}}}
+      {\object{}}
+      {\x{}}}
+    {\polaritymeta{}}}}
 \\\\
-{\replacefor
-  {\isprop {\propisnotmeta{}} {\path {\pathelem{}} {\x{}}}}
-  {\path {\pathelemp{}} {\y{}}}
-  {\x{}}}
+{\withpolarity
+  {\replacefor
+    {\isprop {\propisnotmeta{}} {\path {\pathelem{}} {\x{}}}}
+    {\path {\pathelemp{}} {\y{}}}
+    {\x{}}}
+  {\polaritymeta{}}}
 &=&
-  {\isprop {({\replacefor
+  {\isprop {({\withpolarity
+              {\replacefor
                {\propisnotmeta{}}
                {\path {\pathelemp{}} {\y{}}}
-               {\x{}}})}
+               {\x{}}}
+              {\polaritymeta{}}})}
            {{\pathelem{}}({\path {\pathelemp{}} {\y{}}})}}
            \\
 
@@ -48,10 +58,12 @@ $$
 {\botprop{}}
 
 \\
+{\withpolarity
 {\replacefor
   {\isprop {\propisnotmeta{}} {\path {\pathelem{}} {\x{}}}}
   {\object{}}
   {\z{}}}
+{\polaritymeta{}}}
 &=&
   {\isprop {\propisnotmeta{}} {\path {\pathelem{}} {\x{}}}}
   & \x{} \not= \z{}\ \text{and}\ \z{} \not\in {\fv {\propisnotmeta{}}}
@@ -78,18 +90,22 @@ $$
   & \x{} \not= \z{}\ \text{and}\ \z{} \in {\fv {\propisnotmeta{}}}
 
 \\
+{\withpolarity
 {\replacefor
   {\topprop{}}
   {\object{}}
   {\x{}}}
+{\polaritymeta{}}}
 &=&
   {\topprop{}}
 
 \\
+{\withpolarity
 {\replacefor
   {\botprop{}}
   {\object{}}
   {\x{}}}
+{\polaritymeta{}}}
 &=&
   {\botprop{}}
 
@@ -116,58 +132,78 @@ $$
   {\pluspolarity {\replacefor {\prop{1}} {\object{}} {\x{}}}}
   {\minuspolarity {\replacefor {\prop{2}} {\object{}} {\x{}}}}}
 \\
+{\withpolarity
 {\replacefor
   {({\orprop {\prop{1}} {\prop{2}}})}
   {\object{}}
   {\x{}}}
+{\polaritymeta{}}}
 &=&
 {\orprop 
-  {\replacefor {\prop{1}} {\object{}} {\x{}}}
-  {\replacefor {\prop{2}} {\object{}} {\x{}}}}
+  {\withpolarity
+    {\replacefor {\prop{1}} {\object{}} {\x{}}}
+    {\polaritymeta{}}}
+  {\withpolarity
+    {\replacefor {\prop{2}} {\object{}} {\x{}}}
+    {\polaritymeta{}}}}
 \\
+{\withpolarity
 {\replacefor
   {({\andprop {\prop{1}} {\prop{2}}})}
   {\object{}}
   {\x{}}}
+{\polaritymeta{}}}
 &=&
 {\andprop 
+{\withpolarity
   {\replacefor {\prop{1}} {\object{}} {\x{}}}
-  {\replacefor {\prop{2}} {\object{}} {\x{}}}}
+  {\polaritymeta{}}}
+{\withpolarity
+  {\replacefor {\prop{2}} {\object{}} {\x{}}}
+  {\polaritymeta{}}}}
 
     \\\\
 
+{\withpolarity
 {\replacefor
   {\path {\pathelem{}} {\x{}}}
   {\path {\pathelemp{}} {\y{}}}
   {\x{}}}
+{\polaritymeta{}}}
            &=&
 {\path{\pathelem{}}{\path {\pathelemp{}} {\y{}}}}
 
     \\
 
+{\withpolarity
 {\replacefor
   {\path {\pathelem{}} {\x{}}}
   {\emptyobject{}}
   {\x{}}}
+{\polaritymeta{}}}
            &=&
 {\emptyobject{}}
 
     \\
 
+{\withpolarity
 {\replacefor
   {\path {\pathelem{}} {\x{}}}
   {\object{}}
   {\z{}}}
+{\polaritymeta{}}}
            &=&
 {\path {\pathelem{}} {\x{}}}
 
 & \x{} \not= \z{}
     \\
 
+{\withpolarity
 {\replacefor
   {\emptyobject{}}
   {\object{}}
   {\x{}}}
+{\polaritymeta{}}}
            &=&
 {\emptyobject{}}
 

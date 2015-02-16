@@ -128,6 +128,9 @@ $$
                       \\
   \definedreduction{} &::=& \v{} \alt \wrongorerror{}
                  &\mbox{Defined reductions}
+                 \\
+  \polaritymeta{} &::=& \pluspolarityliteral \alt \minuspolarityliteral
+                 &\mbox{Substitution Polarity}
 \end{altgrammar}
 $$
 \caption{Syntax of Terms, Types, Propositions, and Objects}
@@ -150,6 +153,13 @@ $$
   \judgementtwo{\propenv{}}{\hastype{\e{}}{\t{}}} &\equiv& 
   \judgement{\propenv{}}{\hastype{\e{}}{\t{}}}{\filterset{\thenprop{\prop{}}}{\elseprop{\prop{}}}}{\object{}}
   & \text{for some}\ {\thenprop{\prop{}}}, {\elseprop{\prop{}}} \text{and}\ {\object{}}
+
+  \\
+  {\replacefor{\t{}}{\object{}}{\x{}}} &\equiv& {\pluspolarity{\replacefor{\t{}}{\object{}}{\x{}}}}
+  \\
+  {\replacefor{\prop{}}{\object{}}{\x{}}} &\equiv&  {\pluspolarity{\replacefor{\prop{}}{\object{}}{\x{}}}}
+  \\
+  {\replacefor{\object{}}{\object{}}{\x{}}} &\equiv& {\pluspolarity{\replacefor{\object{}}{\object{}}{\x{}}}}
 
 \end{array}
 $$

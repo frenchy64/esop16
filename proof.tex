@@ -78,72 +78,72 @@
 \end{proof}
 \end{lemma}
 
-\begin{lemma}[Equal types] \label{lemma:equaltypes}
-  If
-  \begin{itemize}
-    \item
-      \judgement{\propenv{}}{\hastype{\e{}}{\t{}}}{\filterset{\thenprop{\prop{}}}{\elseprop{\prop{}}}}{\object{}},
-    \item
-     \judgement{\propenv{}}{\hastype{\ep{}}{\tp{}}}{\filterset{\thenprop{\propp{}}}{\elseprop{\propp{}}}}{\objectp{}},
-    \item
-     \satisfies{\openv{}}{\propenv{}},
-    \item
-     \opsem{\openv{}}{\e{}}{\v{}},
-    \item
-     \opsem{\openv{}}{\ep{}}{\vp{}}, and
-    \item \v{} = \vp{}
-  \end{itemize}
-  then
-      \judgement{}{\hastype{\vp{}}{\t{}}}{\filterset{\thenprop{\prop{}}}{\elseprop{\prop{}}}}{\object{}},
-
-  \begin{proof}
-    TODO
-  \end{proof}
-\end{lemma}
-
-\begin{lemma}[IsA Equal] \label{lemma:isa}
-
-  If
-  \begin{itemize}
-    \item
-      \judgement{\propenv{}}{\hastype{\e{1}}{\s{}}}{\filterset{\thenprop{\prop{1}}}{\elseprop{\prop{1}}}}{\object{1}},
-    \item
-     \judgement{\propenv{}}{\hastype{\e{2}}{\t{}}}{\filterset{\thenprop{\prop{2}}}{\elseprop{\prop{2}}}}{\object{2}},
-    \item
-     \satisfies{\openv{}}{\propenv{}},
-    \item
-     \opsem{\openv{}}{\e{1}}{\v{}},
-    \item
-     \opsem{\openv{}}{\e{2}}{\v{}},
-    \item
-      \isaopsem{\v{1}}{\v{2}} = {\true{}}, and
-    \item
-      \isacompare{\s{}}{\object{2}}{\t{}}{\filterset{\thenprop{\prop{}}}{\elseprop{\prop{}}}}
-  \end{itemize}
-  then
-  either {\istrueval{\v{b}}} and \satisfies{\openv{}}{\thenprop{\prop{}}}
-  or     {\isfalseval{\v{b}}} and \satisfies{\openv{}}{\elseprop{\prop{}}}.
-\begin{proof}
-  By cases on {\v{b}}.
-
-  \begin{case}[{\istrueval{\v{b}}}]
-    \thenprop{\prop{}} = {\replacefor{\isprop{\t{}}{\x{}}}{\object{2}}{\x{}}}
-
-  By cases on the definition of \isaopsemliteral.
-
-  \begin{itemize}
-    \item[]
-  \begin{subcase} \v{1} = \v{2}
-
-    By lemma \ref{lemma:equaltypes} we know
-     \judgement{}{\hastype{\v{1}}{\t{}}}{\filterset{\thenprop{\prop{2}}}{\elseprop{\prop{2}}}}{\object{2}},
-  \end{subcase}
-  \end{itemize}
-    \item \v{1} = \class{1} and \v{2} = \class{2} where \issubtype{}{1}{\class{1}}{\class{2}}
-   may be be safely upcast to the same type as down {\object{1}}.
-  \end{case}
-\end{proof}
-\end{lemma}
+%\begin{lemma}[Equal types] \label{lemma:equaltypes}
+%  If
+%  \begin{itemize}
+%    \item
+%      \judgement{\propenv{}}{\hastype{\e{}}{\t{}}}{\filterset{\thenprop{\prop{}}}{\elseprop{\prop{}}}}{\object{}},
+%    \item
+%     \judgement{\propenv{}}{\hastype{\ep{}}{\tp{}}}{\filterset{\thenprop{\propp{}}}{\elseprop{\propp{}}}}{\objectp{}},
+%    \item
+%     \satisfies{\openv{}}{\propenv{}},
+%    \item
+%     \opsem{\openv{}}{\e{}}{\v{}},
+%    \item
+%     \opsem{\openv{}}{\ep{}}{\vp{}}, and
+%    \item \v{} = \vp{}
+%  \end{itemize}
+%  then
+%      \judgement{}{\hastype{\vp{}}{\t{}}}{\filterset{\thenprop{\prop{}}}{\elseprop{\prop{}}}}{\object{}},
+%
+%  \begin{proof}
+%    TODO
+%  \end{proof}
+%\end{lemma}
+%
+%\begin{lemma}[IsA Equal] \label{lemma:isa}
+%
+%  If
+%  \begin{itemize}
+%    \item
+%      \judgement{\propenv{}}{\hastype{\e{1}}{\s{}}}{\filterset{\thenprop{\prop{1}}}{\elseprop{\prop{1}}}}{\object{1}},
+%    \item
+%     \judgement{\propenv{}}{\hastype{\e{2}}{\t{}}}{\filterset{\thenprop{\prop{2}}}{\elseprop{\prop{2}}}}{\object{2}},
+%    \item
+%     \satisfies{\openv{}}{\propenv{}},
+%    \item
+%     \opsem{\openv{}}{\e{1}}{\v{}},
+%    \item
+%     \opsem{\openv{}}{\e{2}}{\v{}},
+%    \item
+%      \isaopsem{\v{1}}{\v{2}} = {\true{}}, and
+%    \item
+%      \isacompare{\s{}}{\object{2}}{\t{}}{\filterset{\thenprop{\prop{}}}{\elseprop{\prop{}}}}
+%  \end{itemize}
+%  then
+%  either {\istrueval{\v{b}}} and \satisfies{\openv{}}{\thenprop{\prop{}}}
+%  or     {\isfalseval{\v{b}}} and \satisfies{\openv{}}{\elseprop{\prop{}}}.
+%\begin{proof}
+%  By cases on {\v{b}}.
+%
+%  \begin{case}[{\istrueval{\v{b}}}]
+%    \thenprop{\prop{}} = {\replacefor{\isprop{\t{}}{\x{}}}{\object{2}}{\x{}}}
+%
+%  By cases on the definition of \isaopsemliteral.
+%
+%  \begin{itemize}
+%    \item[]
+%  \begin{subcase} \v{1} = \v{2}
+%
+%    By lemma \ref{lemma:equaltypes} we know
+%     \judgement{}{\hastype{\v{1}}{\t{}}}{\filterset{\thenprop{\prop{2}}}{\elseprop{\prop{2}}}}{\object{2}},
+%  \end{subcase}
+%  \end{itemize}
+%    \item \v{1} = \class{1} and \v{2} = \class{2} where \issubtype{}{1}{\class{1}}{\class{2}}
+%   may be be safely upcast to the same type as down {\object{1}}.
+%  \end{case}
+%\end{proof}
+%\end{lemma}
 
 \begin{lemma} \label{lemma:substfilter}
   If 
@@ -161,6 +161,60 @@
 
   \begin{proof}
     By induction on the derivation of the model judgement.
+  \end{proof}
+\end{lemma}
+
+\begin{lemma} \label{lemma:satisfies}
+  If \satisfies{\openv{}}{\propenv{}} and \inpropenv{\propenv{}}{\prop{}} then \satisfies{\openv{}}{\prop{}}.
+
+  \begin{proof}
+    By structural induction on \inpropenv{\propenv{}}{\prop{}}.
+    \begin{itemize}
+      \item[]
+        \begin{case}[L-AndI]
+          \inpropenv{\propenv{}}{\andprop{\prop{1}}{\prop{2}}}, \satisfies{\openv{}}{\propenv{}}
+
+          By inversion on the proof system we know \inpropenv{\propenv{}}{\prop{1}}
+          and
+          \inpropenv{\propenv{}}{\prop{2}}.
+
+          By the induction hypothesis we know \satisfies{\openv{}}{\prop{1}}
+          and
+          \satisfies{\openv{}}{\prop{2}}.
+
+          By M-And we know \satisfies{\openv{}}{\andprop{\prop{1}}{\prop{2}}}
+          and we are done.
+        \end{case}
+      \item[]
+        \begin{case}[L-AndE]
+          \inpropenv{\propenv{},{\andprop{\prop{1}}{\prop{2}}}}{\prop{}}, \satisfies{\openv{}}{\propenv{},{\andprop{\prop{1}}{\prop{2}}}}
+
+
+          By inversion on the proof system we know  either
+          \inpropenv{\propenv{},{\prop{1}}}{\prop{}}
+          or
+          \inpropenv{\propenv{},{\prop{2}}}{\prop{}}.
+
+          %TODO
+         % By the induction hypothesis we know 
+         % either
+         % \satisfies{\openv{}}{\prop{1}}
+         % and
+         % \satisfies{\openv{}}{\prop{2}}.
+        \end{case}
+    \end{itemize}
+  \end{proof}
+\end{lemma}
+
+\begin{lemma} \label{lemma:goodobjects+ve}
+  If \inpropenv{\propenv{}}{\isprop{\t{}}{\path{\pathelem{}}{\x{}}}},
+  \satisfies{\openv{}}{\propenv{}}
+  and {\openv{}}({\path{\pathelem{}}{\x{}}}) = \v{}
+  then
+  \judgement{}{\hastype{\v{}}{\t{}}}{\filterset{\thenprop{\propp{}}}{\elseprop{\propp{}}}}{\objectp{}}
+  for some {\thenprop{\propp{}}}, {\elseprop{\propp{}}} and {\objectp{}}.
+  \begin{proof}
+    Corollary of lemma \ref{lemma:satisfies}.
   \end{proof}
 \end{lemma}
 
@@ -228,7 +282,6 @@
 
 \end{definition}
 
-
 \begin{definition} \label{definition:isconsistent}
   \isconsistent{\openv{}}
   iff
@@ -259,25 +312,24 @@ and all of the following hold:
 \opsem {\openv{}} {\e{}} {\errorvalv{}}.
 \end{itemize}
 
-
 \begin{proof}
 By induction on the derivation of the typing judgement.
 
 \begin{case}[T-True]
-\e{} = \true, \t{} = \True, \thenprop{\prop{}} = \topprop{}, \elseprop{\prop{}} = \botprop{}, \object{} = \emptyobject{}
+  \e{} = \true, \t{} = \True, \thenprop{\prop{}} = \topprop{}, \elseprop{\prop{}} = \botprop{}, \object{} = \emptyobject{}
 
-\begin{itemize}
-  \item[] 
-    \begin{subcase}[B-Val]
-      \v{} = \true{}
+  \begin{itemize}
+    \item[] 
+      \begin{subcase}[B-Val]
+        \v{} = \true{}
 
-Proving part 1 is trivial: \object{} is \emptyobject. 
-To prove part 2, we note that \v{} = \true\ 
-and \thenprop{\prop{}} = \topprop{}, so \satisfies{\openv{}}{\thenprop{\prop{}}} by M-Top.
-Part 3 holds as \e{} can only be reduced to itself via B-Val.
-\end{subcase}
-
-\end{itemize}
+        Proving part 1 is trivial: \object{} is \emptyobject. 
+        To prove part 2, we note that \v{} = \true\ 
+        and \thenprop{\prop{}} = \topprop{}, so \satisfies{\openv{}}{\thenprop{\prop{}}} by M-Top.
+        Part 3 holds as \e{} can only be reduced to itself via B-Val.
+      \end{subcase}
+  \end{itemize}
+\end{case}
 
 \begin{case}[T-HMap] \e{} = {\curlymapvaloverright{\v{k}}{\v{v}}},
   \t{} = {\HMapc {\mandatory{}}},
@@ -310,8 +362,6 @@ Part 3 holds as \e{} can only be reduced to itself via B-Val.
         Similar to T-True.
       \end{subcase}
   \end{itemize}
-\end{case}
-
 \end{case}
 
 \begin{case}[T-False]
@@ -1326,40 +1376,98 @@ so we know $\forall v \in \fv{\thenprop{\prop{}}} - \x{}$,
   \begin{itemize}
     \item[]
       \begin{subcase}[B-IsA]
-  \opsem {\openv{}} {\e{1}} {\v{1}},
-  \opsem {\openv{}} {\e{2}} {\v{2}},
-  \isaopsem{\v{1}}{\v{2}} = {\v{}}
+        \opsem {\openv{}} {\e{1}} {\v{1}},
+        \opsem {\openv{}} {\e{2}} {\v{2}},
+        \isaopsem{\v{1}}{\v{2}} = {\v{}}
 
-  From the definition of \isacompareliteral,
-  \thenprop{\prop{}} = {\replacefor{\isprop{\t{2}}{\x{}}}{\object{1}}{\x{}}} and
-  \elseprop{\prop{}} = {\replacefor{\notprop{\t{2}}{\x{}}}{\object{1}}{\x{}}}.
+        Part 1 holds trivially with \object{} = \emptyobject{}.
 
-  Part 1 holds trivially with \object{} = \emptyobject{}.
+        For part 2, we must prove, where 
+        \isaopsem{\v{1}}{\v{2}} = {\v{}},
+        and
+        \isacompare{\t{1}}{\object{1}}{\t{2}}{\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}}
+        that if
+        \istrueval{\v{}}
+        then {\satisfies{\openv{}}{\thenprop{\prop{}}}}
+        or if
+        \isfalseval{\v{}}
+        then {\satisfies{\openv{}}{\elseprop{\prop{}}}}.
 
-  For part 2, first we consider if \istrueval{\v{}}
-  then {\satisfies{\openv{}}{\replacefor{\isprop{\t{2}}{\x{}}}{\object{1}}{\x{}}}}. By the definition
-  of \isaopsemliteral if \istrueval{\v{}} then either
+        Prove by cases on the definition of \isaopsemliteral:
+        \begin{itemize} % isaopsem
+          \item[]
+            \begin{subcase}[\isaopsem{\v{}}{\v{}} = {\true{}}]
+              \v{1} = \v{2}, \istrueval{\v{}}
+              
+              Since \istrueval{\v{}} we prove {\satisfies{\openv{}}{\thenprop{\prop{}}}}
+              by cases on the definition of \isacompareliteral{}:
+              \begin{itemize} % isacompare
+                \item[]
+                  \begin{subcase}[\isacompare{\s{}}{\path{\classpe{}}{\path{\pathelem{}}{\x{}}}}{\t{}}
+                    {\filterset{\isprop{\t{}} {\path{\classpe{}}{\path{\pathelem{}}{\x{}}}}}
+                      {\notprop{\t{}}{\path{\classpe{}}{\path{\pathelem{}}{\x{}}}}}}]
+                    \ 
 
-  \begin{itemize}
-    \item \v{1} = \v{2}, 
-      which implies
-      {\opsem{\openv{}}{\e{1}}{\v{2}}},
-      and since {\opsem{\openv{}}{\e{2}}{\v{2}}}
-      then either {\opsem{\openv{}}{\e{1}}{\e{2}}} or {\opsem{\openv{}}{\e{2}}{\e{1}}},
-      which implies \judgement{\propenv{}}{\hastype{\e{1}}{\t{2}}}
-                                                {\filterset {\thenprop {\prop{1}}}
-                                                            {\elseprop {\prop{1}}}}
-                                                          {\object{1}},
-                          so {\satisfies{\openv{}}{\replacefor{\isprop{\t{2}}{\x{}}}{\object{1}}{\x{}}}}, or
-    \item \v{1} = \class{1} and \v{2} = \class{2} where {\issubtypein{}{\class{1}}{\class{2}}}.
-      The interesting case is where \object{1} is non-empty, as in \isaapp{\appexp{\classconst{}}{\y{}}}{\Keyword{}}
-      where \object{1} = {\path{\classpe{}}{\y{}}}.
-  \end{itemize}
-  Part 3 holds because by the definition of \isaopsemliteral
-  \v{} can only be \true or \false, which are both subtypes of
-  \t{}.
+                    \object{1} = {\path{\classpe{}}{\path{\pathelem{}}{\x{}}}},
+                    \thenprop{\prop{}} = {\isprop{\t{2}} {\path{\classpe{}}{\path{\pathelem{}}{\x{}}}}},
+                    \elseprop{\prop{}} = {\notprop{\t{2}}{\path{\classpe{}}{\path{\pathelem{}}{\x{}}}}}
 
+                    Since \v{1} = \v{2} then {\opsem{\openv{}}{\e{1}}{\v{2}}}, 
+                    and then with
+                    \judgement 
+                    {\propenv{}} 
+                    {\hastype {\e{1}} {\t{1}}}
+                    {\filterset 
+                      {\thenprop {\prop{1}}}
+                      {\elseprop {\prop{1}}}}
+                    {\path{\classpe{}}
+                      {\path{\pathelem{}}{\x{}}}}
+                    we know
 
+                    \judgement{\propenv{}}
+                    {\hastype{\e{1}}{\t{2}}}
+                    {\filterset 
+                      {\thenprop {\prop{1}}}
+                      {\elseprop {\prop{1}}}}
+                    {\path{\classpe{}}{\path{\pathelem{}}{\x{}}}}.
+
+                    We can use the type and object from this judgement to show
+                    {\satisfies{\openv{}}{\isprop{\t{2}} {\path{\classpe{}}{\path{\pathelem{}}{\x{}}}}}}.
+                    %{\satisfies{\openv{}}{\thenprop{\prop{}}}}
+                  \end{subcase}
+                \item[]
+                  \begin{subcase}[\isacompare{\s{}}{\object{}}{\Value{\singletonmeta{}}}
+                    {\replacefor
+                      {\filtersetparen{\isprop{\Value{\singletonmeta{}}} {\x{}}}
+                        {\notprop{\Value{\singletonmeta{}}}{\x{}}}}
+                      {\object{}}
+                      {\x{}}}\ 
+                    \text{if}\ {\singletonmeta{}} \notequal \class{}]
+                    \ 
+
+                    \t{2} = {\Value{\singletonmeta{}}}, 
+                    {\singletonmeta{}} \notequal \class{},
+                    \thenprop{\prop{}} = {\replacefor{\isprop{\Value{\singletonmeta{}}} {\x{}}}
+                                           {\object{1}}
+                                           {\x{}}},
+                    \elseprop{\prop{}} = {\replacefor{\notprop{\Value{\singletonmeta{}}} {\x{}}}
+                                           {\object{1}}
+                                           {\x{}}}
+
+                    By inversion on the typing and evaluation judgements then 
+                    {\v{1}} and {\v{2}} are both either \true{}, \false{}, \nil{} or \k{}.
+
+                  \end{subcase}
+              \end{itemize}
+            \end{subcase}
+        \end{itemize}
+
+        Part 3 holds because by the definition of \isaopsemliteral
+        \v{} can only be \true\ or \false, 
+        and since \judgementtwo{\propenv{}}{\hastype{\true}{\t{}}}
+        and
+        \judgementtwo{\propenv{}}{\hastype{\false}{\t{}}}
+        we are done.
       \end{subcase}
     \item[]
       \begin{subcase}[BE-IsA1]

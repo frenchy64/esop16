@@ -225,11 +225,11 @@
 
 % update function
 \newcommand\metafunctionfont[1]{{\mathsf{#1}}}
-\newcommand\updateliteral[0]{\metafunctionfont{update}}
+\newcommand\updateliteral[0]{\ma{\metafunctionfont{update}}}
 \newcommand\update[3]{\updateliteral(#1 , #2, #3)}
-\newcommand\restrictliteral[0]{\metafunctionfont{restrict}}
+\newcommand\restrictliteral[0]{\ma{\metafunctionfont{restrict}}}
 \newcommand\restrict[2]{\restrictliteral(#1, #2)}
-\newcommand\removeliteral[0]{\metafunctionfont{remove}}
+\newcommand\removeliteral[0]{\ma{\metafunctionfont{remove}}}
 \newcommand\remove[2]{\removeliteral(#1, #2)}
 \newcommand\emptypath[0]{\ma{\epsilon}}
 
@@ -327,9 +327,9 @@
 
 % isa? special functions
 \newcommand\isacompareliteral[0]{\ma{\metafnfont{IsAProps}}}
-\newcommand\isacompare[4]{\ma{\isacompareliteral(#1, #2, #3) = {#4}}}
 \newcommand\isacomparethree[3]{\ma{\isacompareliteral(#1, #2, #3)}}
-\newcommand\isacomparealign[4]{\ma{\isacompareliteral(#1, #2, #3) &=& {#4}}}
+\newcommand\isacompare[4]{\ma{\isacomparethree{#1}{#2}{#3} = {#4}}}
+\newcommand\isacomparealign[4]{\ma{\isacomparethree{#1}{#2}{#3} &=& {#4}}}
 \newcommand\isaopsemliteral[0]{\ma{\metafnfont{IsA}}}
 \newcommand\isaopsem[2]{\ma{\isaopsemliteral(#1, #2)}}
 
@@ -374,9 +374,15 @@
 \newcommand\filterset[2]{\ma{#1 | #2}}
 \newcommand\filtersetparen[2]{\ma{(\filterset{#1}{#2})}}
 \newcommand\thenprop[1]{\ma{{#1}_+}}
-\newcommand\pluspolarity[1]{\ma{{#1}_{\pm}}}
+\newmeta\polaritymeta{pol}
+\newcommand\pluspolarityliteral[0]{\metafunctionfont{pos}}
+\newcommand\minuspolarityliteral[0]{\metafunctionfont{neg}}
+\newcommand\withpolarity[2]{\ma{{#1}_{#2}}}
+\newcommand\pluspolarity[1]{\ma{{#1}_{\pluspolarityliteral}}}
 \newcommand\elseprop[1]{\ma{{#1}_-}}
-\newcommand\minuspolarity[1]{\ma{{#1}_{\mp}}}
+\newcommand\minuspolarity[1]{\ma{{#1}_{\minuspolarityliteral}}}
+
+\newcommand\notequal[0]{\ma{\not=}}
 
 % objects
 \newcommand\path[2]{\ma{#1(#2)}}

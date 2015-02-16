@@ -1,10 +1,14 @@
 \begin{figure*}
 $$
 \begin{array}{lllr}
-  \isacomparealign{\s{}}{\path{\classpe{}}{\path{\pathelem{}}{\x{}}}}{\t{}}
-             {\filterset{\isprop{\t{}} {\path{\classpe{}}{\path{\pathelem{}}{\x{}}}}}
-                        {\notprop{\t{}}{\path{\classpe{}}{\path{\pathelem{}}{\x{}}}}}}
+  \isacomparealign{\s{}}{\path{\classpe{}}{\path{\pathelem{}}{\x{}}}}{\Value{\class{}}}
+             {\filterset{\isprop{\class{}} {\path{\pathelem{}}{\x{}}}}
+                        {\notprop{\class{}}{\path{\pathelem{}}{\x{}}}}}
                         \\
+%  \isacomparealign{\s{}}{\path{\classpe{}}{\path{\pathelem{}}{\x{}}}}{\Value{\class{}}}
+%             {\filterset{\isprop{\Value{\class{}}} {\path{\classpe{}}{\path{\pathelem{}}{\x{}}}}}
+%                        {\notprop{\Value{\class{}}}{\path{\classpe{}}{\path{\pathelem{}}{\x{}}}}}}
+%                        \\
   \isacomparealign{\s{}}{\object{}}{\Value{\singletonmeta{}}}
              {\replacefor
                {\filtersetparen{\isprop{\Value{\singletonmeta{}}} {\x{}}}
