@@ -78,73 +78,6 @@
 \end{proof}
 \end{lemma}
 
-%\begin{lemma}[Equal types] \label{lemma:equaltypes}
-%  If
-%  \begin{itemize}
-%    \item
-%      \judgement{\propenv{}}{\hastype{\e{}}{\t{}}}{\filterset{\thenprop{\prop{}}}{\elseprop{\prop{}}}}{\object{}},
-%    \item
-%     \judgement{\propenv{}}{\hastype{\ep{}}{\tp{}}}{\filterset{\thenprop{\propp{}}}{\elseprop{\propp{}}}}{\objectp{}},
-%    \item
-%     \satisfies{\openv{}}{\propenv{}},
-%    \item
-%     \opsem{\openv{}}{\e{}}{\v{}},
-%    \item
-%     \opsem{\openv{}}{\ep{}}{\vp{}}, and
-%    \item \v{} = \vp{}
-%  \end{itemize}
-%  then
-%      \judgement{}{\hastype{\vp{}}{\t{}}}{\filterset{\thenprop{\prop{}}}{\elseprop{\prop{}}}}{\object{}},
-%
-%  \begin{proof}
-%    TODO
-%  \end{proof}
-%\end{lemma}
-%
-%\begin{lemma}[IsA Equal] \label{lemma:isa}
-%
-%  If
-%  \begin{itemize}
-%    \item
-%      \judgement{\propenv{}}{\hastype{\e{1}}{\s{}}}{\filterset{\thenprop{\prop{1}}}{\elseprop{\prop{1}}}}{\object{1}},
-%    \item
-%     \judgement{\propenv{}}{\hastype{\e{2}}{\t{}}}{\filterset{\thenprop{\prop{2}}}{\elseprop{\prop{2}}}}{\object{2}},
-%    \item
-%     \satisfies{\openv{}}{\propenv{}},
-%    \item
-%     \opsem{\openv{}}{\e{1}}{\v{}},
-%    \item
-%     \opsem{\openv{}}{\e{2}}{\v{}},
-%    \item
-%      \isaopsem{\v{1}}{\v{2}} = {\true{}}, and
-%    \item
-%      \isacompare{\s{}}{\object{2}}{\t{}}{\filterset{\thenprop{\prop{}}}{\elseprop{\prop{}}}}
-%  \end{itemize}
-%  then
-%  either {\istrueval{\v{b}}} and \satisfies{\openv{}}{\thenprop{\prop{}}}
-%  or     {\isfalseval{\v{b}}} and \satisfies{\openv{}}{\elseprop{\prop{}}}.
-%\begin{proof}
-%  By cases on {\v{b}}.
-%
-%  \begin{case}[{\istrueval{\v{b}}}]
-%    \thenprop{\prop{}} = {\replacefor{\isprop{\t{}}{\x{}}}{\object{2}}{\x{}}}
-%
-%  By cases on the definition of \isaopsemliteral.
-%
-%  \begin{itemize}
-%    \item[]
-%  \begin{subcase} \v{1} = \v{2}
-%
-%    By lemma \ref{lemma:equaltypes} we know
-%     \judgement{}{\hastype{\v{1}}{\t{}}}{\filterset{\thenprop{\prop{2}}}{\elseprop{\prop{2}}}}{\object{2}},
-%  \end{subcase}
-%  \end{itemize}
-%    \item \v{1} = \class{1} and \v{2} = \class{2} where \issubtype{}{1}{\class{1}}{\class{2}}
-%   may be be safely upcast to the same type as down {\object{1}}.
-%  \end{case}
-%\end{proof}
-%\end{lemma}
-
 \begin{lemma} \label{lemma:substfilter}
   If 
   \begin{itemize}
@@ -256,6 +189,16 @@
      TODO
    \end{case}
  \end{proof}
+\end{lemma}
+
+\begin{lemma}[\classconst]\label{lemma:classconst}
+  If
+  {\opsem{\openv{}}{\appexp{\classconst{}}{\openv{}({\path{\pathelem{}}{\x{}}})}}{\class{}}} then
+  {\satisfies{\openv{}}{\isprop{\class{}}{\path{\pathelem{}}{\x{}}}}}.
+
+  \begin{proof}
+    Induction on the definition of {\classconst{}}.
+  \end{proof}
 \end{lemma}
 
 % TODO is this too strong? Should it include things to the left of the arrow? What if the argument type includes \x{}?
@@ -1403,37 +1346,27 @@ so we know $\forall v \in \fv{\thenprop{\prop{}}} - \x{}$,
               by cases on the definition of \isacompareliteral{}:
               \begin{itemize} % isacompare
                 \item[]
-                  \begin{subcase}[\isacompare{\s{}}{\path{\classpe{}}{\path{\pathelem{}}{\x{}}}}{\t{}}
-                    {\filterset{\isprop{\t{}} {\path{\classpe{}}{\path{\pathelem{}}{\x{}}}}}
-                      {\notprop{\t{}}{\path{\classpe{}}{\path{\pathelem{}}{\x{}}}}}}]
+                  \begin{subcase}[\isacompare{\s{}}{\path{\classpe{}}{\path{\pathelem{}}{\x{}}}}{\Value{\class{}}}
+                                 {\filterset{\isprop{\class{}} {\path{\pathelem{}}{\x{}}}}
+                                            {\notprop{\class{}}{\path{\pathelem{}}{\x{}}}}}]
                     \ 
 
                     \object{1} = {\path{\classpe{}}{\path{\pathelem{}}{\x{}}}},
-                    \thenprop{\prop{}} = {\isprop{\t{2}} {\path{\classpe{}}{\path{\pathelem{}}{\x{}}}}},
-                    \elseprop{\prop{}} = {\notprop{\t{2}}{\path{\classpe{}}{\path{\pathelem{}}{\x{}}}}}
+                    \t{2} = {\Value{\class{}}},
+                    \thenprop{\prop{}} = {\isprop{\class{}} {\path{\pathelem{}}{\x{}}}}
 
-                    Since \v{1} = \v{2} then {\opsem{\openv{}}{\e{1}}{\v{2}}}, 
-                    and then with
-                    \judgement 
-                    {\propenv{}} 
-                    {\hastype {\e{1}} {\t{1}}}
-                    {\filterset 
-                      {\thenprop {\prop{1}}}
-                      {\elseprop {\prop{1}}}}
-                    {\path{\classpe{}}
-                      {\path{\pathelem{}}{\x{}}}}
-                    we know
+                    By inversion on the typing relation, since \classpe{} is the last path element of \object{1}
+                    then \opsem{\openv{}}{\appexp{\classconst{}}{\openv{}({\path{\pathelem{}}{\x{}}})}}{\v{1}}.
 
-                    \judgement{\propenv{}}
-                    {\hastype{\e{1}}{\t{2}}}
-                    {\filterset 
-                      {\thenprop {\prop{1}}}
-                      {\elseprop {\prop{1}}}}
-                    {\path{\classpe{}}{\path{\pathelem{}}{\x{}}}}.
+                    Since {\v{1}} = {\v{2}} then {\t{1}} = {\t{2}}, and because {\t{2}} = {\Value{\class{}}}
+                    then {\t{1}} = {\Value{\class{}}}.
 
-                    We can use the type and object from this judgement to show
-                    {\satisfies{\openv{}}{\isprop{\t{2}} {\path{\classpe{}}{\path{\pathelem{}}{\x{}}}}}}.
-                    %{\satisfies{\openv{}}{\thenprop{\prop{}}}}
+                    By inversion {\v{1}} = {\class{}}, via T-Class.
+
+                    Since {\opsem{\openv{}}{\appexp{\classconst{}}{\openv{}({\path{\pathelem{}}{\x{}}})}}{\class{}}}
+                    we conclude by lemma \ref{lemma:classconst}
+                    with {\satisfies{\openv{}}{\isprop{\class{}} {\path{\pathelem{}}{\x{}}}}}.
+
                   \end{subcase}
                 \item[]
                   \begin{subcase}[\isacompare{\s{}}{\object{}}{\Value{\singletonmeta{}}}
