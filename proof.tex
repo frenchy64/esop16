@@ -1339,8 +1339,10 @@ so we know $\forall v \in \fv{\thenprop{\prop{}}} - \x{}$,
         Prove by cases on the definition of \isaopsemliteral:
         \begin{itemize} % isaopsem
           \item[]
-            \begin{subcase}[\isaopsem{\v{}}{\v{}} = {\true{}}]
-              \v{1} = \v{2}, \istrueval{\v{}}
+            \begin{subcase}[\isaopsem{\v{}}{\v{}} = {\true{}}, \text{if} \v{} \notequal\ {\class{}}]
+              \ 
+
+              \v{1} = \v{2}, \v{1} \notequal\ {\class{}}, \v{2} \notequal\ {\class{}}, \istrueval{\v{}}
               
               Since \istrueval{\v{}} we prove {\satisfies{\openv{}}{\thenprop{\prop{}}}}
               by cases on the definition of \isacompareliteral{}:
@@ -1351,21 +1353,25 @@ so we know $\forall v \in \fv{\thenprop{\prop{}}} - \x{}$,
                                             {\notprop{\class{}}{\path{\pathelem{}}{\x{}}}}}]
                     \ 
 
+
                     \object{1} = {\path{\classpe{}}{\path{\pathelem{}}{\x{}}}},
                     \t{2} = {\Value{\class{}}},
                     \thenprop{\prop{}} = {\isprop{\class{}} {\path{\pathelem{}}{\x{}}}}
 
-                    By inversion on the typing relation, since \classpe{} is the last path element of \object{1}
-                    then \opsem{\openv{}}{\appexp{\classconst{}}{\openv{}({\path{\pathelem{}}{\x{}}})}}{\v{1}}.
+                    Unreachable by inversion on the typing relation, since \t{2} = {\Value{\class{}}},
+                    yet \v{2} \notequal\ {\class{}}.
 
-                    Since {\v{1}} = {\v{2}} then {\t{1}} = {\t{2}}, and because {\t{2}} = {\Value{\class{}}}
-                    then {\t{1}} = {\Value{\class{}}}.
-
-                    By inversion {\v{1}} = {\class{}}, via T-Class.
-
-                    Since {\opsem{\openv{}}{\appexp{\classconst{}}{\openv{}({\path{\pathelem{}}{\x{}}})}}{\class{}}}
-                    we conclude by lemma \ref{lemma:classconst}
-                    with {\satisfies{\openv{}}{\isprop{\class{}} {\path{\pathelem{}}{\x{}}}}}.
+%                    By inversion on the typing relation, since \classpe{} is the last path element of \object{1}
+%                    then \opsem{\openv{}}{\appexp{\classconst{}}{\openv{}({\path{\pathelem{}}{\x{}}})}}{\v{1}}.
+%
+%                    Since {\v{1}} = {\v{2}} then {\t{1}} = {\t{2}}, and because {\t{2}} = {\Value{\class{}}}
+%                    then {\t{1}} = {\Value{\class{}}}.
+%
+%                    By inversion {\v{1}} = {\class{}}, via T-Class.
+%
+%                    Since {\opsem{\openv{}}{\appexp{\classconst{}}{\openv{}({\path{\pathelem{}}{\x{}}})}}{\class{}}}
+%                    we conclude by lemma \ref{lemma:classconst}
+%                    with {\satisfies{\openv{}}{\isprop{\class{}} {\path{\pathelem{}}{\x{}}}}}.
 
                   \end{subcase}
                 \item[]
@@ -1382,13 +1388,210 @@ so we know $\forall v \in \fv{\thenprop{\prop{}}} - \x{}$,
                     {\singletonmeta{}} \notequal \class{},
                     \thenprop{\prop{}} = {\replacefor{\isprop{\Value{\singletonmeta{}}} {\x{}}}
                                            {\object{1}}
-                                           {\x{}}},
+                                           {\x{}}}
+                    %\elseprop{\prop{}} = {\replacefor{\notprop{\Value{\singletonmeta{}}} {\x{}}}
+                    %                       {\object{1}}
+                    %                       {\x{}}}
+
+                    Since \t{2} = {\Value{\singletonmeta{}}} where {\singletonmeta{}} \notequal \class{},
+                    by inversion on the typing judgement 
+                    {\v{2}} is either \true{}, \false{}, \nil{} or \k{}
+                    by T-True, T-False, T-Nil or T-Kw.
+
+                    Since \v{1} = {\v{2}} then \t{1} = \t{2}, and since \t{2} = {\Value{\singletonmeta{}}}
+                      then \t{1} = {\Value{\singletonmeta{}}}, so
+                    \judgementtwo {} {\hastype {\v{1}} {\Value{\singletonmeta{}}}}
+
+                    If \object{1} = \emptyobject{} then \thenprop{\prop{}} = \topprop{} and
+                    we derive
+                    {\satisfies{\openv{}}{\topprop{}}} with M-Top.
+
+                    Otherwise \object{1} = \path{\pathelem{}}{\x{}} and \thenprop{\prop{}} =
+                    {\isprop{\Value{\singletonmeta{}}}{\path{\pathelem{}}{\x{}}}},
+                    and since
+                    \judgementtwo {} {\hastype {\v{1}} {\Value{\singletonmeta{}}}}
+                    then
+                    \judgementtwo {} {\hastype {{\openv{}}(\path{\pathelem{}}{\x{}})} {\Value{\singletonmeta{}}}},
+                    which we can use M-Type to derive
+                    {\satisfies{\openv{}}{\isprop{\Value{\singletonmeta{}}}{\path{\pathelem{}}{\x{}}}}}.
+                  \end{subcase}
+                \item[]
+                  \begin{subcase}[\isacompare{\s{}}{\object{}}{\t{}} {\filterset{\topprop{}} {\topprop{}}}]
+                    \ 
+
+                    {\thenprop{\prop{}}} = {\topprop{}}
+
+                    {\satisfies{\openv{}}{\topprop{}}} holds by M-Top.
+
+                  \end{subcase}
+              \end{itemize}
+            \end{subcase}
+          \item[]
+            \begin{subcase}[\isaopsem{\class{1}}{\class{2}} = {\true{}}, \text{if}\ \issubtypein{}{\class{1}}{\class{2}}]
+              \ 
+
+              \v{1} = \class{1}, \v{2} = \class{2},
+              \issubtypein{}{\class{1}}{\class{2}},
+              \istrueval{\v{}}
+              
+              Since \istrueval{\v{}} we prove {\satisfies{\openv{}}{\thenprop{\prop{}}}}
+              by cases on the definition of \isacompareliteral{}:
+              \begin{itemize} % isacompare
+                \item[]
+                  \begin{subcase}[\isacompare{\s{}}{\path{\classpe{}}{\path{\pathelem{}}{\x{}}}}{\Value{\class{}}}
+                                 {\filterset{\isprop{\class{}} {\path{\pathelem{}}{\x{}}}}
+                                            {\notprop{\class{}}{\path{\pathelem{}}{\x{}}}}}]
+                    \ 
+
+
+                    \object{1} = {\path{\classpe{}}{\path{\pathelem{}}{\x{}}}},
+                    \t{2} = {\Value{\class{2}}},
+                    \thenprop{\prop{}} = {\isprop{\class{2}} {\path{\pathelem{}}{\x{}}}}
+
+                    By inversion on the typing relation, since \classpe{} is the last path element of \object{1}
+                    then \opsem{\openv{}}{\appexp{\classconst{}}{\openv{}({\path{\pathelem{}}{\x{}}})}}{\v{1}}.
+
+                    Since {\opsem{\openv{}}{\appexp{\classconst{}}{\openv{}({\path{\pathelem{}}{\x{}}})}}{\class{1}}},
+                    as {\v{1}} = {\class{1}},
+                    we can derive from lemma \ref{lemma:classconst}
+                    {\satisfies{\openv{}}{\isprop{\class{1}} {\path{\pathelem{}}{\x{}}}}}.
+
+                    By the induction hypothesis we can derive 
+                    {\inpropenv{\propenv{}}{\isprop{\class{1}} {\path{\pathelem{}}{\x{}}}}},
+                    and with the fact {\issubtypein{}{\class{1}}{\class{2}}}
+                    we can use L-Sub to conclude 
+                    {\inpropenv{\propenv{}}{\isprop{\class{2}} {\path{\pathelem{}}{\x{}}}}},
+                    and finally by lemma \ref{lemma:satisfies}
+                    we derive
+                    {\satisfies{\openv{}}{\isprop{\class{2}} {\path{\pathelem{}}{\x{}}}}}.
+
+                  \end{subcase}
+                \item[]
+                  \begin{subcase}[\isacompare{\s{}}{\object{}}{\Value{\singletonmeta{}}}
+                    {\replacefor
+                      {\filtersetparen{\isprop{\Value{\singletonmeta{}}} {\x{}}}
+                        {\notprop{\Value{\singletonmeta{}}}{\x{}}}}
+                      {\object{}}
+                      {\x{}}}\ 
+                    \text{if}\ {\singletonmeta{}} \notequal \class{}]
+                    \ 
+
+                    \t{2} = {\Value{\singletonmeta{}}}, 
+                    {\singletonmeta{}} \notequal \class{},
+                    \thenprop{\prop{}} = {\replacefor{\isprop{\Value{\singletonmeta{}}} {\x{}}}
+                                           {\object{1}}
+                                           {\x{}}}
+
+                    Unreachable case since 
+                    \t{2} = {\Value{\singletonmeta{}}} where 
+                    {\singletonmeta{}} \notequal \class{},
+                    but \v{2} = \class{2}.
+                  \end{subcase}
+                \item[]
+                  \begin{subcase}[\isacompare{\s{}}{\object{}}{\t{}} {\filterset{\topprop{}} {\topprop{}}}]
+                    \ 
+
+                    {\thenprop{\prop{}}} = {\topprop{}}
+
+                    {\satisfies{\openv{}}{\topprop{}}} holds by M-Top.
+
+                  \end{subcase}
+              \end{itemize}
+            \end{subcase}
+          \item[]
+            \begin{subcase}[\isaopsem{\v{1}}{\v{2}} = {\false{}}, otherwise]
+              \ 
+
+              \v{1} \notequal\ \v{2},
+              \isfalseval{\v{}}
+              
+              Since \isfalseval{\v{}} we prove {\satisfies{\openv{}}{\elseprop{\prop{}}}}
+              by cases on the definition of \isacompareliteral{}:
+              \begin{itemize} % isacompare
+                \item[]
+                  \begin{subcase}[\isacompare{\s{}}{\path{\classpe{}}{\path{\pathelem{}}{\x{}}}}{\Value{\class{}}}
+                                 {\filterset{\isprop{\class{}} {\path{\pathelem{}}{\x{}}}}
+                                            {\notprop{\class{}}{\path{\pathelem{}}{\x{}}}}}]
+                    \ 
+
+
+                    \object{1} = {\path{\classpe{}}{\path{\pathelem{}}{\x{}}}},
+                    \t{2} = {\Value{\class{}}},
+                    \elseprop{\prop{}} = {\notprop{\class{}} {\path{\pathelem{}}{\x{}}}}
+
+                    By inversion on the typing relation, since \classpe{} is the last path element of \object{1}
+                    then \opsem{\openv{}}{\appexp{\classconst{}}{\openv{}({\path{\pathelem{}}{\x{}}})}}{\v{1}}.
+                    
+                    By the definition of {\classconst{}} either {\v{1}} = {\class{}} or {\v{1}} = \nil{}.
+
+                    If {\v{1}} = \nil{}, then we know from the definition of \isaopsemliteral that 
+                    {\openv{}({\path{\pathelem{}}{\x{}}})} = \nil{}.
+
+                    Since \judgementtwo{}{\hastype{\openv{}({\path{\pathelem{}}{\x{}}})}{\Nil}},
+                    and there is no \v{1} such that both \judgementtwo{}{\hastype{\openv{}({\path{\pathelem{}}{\x{}}})}{\class}} and
+                    \judgementtwo{}{\hastype{\openv{}({\path{\pathelem{}}{\x{}}})}{\Nil{}}},
+                    we use M-NotType to derive 
+                    \satisfies{\openv{}}{\notprop{\class{}} {\path{\pathelem{}}{\x{}}}}.
+
+                    Similarly if {\v{1}} = \class{1}, by the definition of \isacompareliteral
+                    we know {\notsubtypein{}{\class{1}}{\class{}}} and 
+                    {\openv{}({\path{\pathelem{}}{\x{}}})} = \class{1}.
+
+                    Since \judgementtwo{}{\hastype{\openv{}({\path{\pathelem{}}{\x{}}})}{\class{1}}},
+                    and there is no \v{1} such that both 
+                    \judgementtwo{}{\hastype{\v{1}}{\class{}}} and
+                    \judgementtwo{}{\hastype{\v{1}}{\class{1}}},
+                    we use M-NotType to derive 
+                    \satisfies{\openv{}}{\notprop{\class{}} {\path{\pathelem{}}{\x{}}}}.
+
+
+                  \end{subcase}
+                \item[]
+                  \begin{subcase}[\isacompare{\s{}}{\object{}}{\Value{\singletonmeta{}}}
+                    {\replacefor
+                      {\filtersetparen{\isprop{\Value{\singletonmeta{}}} {\x{}}}
+                        {\notprop{\Value{\singletonmeta{}}}{\x{}}}}
+                      {\object{}}
+                      {\x{}}}\ 
+                    \text{if}\ {\singletonmeta{}} \notequal \class{}]
+                    \ 
+
+                    \t{2} = {\Value{\singletonmeta{}}}, 
+                    {\singletonmeta{}} \notequal \class{},
+                    %\thenprop{\prop{}} = {\replacefor{\isprop{\Value{\singletonmeta{}}} {\x{}}}
+                    %                       {\object{1}}
+                    %                       {\x{}}}
                     \elseprop{\prop{}} = {\replacefor{\notprop{\Value{\singletonmeta{}}} {\x{}}}
                                            {\object{1}}
                                            {\x{}}}
 
-                    By inversion on the typing and evaluation judgements then 
-                    {\v{1}} and {\v{2}} are both either \true{}, \false{}, \nil{} or \k{}.
+                    Since \t{2} = {\Value{\singletonmeta{}}} where {\singletonmeta{}} \notequal \class{},
+                    by inversion on the typing judgement 
+                    {\v{2}} is either \true{}, \false{}, \nil{} or \k{}
+                    by T-True, T-False, T-Nil or T-Kw.
+
+                    If \object{1} = \emptyobject{} then \elseprop{\prop{}} = \topprop{} and
+                    we derive
+                    {\satisfies{\openv{}}{\topprop{}}} with M-Top.
+
+                    Otherwise \object{1} = \path{\pathelem{}}{\x{}} and \elseprop{\prop{}} =
+                    {\notprop{\Value{\singletonmeta{}}}{\path{\pathelem{}}{\x{}}}}.
+                    Noting that \v{1} \notequal\ \v{2},
+                    we know \judgementtwo{}{\hastype{\openv{}({\path{\pathelem{}}{\x{}}})}{\s{}}}
+                    where \s{} \notequal\ {\Value{\singletonmeta{}}},
+                    and there is no \v{1} such that both 
+                    \judgementtwo{}{\hastype{\v{1}}{\Value{\singletonmeta{}}}} and
+                    \judgementtwo{}{\hastype{\v{1}}{\s{}}}
+                    so we can use M-NotType to derive
+                    {\satisfies{\openv{}}{\notprop{\Value{\singletonmeta{}}}{\path{\pathelem{}}{\x{}}}}}.
+                  \end{subcase}
+                \item[]
+                  \begin{subcase}[\isacompare{\s{}}{\object{}}{\t{}} {\filterset{\topprop{}} {\topprop{}}}]
+                    \ 
+
+                    {\elseprop{\prop{}}} = {\topprop{}}
+
+                    {\satisfies{\openv{}}{\topprop{}}} holds by M-Top.
 
                   \end{subcase}
               \end{itemize}
@@ -1404,9 +1607,16 @@ so we know $\forall v \in \fv{\thenprop{\prop{}}} - \x{}$,
       \end{subcase}
     \item[]
       \begin{subcase}[BE-IsA1]
+        \opsem {\openv{}} {\e{1}} {\errorvalv{}}
+
+        Trivially reduces to an error.
       \end{subcase}
     \item[]
       \begin{subcase}[BE-IsA2]
+       \opsem {\openv{}} {\e{1}} {\v{1}},
+       \opsem {\openv{}} {\e{2}} {\errorvalv{}}
+
+        Trivially reduces to an error.
       \end{subcase}
   \end{itemize}
 \end{case}
