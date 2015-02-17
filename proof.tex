@@ -104,6 +104,17 @@
     By structural induction on \inpropenv{\propenv{}}{\prop{}}.
     \begin{itemize}
       \item[]
+        \begin{case}[L-True]
+
+          Holds by M-Top.
+        \end{case}
+      \item[]
+        \begin{case}[L-False]
+          {\inpropenv{\propenv{}}{\botprop{}}}
+
+          ??? TODO
+        \end{case}
+      \item[]
         \begin{case}[L-AndI]
           \inpropenv{\propenv{}}{\andprop{\prop{1}}{\prop{2}}}, \satisfies{\openv{}}{\propenv{}}
 
@@ -770,9 +781,6 @@ and {\emptydisptable} vacuously satisfies the other premises of T-Multi, so we a
                                 {\v{v}}
                                 {\v{f}}}
         \end{enumerate}
-
-        Any callers of \e{f} must prove {\thenprop {\prop{i}}}, which by inversion on the operational semantics judgement
-        can only happen in B-BetaMulti, which we show satisfies this requirement in the B-BetaMulti subcase of T-App.
 
                                 Part 1 and 2 hold for the same reasons as T-True, noting that the propositions
                                 and object agree with T-Multi.

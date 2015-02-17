@@ -94,6 +94,12 @@
   {\HMapp {\overrightarrow{(\k{},\ \t{})}^i} {\absent{}}}
                }
 
+\infer [S-HMapMono]
+{}
+{\issubtypein {} 
+  {\HMapgeneric {\mandatory{}} {\absent{}}}
+  {\HMapInstance{}}}
+
 \infer [S-SKw]
 {}
 {\issubtypein {}
@@ -105,6 +111,19 @@
 {\issubtypein {}
   {\Value{\class{}}}
   {\Class{}}}
+
+\infer [S-STrue]
+{}
+{\issubtypein {}
+  {\Value{\True}}
+  {\Boolean{}}}
+
+\infer [S-SFalse]
+{}
+{\issubtypein {}
+  {\Value{\False}}
+  {\Boolean{}}}
+
 
 \infer [S-Object]
 {}
