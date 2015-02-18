@@ -113,6 +113,28 @@ $$
 \caption{Subtyping rules}
 \end{figure*}
 
+\subsection{\isaliteral{}}
+
+
+\begin{figure}
+\begin{mathpar}
+  \isaopsemfigure{}
+
+       \BIsA{}
+\end{mathpar}
+\caption{\isaliteral{} semantics}
+\end{figure}
+
+\begin{figure}
+\begin{mathpar}
+\isapropsfigure{}
+
+       \TIsA{}
+\end{mathpar}
+\caption{\isaliteral{} typing rules}
+\end{figure}
+
+
 \subsection{Multimethods}
 
 \begin{figure}
@@ -122,6 +144,25 @@ $$
   \TDefMethod{}
 \end{mathpar}
 \caption{Multimethod typing rules}
+\end{figure}
+
+\begin{figure}
+\begin{mathpar}
+  \Multisubtyping{}
+\end{mathpar}
+\caption{Multimethod subtyping rules}
+\end{figure}
+
+
+\begin{figure}
+\begin{mathpar}
+  \BBetaMulti{}
+
+       \BDefMulti{}
+
+       \BDefMethod{}
+\end{mathpar}
+\caption{Multimethod semantics}
 \end{figure}
 
 Clojure provides multimethods which can dispatch on the result of an
@@ -160,7 +201,7 @@ TODO
     vs over arrow
 \end{verbatim}
 
-\subsection{Extending occurrence typing}
+\subsection{Heterogenous maps}
 
 \subsection{Java interoperability}
 

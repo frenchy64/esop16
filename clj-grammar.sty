@@ -53,7 +53,7 @@
 \newbfop\Not{Not}
 \newbfop\Allliteral{All}
 \newbfop\TFnliteral{TFn}
-\newbfop\Valueliteral{Value}
+\newbfop\Valueliteral{Val}
 \newbfop\ArrayTwoLiteral{Array2}
 \newbfop\ArrayLiteral{Array}
 \newbfop\ArrayPLiteral{ArrayP}
@@ -723,6 +723,25 @@
 }
 }
 
+\newcommand\TIsA[0]{
+\infer [T-IsA]
+{
+  \judgement {\propenv{}} {\hastype {\e{}} {\s{}}}
+             {\filterset {\thenprop {\propp{}}}
+                         {\elseprop {\propp{}}}}
+                       {\object{}}
+  \\
+  \judgementtwo
+             {\propenv{}} {\hastype {\ep{}} {\t{}}}
+             \\
+  \isacompare{\s{}}{\object{}}{\t{}}{\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}}
+}
+{ \judgement {\propenv{}} {\hastype {\isaapp {\e{}} {\ep{}}}
+                                    {\Boolean{}}}
+             {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}}
+             {\emptyobject}}
+         }
+
 
 % common Syntax
 \newcommand\occurrencetypingsyntax[0]{
@@ -843,6 +862,17 @@
          {\closure {\openv{}} {\abs {\x{}} {\t{}} {\e{}}}}}
      }
 
+\newcommand\BIsA[0]{
+\infer [B-IsA]
+{ \opsem {\openv{}} {\e{1}} {\v{1}}
+  \\
+  \opsem {\openv{}} {\e{2}} {\v{2}}
+  \\
+  \isaopsem{\v{1}}{\v{2}} = {\v{}}
+}
+{\opsem {\openv{}} {\isaapp {\e{1}} {\e{2}}} {\v{}}}
+}
+
 \newcommand\BBetaClosure[0]{
 \infer [B-BetaClosure]
 { \opsem {\openv{}}
@@ -861,6 +891,69 @@
          {\appexp {\e{f}} {\e{a}}}
          {\v{}}
        }
+     }
+
+\newcommand\BBetaMulti[0]{
+\infer [B-BetaMulti]
+{ \opsem {\openv{}}
+         {\e{f}}
+         {\multi {\v{d}} {\disptable{}}}
+         \\
+  \opsem {\openv{}}
+         {\e{a}}
+         {\v{a}}
+         \\
+  \opsem {\openv{}}
+         {\appexp {\v{d}} {\v{a}}}
+         {\v{e}}
+         \\\\
+  \getmethod {\disptable{}}
+             {\v{e}}
+             {\roundpair{\v{k}}{\v{f}}}
+         \\
+  \opsem {\openv{}}
+         {\appexp {\v{f}} {\v{a}}}
+         {\v{}}
+       }
+{ \opsem {\openv{}}
+         {\appexp {\e{f}} {\e{a}}}
+         {\v{}}
+       }
+     }
+
+     \newcommand\BDefMulti[0]{
+\infer [B-DefMulti]
+{ \opsem {\openv{}} {\e{d}} {\v{d}}
+}
+{\opsem {\openv{}}
+        {\createmultiexp {\t{}}
+                         {\e{d}}}
+        {\multi {\v{d}} {\emptydisptable}}
+}
+     }
+
+     \newcommand\BDefMethod[0]{
+\infer [B-DefMethod]
+{ \opsem {\openv{}}
+         {\e{m}}
+         {\multi {\v{d}} {\disptable{}}}
+         \\
+  \opsem {\openv{}}
+         {\e{v}}
+         {\v{v}}
+         \\\\
+  \opsem {\openv{}}
+         {\e{f}}
+         {\v{f}}
+         \\
+         \disptablep{} = {\extenddisptable {\disptable{}} 
+                                {\v{v}}
+                                {\v{f}}}
+}
+{\opsem {\openv{}}
+        {\extendmultiexp {\e{m}} {\e{v}} {\e{f}}}
+        {\multi {\v{d}} {\disptablep{}}}
+      }
      }
 
 \newcommand\BDelta[0]{
@@ -1041,3 +1134,38 @@
   {\PMulti{}}
 }
                        }
+
+% isa? operational semantics
+
+\newcommand\isaopsemfigure[0]{
+  \ma{
+\begin{array}{lllr}
+  \isaopsem{\v{}}{\v{}} &=& {\true{}} & \text{if}\ \v{} \notequal {\class{}} \\
+  \isaopsem{\class{1}}{\class{2}} &=& {\true{}} & \text{if}\ \issubtypein{}{\class{1}}{\class{2}}\\
+  \isaopsem{\v{1}}{\v{2}} &=& {\false{}} & \text{otherwise}
+\end{array}
+  }
+}
+
+\newcommand\isapropsfigure[0]{
+  \ma{
+\begin{array}{lllr}
+  \isacomparealign{\s{}}{\path{\classpe{}}{\path{\pathelem{}}{\x{}}}}{\Value{\class{}}}
+             {\filterset{\isprop{\class{}} {\path{\pathelem{}}{\x{}}}}
+                        {\notprop{\class{}}{\path{\pathelem{}}{\x{}}}}}
+                        \\
+  \isacomparealign{\s{}}{\object{}}{\Value{\singletonmeta{}}}
+             {\replacefor
+               {\filtersetparen{\isprop{\Value{\singletonmeta{}}} {\x{}}}
+                   {\notprop{\Value{\singletonmeta{}}}{\x{}}}}
+                   {\object{}}
+                   {\x{}}}
+                 \\
+                   && \text{if}\ {\singletonmeta{}} \not= \class{}
+               \\
+  \isacomparealign{\s{}}{\object{}}{\t{}}
+                  {\filterset{\topprop{}}
+                             {\topprop{}}}
+\end{array}
+  }
+}

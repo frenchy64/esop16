@@ -19,31 +19,7 @@
 
 \BDelta{}
 
-\infer [B-BetaMulti]
-{ \opsem {\openv{}}
-         {\e{f}}
-         {\multi {\v{d}} {\disptable{}}}
-         \\\\
-  \opsem {\openv{}}
-         {\e{a}}
-         {\v{a}}
-         \\\\
-  \opsem {\openv{}}
-         {\appexp {\v{d}} {\v{a}}}
-         {\v{e}}
-         \\\\
-  \getmethod {\disptable{}}
-             {\v{e}}
-             {\roundpair{\v{k}}{\v{f}}}
-         \\\\
-  \opsem {\openv{}}
-         {\appexp {\v{f}} {\v{a}}}
-         {\v{}}
-       }
-{ \opsem {\openv{}}
-         {\appexp {\e{f}} {\e{a}}}
-         {\v{}}
-       }
+\BBetaMulti{}
 
 \infer [B-Field]
 { \opsem {\openv{}}
@@ -96,45 +72,11 @@
                         {\class{}} {\overrightarrow{\e{i}}}}
          {\v{}}}
 
-\infer [B-DefMulti]
-{ \opsem {\openv{}} {\e{d}} {\v{d}}
-}
-{\opsem {\openv{}}
-        {\createmultiexp {\t{}}
-                         {\e{d}}}
-        {\multi {\v{d}} {\emptydisptable}}
-}
+       \BDefMulti{}
 
-\infer [B-DefMethod]
-{ \opsem {\openv{}}
-         {\e{m}}
-         {\multi {\v{d}} {\disptable{}}}
-         \\
-  \opsem {\openv{}}
-         {\e{v}}
-         {\v{v}}
-         \\\\
-  \opsem {\openv{}}
-         {\e{f}}
-         {\v{f}}
-         \\
-         \disptablep{} = {\extenddisptable {\disptable{}} 
-                                {\v{v}}
-                                {\v{f}}}
-}
-{\opsem {\openv{}}
-        {\extendmultiexp {\e{m}} {\e{v}} {\e{f}}}
-        {\multi {\v{d}} {\disptablep{}}}
-      }
+       \BDefMethod{}
 
-\infer [B-IsA]
-{ \opsem {\openv{}} {\e{1}} {\v{1}}
-  \\\\
-  \opsem {\openv{}} {\e{2}} {\v{2}}
-  \\\\
-  \isaopsem{\v{1}}{\v{2}} = {\v{}}
-}
-{\opsem {\openv{}} {\isaapp {\e{1}} {\e{2}}} {\v{}}}
+       \BIsA{}
 
 \infer [B-Assoc]
 {\opsem {\openv{}}
