@@ -236,7 +236,6 @@
 
 % class table
 \newcommand\ct[0]{\mathcal{CT}}
-\newcommand\ctlookup[1]{\ct(\ma{#1})}
 \newmeta\ctentrymeta{ce}
 \newmeta\ctmethod{m}
 \newmeta\ctfield{f}
@@ -255,6 +254,11 @@
   \ctfieldsliteral \mapsto \{\overrightarrow{\ctfldentry{\fld{}}{\classhint{}}} \}, \ 
   \ctconstructorsliteral \mapsto \{\overrightarrow{\ctctorentry{\overrightarrow{\classhint{}}}} \}
                           \}}
+\newcommand\ctlookup[2]{\ma{{#1}[#2]}}
+\newcommand\ctlookuptwo[3]{\ma{\ctlookup{\ctlookup{#1}{#2}}{#3}}}
+\newcommand\ctlookupmethods[2]{\ma{\ctlookuptwo{#1}{#2}{\ctmethodsliteral}}}
+\newcommand\ctlookupfields[2]{\ma{\ctlookuptwo{#1}{#2}{\ctfieldsliteral}}}
+\newcommand\ctlookupctors[2]{\ma{\ctlookuptwo{#1}{#2}{\ctconstructorsliteral}}}
 
 % typing judgements
 \newcommand\hastype[2]{\ma{#1 \mathbin{:} #2}}
@@ -347,9 +351,9 @@
 % new special functions
 % Type -> [Type]
 \newcommand\ctorparamsliteral[0]{\metafnfont{Constructor}}
-\newcommand\ctorparamsnoeq[3]{\ma{\ctorparamsliteral(#1, #2, #3)}}
-\newcommand\ctorparams[4]{\ma{\ctorparamsnoeq{#1}{#2}{#3} = #4}}
-\newcommand\ctorparamsalign[4]{\ma{\ctorparamsnoeq{#1}{#2}{#3} &=& #4}}
+\newcommand\ctorparamsnoeq[3]{\ma{\ctorparamsliteral(#1, #2, [#3])}}
+\newcommand\ctorparams[4]{\ma{\ctorparamsnoeq{#1}{#2}{#3} = [#4]}}
+\newcommand\ctorparamsalign[4]{\ma{\ctorparamsnoeq{#1}{#2}{#3} &=& [#4]}}
 
 % field special functions
 % Type Field -> Type
