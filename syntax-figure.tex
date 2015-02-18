@@ -80,6 +80,8 @@ $$
                              \alt {\True}
                              \alt {\False}
                 &\mbox{Value types} \\ \\
+  \openv{}     &::=& \{\overrightarrow{\x{} \mapsto \v{}}\}
+                &\mbox{Value environments} \\
   \tatype{}     &::=& \unknownhint{} \alt \classhint{}
                 &\mbox{tools.analyzer Types} \\ \\
   \prop{}       &::=& {\isprop {\t{}} {\path {\pathelem{}} {\x{}}}}
@@ -97,7 +99,7 @@ $$
                 &\mbox{Paths} \\
   \pesyntax{}   &::=& \classpe{} \alt \keype{\k{}}
                 &\mbox{Path Elements} \\ \\
- \disptable{}   &::=& \{ \overrightarrow{\v{} \Rightarrow \v{}} \}
+ \disptable{}   &::=& \{ \overrightarrow{\v{} \mapsto \v{}} \}
                &\mbox{Multimethod dispatch table} \\
   \propenv{}   &::=& \overrightarrow{\prop{}}
                &\mbox{Proposition Environment} \\
@@ -105,7 +107,7 @@ $$
                &\mbox{tools.analyzer Environment} \\
   \ctentrymeta{} &::=& \ctentry
                &\mbox{Class descriptors} \\
-  \ct{}   &::=& \{ \overrightarrow{\classhint{} \Rightarrow \ctentrymeta{}} \}
+  \ct{}   &::=& \{ \overrightarrow{\classhint{} \mapsto \ctentrymeta{}} \}
                &\mbox{Class Table} \\
   \classvaluemeta{} 
           &::=& {\classvalue{\classhint{}} {\overrightarrow {\classfieldpair{\fld{}} {\v{}}}}}

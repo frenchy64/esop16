@@ -2,6 +2,7 @@
 
 \begin{assumption}[\newjavaliteral] \label{assumption:new}
   If\ $\forall i.\ {\v{i}} = {\classvalue{\classhint{i}}{\overrightarrow{\classfieldpair{\fld{j}} {\v{j}}}}}\ or\ {\v{i}}= {\nil}$
+  and {\v{i}}
   then either
   \begin{itemize}
   \item $\newjava {\classhint{}}
@@ -212,18 +213,26 @@
   \end{proof}
 \end{lemma}
 
-% TODO is this too strong? Should it include things to the left of the arrow? What if the argument type includes \x{}?
-% what does "either" here mean, and can it derive contradictory facts?
 \begin{definition} \label{definition:consistentwith}
   \consistentwith{\v{}}{\openv{}}
-  iff
-
-  $\forall$ \closure{\openv{1}}{\abs{\x{}}{\s{}}{\e{}}} in \v{}.
+  iff $\forall$ \closure{\openv{1}}{\abs{\x{}}{\s{}}{\e{}}} in \v{},
 
   if \judgement{}{\hastype{\closure{\openv{1}}{\abs{\x{}}{\s{}}{\e{}}}}{\t{}}}{\filterset{\topprop{}}{\botprop{}}}{\emptyobject{}}
-  and $\forall$ \objectp{} in \t{}, either \objectp{} = \emptyobject{}, or \objectp{} = {\path{\pathelemp{}}{\x{}}},
+  and $\forall$ \objectp{} in \t{}, either 
+\begin{itemize}
+  \item \objectp{} = \emptyobject{}, or 
+  \item \objectp{} = {\path{\pathelemp{}}{\x{}}},
   or 
+\item 
 \inopenvnoeq{\openv{}}{\objectp{}} = {\inopenvnoeq{\openv{1}}{\objectp{}}}.
+\end{itemize}
+
+% In code like
+% (let [x true]
+%   ((let [x 1]
+%      (fn [a] x))
+%    2))
+% this property guarantees that the x's don't get confused.
 \end{definition}
 
 \begin{definition} \label{definition:istrueval}
@@ -281,6 +290,7 @@ By induction on the derivation of the typing judgement.
         To prove part 2, we note that \v{} = \true\ 
         and \thenprop{\prop{}} = \topprop{}, so \satisfies{\openv{}}{\thenprop{\prop{}}} by M-Top.
         Part 3 holds as \e{} can only be reduced to itself via B-Val.
+        Part 4 holds vacuously.
       \end{subcase}
   \end{itemize}
 \end{case}
@@ -329,6 +339,7 @@ By induction on the derivation of the typing judgement.
 Proving part 1 is trivial: \object{} is \emptyobject. To prove part 2, we note that \v{} = \false\ 
 and \elseprop{\prop{}} = \topprop{}, so \satisfies{\openv{}}{\elseprop{\prop{}}} by M-Top. 
 Part 3 holds as \e{} can only be reduced to itself via B-Val.
+Part 4 holds vacuously.
 \end{subcase}
 
 \end{itemize}
@@ -357,9 +368,11 @@ Part 3 holds as \e{} can only be reduced to itself via B-Val.
 
   \begin{itemize}
     \item[]
-      \begin{subcase}[B-Val] \v{} = {\classvalue{\classhint{}} {\overrightarrow {\classfieldpair{\fld{}} {\v{}}}}}
+      \begin{subcase}[B-Val] \v{} = {\classvalue{\classhint{}} {\overrightarrow {\classfieldpair{\fld{i}} {\v{i}}}}}
 
         Similar to T-True.
+
+        Part 4 holds by the induction hypothesis on ${\overrightarrow{\v{i}}}$.
       \end{subcase}
   \end{itemize}
 \end{case}
@@ -393,9 +406,11 @@ Part 3 holds as \e{} can only be reduced to itself via B-Val.
 { \opsem {\openv{}} {\x{}} {\v{}} }
 
 Part 1 follows from \inopenv{\openv{}}{\x{}} {\v{}} by B-Local.
+
 Part 2 considers two cases: if \v{} is not \false\ or \nil, then 
 \satisfies{\openv{}}{\notprop{\falsy}{\x{}}} holds by M-NotType; if \v{} is \false\ or \nil, then 
 \satisfies{\openv{}}{\isprop{\falsy}{\x{}}} holds by M-Type.
+
 We prove part 3 by observing
 \inpropenv{\propenv{}}{\isprop{\t{}}{\x{}}}
 and
@@ -404,6 +419,8 @@ so
 { \inopenv {\openv{}} {\x{}} {\v{}} }
 by B-Local
 gives us the desired result.
+
+Part 4 holds vacuously.
 \end{subcase}
 \end{itemize}
 
@@ -451,7 +468,7 @@ to show if \v{} $\not=$ \false\ (or \nil) then
   if \v{} = \false\ (or \nil) then
         {\satisfies{\openv{}}{\elseprop{\prop{}}}}.
 
-Part 3 follows from the induction hypothesis on \e{2}.
+Parts 3 and 4 follow from the induction hypothesis on \e{2}.
     \end{subcase}
   \item[]
 
@@ -505,11 +522,14 @@ Part 3 follows from the induction hypothesis on \e{2}.
                   {\v{}}$
 
 Part 1 follows \object{} = \emptyobject{}.
+
 Part 2 requires some explanation. The two false values in Typed Clojure
 cannot be constructed with \newliteral, so the only case is \v{} $\not=$ \false\ (or \nil)
 where \thenprop{\prop{}} = \topprop{} so \satisfies{\openv{}}{\thenprop{\prop{}}}.
+
 Part 3 holds as B-New reduces to a \emph{non-nilable}
 instance of \class{} via \newjavaliteral (by assumption \ref{assumption:new}), and \javatotc{\classhint{}}{\t{}}.
+
 \end{subcase}
   \item[]
 
@@ -1172,7 +1192,7 @@ so we know $\forall v \in \fv{\thenprop{\prop{}}} - \x{}$,
   We know by the definition of \getmethodliteral that
   \begin{enumerate}[resume]
     \item $\{ \v{v} | {\roundpair{\v{k}}{\v{v}}} \in \disptable{} \text{ and } \isaopsem{\v{k}}{\v{e}} = {\true{}} \} = {\roundpair{\v{l}}{\v{g}}}$, so
-    \item \opsem{}{\isaapp{\v{l}}{\v{e}}}{\true{}}
+    \item \isaopsem{\v{l}}{\v{e}} = {\true{}}
   \end{enumerate}
 
   and because ${\v{g}} \in \{\overrightarrow{\v{v}}\}$

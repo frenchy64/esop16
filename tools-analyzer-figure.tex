@@ -207,17 +207,17 @@
     \rewrite {\taenv{}}
            {\e{i}}
            {\e{j}}}
-  \\\\
+  \\
   \overrightarrow{
   \tajudgement {\taenv{}}
                {\hastype {\e{j}} {\classhint{j}}}
              }
                \\\\
-  \methodtype {\ctlookup{\classhint{}}} {\mth{}} {\overrightarrow{\classhint{j}}} {\classhint{}}
+  \ctorparams {\ct{}}{\classhint{}}{[\overrightarrow{\classhint{j}}]}{[\overrightarrow{\classhint{k}}]}
              }
 { \rewrite {\taenv{}}
            {\newexp {\class{}} {\overrightarrow {\e{i}}}}
-           {\newstaticexp {\overrightarrow {\classhint{j}}} {\classhint{}} {\class{}} {\overrightarrow {\e{j}}}}
+           {\newstaticexp {\overrightarrow {\classhint{k}}} {\classhint{}} {\class{}} {\overrightarrow {\e{j}}}}
 }
 
 \infer [R-NewStatic]
@@ -295,13 +295,13 @@
            {\ep{}}
            \\
   \tajudgement {\taenv{}}
-               {\hastype {\ep{}} {\classhint{1}}}
+               {\hastype {\ep{}} {\classhint{}}}
                \\\\
-               \fieldtype {\ctlookup {\classhint{1}}} {\fld{}} {\classhint{2}}
+               \fieldtype {\ct{}} {\classhint{}} {\fld{}} {\classhint{t}}{\classhint{f}}
          }
 { \rewrite {\taenv{}}
            {\fieldexp {\fld{}} {\e{}}}
-           {\fieldstaticexp {\classhint{1}} {\classhint{2}} {\fld{}} {\ep{}}}
+           {\fieldstaticexp {\classhint{t}} {\classhint{f}} {\fld{}} {\ep{}}}
          }
 
 \infer [R-FieldStatic]
@@ -348,11 +348,11 @@
                {\hastype {\e{j}} {\classhint{j}}}
              }
                \\\\
-  \methodtype {\ctlookup{\classhint{}}} {\mth{}} {\overrightarrow{\classhint{1}}} {\classhint{2}}
+  \methodtype {\ct{}}{\classhint{}} {\mth{}} {\overrightarrow{\classhint{j}}}{\classhint{t}}{\overrightarrow{\classhint{p}}}{\classhint{r}}
          }
 { \rewrite {\taenv{}}
            {\methodexp {\mth} {\e{}} {\overrightarrow {\e{i}}}}
-           {\methodstaticexp {\classhint{}} {\overrightarrow {\classhint{1}}} {\classhint{2}} {\mth{}} {\ep{}} {\overrightarrow {\e{j}}}}
+           {\methodstaticexp {\classhint{t}} {\overrightarrow {\classhint{p}}} {\classhint{r}} {\mth{}} {\ep{}} {\overrightarrow {\e{j}}}}
   }
 
 \infer [R-MethodStatic]

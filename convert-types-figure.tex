@@ -2,18 +2,30 @@
 $$
 \begin{altgrammar}
 
-  \methodtypealign {\ \{ methods \Rightarrow \{ \mth{} \Rightarrow [ \overrightarrow{\classhint{p}}, \classhint{r} ] \} \} }
-              {\mth{}}
-              {\overrightarrow{\classhint{p}}}
-              {\classhint{r}}
+  \methodtypealign
+  {\ct{}}
+  {\classhint{}}
+  {\mth{}}
+  {\overrightarrow{\classhint{p}}}
+  {\classhint{t}}
+  {\overrightarrow{\classhint{p}}}
+  {\classhint{r}}
+  & \text{if}  \in \ct{}
       \\\\
-  \fieldtypealign {\ \{ fields \Rightarrow \{ \fld{} \Rightarrow \classhint{} \} \} }
-             {\fld{}}
-             {\classhint{}}
+  \fieldtypealign 
+  {\ct{}}
+  {\classhint{}}
+  {\fld{}}
+  {\classhint{}}
+  {\classhint{f}}
+  & \text{if} \{
       \\\\
-  \ctorparamsalign {\ \{ constructors \Rightarrow \{ ctor \Rightarrow \classhint{} \} \} }
-             {\fld{}}
-             {\classhint{}}
+  \ctorparamsalign 
+      {\ct{}}
+      {\classhint{}}
+      {[\overrightarrow{\class{p{}}}]}
+      {[\overrightarrow{\class{p{}}}]}
+  & if TODO
 
 %{\javaspecial {\JavaField {\class{}}}} &=& {\javatotc {\class{}} {\true{}}}
 %\\
