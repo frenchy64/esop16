@@ -290,7 +290,7 @@
 \newcommand\extendopenv[3]{\ma{#1[#2 \mapsto #3]}}
 \newcommand\opsem[3]{\ma{#1 \vdash #2 \Downarrow #3}}
 \newcommand\notopsem[3]{\ma{#1 \not\vdash #2 \Downarrow #3}}
-\newcommand\closure[2]{\ma{[#1, #2]_{closure}}}
+\newcommand\closure[2]{\ma{[#1, #2]_{clos}}}
 % multimethod semantics
 \newcommand\multi[2]{\ma{[#1, #2]_{multi}}}
 \newcommand\emptydisptable[0]{\{\}}
@@ -460,3 +460,584 @@
 \newcommand\isfalseval[1]{\ma{\metafunctionfont{FalseVal}(#1)}}
 
 \newmeta\definedreduction{\alpha}
+
+% Common typing rules
+\newcommand\TLocal[0]{
+\infer [T-Local]
+{ \inpropenv {\propenv{}} {\isprop {\t{}} {\x{}}}
+  \\
+  \s{} = {\falsydiff} }
+{ \judgementfillcol {\propenv{}} 
+                    {\hastype {\x{}} {\t{}}}
+                    {\filterset {{\notprop {\s{}} {\x{}}}} {{\isprop {\s{}} {\x{}}}}}
+                    {\x{}}
+                   }
+                 }
+
+\newcommand\TTrue[0]{
+\infer [T-True]
+{}
+{ \judgementfillcol {\propenv{}}
+      {{\hastype {\true{}} {\True{}}}}
+      {{\filterset {\topprop{}} {\botprop{}}}}
+      {\emptyobject{}}
+    }
+  }
+
+\newcommand\TFalse[0]{
+\infer [T-False]
+{}
+{ \judgementfillcol {\propenv{}}
+      {{\hastype {\false{}} {\False{}}}}
+      {\filterset {\botprop{}} {\topprop{}}}
+    {\emptyobject{}}
+   }
+ }
+
+\newcommand\TNil[0]{
+\infer [T-Nil]
+{}
+{ \judgementfillcol {\propenv{}} 
+      {{\hastype {\nil{}} {\Nil{}}}} 
+      {\filterset {\trdiff{\botprop{}}} {\topprop{}}}
+      {\emptyobject{}} 
+    }
+  }
+
+\newcommand\TDo[0]{
+\infer [T-Do]
+{ 
+  \judgement {\propenv{}} 
+             {\hastype {\e1} {\t1}} 
+             {\filterset {\thenprop {\prop{1}}} {\elseprop {\prop1}}} 
+             {\object{1}}
+\\\\
+\judgement {\propenv{}, {\trdiff {\orprop {\thenprop {\prop{1}}} {\elseprop {\prop{1}}}}}}
+           {\hastype {\e{}} {\t{}}} 
+           {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}} 
+           {\object{}}
+  }
+{ \judgement
+    {\propenv{}} 
+    {\hastype {\doexp {\e1} {\e{}}} {\t{}}} 
+    {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}} {\object{}} 
+             }
+           }
+
+\newcommand\TIf[0]{
+\infer [T-If]
+{ \judgement {\propenv{}} {\hastype {\e1} {\t{1}}} {\filterset {\thenprop {\prop{1}}} {\elseprop {\prop{1}}}}
+                 {\object{1}} 
+             \\\\
+  \judgement {\propenv{}, {\thenprop {\prop{1}}}}
+                 {\hastype {\e2} {\t{}}} {\filterset {\thenprop {\prop{2}}} {\elseprop {\prop{2}}}}
+                 {\object{}}
+  \\\\
+  \judgement {\propenv{}, {\elseprop {\prop{1}}}}
+                 {\hastype {\e3} {\t{}}} {\filterset {\thenprop {\prop{3}}} {\elseprop {\prop{3}}}}
+                 {\object{}}
+             }
+{ \judgement {\propenv{}} {\hastype {\ifexp {\e1} {\e2} {\e3}} {\t{}}} 
+                 {\filterset {\orprop {\thenprop {\prop{2}}} {\thenprop {\prop{3}}}} 
+                             {\orprop {\elseprop {\prop{2}}} {\elseprop {\prop{3}}}}}
+                 {\object{}} }
+
+             }
+
+\newcommand\TLet[0]{
+\infer [T-Let]
+{ \judgement {\propenv{}} {\hastype {\e{1}} {\s{}}} {\filterset {\thenprop {\prop{1}}} {\elseprop {\prop{1}}}}
+             {\object{1}}
+             \\\\
+             \propp{} = {\impprop {\notprop {\falsydiff{}} {\x{}}} {\thenprop {\prop{1}}}}
+             \\\\
+             \proppp{} = {\impprop {\isprop {\falsydiff{}} {\x{}}} {\elseprop {\prop{1}}}}
+  \\\\
+  \judgement
+       {\propenv{}, {\isprop {\s{}} {\x{}}},
+         {\propp{}},
+         {\proppp{}}}
+             {\hastype {\e{}} {\t{}}} {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}}
+             {\object{}} 
+             }
+{ \judgement {\propenv{}} {\hastype {\letexp {\x{}} {\e{1}} {\e{}}} {\t{}}}
+             {\replacefor {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}}
+                          {\object{1}}
+                          {\x{}}}
+             {\replacefor {\object{}} 
+                          {\object{1}}
+                          {\x{}}}
+             }
+
+           }
+
+\newcommand\TApp[0]{
+\infer [T-App]
+{ \judgement {\propenv{}} {\hastype {\e{}} {\ArrowOne {\x{}} {\s{}}
+                                                       {\t{}}
+                                                       {\filterset {\thenprop {\prop{f}}}
+                                                                   {\elseprop {\prop{f}}}}
+                                                       {\object{f}}}}
+                {\filterset {\thenprop {\prop{}}}
+                            {\elseprop {\prop{}}}}
+                {\object{}}
+  \\\\
+  \judgement {\propenv{}}
+                 {\hastype {\ep{}} {\s{}}}
+                 {\filterset {\thenprop {\propp{}}}
+                             {\elseprop {\propp{}}}}
+                 {\objectp{}} 
+}
+{ \judgementfillcol {\propenv{}} {\hastype {\appexp {\e{}} {\ep{}}}
+                                        {\replacefor {\t{}}
+                                                     {\objectp{}}
+                                                     {\x{}}}}
+                 {\replacefor {\filterset {\thenprop {\prop{f}}}
+                                          {\elseprop {\prop{f}}}}
+                              {\objectp{}}
+                              {\x{}}}
+                 {\replacefor {\object{f}}
+                              {\objectp{}}
+                              {\x{}}}
+}
+}
+
+\newcommand\TAbs[0]{
+\infer [T-Abs]
+{ \judgement {\propenv{}, {\isprop {\s{}} {\x{}}}}
+            {\hastype {\e{}} {\t{}}}
+             {\filterset {\thenprop {\prop{}}}
+                         {\elseprop {\prop{}}}}
+             {\object{}}}
+{ \judgement {\propenv{}} {\hastype {\abs {\x{}} {\s{}} {\e{}}}
+                                           {\ArrowOne {\x{}} {\s{}}
+                                                      {\t{}}
+                                                      {\filterset {\thenprop {\prop{}}}
+                                                                  {\elseprop {\prop{}}}}
+                                                      {\object{}}}}
+                {\filterset {\topprop{}}
+                            {\botprop{}}}
+                {\emptyobject{}}}
+            }
+
+\newcommand\TSubsume[0]{
+\infer [T-Subsume]
+{ \judgement {\propenv{}} {\hastype {\e{}} {\t{}}}
+             {\filterset {\thenprop {\prop{}}}
+                         {\elseprop {\prop{}}}}
+             {\object}
+\\\\
+\inpropenv {\propenv{}, {\thenprop {\prop{}}}} {\thenprop {\propp{}}}
+\\
+\inpropenv {\propenv{}, {\elseprop {\prop{}}}} {\elseprop {\propp{}}}
+\\\\
+\inpropenv {} {\issubtype {\t{}} {\tp{}}}
+\\
+\inpropenv {} {\issubtype {\object{}} {\objectp{}}}
+}
+{ \judgement {\propenv{}} {\hastype {\e{}} {\tp{}}}
+             {\filterset {\thenprop {\propp{}}}
+                         {\elseprop {\propp{}}}}
+             {\objectp{}}}
+         }
+
+\newcommand\TNewStatic[0]{
+\infer [T-NewStatic]
+{ 
+  \overrightarrow{
+\javatotc {\classhint{i}}
+          {\t{i}}
+          }
+  \\\\
+  \javatotc {\classhint{}}
+            {\t{}}
+  \\
+  \overrightarrow{
+  \judgementtwo {\propenv{}}
+                    {\hastype {\e{i}} {\t{i}}}
+                  }
+           }
+{ \judgementfillcol {\propenv{}} {\hastype {\newstaticexp {\overrightarrow{\classhint{i}}} {\classhint{}} 
+                                                          {\class{}} {\overrightarrow{\e{i}}}} {\t{}}}
+             {\filterset {\topprop{}} {\botprop{}}}
+             {\emptyobject}
+             }
+         }
+
+\newcommand\TDefMulti[0]{
+\infer [T-DefMulti]
+{ \s{} = {\ArrowOne {\x{}} {\t{}} {\tp{}}
+                          {\filterset {\thenprop {\prop{}}}
+                                      {\elseprop {\prop{}}}}
+                          {\object{}}}
+                          \\
+  \sp{} = {\ArrowOne {\x{}} {\t{}} {\tpp{}}
+                          {\filterset {\thenprop {\propp{}}}
+                                      {\elseprop {\propp{}}}}
+                          {\objectp{}}}
+                \\\\
+\judgementtwo {\propenv{}} {\hastype {\e{}} {\sp{}}}
+}
+{
+  \judgement {\propenv{}}  
+      {\hastype {\createmultiexp {\s{}}
+                                 {\e{}}} 
+                {\MultiFntype {\s{}} {\sp{}}}}
+             {\filterset {\topprop{}} {\botprop{}}}
+             {\emptyobject{}}
+}
+}
+
+\newcommand\TDefMethod[0]{
+\infer [T-DefMethod]
+{
+  \t{m} = {\ArrowOne {\x{}} {\t{}} {\s{}}
+                                    {\filterset {\thenprop {\prop{}}}
+                                                {\elseprop {\prop{}}}}
+                                    {\object{}}}
+\\
+\t{d} = {\ArrowOne {\x{}} {\t{}} {\sp{}}
+                   {\filterset {\thenprop {\propp{}}}
+                               {\elseprop {\propp{}}}}
+                   {\objectp{}}}
+             \\\\
+\judgementtwo {\propenv{}}
+                  {\hastype {\e{m}} {\MultiFntype {\t{m}} {\t{d}}}}
+\\
+  \isacompare{\sp{}}{\objectp{}}{\t{v}}{\filterset {\thenprop {\proppp{}}} {\elseprop {\proppp{}}}}
+\\\\
+\judgementtwo {\propenv{}}
+           {\hastype {\e{v}} {\t{v}}}
+           \\
+\judgement {\propenv{}, {\isprop{\t{}} {\x{}}}, {\thenprop {\proppp{}}}}
+           {\hastype {\e{b}} {\s{}}}
+           {\filterset {\thenprop {\prop{}}}
+                       {\elseprop {\prop{}}}}
+           {\object{}}
+}
+{ \judgementfillcol {\propenv{}} {\hastype {\extendmultiexp {\e{m}} {\e{v}} 
+                                                            {\abs {\x{}} {\t{}} {\e{b}}}}
+                                           {\MultiFntype {\t{m}} {\t{d}}}}
+             {\filterset {\topprop{}} {\botprop{}}}
+             {\emptyobject{}}
+}
+}
+
+
+% common Syntax
+\newcommand\occurrencetypingsyntax[0]{
+  \prop{}       &::=& {\isprop {\t{}} {\path {\pathelem{}} {\x{}}}}
+                      \alt {\notprop {\t{}} {\path {\pathelem{}} {\x{}}}}
+                      \alt {\impprop {\prop{}} {\prop{}}}
+                      \alt {\andprop {\prop{}} {\prop{}}}
+                      \alt {\orprop {\prop{}} {\prop{}}}
+                      \alt \topprop{}
+                      \alt \botprop{}
+                &\mbox{Propositions} \\
+  \object{}     &::=& {\path {\pathelem{}} {\x{}}}
+                      \alt \emptyobject{}
+                &\mbox{Objects} \\
+  \pathelem{}   &::=& \overrightarrow{\pesyntax{}}
+                &\mbox{Paths} \\
+  \pesyntax{}   &::=& \trdiff{\classpe{}} \alt \trdiff{\keype{\k{}}}
+                &\mbox{Path Elements}
+              }
+
+\newcommand\classliteralallsyntax[0]{
+   \class{}      &::=& \Object{}
+                      \alt \Keyword{}
+                      %\alt \Number{}
+                      \alt \Class{}
+                      \alt \Boolean{}
+                      %\alt \File{}
+                      %\alt \String{}
+                      \alt \IFn{}
+                      \alt \PMulti{}
+                      \alt \HMapInstance{}
+                      \alt \Void{}
+                &\mbox{Class literals}
+              }
+
+\newcommand\singletonallsyntax[0]{
+  \singletonmeta{}     &::=& \k{} 
+                             \alt {\trdiff{\class{}}}
+                             \alt {\trdiff{\Nil}}
+                             \alt {\True}
+                             \alt {\False}
+                &\mbox{Value types}
+              }
+
+% common operational semantics
+
+\newcommand\BLocal[0]{
+\infer [B-Local]
+{ \inopenv {\openv{}} {\x{}} {\v{}} }
+{ \opsem {\openv{}} {\x{}} {\v{}} }
+}
+
+\newcommand\BDo[0]{
+\infer [B-Do]
+{ \opsem {\openv{}} {\e{1}} {\v{1}} 
+  \\\\
+  \opsem {\openv{}} {\e{}} {\v{}} 
+}
+{ \opsem {\openv{}} {\doexp{\e{1}}{\e{}}} {\v{}} }
+}
+
+
+\newcommand\BLet[0]{
+\infer [B-Let]
+{ \opsem {\openv{}} {\e{a}} {\v{a}}
+  \\\\
+  \opsem {\extendopenv{\openv{}}{\x{}}{\v{a}}}
+         {\e{}}
+         {\v{}}
+ }
+{ \opsem {\openv{}} 
+         {\letexp {\x{}} {\e{a}} {\e{}}}
+         {\v{}}}
+     }
+
+
+\newcommand\BVal[0]{
+\infer [B-Val]
+{}
+{ \opsem {\openv{}} {\v{}} {\v{}}}
+}
+
+\newcommand\BIfTrue[0]{
+\infer [B-IfTrue]
+{ \opsem {\openv{}} {\e{1}} {\v{1}}
+  \\\\
+  {\v{1}} \not= {\false{}}
+  \\
+  {\trdiff{{\v{1}} \not= {\nil{}}}}
+  \\\\
+  \opsem {\openv{}} {\e{2}} {\v{}}
+}
+{ \opsem {\openv{}}
+         {\ifexp {\e1} {\e2} {\e3}}
+         {\v{}}
+       }
+     }
+
+\newcommand\BIfFalse[0]{
+\infer [B-IfFalse]
+{  \opsem {\openv{}} {\e{1}} {\false{}}
+  \ \ \trdiff{\text{or}\ \ 
+  {\opsem {\openv{}} {\e{1}} {\nil{}}}}
+  \\\\
+  \opsem {\openv{}} {\e{3}} {\v{}}
+}
+{ \opsem {\openv{}}
+         {\ifexp {\e1} {\e2} {\e3}}
+         {\v{}}
+       }
+     }
+
+\newcommand\BAbs[0]{
+\infer [B-Abs]
+{}
+{ \opsem {\openv{}}
+         {\abs {\x{}} {\t{}} {\e{}}}
+         {\closure {\openv{}} {\abs {\x{}} {\t{}} {\e{}}}}}
+     }
+
+\newcommand\BBetaClosure[0]{
+\infer [B-BetaClosure]
+{ \opsem {\openv{}}
+         {\e{f}}
+         {\closure {\openv{c}} {\abs {\x{}} {\t{}} {\e{b}}}}
+         \\\\
+  \opsem {\openv{}}
+         {\e{a}}
+         {\v{a}}
+         \\\\
+  \opsem {\extendopenv {\openv{c}} {\x{}} {\v{a}}}
+         {\e{b}}
+         {\v{}}
+       }
+{ \opsem {\openv{}}
+         {\appexp {\e{f}} {\e{a}}}
+         {\v{}}
+       }
+     }
+
+\newcommand\BDelta[0]{
+\infer [B-Delta]
+{ \opsem {\openv{}} {\e{}} {\const{}}
+  \\\\
+  \opsem {\openv{}} {\ep{}} {\v{}}
+  \\\\
+  \constantopsem{\const{}}{\v{}} = \vp{}
+}
+{ \opsem {\openv{}}
+         {\appexp {\e{}} {\ep{}}}
+         {\vp{}}
+       }
+     }
+
+% subtyping syntax
+\newcommand\standardsubtyping[0]{
+
+\infer [SO-Refl]
+{}
+{ \issubobjin {} {\object{}} {\object{}}}
+
+
+\infer [SO-Top]
+{}
+{ \issubobjin {} {\object{}} {\emptyobject{}}}
+
+\infer [S-Refl]
+{}
+{ \issubtypein {} {\t{}} {\t{}}}
+
+\infer [S-Top]
+{}
+{ \issubtypein {} {\t{}} {\Top{}}}
+
+\infer [S-UnionSuper]
+{ \exists i.\ {\issubtypein {} {\t{}} {\s{i}}}}
+{ \issubtypein {} {\t{}} {\Unionsplice{{\overrightarrow{\s{}}}^{i}}}}
+
+% FIXME fix overrightarrow caption
+\infer [S-UnionSub]
+{ {\overrightarrow {\issubtypein {} {\t{i}} {\s{}}}}^{i}}
+{ \issubtypein {} {\Unionsplice{\overrightarrow{\t{}}^{i}}} {\s{}}}
+
+\infer [S-Fun]
+{ \issubtypein {} {\sp{}} {\s{}}
+  \\
+  \issubtypein {} {\t{}} {\tp{}}
+  \\\\
+  \inpropenv {\thenprop {\prop{}}} {\thenprop {\propp{}}}
+  \\
+  \inpropenv {\elseprop {\prop{}}} {\elseprop {\propp{}}}
+  \\
+  \issubobjin{} {\object{}} {\objectp{}}
+}
+{ \issubtypein {}
+    {\ArrowOne {\x{}} {\s{}}
+              {\t{}}
+              {\filterset {\thenprop {\prop{}}}
+                          {\elseprop {\prop{}}}}
+              {\object{}}}
+    {\ArrowOne {\x{}} {\sp{}}
+              {\tp{}}
+              {\filterset {\thenprop {\propp{}}}
+                          {\elseprop {\propp{}}}}
+              {\objectp{}}}}
+
+\infer [S-SKw]
+{}
+{\issubtypein {}
+  {\Value{\k{}}}
+  {\Keyword}}
+
+\infer [S-SClass]
+{}
+{\issubtypein {}
+  {\Value{\class{}}}
+  {\Class{}}}
+
+\infer [S-STrue]
+{}
+{\issubtypein {}
+  {\Value{\True}}
+  {\Boolean{}}}
+
+\infer [S-SFalse]
+{}
+{\issubtypein {}
+  {\Value{\False}}
+  {\Boolean{}}}
+
+
+\infer [S-Object]
+{}
+{\issubtypein {}
+  {\class{}}
+  {\Object{}}}
+
+
+\infer [S-FunMono]
+{}
+{\issubtypein {}
+  {\ArrowOne {\x{}} {\s{}}
+             {\t{}}
+             {\filterset {\thenprop{\prop{}}}
+                         {\elseprop{\prop{}}}}
+             {\object{}}}
+  {\IFn{}}}
+
+}
+
+\newcommand\HMapsubtyping[0]{
+\infer [S-HMap]
+{ \forall i.\ ({\k{i}},\ \s{i}) \in \mandatory{} \text{ and } \issubtypein {} {\s{i{}}} {\t{i{}}}
+  \\\\
+  {\absent{1}} \supseteq {\absent{2}}
+}
+{\issubtypein {} {\HMapgeneric {\mandatory{}} {\absent{1}}}
+  {\HMapgeneric {\overrightarrow{(\k{},\ \t{})}^i} {\absent{2}}}
+               }
+
+\infer [S-HMapP]
+{ \forall i.\ ({\k{i}},\ \s{i}) \in \mandatory{} \text{ and } \issubtypein {} {\s{i{}}} {\t{i{}}}
+}
+{\issubtypein {} 
+  {\HMapc {\mandatory{}}}
+  {\HMapp {\overrightarrow{(\k{},\ \t{})}^i} {\absent{}}}
+               }
+
+\infer [S-HMapMono]
+{}
+{\issubtypein {} 
+  {\HMapgeneric {\mandatory{}} {\absent{}}}
+  {\HMapInstance{}}}
+}
+
+\newcommand\Multisubtyping[0]{
+\infer [S-PMulti]
+{ \issubtypein {} {\s{}} {\sp{}}
+  \\
+  \issubtypein {} {\t{}} {\tp{}}}
+{ \issubtypein {} {\MultiFntype {\s{}} {\t{}}}{\MultiFntype {\sp{}} {\tp{}}}}
+
+\infer [S-PMultiFn]
+{ \issubtypein {}
+  {\s{t}}
+  {\ArrowOne {\x{}} {\s{}} {\t{}}
+                                  {\filterset {\thenprop {\prop{}}}
+                                              {\elseprop {\prop{}}}}
+                                      {\object{}}}
+                                      \\
+  \issubtypein {}
+  {\s{d}}
+  {\ArrowOne {\x{}} {\s{}} {\tp{}}
+                                  {\filterset {\thenprop {\propp{}}}
+                                              {\elseprop {\propp{}}}}
+                                      {\objectp{}}}
+}
+{ \issubtypein {} {\MultiFntype{\s{t}}{\s{d}}}
+                  {\ArrowOne {\x{}} {\s{}} {\t{}}
+                             {\filterset {\thenprop {\prop{}}}
+                                         {\elseprop {\prop{}}}}
+                             {\object{}}}}
+
+\infer [S-MultiMono]
+{}
+{\issubtypein {}
+  {\MultiFntype {\ArrowOne {\x{}} {\s{}} {\t{}}
+                          {\filterset {\thenprop{\prop{}}}
+                                      {\elseprop{\prop{}}}}
+                          {\object{}}}
+                {\ArrowOne {\x{}} {\s{}} {\tp{}}
+                          {\filterset {\thenprop{\propp{}}}
+                                      {\elseprop{\propp{}}}}
+                          {\objectp{}}}
+                }
+  {\PMulti{}}
+}
+                       }

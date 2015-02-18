@@ -1,93 +1,23 @@
 \begin{figure*}
 \begin{mathpar}
 
-\infer [B-Local]
-{ \inopenv {\openv{}} {\x{}} {\v{}} }
-{ \opsem {\openv{}} {\x{}} {\v{}} }
+\BLocal{}
 
-\infer [B-Do]
-{ \opsem {\openv{}} {\e{1}} {\v{1}} 
-  \\\\
-  \opsem {\openv{}} {\e{}} {\v{}} 
-}
-{ \opsem {\openv{}} {\doexp{\e{1}}{\e{}}} {\v{}} }
+\BDo{}
 
-\infer [B-Let]
-{ \opsem {\openv{}} {\e{a}} {\v{a}}
-  \\\\
-  \opsem {\extendopenv{\openv{}}{\x{}}{\v{a}}}
-         {\e{}}
-         {\v{}}
- }
-{ \opsem {\openv{}} 
-         {\letexp {\x{}} {\e{a}} {\e{}}}
-         {\v{}}}
+\BLet{}
 
-\infer [B-Val]
-{}
-{ \opsem {\openv{}} {\v{}} {\v{}}}
+\BVal{}
 
-\infer [B-IfTrue]
-{ \opsem {\openv{}} {\e{1}} {\v{1}}
-  \\\\
-  {\v{1}} \not= {\false{}}
-  \\
-  {\v{1}} \not= {\nil{}}
-  \\\\
-  \opsem {\openv{}} {\e{2}} {\v{}}
-}
-{ \opsem {\openv{}}
-         {\ifexp {\e1} {\e2} {\e3}}
-         {\v{}}
-       }
+\BIfTrue{}
 
-\infer [B-IfFalse]
-{  \opsem {\openv{}} {\e{1}} {\false{}}
-  \ \ \text{or}\ \ 
-  \opsem {\openv{}} {\e{1}} {\nil{}}
-  \\\\
-  \opsem {\openv{}} {\e{3}} {\v{}}
-}
-{ \opsem {\openv{}}
-         {\ifexp {\e1} {\e2} {\e3}}
-         {\v{}}
-       }
+\BIfFalse{}
 
-\infer [B-Abs]
-{}
-{ \opsem {\openv{}}
-         {\abs {\x{}} {\t{}} {\e{}}}
-         {\closure {\openv{}} {\abs {\x{}} {\t{}} {\e{}}}}}
+\BAbs{}
 
-\infer [B-BetaClosure]
-{ \opsem {\openv{}}
-         {\e{f}}
-         {\closure {\openv{c}} {\abs {\x{}} {\t{}} {\e{b}}}}
-         \\\\
-  \opsem {\openv{}}
-         {\e{a}}
-         {\v{a}}
-         \\\\
-  \opsem {\extendopenv {\openv{c}} {\x{}} {\v{a}}}
-         {\e{b}}
-         {\v{}}
-       }
-{ \opsem {\openv{}}
-         {\appexp {\e{f}} {\e{a}}}
-         {\v{}}
-       }
+\BBetaClosure{}
 
-\infer [B-Delta]
-{ \opsem {\openv{}} {\e{}} {\const{}}
-  \\\\
-  \opsem {\openv{}} {\ep{}} {\v{}}
-  \\\\
-  \constantopsem{\const{}}{\v{}} = \vp{}
-}
-{ \opsem {\openv{}}
-         {\appexp {\e{}} {\ep{}}}
-         {\vp{}}
-       }
+\BDelta{}
 
 \infer [B-BetaMulti]
 { \opsem {\openv{}}

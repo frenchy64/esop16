@@ -74,31 +74,15 @@ $$
                 &\mbox{HMap absent entries} \\
   \completenessmeta{} &::=& {\complete{}} \alt {\partial{}}
                 &\mbox{HMap completeness} \\
-  \singletonmeta{}     &::=& \k{} 
-                             \alt \class{}
-                             \alt {\Nil}
-                             \alt {\True}
-                             \alt {\False}
-                &\mbox{Value types} \\ \\
+  \singletonallsyntax{}
+                \\ \\
   \openv{}     &::=& \{\overrightarrow{\x{} \mapsto \v{}}\}
                 &\mbox{Value environments} \\
   \tatype{}     &::=& \unknownhint{} \alt \classhint{}
                 &\mbox{tools.analyzer Types} \\ \\
-  \prop{}       &::=& {\isprop {\t{}} {\path {\pathelem{}} {\x{}}}}
-                      \alt {\notprop {\t{}} {\path {\pathelem{}} {\x{}}}}
-                      \alt {\impprop {\prop{}} {\prop{}}}
-                      \alt {\andprop {\prop{}} {\prop{}}}
-                      \alt {\orprop {\prop{}} {\prop{}}}
-                      \alt \topprop{}
-                      \alt \botprop{}
-                &\mbox{Propositions} \\
-  \object{}     &::=& {\path {\pathelem{}} {\x{}}}
-                      \alt \emptyobject{}
-                &\mbox{Objects} \\
-  \pathelem{}   &::=& \overrightarrow{\pesyntax{}}
-                &\mbox{Paths} \\
-  \pesyntax{}   &::=& \classpe{} \alt \keype{\k{}}
-                &\mbox{Path Elements} \\ \\
+  \occurrencetypingsyntax{}
+  \\\\
+
  \disptable{}   &::=& \{ \overrightarrow{\v{} \mapsto \v{}} \}
                &\mbox{Multimethod dispatch table} \\
   \propenv{}   &::=& \overrightarrow{\prop{}}
@@ -112,18 +96,7 @@ $$
   \classvaluemeta{} 
           &::=& {\classvalue{\classhint{}} {\overrightarrow {\classfieldpair{\fld{}} {\v{}}}}}
                &\mbox{Class Values}\\
-   \class{}      &::=& \Object{}
-                      \alt \Keyword{}
-                      %\alt \Number{}
-                      \alt \Class{}
-                      \alt \Boolean{}
-                      %\alt \File{}
-                      %\alt \String{}
-                      \alt \IFn{}
-                      \alt \PMulti{}
-                      \alt \HMapInstance{}
-                      \alt \Void{}
-                &\mbox{Class literals}
+               \classliteralallsyntax{}
                       \\
   \wrongorerror{} &::=& \wrong{} \alt \errorvalv{}
                 &\mbox{Wrong or error}

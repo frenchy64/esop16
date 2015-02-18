@@ -17,8 +17,112 @@ proposition environment $\propenv{}$, with
 then proposition {\thenprop {\prop{}}}, else proposition {\elseprop {\prop{}}}
 and object \object{}.
 
+\begin{figure*}
+$$
+\begin{altgrammar}
+  \expd{}, \e{} &::=& \x{}
+                      \alt \v{} 
+                      \alt {\comb {\e{}} {\e{}}} 
+                      \alt {\abs {\x{}} {\t{}} {\e{}}}
+                      \alt {\ifexp {\e{}} {\e{}} {\e{}}}
+                      \alt {\trdiff{\doexp {\e{}} {\e{}}}}
+                      \alt {\letexp {\x{}} {\e{}} {\e{}}}
+                &\mbox{Expressions} \\
+  \v{} &::=&          \true{} \alt \false{} \alt \trdiff{\nil{}}
+                      \alt \trdiff{\class{}}
+                      \alt \k{}
+                      \alt {\const{}}
+                      \alt {\closure {\openv{}} {\abs {\x{}} {\t{}} {\e{}}}}
+                &\mbox{Values} \\
+  {\const{}}           &::=& \classconst \alt \throwconst
+
+                &\mbox{Constants}\\
+  \s{}, \t{}    &::=& \Top 
+                      \alt {\Unionsplice {\overrightarrow{\t{}}}}
+                      \alt
+                      {\ArrowOne {\x{}} {\t{}}
+                                   {\t{}}
+                                   {\filterset {\prop{}} {\prop{}}}
+                                   {\object{}}}
+                      \alt {\Value \singletonmeta{}} 
+                &\mbox{Types} \\
+  \singletonallsyntax{}
+                \\ \\
+  \occurrencetypingsyntax{}
+  %\\
+  %\classliteralallsyntax{}
+\end{altgrammar}
+$$
+\caption{Syntax of Terms, Types, Propositions and Objects}
+\end{figure*}
+
+\begin{figure*}
+\begin{mathpar}
+  {\TLocal}
+
+  {\TTrue}
+
+{\TFalse}
+
+{\TNil}
+
+{\TDo}
+
+{\TIf}
+
+{\TLet}
+
+{\TApp}
+
+{\TAbs}
+
+         {\TSubsume}
+\end{mathpar}
+\caption{Standard typing rules}
+\end{figure*}
+
+\begin{figure*}
+\begin{mathpar}
+  {\BLocal}
+
+  {\BDo}
+
+  {\BLet}
+
+  \BVal{}
+
+\BIfTrue{}
+
+\BIfFalse{}
+
+\BAbs{}
+
+\BBetaClosure{}
+
+\BDelta{}
+\end{mathpar}
+\caption{Semantics}
+\end{figure*}
+
+\input{constant}
+
+\begin{figure*}
+\begin{mathpar}
+\standardsubtyping{}
+\end{mathpar}
+\caption{Subtyping rules}
+\end{figure*}
 
 \subsection{Multimethods}
+
+\begin{figure}
+\begin{mathpar}
+  \TDefMulti{}
+
+  \TDefMethod{}
+\end{mathpar}
+\caption{Multimethod typing rules}
+\end{figure}
 
 Clojure provides multimethods which can dispatch on the result of an
 arbitrary function, the \emph{dispatch function}. \emph{Methods} are
