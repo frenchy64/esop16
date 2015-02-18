@@ -276,7 +276,7 @@
 
 \DeclareOption{titlepage}{\@unsupportedoption{titlepage}}
 
-%%\DeclareOption{twocolumn}{\@setflag \@onecolumn = \@false}
+\DeclareOption{twocolumn}{\@setflag \@onecolumn = \@false}
 
 \DeclareOption*{\PassOptionsToClass{\CurrentOption}{article}}
 

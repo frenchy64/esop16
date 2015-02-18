@@ -55,9 +55,10 @@
 \\
 \update{\t{}}{\Value{\class{}}}{\classpe{}}
 &=& \restrict{\t{}}{\class{}}
-%\\
-%\update{\t{}}{\nottype{\Value{\class{}}}}{\classpe{}}
-%&=& \remove{\t{}}{\class{}}
+\\
+\update{\t{}}{\nottype{\Value{\class{}}}}{\classpe{}}
+&=& \remove{\t{}}{\class{}}
+& \text{if}\ \not\exists \classp{}.\ {\issubtypein{}{\classp{}}{\class{}}}\ \text{and}\ {\classp{}} \not= \class{}
 \\
 \update{\t{}}{\Object}{\classpe{}}
 &=& \restrict{\t{}}{\Object}

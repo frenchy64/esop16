@@ -1,0 +1,107 @@
+\section{Clojure with static typing}
+
+% current situation 
+
+Programming is an error prone activity, especially in the presence of
+multiple languages working together. Over the past decade, it has become increasingly
+frequent to extend existing dynamically typed languages with optional type systems.
+The guarantees that a sound type system provides can be the difference between
+choosing a language that supports a type system or one that does not.
+
+% presenting clojure
+
+Clojure is a dynamically typed language built to run on the Java Virtual Machine (JVM)
+which has recently gained popularity as an alternative JVM language.
+It offers the flexibility of a Lisp dialect, including Common Lisp-style macros,
+emphasising a functional style via a standard library of immutable datastructures. 
+Clojure has good interoperability with existing Java code, allowing programmers to
+use existing Java libaries without leaving Clojure.
+
+%problem?
+
+Clojure
+
+Typed Clojure is a gradual type system for Clojure, based on the
+static portion of Typed Racket.
+
+\begin{lstlisting}
+(ann parent [(U nil File) -> (U nil File)])
+(defn parent [^File f]
+  (when f
+    (let [s (. f (getParent))]
+      (assert s "Expected parent string, got nil")
+      (new File s))))
+\end{lstlisting}
+
+%$$
+%\abs{\x{}}{\Union{\Nil}{\File}}
+%{\letexp {\hinted{\File{}}{f}} {f}
+%  {\ifexp {f} 
+%    {\letexp {s} {\methodstaticexp {\File{}} {\String{}} {\String{}} {getParent} {f}}
+%      {\doexp {\ifexp {s}
+%                {\nil{}}
+%                {\errorval{input}}}
+%              {\newstaticexp {\String{}} {\File{}} {\File{}} {s}}}}
+%    {\nil{}}
+%}}
+%              $$
+
+%(some-> f (.getParent) (File.) (.getParent))
+
+%\begin{lstlisting}
+%(ann parent [(U nil File) -> (U nil String)])
+%(defn parent [^File f]
+%  (when f
+%    (.getParent f)))
+%\end{lstlisting}
+
+\begin{lstlisting}
+(defalias Expr
+  (U '{:op :if :test Expr :then Expr :else Expr}
+     '{:op :const :val Any} ...))
+(ann tree-str [Expr -> String])
+(defmulti tree-str (fn [e :- Expr] (get :op e)))
+(defmethod tree-str :if [{:keys [test then else]}] 
+  (str (tree-str test) (tree-str then) (tree-str else)))
+(defmethod tree-str :const [{:keys [val]}] 
+  (str val))
+\end{lstlisting}
+
+\subsection{Contributions}
+
+%The main idea is....... SPJ
+In this paper we present a practical type system for Clojure.
+
+\begin{itemize}
+
+  \item We formalise Typed Clojure and prove that typed code
+    \begin{itemize}
+      \item disallows null-pointer exceptions, (Section ?)
+      \item statically resolves Java interoperability (Section ?)
+    \end{itemize}
+  \item We reveal the surprising synthesis between Clojure multimethods
+        and occurrence typing.
+  \item We 
+\end{itemize}
+
+% what are the goals of Typed Clojure?
+% where do they differ from Typed Racket? why?
+
+% Things todo
+% - DONE small calculus based on previous TR formalisation
+%   that demos the ``flow'' environment & not/intersection type
+% - discussion and examples for flow filters
+% - discussion on the not/difference type, real code where it helps
+% - higher-rank polymorphism, show what it enables (eg. monads)
+%   - also show more complicated example, making an extensible
+%     type for clojure.core/conj, and why it's not straightforward
+% - discussion on limitations of local type inference
+% - demonstration of how we check multimethods
+% - dealing with array covariance
+% - note on how we avoid null-pointer exceptions
+% - discussion on why Typed Clojure only uses the ``static'' part
+%   of Typed Racket
+% - the equality filter problem (and draft solution?), a proposition
+%   that knows about binding aliasing. Sounds straightforward?
+
+

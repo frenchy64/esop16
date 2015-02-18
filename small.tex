@@ -20,7 +20,7 @@
 %-----------------------------------------------------------------------------
 
 
-\documentclass[preprint,9pt,onecolumn,nonatbib]{sigplanconf}
+\documentclass[preprint,9pt,twocolumn]{sigplanconf}
 
 % The following \documentclass options may be useful:
 
@@ -30,9 +30,9 @@
 % authoryear    To obtain author/year citation style instead of numeric.
 
 \usepackage{common}
+\include{bibliography.bib}
 
 \begin{document}
-\nocite{*}
 
 \special{papersize=8.5in,11in}
 \setlength{\pdfpageheight}{\paperheight}
@@ -56,7 +56,7 @@
 %\titlebanner{banner above paper title}        % These are ignored unless
 %\preprintfooter{short description of paper}   % 'preprint' option specified.
 
-\title{Appendix}
+\title{Practical Optional Types for Clojure}
 
 \authorinfo{Ambrose Bonnaire-Sergeant}
            {Indiana University}
@@ -70,59 +70,45 @@
 
 \maketitle
 
+\begin{abstract}
+Clojure is a dynamically typed language hosted on the Java 
+Virtual Machine.
+Typed Racket is a valuable starting point for
+a gradual type system that targets Clojure.
+Building a similar type system for a new language gives the
+designer some flexibility to repurpose and extend features.
+This paper gives an overview of Typed Clojure, concentrating
+on the extensions and differences from Typed Racket. We also
+show where Typed Racket's features were particularly useful
+for type checking non-trivial Clojure idioms.
+\end{abstract}
+
 \category{CR-number}{subcategory}{third-level}
 
-% general terms are not compulsory anymore, 
-% you may leave them out
-%\terms
-%term1, term2
-
 \keywords
-gradual types, Clojure
+optional types, Clojure
 
-\input{proof}
+\input{intro}
 
-\input{syntax-figure}
+\input{overview}
 
-\input{typing-rules}
+\input{formal-model}
 
-\input{tools-analyzer-figure}
+\input{metatheory}
 
-\input{subtyping}
+\input{experience}
 
-%$$
-%\begin{tdisplay}{Evaluation Contexts}
-%  \begin{altgrammar}
-%    \E{} &::=& [ ] % application rules
-%              \alt (\c{}\ \overrightarrow{\v{}}\ \E{}\ \overrightarrow{\exp{}}) % eval arguments left-to-right
-%              % map rules
-%              \alt \{\overrightarrow{\v{}\ \v{}}\ \E{}\ \exp{}\ \overrightarrow{\exp{}\ \exp{}} \} % key first
-%              \alt \{\overrightarrow{\v{}\ \v{}}\ \v{}\ \E{}\ \overrightarrow{\exp{}\ \exp{}} \}   % value next
-%              &\mbox{Evaluation Contexts}
-%  \end{altgrammar}
-%\end{tdisplay}
-%$$ 
+\input{related-work}
 
-\input{convert-types-figure}
-\input{constant}
-
-\input{isa-figure}
-\input{get-method}
-
-\clearpage
-\input{operational-semantics}
-\input{update}
-\input{satisfaction}
-\input{proof-system}
-\input{subst}
+\input{conclusion}
 
 % We recommend abbrvnat bibliography style.
 
-%\bibliographystyle{abbrvnat}
+\bibliographystyle{abbrvnat}
 
 % The bibliography should be embedded for final submission.
 
-%\bibliography{bibliography}
+\bibliography{bibliography}
 
 \end{document}
 
