@@ -21,56 +21,11 @@
 
 \BBetaMulti{}
 
-\infer [B-Field]
-{ \opsem {\openv{}}
-         {\e{}} 
-       {\v{1}}
-         \\\\
-         \getfieldjava{\classhint{1}} {\v{1}} {\fld{}} {\classhint{2}} {\v{}}
-       }
-{ \opsem {\openv{}}
-         {\fieldstaticexp {\classhint{1}} {\classhint{2}} {\fld{}} {\e{}}}
-         {\v{}}
-   }
+\BField{}
 
-\infer [B-Method]
-{ \opsem {\openv{}}
-         {\e{m}}
-         {\v{m}}
-  \\
-  \overrightarrow{
-  \opsem {\openv{}}
-         {\e{a}}
-         {\v{a}}
-       }
-  \\\\
-  \invokejavamethod {\classhint{1}} {\v{m}} {mth}
-                    {\overrightarrow{\classhint{a}}} {\overrightarrow{\v{a}}}
-                    {\classhint{2}}
-                    {\v{}}
-}
-{\opsem {\openv{}}
-        {\methodstaticexp {\classhint{1}} {\overrightarrow{\classhint{a}}} {\classhint{2}} {mth} {\e{m}} {\overrightarrow{\e{a}}}}
-        {\v{}}
-      }
+\BMethod{}
 
-\infer [B-New]
-{ 
-  \overrightarrow{
-  \opsem {\openv{}}
-         {\e{i}}
-         {\v{i}}
-       }
-         \\\\
-         \newjava {\classhint{1}}
-                  {\overrightarrow{\classhint{i}}}
-                  {\overrightarrow{\v{i}}}
-                  {\v{}}
-       }
-{ \opsem {\openv{}}
-         {\newstaticexp {\overrightarrow{\classhint{i}}} {\classhint{1}} 
-                        {\class{}} {\overrightarrow{\e{i}}}}
-         {\v{}}}
+\BNew{}
 
        \BDefMulti{}
 
