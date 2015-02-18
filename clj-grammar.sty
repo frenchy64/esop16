@@ -759,7 +759,9 @@
   \pathelem{}   &::=& \overrightarrow{\pesyntax{}}
                 &\mbox{Paths} \\
   \pesyntax{}   &::=& \trdiff{\classpe{}} \alt \trdiff{\keype{\k{}}}
-                &\mbox{Path Elements}
+                &\mbox{Path Elements}\\
+  \propenv{}   &::=& \overrightarrow{\prop{}}
+               &\mbox{Proposition Environment} \\
               }
 
 \newcommand\classliteralallsyntax[0]{
@@ -921,6 +923,33 @@
        }
      }
 
+     \newcommand\getmethodfigure[0]{
+$$
+\begin{array}{lr}
+
+  \getmethod {\disptable{}}
+             {\v{e}}
+             {\roundpair{\v{v}}{\v{f}}}
+             \\
+             \ \ \ \ 
+             \text{let } {\overrightarrow{\v{fs}}} = 
+                \{ (\v{v}, \v{f}) | 
+                    {\roundpair{\v{v}}{\v{f}}} \in \disptable{} 
+                  \text{ and } 
+                \isaopsem{\v{v}}{\v{e}} = {\true{}} \},
+                \\
+             \ \ \ \ 
+             \text{ if } {\overrightarrow{\v{fs}}} = \{{\roundpair{\v{v}}{\v{f}}}\}
+
+             \\
+  \getmethod {\disptable{}}
+             {\v{e}}
+             {\mmerror{}} & \text{otherwise}
+
+\end{array}
+$$
+     }
+
      \newcommand\BDefMulti[0]{
 \infer [B-DefMulti]
 { \opsem {\openv{}} {\e{d}} {\v{d}}
@@ -1069,7 +1098,7 @@
 \newcommand\HMapsubtyping[0]{
 \infer [S-HMap]
 { \forall i.\ ({\k{i}},\ \s{i}) \in \mandatory{} \text{ and } \issubtypein {} {\s{i{}}} {\t{i{}}}
-  \\\\
+  \\
   {\absent{1}} \supseteq {\absent{2}}
 }
 {\issubtypein {} {\HMapgeneric {\mandatory{}} {\absent{1}}}
@@ -1168,4 +1197,82 @@
                              {\topprop{}}}
 \end{array}
   }
+}
+
+% multimethod syntax
+
+\newcommand\disptablesyntax[0]{
+ \disptable{}   &::=& \{ \overrightarrow{\v{} \mapsto \v{}} \}
+               &\mbox{Multimethod dispatch table}
+             }
+\newcommand\multimethodexpsyntax[0]{
+  {\createmultiexp {\t{}} {\e{}}}
+                      \alt
+                              {\extendmultiexp {\e{}} {\e{}} {\e{}}}
+                      \alt {\isaapp {\e{}} {\e{}}}
+              }
+
+% HMap syntax auxiliary 
+\newcommand\auxhmapsyntax[0]{
+  \mandatory{} &::=& \mandatorysetoverright{\k{}}{\t{}}
+                &\mbox{HMap mandatory entries} \\
+  \absent{} &::=& \absentoverright{\k{}}
+                &\mbox{HMap absent entries} \\
+  \completenessmeta{} &::=& {\complete{}} \alt {\partial{}}
+                &\mbox{HMap completeness}
+              }
+
+\newcommand\hmapexpressionsyntax[0]{
+                      {\getexp {\e{}} {\e{}}}
+                      \alt {\assocexp {\e{}}{\e{}}{\e{}}}
+                    }
+
+% reflective Java interop syntax
+\newcommand\reflectiveexpsyntax[0]{
+                      {\fieldexp {\fld{}} {\e{}}}
+                      \alt {\methodexp {\mth{}} {\e{}} {\overrightarrow{\e{}}}}
+                      \alt {\newexp {\class{}} {\overrightarrow{\e{}}}}
+}
+
+\newcommand\fieldexpsyntax[0]{
+                      {\fieldstaticexp {\classhint{}} {\classhint{}} {\fld{}} {\e{}}}
+}
+
+\newcommand\methodexpsyntax[0]{
+  {\methodstaticexp {\classhint{}} {\overrightarrow{\classhint{}}} {\classhint{}} {\mth{}} {\e{}} {\overrightarrow{\e{}}}}
+}
+
+\newcommand\newexpsyntax[0]{
+  {\newstaticexp {\overrightarrow {\classhint{}}} {\classhint{}} {\class{}} {\overrightarrow{\e{}}}}
+}
+
+% nonreflective Java interop syntax
+\newcommand\nonreflectiveexpsyntax[0]{
+  \fieldexpsyntax{}
+  \alt \methodexpsyntax{}
+  \alt \newexpsyntax{}
+}
+
+% small figure for nonreflective Java interop syntax
+\newcommand\mininonreflectiveexpsyntax[0]{
+  \fieldexpsyntax{}
+  \alt \methodexpsyntax{}\\
+  &\alt& \newexpsyntax{}
+}
+
+\newcommand\lethintsyntax[0]{
+  {\letexp {\hinted {\classhint{}} {\x{}}} {\e{}} {\e{}}}
+}
+
+\newcommand\localhintsyntax[0]{
+  \hinted{\classhint{}} {\x{}}
+}
+
+\newcommand\typehintedexpsyntax[0]{
+  \localhintsyntax{}
+  \alt \lethintsyntax{}
+}
+
+\newcommand\classvaluesyntax[0]{
+  {\classvalue{\classhint{}} {\overrightarrow {\classfieldpair{\fld{}} {\v{}}}}}
 }

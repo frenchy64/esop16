@@ -104,8 +104,6 @@ $$
 \caption{Semantics}
 \end{figure*}
 
-\input{constant}
-
 \begin{figure*}
 \begin{mathpar}
 \standardsubtyping{}
@@ -138,6 +136,20 @@ $$
 \subsection{Multimethods}
 
 \begin{figure}
+$$
+\begin{altgrammar}
+  \e{} &::=& \ldots \alt \multimethodexpsyntax{} 
+                &\mbox{Expressions} \\
+  \v{} &::=& \ldots \alt {\multi {\v{}} {\disptable{}}}
+                &\mbox{Values} \\
+
+ \disptablesyntax{} \\
+\end{altgrammar}
+$$
+\caption{Multimethod Syntax}
+\end{figure}
+
+\begin{figure}
 \begin{mathpar}
   \TDefMulti{}
 
@@ -155,12 +167,14 @@ $$
 
 
 \begin{figure}
+  \getmethodfigure{}
 \begin{mathpar}
-  \BBetaMulti{}
 
        \BDefMulti{}
 
        \BDefMethod{}
+
+  \BBetaMulti{}
 \end{mathpar}
 \caption{Multimethod semantics}
 \end{figure}
@@ -203,7 +217,42 @@ TODO
 
 \subsection{Heterogenous maps}
 
+\begin{figure}
+$$
+\begin{altgrammar}
+  \e{} &::=& \ldots \alt \hmapexpressionsyntax{}
+                &\mbox{Expressions} \\
+  \v{} &::=& \ldots \alt {\emptymap{}}
+                &\mbox{Values} \\
+  \t{} &::=& \ldots \alt {\HMapgeneric {\mandatory{}} {\absent{}}}
+                &\mbox{Types} \\
+  \auxhmapsyntax{}\\
+\end{altgrammar}
+$$
+\caption{HMap Terms and Types}
+\end{figure}
+
+
+\begin{figure}
+\begin{mathpar}
+  \HMapsubtyping{}
+\end{mathpar}
+\caption{HMap subtyping rules}
+\end{figure}
+
 \subsection{Java interoperability}
+
+\begin{figure}
+$$
+\begin{altgrammar}
+  \e{} &::=& \ldots \alt \reflectiveexpsyntax{}
+                &\mbox{Expressions} \\
+  \v{} &::=& \ldots \alt {\classvalue{\classhint{}} {\overrightarrow {\classfieldpair{\fld{}} {\v{}}}}}
+                &\mbox{Values} \\
+\end{altgrammar}
+$$
+\caption{Java Interoperability Terms and Types}
+\end{figure}
 
 As Clojure supports Java interoperability, Typed Clojure has some
 integration with Java's type system. Calls to Java methods from
@@ -225,6 +274,17 @@ inference for \emph{tools.analyzer}, which uses type hints
 to resolve ambiguities in Java interop like overloaded methods.
 
 \subsection{Clojure type hints}
+
+\begin{figure}
+$$
+\begin{altgrammar}
+  \e{} &::=& \ldots \alt \mininonreflectiveexpsyntax{}
+              \alt \typehintedexpsyntax{}
+                &\mbox{Expressions} \\
+\end{altgrammar}
+$$
+\caption{Type Hinting Terms}
+\end{figure}
 
 Clojure comes with a small type system that helps improve
 performance in Clojure code: type hints. They are used to help
@@ -269,3 +329,5 @@ TODO
 - write conversion rules for 
   Java type -> Clojure type
 \end{verbatim}
+
+\input{constant}

@@ -29,30 +29,15 @@ $$
   {\const{}}           &::=& \classconst \alt \throwconst
 
                 &\mbox{Constants} \\
-  \HintedExp{}             &::=&
-
-                      \hinted{\classhint{}} {\x{}}
-                      \alt
-                      {\letexp {\hinted {\classhint{}} {\x{}}} {\e{}} {\e{}}}
+  \HintedExp{}             &::=& \typehintedexpsyntax{}
                 &\mbox{Type Hinted Expressions} \\
-  \HashMapExp{}                &::=&
-                      {\getexp {\e{}} {\e{}}}
-                      \alt {\assocexp {\e{}}{\e{}}{\e{}}}
+  \HashMapExp{}                &::=& \hmapexpressionsyntax{}
                 &\mbox{Hash Maps} \\
-  \NonReflectiveExp{}     &::=&
-                      {\fieldstaticexp {\classhint{}} {\classhint{}} {\fld{}} {\e{}}}
-                      \alt {\methodstaticexp {\classhint{}} {\overrightarrow{\classhint{}}} {\classhint{}} {mth} {\e{}} {\overrightarrow{\e{}}}}
-                      \alt {\newstaticexp {\overrightarrow {\classhint{}}} {\classhint{}} {\class{}} {\overrightarrow{\e{}}}}
+  \NonReflectiveExp{}     &::=& \nonreflectiveexpsyntax{}
                 &\mbox{Non-Reflective Java Interop} \\
-  \ReflectiveExp{}     &::=&
-                      {\fieldexp {\fld{}} {\e{}}}
-                      \alt {\methodexp {mth} {\e{}} {\overrightarrow{\e{}}}}
-                      \alt {\newexp {\class{}} {\overrightarrow{\e{}}}}
+  \ReflectiveExp{}     &::=& \reflectiveexpsyntax{}
                 &\mbox{Reflective Java Interop} \\
-  \MultimethodExp{}     &::=& {\createmultiexp {\t{}} {\e{}}}
-                      \alt
-                              {\extendmultiexp {\e{}} {\e{}} {\e{}}}
-                      \alt {\isaapp {\e{}} {\e{}}}
+  \MultimethodExp{}     &::=& \multimethodexpsyntax{}
                 &\mbox{Immutable First-Class Multimethods}
                       \\\\
   \s{}, \t{}    &::=& \Top 
@@ -68,12 +53,7 @@ $$
                       \alt {\MultiFntype{\t{}}{\t{}}}
                       
                 &\mbox{Typed Clojure Types} \\
-  \mandatory{} &::=& \mandatorysetoverright{\k{}}{\t{}}
-                &\mbox{HMap mandatory entries} \\
-  \absent{} &::=& \absentoverright{\k{}}
-                &\mbox{HMap absent entries} \\
-  \completenessmeta{} &::=& {\complete{}} \alt {\partial{}}
-                &\mbox{HMap completeness} \\
+                \auxhmapsyntax{}\\
   \singletonallsyntax{}
                 \\ \\
   \openv{}     &::=& \{\overrightarrow{\x{} \mapsto \v{}}\}
@@ -83,10 +63,7 @@ $$
   \occurrencetypingsyntax{}
   \\\\
 
- \disptable{}   &::=& \{ \overrightarrow{\v{} \mapsto \v{}} \}
-               &\mbox{Multimethod dispatch table} \\
-  \propenv{}   &::=& \overrightarrow{\prop{}}
-               &\mbox{Proposition Environment} \\
+ \disptablesyntax{} \\
   \taenv{}    &::=& \{ \overrightarrow{ \hastype{\x{}} {\tatype{}}} \}
                &\mbox{tools.analyzer Environment} \\
   \ctentrymeta{} &::=& \ctentry
@@ -94,7 +71,7 @@ $$
   \ct{}   &::=& \{ \overrightarrow{\classhint{} \mapsto \ctentrymeta{}} \}
                &\mbox{Class Table} \\
   \classvaluemeta{} 
-          &::=& {\classvalue{\classhint{}} {\overrightarrow {\classfieldpair{\fld{}} {\v{}}}}}
+          &::=& \classvaluesyntax{}
                &\mbox{Class Values}\\
                \classliteralallsyntax{}
                       \\
