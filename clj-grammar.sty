@@ -243,19 +243,17 @@
 \newcommand\ctmethodsliteral[0]{\metafunctionfont{methods}}
 \newcommand\ctfieldsliteral[0]{\metafunctionfont{fields}}
 \newcommand\ctconstructorsliteral[0]{\metafunctionfont{constructors}}
-\newcommand\ctmthentryrhs[2]{\ma{[[#1], #2]}}
-\newcommand\ctfldentryrhs[1]{\ma{#1}}
-\newcommand\ctctorentryrhs[1]{\ma{[#1]}}
-\newcommand\ctmthentry[3]{\ma{#1 \mapsto  \ctmthentryrhs{#2}{#3}}}
-\newcommand\ctfldentry[2]{\ma{#1 \mapsto \ctfldentryrhs{#2}}}
-\newcommand\ctctorentry[1]{\ma{\ctctorentryrhs{#1}}}
+\newcommand\ctmthentry[3]{\ma{[#1, [#2], #3]}}
+\newcommand\ctfldentry[2]{\ma{[#1, #2]}}
+\newcommand\ctctorentry[1]{\ma{[#1]}}
+\newcommand\set[1]{\ma{\{#1\}}}
 \newcommand\ctentry[0]{\{ \ctmethodsliteral \mapsto 
-                        \{ \overrightarrow{\ctmthentry{\mth{}}{\overrightarrow{\classhint{}}}{\classhint{}}} \}, \ 
+  \set{\overrightarrow{\ctmthentry{\mth{}}{\overrightarrow{\classhint{}}}{\classhint{}}}}, \ 
   \ctfieldsliteral \mapsto \{\overrightarrow{\ctfldentry{\fld{}}{\classhint{}}} \}, \ 
   \ctconstructorsliteral \mapsto \{\overrightarrow{\ctctorentry{\overrightarrow{\classhint{}}}} \}
                           \}}
 \newcommand\ctlookup[2]{\ma{{#1}[#2]}}
-\newcommand\ctlookuptwo[3]{\ma{\ctlookup{\ctlookup{#1}{#2}}{#3}}}
+\newcommand\ctlookuptwo[3]{\ma{\ctlookup{({\ctlookup{#1}{#2}})}{#3}}}
 \newcommand\ctlookupmethods[2]{\ma{\ctlookuptwo{#1}{#2}{\ctmethodsliteral}}}
 \newcommand\ctlookupfields[2]{\ma{\ctlookuptwo{#1}{#2}{\ctfieldsliteral}}}
 \newcommand\ctlookupctors[2]{\ma{\ctlookuptwo{#1}{#2}{\ctconstructorsliteral}}}
