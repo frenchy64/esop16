@@ -1276,3 +1276,133 @@ $$
 \newcommand\classvaluesyntax[0]{
   {\classvalue{\classhint{}} {\overrightarrow {\classfieldpair{\fld{}} {\v{}}}}}
 }
+
+% reflection resolution rewrite 
+
+\newcommand\RLocal[0]{
+\infer [R-Local]
+{}
+{ \rewrite {\taenv{}}
+           {\x{}}
+           {\x{}}
+         }
+       }
+
+\newcommand\RNewElimRefl[0]{
+\infer [R-NewElimRefl]
+{ \overrightarrow{
+    \rewrite {\taenv{}}
+           {\e{i}}
+           {\e{j}}}
+  \\
+  \overrightarrow{
+  \tajudgement {\taenv{}}
+               {\hastype {\e{j}} {\classhint{j}}}
+             }
+               \\\\
+  \ctorparams {\ct{}}{\classhint{}}{\overrightarrow{\classhint{j}}}{\overrightarrow{\classhint{k}}}
+             }
+{ \rewrite {\taenv{}}
+           {\newexp {\class{}} {\overrightarrow {\e{i}}}}
+           {\newstaticexp {\overrightarrow {\classhint{k}}} {\classhint{}} {\class{}} {\overrightarrow {\e{j}}}}
+}
+
+       }
+
+\newcommand\RLet[0]{
+\infer [R-Let]
+{ \rewrite {\taenv{}}
+           {\e{1}}
+           {\ep{1}}
+           \\
+  \tajudgement {\taenv{}} {\hastype {\ep{1}} {\tatype{}}}
+           \\\\
+  \rewrite {\taenv{}, {\hastype {\x{}} {\tatype{}}}}
+           {\e{}}
+           {\ep{}}
+         }
+{ \rewrite {\taenv{}}
+           {\letexp {\x{}}
+                    {\e{1}}
+                    {\e{}}}
+           {\letexp {\x{}}
+                    {\ep{1}}
+                    {\ep{}}}
+}
+       }
+
+\newcommand\RLetHint[0]{
+\infer [R-LetHint]
+{ \rewrite {\taenv{}}
+           {\e{1}}
+           {\ep{1}}
+           \\
+  \rewrite {\taenv{}, {\hastype {\x{}} {\classhint{}}}}
+           {\e{}}
+           {\ep{}}
+         }
+{ \rewrite {\taenv{}}
+           {\letexp {\hinted {\classhint{}} {\x{}}}
+                    {\e{1}}
+                    {\e{}}}
+           {\letexp {\hinted {\classhint{}} {\x{}}}
+                    {\ep{1}}
+                    {\ep{}}}
+}
+}
+
+\newcommand\RFieldElimRefl[0]{
+\infer [R-FieldElimRefl]
+{ \rewrite {\taenv{}}
+           {\e{}}
+           {\ep{}}
+           \\
+  \tajudgement {\taenv{}}
+               {\hastype {\ep{}} {\classhint{}}}
+               \\\\
+               \fieldtype {\ct{}} {\classhint{}} {\fld{}} {\classhint{t}}{\classhint{f}}
+         }
+{ \rewrite {\taenv{}}
+           {\fieldexp {\fld{}} {\e{}}}
+           {\fieldstaticexp {\classhint{t}} {\classhint{f}} {\fld{}} {\ep{}}}
+         }
+       }
+
+\newcommand\RMethodElimRefl[0]{
+\infer [R-MethodElimRefl]
+{ \rewrite {\taenv{}}
+           {\e{}}
+           {\ep{}}
+           \\
+  \tajudgement {\taenv{}}
+               {\hastype {\ep{}} {\classhint{}}}
+           \\\\
+           \overrightarrow{
+  \rewrite {\taenv{}}
+           {\e{i}}
+           {\e{j}}}
+           \\
+           \overrightarrow{
+  \tajudgement {\taenv{}}
+               {\hastype {\e{j}} {\classhint{j}}}
+             }
+               \\\\
+  \methodtype {\ct{}}{\classhint{}} {\mth{}} {\overrightarrow{\classhint{j}}}{\classhint{t}}{\overrightarrow{\classhint{p}}}{\classhint{r}}
+         }
+{ \rewrite {\taenv{}}
+           {\methodexp {\mth} {\e{}} {\overrightarrow {\e{i}}}}
+           {\methodstaticexp {\classhint{t}} {\overrightarrow {\classhint{p}}} {\classhint{r}} {\mth{}} {\ep{}} {\overrightarrow {\e{j}}}}
+  }
+}
+
+\newcommand\RAbs[0]{
+\infer [R-Abs]
+{ \rewrite {\taenv{}, {\hastype {\x{}} {\unknownhint{}}}}
+           {\e{}}
+           {\ep{}}
+}
+{ \rewrite {\taenv{}}
+           {\abs {\x{}} {\t{}} {\e{}}}
+           {\abs {\x{}} {\t{}} {\ep{}}}
+         }
+       }
