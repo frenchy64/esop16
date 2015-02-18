@@ -276,46 +276,45 @@ to resolve ambiguities in Java interop like overloaded methods.
 \subsection{Clojure type hints}
 
 \begin{figure}
-$$
-\begin{altgrammar}
-  \e{} &::=& \ldots \alt \mininonreflectiveexpsyntax{}
-              \alt \typehintedexpsyntax{}
-                &\mbox{Expressions} \\
-\end{altgrammar}
-$$
-\caption{Type Hinting Terms}
+  $$
+  \begin{altgrammar}
+    \e{} &::=& \ldots \alt \mininonreflectiveexpsyntax{}
+    &\mbox{Expressions} \\
+  \end{altgrammar}
+  $$
+  \caption{Type Hinting and Non-Reflective Terms}
 \end{figure}
 
 \begin{figure*}
-\begin{mathpar}
-\RAbs{}
+  \begin{mathpar}
+    \RAbs{}
 
-\RNewElimRefl{}
+    \RNewElimRefl{}
 
-\RMethodElimRefl{}
+    \RMethodElimRefl{}
 
-\RFieldElimRefl{}
+    \RFieldElimRefl{}
 
-         \RLet{}
+    \RLet{}
 
-\RLetHint{}
-\end{mathpar}
+    \RLetHint{}
+  \end{mathpar}
 \caption{Reflection Elimination}
 \end{figure*}
 
 \begin{figure*}
-\begin{mathpar}
-  \TALocal{}
+  \begin{mathpar}
+    \TALocal{}
 
-  \TANil{}
+    \TANil{}
 
-  \TANewStatic{}
+    \TANewStatic{}
 
-  \TALetHint{}
+    \TALetHint{}
 
-  \TALet{}
-\end{mathpar}
-\caption{Type hint propagation}
+    \TALet{}
+  \end{mathpar}
+\caption{Type Hint Inference}
 \end{figure*}
 
 Clojure comes with a small type system that helps improve
