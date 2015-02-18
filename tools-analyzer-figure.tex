@@ -2,16 +2,9 @@
 \begin{figure*}
 \begin{mathpar}
 
-\infer [TA-Local]
-{ \intaenv {\taenv{}} {\x{}} {\tatype{}}
-}
-{ \tajudgement {\taenv{}} {\hastype {\x{}} {\tatype{}}}
-}
+  \TALocal{}
 
-\infer [TA-Nil]
-{}
-{ \tajudgement {\taenv{}} {\hastype {\nil{}} {\unknownhint{}}}
-}
+  \TANil{}
 
 \infer [TA-True]
 {}
@@ -37,12 +30,7 @@
 %{}
 %{ \tajudgement {\taenv{}} {\hastype{\classvalue{\classhint{}} {\overrightarrow {\classfieldpair{\fld{}} {\v{}}}}}{\unknownhint{}}}}
 
-\infer [TA-NewStatic]
-{}
-{ \tajudgement {\taenv{}}
-  {\hastype {\newstaticexp {\overrightarrow {\classhint{i}}} {\classhint{1}} {\class{}} {\overrightarrow {\e{}}}}
-                           {\classhint{1}}}
-}
+\TANewStatic{}
 
 \infer [TA-NewRefl]
 {}
@@ -58,30 +46,9 @@
                          {\unknownhint{}}}
                        }
 
-\infer [TA-LetHint]
-{ \tajudgement {\taenv{}, {\hastype {\x{}} {\classhint{}}}}
-               {\hastype {\e{}} {\tatype{}}}
-}
-{ \tajudgement {\taenv{}}
-      {\hastype {\letexp {\hinted{\classhint{}}{\x{}}}
-                                  {\e{1}}
-                                  {\e{}}}
-                         {\tatype{}}}
-}
+\TALetHint{}
 
-\infer [TA-Let]
-{ \tajudgement {\taenv{}} 
-               {\hastype {\e{1}} {\tatype{1}}}
-               \\\\
-  \tajudgement {\taenv{}, {\hastype {\x{}} {\tatype{1}}}}
-               {\hastype {\e{}} {\tatype{}}}
-}
-{ \tajudgement {\taenv{}}
-               {\hastype {\letexp {\x{}}
-                                  {\e{1}}
-                                  {\e{}}}
-                         {\tatype{}}}
-}
+\TALet{}
 
 \infer [TA-FieldRefl]
 {}

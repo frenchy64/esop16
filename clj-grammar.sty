@@ -1406,3 +1406,58 @@ $$
            {\abs {\x{}} {\t{}} {\ep{}}}
          }
        }
+
+% type hint propagation
+
+\newcommand\TALocal[0]{
+\infer [TA-Local]
+{ \intaenv {\taenv{}} {\x{}} {\tatype{}}
+}
+{ \tajudgement {\taenv{}} {\hastype {\x{}} {\tatype{}}}
+}
+}
+
+\newcommand\TANil[0]{
+\infer [TA-Nil]
+{}
+{ \tajudgement {\taenv{}} {\hastype {\nil{}} {\unknownhint{}}}
+}
+}
+
+\newcommand\TANewStatic[0]{
+\infer [TA-NewStatic]
+{}
+{ \tajudgement {\taenv{}}
+  {\hastype {\newstaticexp {\overrightarrow {\classhint{i}}} {\classhint{}} {\class{}} {\overrightarrow {\e{}}}}
+                           {\classhint{}}}
+}
+}
+
+\newcommand\TALetHint[0]{
+\infer [TA-LetHint]
+{ \tajudgement {\taenv{}, {\hastype {\x{}} {\classhint{}}}}
+               {\hastype {\e{}} {\tatype{}}}
+}
+{ \tajudgement {\taenv{}}
+      {\hastype {\letexp {\hinted{\classhint{}}{\x{}}}
+                                  {\e{1}}
+                                  {\e{}}}
+                         {\tatype{}}}
+}
+}
+
+\newcommand\TALet[0]{
+\infer [TA-Let]
+{ \tajudgement {\taenv{}} 
+               {\hastype {\e{1}} {\tatype{1}}}
+               \\\\
+  \tajudgement {\taenv{}, {\hastype {\x{}} {\tatype{1}}}}
+               {\hastype {\e{}} {\tatype{}}}
+}
+{ \tajudgement {\taenv{}}
+               {\hastype {\letexp {\x{}}
+                                  {\e{1}}
+                                  {\e{}}}
+                         {\tatype{}}}
+}
+}
