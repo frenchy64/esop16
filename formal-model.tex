@@ -161,6 +161,23 @@ $$
 \label{figure:subtyping}
 \end{figure*}
 
+\subsection{\doliteral{}}
+
+\begin{minted}{clojure}
+  (fn [x :- (U nil Number)] {:pre (number? x)} (inc x))
+\end{minted}
+
+An elegant extension we introduce is simple exceptional control flow
+with \doliteral{} expressions which can follow control flow like
+
+\begin{minted}[]{clojure}
+  (do (if (number? x) (throw (new Exception)) nil)
+      (inc x))
+\end{minted}
+
+which resembles the macroexpansion of Clojure's precondition syntax
+
+
 \subsection{\isaliteral{}}
 
 One interesting Clojure function we modeled is \isaliteral.

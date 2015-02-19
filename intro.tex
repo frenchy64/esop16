@@ -24,14 +24,14 @@ Clojure
 Typed Clojure is a gradual type system for Clojure, based on the
 static portion of Typed Racket.
 
-\begin{lstlisting}
+\begin{minted}[]{clojure}
 (ann parent [(U nil File) -> (U nil File)])
 (defn parent [^File f]
   (when f
     (let [s (. f (getParent))]
       (assert s "Expected parent string, got nil")
       (new File s))))
-\end{lstlisting}
+\end{minted}
 
 %$$
 %\abs{\x{}}{\Union{\Nil}{\File}}
@@ -55,7 +55,9 @@ static portion of Typed Racket.
 %    (.getParent f)))
 %\end{lstlisting}
 
-\begin{lstlisting}
+\begin{minted}[mathescape,
+  frame=lines,
+  framesep=2mm]{clojure}
 (defalias Expr
   (U '{:op :if :test Expr :then Expr :else Expr}
      '{:op :const :val Any} ...))
@@ -65,7 +67,7 @@ static portion of Typed Racket.
   (str (tree-str test) (tree-str then) (tree-str else)))
 (defmethod tree-str :const [{:keys [val]}] 
   (str val))
-\end{lstlisting}
+\end{minted}
 
 \subsection{Contributions}
 
