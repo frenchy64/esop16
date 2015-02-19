@@ -19,6 +19,38 @@ The propositions inform conditionals on what they can assume down the then and e
 branches if the expression is used as a test.
 The object is a possibly-empty symbolic representation of the expression.
 
+Syntax is given in figure~\ref{figure:termsyntax}. Expressions include variables, values,
+application, abstractions, conditionals, do (sequencing) expressions and let expressions.
+We model throwable errors without a catching mechanism. All binding forms introduce fresh
+variables.
+
+Values include booleans, \nil{}, class literals, keywords, constants and closures.
+\false{} and \nil{} are the only logically false values.
+
+Types include the top type, untagged unions, functions, singleton types
+and class instances. We abbreviate \EmptyUnion{} as \Bot{}.
+Function types contain \emph{latent} propositions and object, which, along with the return type,
+may refer to the parameter identifier. They are latent because they are instantiated with the
+actual object of the argument in applications before they are used in the proposition environment.
+
+Propositions are identical to~\cite{TF10}; positive and negative type propositions, implications,
+conjunctions, disjuctions, trivial and impossible propositions.
+Type propositions contain a non-empty object which it claims type information about.
+
+Proposition environments are sequences of propositions in conjunctive normal form.
+
+Typing rules are in figure~\ref{figure:typingrules}.
+T-Error neither returns logically true or false as it does not return normally.
+T-Do uses the propositions learnt in the first expression to type check the second.
+Other than compensating for the extra logically false value \nil{}, the rest are standard.
+
+Figure~\ref{figure:standardopsem} contains the operational semantics, which are standard
+except for \nil{} being false.
+
+Subtyping (figure~\ref{figure:subtyping}) says singleton types are instances of their respective classes
+and \Object is transitively a supertype to everything except {\Nil{}},
+so \Top{} = {\Union{\Nil}{\Object}}.
+
 \begin{figure*}
   \footnotesize
 $$
@@ -59,6 +91,7 @@ $$
 \end{altgrammar}
 $$
 \caption{Syntax of Terms, Types, Propositions and Objects}
+\label{figure:termsyntax}
 \end{figure*}
 
 \begin{figure*}
@@ -90,7 +123,8 @@ $$
 
     {\TSubsume}
   \end{mathpar}
-  \caption{Standard typing rules}
+  \caption{Typing rules}
+  \label{figure:typingrules}
 \end{figure*}
 
 \begin{figure*}
@@ -114,7 +148,8 @@ $$
 
     \BDelta{}
   \end{mathpar}
-  \caption{Semantics}
+  \caption{Operational Semantics}
+  \label{figure:standardopsem}
 \end{figure*}
 
 \begin{figure*}
@@ -123,6 +158,7 @@ $$
 \standardsubtyping{}
 \end{mathpar}
 \caption{Subtyping rules}
+\label{figure:subtyping}
 \end{figure*}
 
 \subsection{\isaliteral{}}
