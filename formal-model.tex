@@ -163,20 +163,35 @@ $$
 
 \subsection{\doliteral{}}
 
+Assertions in Clojure often expand to simple exceptional control flow reasoning.
+
 \begin{minted}{clojure}
-  (fn [x :- (U nil Number)] {:pre (number? x)} (inc x))
+(fn [x :- (U nil Number)] {:pre (number? x)} (inc x))
 \end{minted}
 
-An elegant extension we introduce is simple exceptional control flow
-with \doliteral{} expressions which can follow control flow like
+roughly expands to
 
-\begin{minted}[]{clojure}
-  (do (if (number? x) (throw (new Exception)) nil)
-      (inc x))
+\begin{minted}{clojure}
+(fn [x :- (U nil Number)]
+  (do (if x (throw (new Exception)) nil)
+      (inc x)))
 \end{minted}
 
-which resembles the macroexpansion of Clojure's precondition syntax
+With an elegant extension in T-Do (figure~\ref{figure:typingrules}) we can follow this reasoning
+to infer \mintinline{clojure}{(inc x)} is safe. The main insight is we can assume the
+disjunction of the propositions of the first \doliteral{} argument while checking the second.
 
+To sketch how this example is checked, first T-Abs type checks the body under the 
+environment \propenv{} = {\isprop{\Union{\nil}{\Number{}}}{\x{}}}.
+T-Do then extracts the propositions of its first argument:
+T-If tells us \thenprop{\prop{1}} = {\orprop{\botprop{}}{\botprop{}}} and 
+\elseprop{\prop{1}} = {\orprop{\botprop{}}{\notprop{\falsy{}}{\x{}}}}
+using T-Error, T-Nil and T-Subsume.
+Now {\orprop {\thenprop {\prop{1}}} {\elseprop {\prop{1}}}} = {\notprop{\falsy}{\x{}}}
+and we check \mintinline{clojure}{(inc x)} in the extended environment 
+\ma{{\propenv{},{\notprop{\falsy}{\x{}}}}}
+and by L-Update we know {\isprop{\Number}{\x{}}}
+so T-Local says \mintinline{clojure}{x} is a \Number.
 
 \subsection{\isaliteral{}}
 
