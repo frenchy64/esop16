@@ -20,7 +20,7 @@
 %-----------------------------------------------------------------------------
 
 
-\documentclass[preprint,9pt,twocolumn]{sigplanconf}
+\documentclass[preprint,9pt,twocolumn,nocopyrightspace,authoryear]{sigplanconf}
 
 % The following \documentclass options may be useful:
 
@@ -72,22 +72,49 @@
 \maketitle
 
 \begin{abstract}
-Clojure is a dynamically typed language hosted on the Java 
-Virtual Machine.
-Typed Racket is a valuable starting point for
-a gradual type system that targets Clojure.
-Building a similar type system for a new language gives the
-designer some flexibility to repurpose and extend features.
-This paper gives an overview of Typed Clojure, concentrating
-on the extensions and differences from Typed Racket. We also
-show where Typed Racket's features were particularly useful
-for type checking non-trivial Clojure idioms.
+Typed Clojure is an optional type system for Clojure, a dynamic
+language in the Lisp family that targets the JVM. Typed Clojure's type
+system build on the design of Typed Racket, repurposing in particular
+\emph{occurence typing}, its approach to statically reasoning about
+predicate tests. However, in adapting the type system to Clojure,
+changes and extensions are required to accomodate both additional
+language features and  idioms used by Clojure programmers.
+
+In this paper, we describe Typed Clojure and present these type system
+extensions, focusing on three features widely used in Clojure. First, Java
+interoperability is central to Clojure's mission but introduces
+challenges such as ubiquitous \texttt{null}; Typed Clojure handles
+Java interoperability while ensuring the absence of null-pointer
+exceptions in typed programs. Second, Clojure programmers
+idiomatically use immutable dictionaries for data structures; Typed
+Clojure handles this in the type system with multiple forms of
+heterogenous dictionary types. Third, multimethods provide extensible
+operations, and their Clojure semantics turns out to have a surprising
+synergy with the underlying occurence typing framework.
+
+We provide a formal model of the Typed Clojure type system
+incorporating these and other features, with a proof of
+soundness. Additionally, Typed Clojure is now in use by numerous
+corporations and developers working with Clojure, and we report on 
+experience with the system and its lessons for the future.
+
+
+%% Clojure is a dynamically typed language hosted on the Java 
+%% Virtual Machine.
+%% Typed Racket is a valuable starting point for
+%% a gradual type system that targets Clojure.
+%% Building a similar type system for a new language gives the
+%% designer some flexibility to repurpose and extend features.
+%% This paper gives an overview of Typed Clojure, concentrating
+%% on the extensions and differences from Typed Racket. We also
+%% show where Typed Racket's features were particularly useful
+%% for type checking non-trivial Clojure idioms.
 \end{abstract}
 
-\category{CR-number}{subcategory}{third-level}
+%% \category{CR-number}{subcategory}{third-level}
 
-\keywords
-optional types, Clojure
+%% \keywords
+%% optional types, Clojure
 
 \input{intro}
 
