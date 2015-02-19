@@ -357,7 +357,7 @@
 
 % field special functions
 % Type Field -> Type
-\newcommand\fieldtypeliteral[0]{\metafnfont{Field}}
+\newcommand\fieldtypeliteral[0]{\ma{\metafnfont{Field}}}
 \newcommand\fieldtypenoeq[3]{\ma{\fieldtypeliteral(#1, #2, #3)}}
 \newcommand\fieldtype[5]{\ma{\fieldtypenoeq{#1}{#2}{#3} = [#4, #5]}}
 \newcommand\fieldtypealign[5]{\ma{\fieldtypenoeq{#1}{#2}{#3} &=& [#4, #5]}}
@@ -423,8 +423,9 @@
 
 % Java type conversion functions
 \newcommand\javatotcliteral[0]{\ma{\metafnfont{JavaToTC}}}
+\newcommand\javatotcnilliteral[0]{\ma{\javatotcliteral_{\nil{}}}}
 \newcommand\javatotc[2]{\javatotcliteral(\ma{#1})\ =\ #2}
-\newcommand\javatotcnil[2]{\ma{\javatotcliteral_{\nil{}}(\ma{#1})\ =\ #2}}
+\newcommand\javatotcnil[2]{\ma{\javatotcnilliteral(\ma{#1})\ =\ #2}}
 \newcommand\javatotcalign[2]{\javatotcliteral(\ma{#1})\ &=&\ #2}
 \newcommand\javatotcalignnil[2]{\javatotcliteral_{\nil{}}(\ma{#1})\ &=&\ #2}
 
@@ -650,7 +651,7 @@
 \javatotc {\classhint{i}}
           {\t{i}}
           }
-  \\\\
+  \\
   \javatotc {\classhint{}}
             {\t{}}
   \\
@@ -664,6 +665,49 @@
              {\filterset {\topprop{}} {\botprop{}}}
              {\emptyobject}
              }
+         }
+
+\newcommand\TFieldStatic[0]{
+\infer [T-FieldStatic]
+{ \javatotc {\classhint{1}} {\class{}}
+             \\
+  \javatotcnil {\classhint{2}} {\t{}}
+  \\
+  \judgementtwo {\propenv{}} {\hastype {\e{1}} {\class{}}}
+           }
+{ \judgement {\propenv{}} {\hastype {\fieldstaticexp {\classhint{1}} {\classhint{2}} {\fld{}} {\e{1}}} {\t{}}}
+             {\filterset {\topprop{}} {\topprop}}
+             {\emptyobject{}}}
+         }
+
+\newcommand\TMethodStatic[0]{
+\infer [T-MethodStatic]
+{ 
+  \overrightarrow{\javatotc {\classhint{i}} {\t{i}}}
+             \\
+             \javatotc {\classhint{1}} {\class{}}
+             \\\\
+             \javatotcnil {\classhint{2}} {\t{}}
+             \\
+  \judgementtwo {\propenv{}} {\hastype {\e{}} {\class{}}}
+             \\
+             \overrightarrow{
+  \judgementtwo {\propenv{}} {\hastype {\e{i}} {\t{i}}}
+                  }
+           }
+{ \judgementfillcol {\propenv{}} {\hastype {\methodstaticexp {\classhint{1}} 
+                                                            {\overrightarrow {\classhint{i}}} 
+                                                            {\classhint{2}}
+                                                            {\mth{}} {\e{}} {\overrightarrow{\e{i}}}}
+                                    {\t{}}}
+             {\filterset {\topprop{}} {\topprop{}}}
+             {\emptyobject{}}}
+         }
+
+\newcommand\TClass[0]{
+\infer [T-Class]
+{}
+{ \judgement {\propenv{}} {\hastype{\class{}}{\Value{\class{}}}}{\filterset{\topprop{}}{\botprop{}}}{\emptyobject{}}}
          }
 
 \newcommand\TDefMulti[0]{
@@ -1006,7 +1050,7 @@ $$
 { \opsem {\openv{}}
          {\e{}} 
        {\v{1}}
-         \\\\
+         \\
          \getfieldjava{\classhint{1}} {\v{1}} {\fld{}} {\classhint{2}} {\v{}}
        }
 { \opsem {\openv{}}
@@ -1046,7 +1090,7 @@ $$
          {\e{i}}
          {\v{i}}
        }
-         \\\\
+         \\
          \newjava {\classhint{1}}
                   {\overrightarrow{\classhint{i}}}
                   {\overrightarrow{\v{i}}}
@@ -1314,11 +1358,7 @@ $$
 
 % small figure for nonreflective Java interop syntax
 \newcommand\mininonreflectiveexpsyntax[0]{
-  \localhintsyntax{}
-  \alt \lethintsyntax{}
-  \alt \fieldexpsyntax{}\\
-  &\alt& \methodexpsyntax{}
-  \alt \newexpsyntax{}
+  \fieldexpsyntax{} \alt \methodexpsyntax{} \alt \newexpsyntax{}
 }
 
 \newcommand\lethintsyntax[0]{

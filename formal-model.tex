@@ -72,6 +72,8 @@ $$
 
 {\TDo}
 
+{\TClass}
+
 {\TIf}
 
 {\TLet}
@@ -301,13 +303,15 @@ $$
   \footnotesize
   $$
   \begin{altgrammar}
-    \e{} &::=& \ldots \alt \reflectiveexpsyntax{}
+    \e{} &::=& \ldots \alt \reflectiveexpsyntax{}\\
+            &\alt&  \localhintsyntax{} \alt \lethintsyntax{}
     &\mbox{Expressions} \\
     \v{} &::=& \ldots \alt {\classvalue{\classhint{}} {\overrightarrow {\classfieldpair{\fld{}} {\v{}}}}}
     &\mbox{Values} \\
   \end{altgrammar}
   $$
   \caption{Java Interoperability Terms and Types}
+  \label{figure:reflectivesyntax}
 \end{figure}
 
 As Clojure supports Java interoperability, Typed Clojure has some
@@ -335,11 +339,15 @@ to resolve ambiguities in Java interop like overloaded methods.
   \footnotesize
   $$
   \begin{altgrammar}
-    \e{} &::=& \ldots \alt \mininonreflectiveexpsyntax{}
-    &\mbox{Expressions} \\
+    \e{} &::=& \ldots \alt \mininonreflectiveexpsyntax{}\\
+    &&\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \
+    \ \ \ \ \ \ \ \  \ \ \ \ \ \ \ \ \ \ \ \ \ \ \
+
+    \mbox{Expressions}
   \end{altgrammar}
   $$
   \caption{Type Hinting and Non-Reflective Terms}
+  \label{figure:nonreflectivesyntax}
 \end{figure}
 
 \begin{figure*}
@@ -390,18 +398,49 @@ to resolve ambiguities in Java interop like overloaded methods.
   \caption{Java Interoperability Semantics}
 \end{figure}
 
+\begin{figure}
+  \footnotesize
+  \begin{mathpar}
+    {\TNewStatic}
+
+    {\TFieldStatic}
+
+    {\TMethodStatic}
+  \end{mathpar}
+  \caption{Java Interoperability Typing Rules}
+  \label{figure:javatyping}
+\end{figure}
+
 Clojure supports \emph{type hints}, an optional type system to improve performance
 and disambiguate Java calls.
 Programmers communicate to the Clojure compiler via type hints
 to resolve Java methods and prevent boxing in loops. Tags are propagated bidirectionally
 and the programmer is free to add them where they like.
 
-core.typed uses tools.analyzer to obtain a rich abstract syntax tree that includes solved
+core.typed uses tools.analyzer to obtain a rich abstract syntax tree that includes resolved
 reflection, however to tell the full story we include a rewrite relation 
 in figure~\ref{figure:rewrite} to eliminate reflection when sufficient type hints are provided.
 Figure~\ref{figure:hintinfer} models how type hints are propagated.
 
-We implicitly resolve reflection before type checking and remaining reflective calls are type errors.
+We now have two languages: an internal language that may contain non-reflective Java calls (figure 
+  \ref{figure:nonreflectivesyntax}) 
+  and an external language that resembles Clojure, where we must rely on type-hints to resolve
+  reflective Java calls (figure~\ref{figure:reflectivesyntax}).
+
+For example, R-FieldElimRefl, which rewrites a reflective field call to be non-reflective,
+rewrites the target expression and uses the result to infer a class type hint as the field target.
+\fieldtypeliteral{} uses the inferred type hint to lookup if the inferred class has the appropriate
+field name and returns the actual target and result type hints which we store in the rewritten rule.
+
+We then extract these type hints in T-FieldStatic for typing checking 
+(figure~\ref{figure:javatyping}), which converts type hints
+with \javatotcliteral{} to obtain a \emph{non-nilable} type to type check the target expression (which prevents
+dereferencing nil) and \javatotcnilliteral{} to get a \emph{nilable} return type (because fields can be nil).
+
+Method and constructor calls are similar, but T-MethodStatic and T-NewStatic disallow passing \nil{} as arguments, 
+we assume methods can return \nil{} and we assume constructors cannot.
+
+We rewrite to our internal language before type checking and remaining reflective calls are type errors.
 
 \subsection{Handling null}
 \label{sec:null}

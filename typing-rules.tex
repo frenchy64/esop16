@@ -59,42 +59,11 @@
 
 {\TNewStatic}
 
-\infer [T-FieldStatic]
-{ \javatotc {\classhint{1}} {\class{}}
-             \\\\
-  \javatotcnil {\classhint{2}} {\t{}}
-  \\\\
-  \judgementtwo {\propenv{}} {\hastype {\e{1}} {\class{}}}
-           }
-{ \judgement {\propenv{}} {\hastype {\fieldstaticexp {\classhint{1}} {\classhint{2}} {\fld{}} {\e{1}}} {\t{}}}
-             {\filterset {\topprop{}} {\topprop}}
-             {\emptyobject{}}}
+{\TFieldStatic}
 
-\infer [T-MethodStatic]
-{ 
-  \overrightarrow{\javatotc {\classhint{i}} {\t{i}}}
-             \\
-             \javatotc {\classhint{1}} {\class{}}
-             \\\\
-             \javatotcnil {\classhint{2}} {\t{}}
-             \\\\
-  \judgementtwo {\propenv{}} {\hastype {\e{}} {\class{}}}
-             \\
-             \overrightarrow{
-  \judgementtwo {\propenv{}} {\hastype {\e{i}} {\t{i}}}
-                  }
-           }
-{ \judgementfillcol {\propenv{}} {\hastype {\methodstaticexp {\classhint{1}} 
-                                                            {\overrightarrow {\classhint{i}}} 
-                                                            {\classhint{2}}
-                                                            {\mth{}} {\e{}} {\overrightarrow{\e{i}}}}
-                                    {\t{}}}
-             {\filterset {\topprop{}} {\topprop{}}}
-             {\emptyobject{}}}
+{\TMethodStatic}
 
-\infer [T-Class]
-{}
-{ \judgement {\propenv{}} {\hastype{\class{}}{\Value{\class{}}}}{\filterset{\topprop{}}{\botprop{}}}{\emptyobject{}}}
+{\TClass}
 
 \infer [T-Instance]
 {}
