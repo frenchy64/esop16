@@ -2,8 +2,7 @@
 
 We describe our type system in a similar way to Typed Racket (\citet{TF10}),
 with differences highlighted in $\trdiff{\text{blue}}$.
-The main judgement 
-
+The typing judgement 
 $
 {\judgement   {\propenv}
               {\hastype {\e{}} {\t{}}}
@@ -11,13 +10,17 @@ $
               {\elseprop {\prop{}}}}
   {\object{}}}
 $
-
 says expression \e{} is of type \t{} in the 
 proposition environment $\propenv{}$, with 
-then proposition {\thenprop {\prop{}}}, else proposition {\elseprop {\prop{}}}
+`then' proposition {\thenprop {\prop{}}}, `else' proposition {\elseprop {\prop{}}}
 and object \object{}.
 
+The propositions inform conditionals on what they can assume down the then and else
+branches if the expression is used as a test.
+The object is a possibly-empty symbolic representation of the expression.
+
 \begin{figure*}
+  \footnotesize
 $$
 \begin{altgrammar}
   \expd{}, \e{} &::=& \x{}
@@ -57,6 +60,7 @@ $$
 \end{figure*}
 
 \begin{figure*}
+  \footnotesize
 \begin{mathpar}
   {\TLocal}
 
@@ -82,6 +86,7 @@ $$
 \end{figure*}
 
 \begin{figure*}
+  \footnotesize
 \begin{mathpar}
   {\BLocal}
 
@@ -105,6 +110,7 @@ $$
 \end{figure*}
 
 \begin{figure*}
+  \footnotesize
 \begin{mathpar}
 \standardsubtyping{}
 \end{mathpar}
@@ -113,29 +119,73 @@ $$
 
 \subsection{\isaliteral{}}
 
+One interesting Clojure function we modeled is \isaliteral.
+It takes two arguments, and returns \true{} if they are the same (equality mode)
+or if they are both classes and the left is a subtype of the right (subclassing mode),
+otherwise returns \false{}, as described in figure~\ref{figure:isasemantics}.
+
+For example, {\isaapp{\Keyword}{\Object}} = \true{} but 
+{\isaapp{\Object}{\Keyword}} = \false{}.
+This is useful in combination with \classconst{}
+with a fixed second argument, where {\isaapp{\appexp{\classconst}{\x{}}}{\Keyword}}
+is a test for \x{} being a \Keyword{}, and also
+as an equality test like
+{\isaapp{\x{}}{\makekw{a}}}.
+
+We encode this behaviour in figure~\ref{figure:isatyping}. 
+\isacompareliteral{} is the interesting part,
+which takes the object of the first argument 
+and the type of the second argument, and returns the then and else propositions
+of the expression.
+
+The first case handles subclassing mode
+in expressions like {\isaapp{\appexp{\classconst}{\x{}}}{\Object}},
+where the first argument has an object ending in \classpe{} and the second argument has a singleton class type.
+For example, in this case \isacomparetwo{\path{\classpe{}}{\x{}}}{\Value{\Object}}
+gives a then proposition {\isprop{\Object} {\x{}}}
+and an else proposition {\notprop{\Object}{\x{}}}.
+
+The reason to peel off one path element is subtle. For example,
+claiming {\isprop{\Value{\Object}} {\path{\classpe{}}{\x{}}}}
+might seem suitable, however it implies \inopenv{\openv{}}{\path{\classpe{}}{\x{}}}{\Object}
+which is wrong if \x{} = \makekw{a} where \inopenv{\openv{}}{\path{\classpe{}}{\x{}}}{\Keyword}.
+(In formulating \isacompareliteral we found a three year old bug in how core.typed handles this case).
+
+The second case handles the equality mode of \isaliteral{}
+with a non-class singleton type as the second argument, to be certain we are not in subclassing mode.
+Substitution is used to ensure well formed propositions.
+
+The final case gives up; we cannot distinguish between equality and subclassing mode.
+
+\isaliteral{} serves as the default dispatch mechanism for multimethods in Clojure.
 
 \begin{figure}
-\begin{mathpar}
-  \isaopsemfigure{}
+  \footnotesize
+  \begin{mathpar}
+    \isaopsemfigure{}
 
-       \BIsA{}
-\end{mathpar}
-\caption{\isaliteral{} semantics}
+    \BIsA{}
+  \end{mathpar}
+  \caption{\isaliteral{} semantics}
+  \label{figure:isasemantics}
 \end{figure}
 
 \begin{figure}
-\begin{mathpar}
-\isapropsfigure{}
+  \footnotesize
+  \begin{mathpar}
+    \isapropsfigure{}
 
-       \TIsA{}
-\end{mathpar}
-\caption{\isaliteral{} typing rules}
+    \TIsA{}
+  \end{mathpar}
+  \caption{\isaliteral{} typing rules}
+  \label{figure:isatyping}
 \end{figure}
 
 
 \subsection{Multimethods}
 
 \begin{figure}
+  \footnotesize
 $$
 \begin{altgrammar}
   \e{} &::=& \ldots \alt \multimethodexpsyntax{} 
@@ -150,6 +200,7 @@ $$
 \end{figure}
 
 \begin{figure}
+  \footnotesize
 \begin{mathpar}
   \TDefMulti{}
 
@@ -159,6 +210,7 @@ $$
 \end{figure}
 
 \begin{figure}
+  \footnotesize
 \begin{mathpar}
   \Multisubtyping{}
 \end{mathpar}
@@ -167,6 +219,7 @@ $$
 
 
 \begin{figure}
+  \footnotesize
   \getmethodfigure{}
 \begin{mathpar}
 
@@ -218,6 +271,7 @@ TODO
 \subsection{Heterogenous maps}
 
 \begin{figure}
+  \footnotesize
 $$
 \begin{altgrammar}
   \e{} &::=& \ldots \alt \hmapexpressionsyntax{}
@@ -234,6 +288,7 @@ $$
 
 
 \begin{figure}
+  \footnotesize
 \begin{mathpar}
   \HMapsubtyping{}
 \end{mathpar}
@@ -243,15 +298,16 @@ $$
 \subsection{Java interoperability}
 
 \begin{figure}
-$$
-\begin{altgrammar}
-  \e{} &::=& \ldots \alt \reflectiveexpsyntax{}
-                &\mbox{Expressions} \\
-  \v{} &::=& \ldots \alt {\classvalue{\classhint{}} {\overrightarrow {\classfieldpair{\fld{}} {\v{}}}}}
-                &\mbox{Values} \\
-\end{altgrammar}
-$$
-\caption{Java Interoperability Terms and Types}
+  \footnotesize
+  $$
+  \begin{altgrammar}
+    \e{} &::=& \ldots \alt \reflectiveexpsyntax{}
+    &\mbox{Expressions} \\
+    \v{} &::=& \ldots \alt {\classvalue{\classhint{}} {\overrightarrow {\classfieldpair{\fld{}} {\v{}}}}}
+    &\mbox{Values} \\
+  \end{altgrammar}
+  $$
+  \caption{Java Interoperability Terms and Types}
 \end{figure}
 
 As Clojure supports Java interoperability, Typed Clojure has some
@@ -276,6 +332,7 @@ to resolve ambiguities in Java interop like overloaded methods.
 \subsection{Clojure type hints}
 
 \begin{figure}
+  \footnotesize
   $$
   \begin{altgrammar}
     \e{} &::=& \ldots \alt \mininonreflectiveexpsyntax{}
@@ -286,6 +343,7 @@ to resolve ambiguities in Java interop like overloaded methods.
 \end{figure}
 
 \begin{figure*}
+  \footnotesize
   \begin{mathpar}
     \RAbs{}
 
@@ -300,9 +358,11 @@ to resolve ambiguities in Java interop like overloaded methods.
     \RLetHint{}
   \end{mathpar}
 \caption{Reflection Elimination}
+\label{figure:rewrite}
 \end{figure*}
 
 \begin{figure*}
+  \footnotesize
   \begin{mathpar}
     \TALocal{}
 
@@ -315,9 +375,11 @@ to resolve ambiguities in Java interop like overloaded methods.
     \TALet{}
   \end{mathpar}
 \caption{Type Hint Inference}
+\label{figure:hintinfer}
 \end{figure*}
 
 \begin{figure}
+  \footnotesize
   \begin{mathpar}
     \BField{}
 
@@ -328,11 +390,18 @@ to resolve ambiguities in Java interop like overloaded methods.
   \caption{Java Interoperability Semantics}
 \end{figure}
 
-Clojure comes with a small type system that helps improve
-performance in Clojure code: type hints. They are used to help
-the compiler resolve Java methods and prevent unboxing in
-certain situations. Tags are propagated bidirectionally
+Clojure supports \emph{type hints}, an optional type system to improve performance
+and disambiguate Java calls.
+Programmers communicate to the Clojure compiler via type hints
+to resolve Java methods and prevent boxing in loops. Tags are propagated bidirectionally
 and the programmer is free to add them where they like.
+
+core.typed uses tools.analyzer to obtain a rich abstract syntax tree that includes solved
+reflection, however to tell the full story we include a rewrite relation 
+in figure~\ref{figure:rewrite} to eliminate reflection when sufficient type hints are provided.
+Figure~\ref{figure:hintinfer} models how type hints are propagated.
+
+We implicitly resolve reflection before type checking and remaining reflective calls are type errors.
 
 \subsection{Handling null}
 \label{sec:null}

@@ -119,6 +119,7 @@
 \newbfop\Instanceliteral{InstanceOf}
 \newcommand\Instance[1]{(\ma{\Instanceliteral\ #1})}
 \newcommand\HVec[1]{[{#1}]}
+\newcommand\makekw[1]{\ma{\metafunctionfont{\mathbin{:}#1}}}
 
 % terms
 \newmeta\x{x}                   % not sure if \x is reserved...
@@ -340,7 +341,8 @@
 
 % isa? special functions
 \newcommand\isacompareliteral[0]{\ma{\metafnfont{IsAProps}}}
-\newcommand\isacomparethree[3]{\ma{\isacompareliteral(#1, #2, #3)}}
+\newcommand\isacomparetwo[2]{\ma{\isacompareliteral(#1, #2)}}
+\newcommand\isacomparethree[3]{\ma{\isacompareliteral(#2, #3)}} % delete 1st argument, unusued outside of vectors
 \newcommand\isacompare[4]{\ma{\isacomparethree{#1}{#2}{#3} = {#4}}}
 \newcommand\isacomparealign[4]{\ma{\isacomparethree{#1}{#2}{#3} &=& {#4}}}
 \newcommand\isaopsemliteral[0]{\ma{\metafnfont{IsA}}}
