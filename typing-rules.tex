@@ -42,11 +42,7 @@
                          {\elseprop {\prop{}}}}
              {\object{}}}
 
-\infer [T-Error]
-{}
-{ \judgement {\propenv{}} {\hastype {\errorvalv} {\Bot}}
-            {\filterset {\botprop{}} {\botprop{}}}
-           {\emptyobject{}}}
+           {\TError}
 
          {\TSubsume}
 \end{mathpar}
@@ -77,6 +73,7 @@
 \begin{mathpar}
 
   \TDefMulti{}
+
   \TDefMethod{}
 
 \TIsA{}
@@ -134,85 +131,15 @@
              {\filterset {\topprop{}} {\botprop{}}}
              {\emptyobject{}}}
 
-\infer [T-Kw]
-{}
-{ \judgementfillcol {\propenv{}} 
-      {\hastype {\k{}} {\Value{\k{}}}}
-      {\filterset {\topprop{}}{\botprop{}}}
-      {\emptyobject{}} 
-    }
+    {\TKw}
 
-\infer [T-GetHMap]
-{ \judgement {\propenv{}} 
-  {\hastype {\e{m}} {\Unionsplice {{\overrightarrow {\HMapgeneric {\mandatory{}} {\absent{}}}}^i}}}
-           {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}}
-           {\object{}}
-           \\\\
-  \judgementtwo {\propenv{}} {\hastype {\e{k}} {\Value {k}}}
-             \\
-             {\overrightarrow{\inmandatory{\k{}}{\t{}}{\mandatory{}}}}^i
-       }
-{ \judgement {\propenv{}} {\hastype {\getexp {\e{m}} {\e{k}}} {\Unionsplice {{\overrightarrow {\t{}}}^i}}}
-             {\filterset {\topprop{}} {\topprop{}}}
-             {\replacefor {\path {\keype{k}} {\x{}}}
-                          {\object{}}
-                          {\x{}}}
-                                  }
+    {\TGetHMap}
 
-\infer [T-GetHMapAbsent]
-{ \judgement {\propenv{}} {\hastype {\e{m}} {\HMapgeneric {\mandatory{}} {\absent}}}
-           {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}}
-           {\object{}}
-         \\\\
-  \judgementtwo {\propenv{}} {\hastype {\e{k}} {\Value {k}}}
-             \\
-             {\inabsent{\k{}}{\absent{}}}
-       }
-{ \judgement {\propenv{}} {\hastype {\getexp {\e{m}} {\e{k}}}
-                                    {\Nil{}}}
-             {\filterset {\topprop{}} {\topprop{}}}
-             {\replacefor
-               {\path {\keype{k}} {\x{}}}
-                          {\object{}}
-                          {\x{}}}
-                        }
+    {\TGetAbsent}
 
-\infer [T-GetHMapPartialDefault]
-{ \judgement {\propenv{}} {\hastype {\e{m}} {\HMapp {\mandatory{}} {\absent}}}
-           {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}}
-           {\object{}}
-         \\\\
-  \judgementtwo {\propenv{}} {\hastype {\e{k}} {\Value {k}}}
-             \\
-             {\notinmandatory{\k{}}{\t{}}{\mandatory{}}}
-             \\
-             {\notinabsent{\k{}}{\absent{}}}
-       }
-{ \judgement {\propenv{}} {\hastype {\getexp {\e{m}} {\e{k}}}
-                                    {\Top{}}}
-             {\filterset {\topprop{}} {\topprop{}}}
-             {\replacefor
-               {\path {\keype{k}} {\x{}}}
-                          {\object{}}
-                          {\x{}}}
-                        }
+    {\TGetHMapPartialDefault}
 
-\infer [T-AssocHMap]
-{ 
-  \judgementtwo {\propenv{}} {\hastype {\e{m}} {\HMapgeneric {\mandatory{}} {\absent}}}
-  \\
-  \judgementtwo {\propenv{}} {\hastype {\e{k}} {\Value{\k{}}}}
-  \\
-  \judgementtwo {\propenv{}} {\hastype {\e{v}} {\t{}}}
-  \\
-  {\k{}} \not\in {\absent{}}
-}
-{ \judgement {\propenv{}} 
-             {\hastype {\assocexp {\e{m}} {\e{k}} {\e{v}}}
-                       {\HMapgeneric {\extendmandatoryset {\mandatory{}}{\k{}}{\t{}}} {\absent}}}
-             {\filterset {\topprop{}} {\botprop{}}}
-             {\emptyobject{}}
-}
+    {\TAssoc}
 
 \end{mathpar}
 \caption{Map Typing Rules}

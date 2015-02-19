@@ -30,6 +30,7 @@ $$
                       \alt {\ifexp {\e{}} {\e{}} {\e{}}}
                       \alt {\trdiff{\doexp {\e{}} {\e{}}}}
                       \alt {\letexp {\x{}} {\e{}} {\e{}}}
+                      \alt {\errorvalv{}}
                 &\mbox{Expressions} \\
   \v{} &::=&          \true{} \alt \false{} \alt \trdiff{\nil{}}
                       \alt \trdiff{\class{}}
@@ -48,6 +49,7 @@ $$
                                    {\filterset {\prop{}} {\prop{}}}
                                    {\object{}}}
                       \alt {\Value \singletonmeta{}} 
+                      \alt \trdiff{\class{}}
                 &\mbox{Types} \\
   \singletonallsyntax{}
                 \\ \\
@@ -61,54 +63,58 @@ $$
 
 \begin{figure*}
   \footnotesize
-\begin{mathpar}
-  {\TLocal}
+  \begin{mathpar}
+    {\TLocal}
 
-  {\TTrue}
+    {\TTrue}
 
-{\TFalse}
+    {\TFalse}
 
-{\TNil}
+    {\TNil}
 
-{\TDo}
+    {\TDo}
 
-{\TClass}
+    {\TClass}
 
-{\TIf}
+    {\TIf}
 
-{\TLet}
+    {\TLet}
 
-{\TApp}
+    {\TKw}
 
-{\TAbs}
+    {\TApp}
 
-         {\TSubsume}
-\end{mathpar}
-\caption{Standard typing rules}
+    {\TAbs}
+
+    {\TError}
+
+    {\TSubsume}
+  \end{mathpar}
+  \caption{Standard typing rules}
 \end{figure*}
 
 \begin{figure*}
   \footnotesize
-\begin{mathpar}
-  {\BLocal}
+  \begin{mathpar}
+    {\BLocal}
 
-  {\BDo}
+    {\BDo}
 
-  {\BLet}
+    {\BLet}
 
-  \BVal{}
+    \BVal{}
 
-\BIfTrue{}
+    \BIfTrue{}
 
-\BIfFalse{}
+    \BIfFalse{}
 
-\BAbs{}
+    \BAbs{}
 
-\BBetaClosure{}
+    \BBetaClosure{}
 
-\BDelta{}
-\end{mathpar}
-\caption{Semantics}
+    \BDelta{}
+  \end{mathpar}
+  \caption{Semantics}
 \end{figure*}
 
 \begin{figure*}
@@ -262,40 +268,61 @@ for checking method definitions for arbitrary dispatch functions.
    :object {:id 0, :path [Class]}])
 \end{lstlisting}
 
-\begin{verbatim}
-TODO
-- example of normal MM usage
-- explain descrepency btwn TC syntax and formal
-  TR calculs syntax. eg. :object/:filter 
-    vs over arrow
-\end{verbatim}
-
 \subsection{Heterogenous maps}
 
 \begin{figure}
   \footnotesize
-$$
-\begin{altgrammar}
-  \e{} &::=& \ldots \alt \hmapexpressionsyntax{}
-                &\mbox{Expressions} \\
-  \v{} &::=& \ldots \alt {\emptymap{}}
-                &\mbox{Values} \\
-  \t{} &::=& \ldots \alt {\HMapgeneric {\mandatory{}} {\absent{}}}
-                &\mbox{Types} \\
-  \auxhmapsyntax{}\\
-\end{altgrammar}
-$$
-\caption{HMap Terms and Types}
+  $$
+  \begin{altgrammar}
+    \e{} &::=& \ldots \alt \hmapexpressionsyntax{}
+    &\mbox{Expressions} \\
+    \v{} &::=& \ldots \alt {\emptymap{}}
+    &\mbox{Values} \\
+    \t{} &::=& \ldots \alt {\HMapgeneric {\mandatory{}} {\absent{}}}
+    &\mbox{Types} \\
+    \auxhmapsyntax{}\\
+  \end{altgrammar}
+  $$
+  \caption{HMap Terms and Types}
+  \label{figure:hmapsyntax}
 \end{figure}
-
 
 \begin{figure}
   \footnotesize
-\begin{mathpar}
-  \HMapsubtyping{}
-\end{mathpar}
-\caption{HMap subtyping rules}
+  \begin{mathpar}
+    {\TGetHMap}
+
+    {\TGetAbsent}
+
+    {\TGetHMapPartialDefault}
+
+    {\TAssoc}
+  \end{mathpar}
+  \caption{HMap Typing Rules}
+  \label{figure:hmaptyping}
 \end{figure}
+
+\begin{figure}
+  \footnotesize
+  \begin{mathpar}
+    \HMapsubtyping{}
+  \end{mathpar}
+  \caption{HMap subtyping rules}
+\end{figure}
+
+It is common in Clojure to use plain immutable hash maps to represent ad-hoc
+objects with a known set of keyword entries. We use \HMapliteral{}
+types to track known present, known absent and unknown keyword entries
+(figure~\ref{figure:hmapsyntax}).
+
+The metavariable \completenessmeta{} tracks whether a HMap is fully ({\complete{}}) or partially ({\partial{}})
+specified. \mandatory{} specifies a set of known present keyword entries, \absent{} tracks known absent keyword
+entries and we write \HMapcwithabsent{\mandatory{}}{\absent{}} as \HMapc{\mandatory{}} as a fully specified
+HMap can assume all entries not in {\mandatory{}} as absent.
+
+\getliteral{} and \assocliteral{} lookup and extend immutable maps respectively.
+To simplify presentation, we only allow the empty map literal and
+restrict lookup and extension to keyword keys.
 
 \subsection{Java interoperability}
 
@@ -346,7 +373,7 @@ to resolve ambiguities in Java interop like overloaded methods.
     \mbox{Expressions}
   \end{altgrammar}
   $$
-  \caption{Type Hinting and Non-Reflective Terms}
+  \caption{Non-Reflective Java Interoperability Syntax}
   \label{figure:nonreflectivesyntax}
 \end{figure}
 
@@ -474,10 +501,6 @@ Field types are nullable. Constructor parameters are non-nullable, and return ty
 are also non-nullable: it is a Java invariant that all constructors return an instance
 of the class they are constructing.
 
-\begin{verbatim}
-TODO 
-- write conversion rules for 
-  Java type -> Clojure type
-\end{verbatim}
-
 \input{constant}
+\input{update}
+\input{convert-types-figure}

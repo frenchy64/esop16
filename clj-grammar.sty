@@ -100,9 +100,13 @@
 \newmeta\completenessmeta{\mathcal{A}}
 \newmeta\complete{\mathcal{C}}
 \newmeta\partial{\mathcal{P}}
-\newcommand\HMapgeneric[2]{(\ma{\HMapliteral^{\completenessmeta{}} #1\ #2})}
-\newcommand\HMapc[1]{(\ma{\HMapliteral^{\complete{}} #1})}
-\newcommand\HMapp[2]{(\ma{\HMapliteral^{\partial{}} #1\ #2})}
+\newcommand\HMapcliteral[0]{\HMapliteral^{\complete{}}}
+\newcommand\HMappliteral[0]{\HMapliteral^{\partial{}}}
+\newcommand\HMapgenericliteral[0]{\HMapliteral^{\completenessmeta{}}}
+\newcommand\HMapgeneric[2]{(\ma{\HMapgenericliteral #1\ #2})}
+\newcommand\HMapc[1]{(\ma{\HMapcliteral #1})}
+\newcommand\HMapcwithabsent[2]{(\ma{\HMapcliteral #1\ #2})}
+\newcommand\HMapp[2]{(\ma{\HMappliteral #1\ #2})}
 \newcommand\mandatoryset[1]{\ma{\{#1\}}}
 \newcommand\mandatorysetoverright[2]{\ma{\{\overrightarrow{(#1,\ #2)}\}}}
 \newcommand\notinmandatory[3]{\ma{(#1\ #2)} \not\in {#3}}
@@ -788,6 +792,103 @@
              {\emptyobject}}
          }
 
+\newcommand\TAssoc[0]{
+\infer [T-AssocHMap]
+{ 
+  \judgementtwo {\propenv{}} {\hastype {\e{m}} {\HMapgeneric {\mandatory{}} {\absent}}}
+  \\
+  \judgementtwo {\propenv{}} {\hastype {\e{k}} {\Value{\k{}}}}
+  \\
+  \judgementtwo {\propenv{}} {\hastype {\e{v}} {\t{}}}
+  \\
+  {\k{}} \not\in {\absent{}}
+}
+{ \judgement {\propenv{}} 
+             {\hastype {\assocexp {\e{m}} {\e{k}} {\e{v}}}
+                       {\HMapgeneric {\extendmandatoryset {\mandatory{}}{\k{}}{\t{}}} {\absent}}}
+             {\filterset {\topprop{}} {\botprop{}}}
+             {\emptyobject{}}
+}
+         }
+
+\newcommand\TGetHMap[0]{
+\infer [T-GetHMap]
+{ \judgement {\propenv{}} 
+  {\hastype {\e{m}} {\Unionsplice {{\overrightarrow {\HMapgeneric {\mandatory{}} {\absent{}}}}^i}}}
+           {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}}
+           {\object{}}
+           \\\\
+  \judgementtwo {\propenv{}} {\hastype {\e{k}} {\Value {k}}}
+             \\
+             {\overrightarrow{\inmandatory{\k{}}{\t{}}{\mandatory{}}}}^i
+       }
+{ \judgement {\propenv{}} {\hastype {\getexp {\e{m}} {\e{k}}} {\Unionsplice {{\overrightarrow {\t{}}}^i}}}
+             {\filterset {\topprop{}} {\topprop{}}}
+             {\replacefor {\path {\keype{k}} {\x{}}}
+                          {\object{}}
+                          {\x{}}}
+                                  }
+                                }
+
+\newcommand\TGetAbsent[0]{
+\infer [T-GetHMapAbsent]
+{ \judgement {\propenv{}} {\hastype {\e{m}} {\HMapgeneric {\mandatory{}} {\absent}}}
+           {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}}
+           {\object{}}
+         \\\\
+  \judgementtwo {\propenv{}} {\hastype {\e{k}} {\Value {k}}}
+             \\
+             {\inabsent{\k{}}{\absent{}}}
+       }
+{ \judgement {\propenv{}} {\hastype {\getexp {\e{m}} {\e{k}}}
+                                    {\Nil{}}}
+             {\filterset {\topprop{}} {\topprop{}}}
+             {\replacefor
+               {\path {\keype{k}} {\x{}}}
+                          {\object{}}
+                          {\x{}}}
+                        }
+                      }
+
+\newcommand\TGetHMapPartialDefault[0]{
+\infer [T-GetHMapPartialDefault]
+{ \judgement {\propenv{}} {\hastype {\e{m}} {\HMapp {\mandatory{}} {\absent}}}
+           {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}}
+           {\object{}}
+         \\\\
+  \judgementtwo {\propenv{}} {\hastype {\e{k}} {\Value {k}}}
+             \\
+             {\notinmandatory{\k{}}{\t{}}{\mandatory{}}}
+             \\
+             {\notinabsent{\k{}}{\absent{}}}
+       }
+{ \judgement {\propenv{}} {\hastype {\getexp {\e{m}} {\e{k}}}
+                                    {\Top{}}}
+             {\filterset {\topprop{}} {\topprop{}}}
+             {\replacefor
+               {\path {\keype{k}} {\x{}}}
+                          {\object{}}
+                          {\x{}}}
+                        }
+}
+
+\newcommand\TKw[0]{
+\infer [T-Kw]
+{}
+{ \judgementfillcol {\propenv{}} 
+      {\hastype {\k{}} {\Value{\k{}}}}
+      {\filterset {\topprop{}}{\botprop{}}}
+      {\emptyobject{}} 
+    }
+}
+
+\newcommand\TError[0]{
+\infer [T-Error]
+{}
+{ \judgement {\propenv{}} {\hastype {\errorvalv} {\Bot}}
+            {\trdiff{\filterset {\botprop{}} {\botprop{}}}}
+           {\emptyobject{}}}
+}
 
 % common Syntax
 \newcommand\occurrencetypingsyntax[0]{
@@ -1561,4 +1662,144 @@ $$
                                   {\e{}}}
                          {\tatype{}}}
 }
+}
+
+% java assumptions
+\newcommand\javaassumptionsall[0]{
+\begin{assumption}[\newjavaliteral] \label{assumption:new}
+  If\ $\forall i.\ {\v{i}} = {\classvalue{\classhint{i}}{\overrightarrow{\classfieldpair{\fld{j}} {\v{j}}}}}\ or\ {\v{i}}= {\nil}$
+  and {\v{i}}
+  then either
+  \begin{itemize}
+  \item $\newjava {\classhint{}}
+                {\overrightarrow{\classhint{i}}}
+                {\overrightarrow{\v{i}}}
+                {\classvalue{\classhint{}}{\overrightarrow {\classfieldpair{\fld{k}} {\v{k}}}}}$, or
+  \item 
+        $\newjava {\classhint{}}
+                {\overrightarrow{\classhint{i}}}
+                {\overrightarrow{\v{i}}}
+                {\errorval{\v{e}}}$, or
+  \item $\newjavanoeq {\classhint{}}
+                {\overrightarrow{\classhint{i}}}
+                {\overrightarrow{\v{i}}}$
+                is undefined.
+  \end{itemize}
+\end{assumption}
+
+\begin{assumption}[\getfieldliteral] \label{assumption:field}
+  If\ {\v{1}} = ${\classvalue{\classhint{1}}{{\classfieldpair{\fld{}}{\v{f}}, {\overrightarrow{\classfieldpair{\fld{l}} {\v{l}}}}}}}$,
+  then either
+  \begin{itemize}
+    \item
+      \getfieldjava{\classhint{1}} {\v{1}} {\fld{}} {\classhint{2}}{\v{f}},
+                  and either
+                  \begin{itemize}
+                    \item
+                  \v{f} = ${\classvalue{\classhint{2}}{\overrightarrow{\classfieldpair{\fld{m}} {\v{m}}}}}$
+                   or 
+                    \item
+                  \v{f} = \nil, or
+                  \end{itemize}
+    \item
+      \getfieldjava{\classhint{1}} {\v{1}} {\fld{}} {\classhint{2}} {\errorval{\v{e}}}.
+  \end{itemize}
+\end{assumption}
+
+\begin{assumption}[\invokejavamethodliteral] \label{assumption:method}
+  If\ {\v{1}} = {\classvalue{\classhint{1}}{\overrightarrow{\classfieldpair{\fld{l}} {\v{l}}}}},
+  $\forall i.\ {\v{i}}={\classvalue{\classhint{i}}{\overrightarrow{\classfieldpair{\fld{j}} {\v{j}}}}}\ or\ {\v{i}}={\nil}$
+         then either
+         \begin{itemize}
+           \item
+  \invokejavamethod {\classhint{1}} {\v{m}} {mth}
+                    {\overrightarrow{\classhint{i}}} {\overrightarrow{\v{i}}}
+                    {\classhint{2}}
+                    {\v{}}
+                  and either
+                  \begin{itemize}
+                    \item
+                  \v{} = ${\classvalue{\classhint{2}}{\overrightarrow{\classfieldpair{\fld{m}} {\v{m}}}}}$
+                  or\ 
+                  \v{} = \nil, or
+                  \end{itemize}
+          \item
+  \invokejavamethod {\classhint{1}} {\v{m}} {mth}
+                    {\overrightarrow{\classhint{i}}} {\overrightarrow{\v{i}}}
+                    {\classhint{2}}
+                    {\errorval{\v{e}}}, or
+          \item 
+  \invokejavamethodnoeq {\classhint{1}} {\v{m}} {mth}
+                    {\overrightarrow{\classhint{i}}} {\overrightarrow{\v{i}}}
+                    {\classhint{2}}
+                    is undefined.
+        \end{itemize}
+\end{assumption}
+}
+
+\newcommand\istruefalsedefinitions[0]{
+\begin{definition} \label{definition:istrueval}
+  \istrueval{\v{}} iff {\v{}} $\not=$ \false\ and {\v{}} $\not=$ \nil.
+
+\end{definition}
+
+\begin{definition} \label{definition:isfalseval}
+  \isfalseval{\v{}} iff {\v{}} $=$ \false\ or {\v{}} $=$ \nil.
+
+\end{definition}
+}
+
+\newcommand\soundnesslemmahypothesis[0]{
+If \judgement{\propenv{}}{\hastype{\e{}}{\t{}}}{\filterset{\thenprop{\prop{}}}{\elseprop{\prop{}}}}{\object{}},
+\satisfies{\openv{}}{\propenv{}}, 
+\isconsistent{\openv{}},
+and \opsem {\openv{}} {\e{}} {\a{}} 
+then either
+\begin{itemize}
+  \item
+    \opsem {\openv{}} {\e{}} {\v{}} 
+and all of the following hold:
+\begin{enumerate}
+  \item either \object{} = \emptyobject{} or \inopenv {\openv{}} {\object{}} {\v{}},
+  \item either {\istrueval{\v{}}} and {\satisfies{\openv{}}{\thenprop{\prop{}}}} or 
+               {\isfalseval{\v{}}} and {\satisfies{\openv{}}{\elseprop{\prop{}}}},
+  \item \judgement{}{\hastype{\v{}}{\t{}}}{\filterset{\thenprop{\propp{}}}{\elseprop{\propp{}}}}{\objectp{}}
+        for some \thenprop{\propp{}}, \elseprop{\propp{}} and {\objectp{}}, and
+  \item \consistentwith{\v{}}{\openv{}}, or
+\end{enumerate}
+
+  \item
+\opsem {\openv{}} {\e{}} {\errorvalv{}}.
+\end{itemize}
+}
+
+\newcommand\consistentwithdefinition[0]{
+\begin{definition} \label{definition:consistentwith}
+  \consistentwith{\v{}}{\openv{}}
+  iff $\forall$ \closure{\openv{1}}{\abs{\x{}}{\s{}}{\e{}}} in \v{},
+
+  if \judgement{}{\hastype{\closure{\openv{1}}{\abs{\x{}}{\s{}}{\e{}}}}{\t{}}}{\filterset{\topprop{}}{\botprop{}}}{\emptyobject{}}
+  and $\forall$ \objectp{} in \t{}, either 
+\begin{itemize}
+  \item \objectp{} = \emptyobject{}, or 
+  \item \objectp{} = {\path{\pathelemp{}}{\x{}}},
+  or 
+\item 
+\inopenvnoeq{\openv{}}{\objectp{}} = {\inopenvnoeq{\openv{1}}{\objectp{}}}.
+\end{itemize}
+
+% In code like
+% (let [x true]
+%   ((let [x 1]
+%      (fn [a] x))
+%    2))
+% this property guarantees that the x's don't get confused.
+\end{definition}
+
+\begin{definition} \label{definition:isconsistent}
+  \isconsistent{\openv{}}
+  iff
+
+  $\forall \v{} \in rng(\openv{})$, \consistentwith{\v{}}{\openv{}}.
+\end{definition}
 }
