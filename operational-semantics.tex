@@ -33,56 +33,11 @@
 
        \BIsA{}
 
-\infer [B-Assoc]
-{\opsem {\openv{}}
-        {\e{m}} {\curlymap{\overrightarrow{({\v{a}}\ {\v{b}})}}}
-        \\
- \opsem {\openv{}} {\e{k}} {\k{}}
-        \\\\
- \opsem {\openv{}} {\e{v}} {\v{v}}
-}
-{
- \opsem {\openv{}}
-        {\assocexp {\e{m}} {\e{k}} {\e{v}}} 
-        {\extendmap{\curlymap{\overrightarrow{({\v{a}}\ {\v{b}})}}}
-                {\k{}}{\v{v}}}
-                }
+       {\BAssoc}
 
-\infer [B-Get]
-{\opsem {\openv{}}
-        {\e{m}} {\curlymap{\overrightarrow{({\v{a}}\ {\v{b}})}}}
-        \\\\
- \opsem {\openv{}}
-        {\e{k}} {\k{}}
-        \\\\
- \keyinmap{\k{}}{\curlymap{\overrightarrow{({\v{a}}\ {\v{b}})}}}
-        \\\\
- \getmap{\curlymap{\overrightarrow{({\v{a}}\ {\v{b}})}}}
-        {\k{}}
-        =
-        {\v{}}
-}
-{
- \opsem {\openv{}}
-        {\getexp {\e{m}} {\e{k}}}
-        {\v{}}
-}
+       {\BGet}
 
-\infer [B-GetMissing]
-{\opsem {\openv{}}
-        {\e{m}} {\curlymap{\overrightarrow{({\v{a}}\ {\v{b}})}}}
-        \\\\
- \opsem {\openv{}}
-        {\e{k}} {\k{}}
-        \\\\
- \keynotinmap{\k{}}{\curlymap{\overrightarrow{({\v{a}}\ {\v{b}})}}}
-}
-{
- \opsem {\openv{}}
-        {\getexp {\e{m}} {\e{k}}}
-        {\nil{}}
-}
-
+       {\BGetMissing}
 \end{mathpar}
 \caption{Operational Semantics}
 \end{figure*}

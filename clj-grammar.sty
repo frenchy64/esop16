@@ -1202,6 +1202,64 @@ $$
          {\v{}}}
 }
 
+\newcommand\BAssoc[0]{
+\infer [B-Assoc]
+{\opsem {\openv{}}
+        {\e{m}} {\curlymapvaloverright{\v{a}}{\v{b}}}
+        \\
+ \opsem {\openv{}} {\e{k}} {\k{}}
+        \\
+ \opsem {\openv{}} {\e{v}} {\v{v}}
+}
+{
+ \opsem {\openv{}}
+        {\assocexp {\e{m}} {\e{k}} {\e{v}}} 
+        {\extendmap{\curlymapvaloverright{\v{a}}{\v{b}}}
+                {\k{}}{\v{v}}}
+                }
+              }
+
+
+\newcommand\BGet[0]{
+\infer [B-Get]
+{\opsem {\openv{}}
+        {\e{m}} {\curlymapvaloverright{\v{a}}{\v{b}}}
+        \\
+ \opsem {\openv{}}
+        {\e{k}} {\k{}}
+        \\\\
+ \keyinmap{\k{}}{\curlymapvaloverright{\v{a}}{\v{b}}}
+        \\\\
+ \getmap{\curlymapvaloverright{\v{a}}{\v{b}}}
+        {\k{}}
+        =
+        {\v{}}
+}
+{
+ \opsem {\openv{}}
+        {\getexp {\e{m}} {\e{k}}}
+        {\v{}}
+}
+}
+
+\newcommand\BGetMissing[0]{
+\infer [B-GetMissing]
+{\opsem {\openv{}}
+        {\e{m}} {\curlymapvaloverright{\v{a}}{\v{b}}}
+        \\\\
+ \opsem {\openv{}}
+        {\e{k}} {\k{}}
+        \\\\
+ \keynotinmap{\k{}}{\curlymapvaloverright{\v{a}}{\v{b}}}
+}
+{
+ \opsem {\openv{}}
+        {\getexp {\e{m}} {\e{k}}}
+        {\nil{}}
+}
+}
+
+
 % subtyping syntax
 \newcommand\standardsubtyping[0]{
 
