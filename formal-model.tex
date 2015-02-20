@@ -417,8 +417,7 @@ method bodies. T-App handles beta reduction because multimethods are subtypes of
 
 It is common in Clojure to use plain immutable hash maps to represent ad-hoc
 objects with a known set of keyword entries. We use \HMapliteral{}
-types to track known present, known absent and unknown keyword entries
-(figure~\ref{figure:hmapsyntax}).
+types (figure~\ref{figure:hmapsyntax}) to track known present, known absent and unknown keyword entries.
 
 The metavariable \completenessmeta{} tracks whether a HMap is fully ({\complete{}}) or partially ({\partial{}})
 specified. \mandatory{} specifies a set of known present keyword entries, \absent{} tracks known absent keyword
@@ -444,7 +443,7 @@ S-HMap (figure~\ref{figure:hmapsubtype}) says that HMap subtypes must have all p
 subtypes and also cover the absent keys.
 Complete maps are subtypes of partial maps by S-HMapP.
 
-\subsection{Java interoperability}
+\subsection{Java Interoperability and Type Hints}
 
 \begin{figure*}
   \footnotesize
@@ -452,51 +451,42 @@ Complete maps are subtypes of partial maps by S-HMapP.
   \begin{altgrammar}
     \e{} &::=& \ldots \alt \reflectiveexpsyntax{}
             \alt  \localhintsyntax{} \alt \lethintsyntax{}
-    &\mbox{Expressions} \\
-    \v{} &::=& \ldots \alt {\classvalue{\classhint{}} {\overrightarrow {\classfieldpair{\fld{}} {\v{}}}}}
-    &\mbox{Values} \\
-    \tatypesyntax{}\\
-    \typehintenvsyntax{}\\
-    \classtableallsyntax{}
+    &\mbox{Expressions}
   \end{altgrammar}
   $$
   \caption{Java Interoperability Terms and Types}
   \label{figure:reflectivesyntax}
 \end{figure*}
 
-As Clojure supports Java interoperability, Typed Clojure has some
-integration with Java's type system. Calls to Java methods from
-Clojure can be type checked by Typed Clojure.
+Clojure supports interoperability with Java, including the ability to
+call constructors, methods and access fields. We model
+these operations in a restricted setting without class inheritance,
+overloading or Java Generics. 
 
-We do not support Java Generics for several reasons. Firstly
-Clojure programmers already use \emph{type hints} to resolve
-Java methods which does not interact with generics. Secondly
-it would complicate the type system to need to consider advanced
-Generics features like existentials and f-bounded polymorphism
-which has complicated other type systems like Scala's.
-Finally Java interop is rare in Clojure code, so the extra
-work needed would not be worth the effort compared to the number
-of new bugs core.typed catches.
-
-Thanks to type erasure, only unparameterised classes, primitive
-types and array classes live at runtime. This simplifies 
-inference for \emph{tools.analyzer}, which uses type hints
-to resolve ambiguities in Java interop like overloaded methods.
-
-\subsection{Clojure type hints}
+We extend the external language with Java field lookups and calls to
+methods and constructors (figure~\ref{figure:nonreflectivesyntax}).
+There are no typing or evaluation rules for these syntaxes because
+Typed Clojure must be convinced that Java interactions are \emph{non-reflective},
+ie., are unambiguously resolved at compile-time. Programmers use
+type hinted expressions (figure~\ref{figure:nonreflectivesyntax}) 
+to help the compiler eliminate reflection.
 
 \begin{figure*}
   \footnotesize
   $$
   \begin{altgrammar}
     \e{} &::=& \ldots \alt \mininonreflectiveexpsyntax{}
-    %&&\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \
-    %\ \ \ \ \ \ \ \  \ \ \ \ \ \ \ \ \ \ \ \ \ \ \
+    &\mbox{Expressions}\\
 
-    &\mbox{Expressions}
+    \v{} &::=& \ldots \alt {\classvalue{\classhint{}} {\overrightarrow {\classfieldpair{\fld{}} {\v{}}}}}
+    &\mbox{Values} \\
+
+    \tatypesyntax{}\\
+    \typehintenvsyntax{}\\
+    \classtableallsyntax{}
   \end{altgrammar}
   $$
-  \caption{Internal Language Non-Reflective Java Interoperability Syntax}
+  \caption{Internal Language Reflection Resolution Extensions}
   \label{figure:nonreflectivesyntax}
 \end{figure*}
 
@@ -570,7 +560,7 @@ and the programmer is free to add them where they like.
 core.typed uses tools.analyzer to obtain a rich abstract syntax tree that includes resolved
 reflection, however to tell the full story we include a rewrite relation 
 in figure~\ref{figure:rewrite} to eliminate reflection when sufficient type hints are provided.
-Figure~\ref{figure:hintinfer} models how type hints are propagated.
+Figure~\ref{figure:hintinfer} shows the interesting cases in type hint inference.
 
 We now have two languages: an internal language that may contain non-reflective Java calls (figure 
   \ref{figure:nonreflectivesyntax}) 
@@ -591,38 +581,6 @@ Method and constructor calls are similar, but T-MethodStatic and T-NewStatic dis
 we assume methods can return \nil{} and we assume constructors cannot.
 
 We rewrite to our internal language before type checking and remaining reflective calls are type errors.
-
-\subsection{Handling null}
-\label{sec:null}
-
-Probably the most common pain point in Java programming is dealing with \emph{null}.
-It is crucial that Typed Clojure deals with \emph{null} intelligently so that
-all potentially erroneous interactions with \emph{null} in typed code are caught at compile time.
-We also want to represent \emph{null} in a way that is natural to Clojure programmers
-and models their reasoning of Clojure code.
-
-Firstly, we separate the concepts of \emph{null} and reference types at the type level.
-This is unlike Java, where a reference type, like \emph{java.lang.Number}, includes \emph{null}.
-We provide a singleton type \Nil{}, which contains just the value \lstinline|nil|,
-Clojure's equivalent of \emph{null}. 
-
-Armed with general unions and the type \lstinline|nil|, 
-we make Typed Clojure's reference types \emph{non-nullable}.
-A Java type like \emph{java.lang.Number} is written \lstinline|(U nil java.lang.Number)|
-in Typed Clojure.
-
-Typed Racket already provides what is needed to write such types; indeed this is a repurposing
-of a common Typed Racket idiom of approximating an Option or Maybe type by
-making a union that includes \emph{\#f}, Racket's only false value.
-However, like handling covariant arrays, the subtlety lies in our interactions with foreign
-Java code.
-
-A set of conversion rules define how to convert a Java type signature into a null-safe
-Clojure version. These rules are designed to be conservative and can be explicitly overridden
-by programmers. Method parameters are non-nullable, while return types are nullable.
-Field types are nullable. Constructor parameters are non-nullable, and return types
-are also non-nullable: it is a Java invariant that all constructors return an instance
-of the class they are constructing.
 
 \input{constant}
 \input{update}
