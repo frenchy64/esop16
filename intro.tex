@@ -2,6 +2,28 @@
 
 % current situation 
 
+The popularity of dynamically-typed languages languages in software
+development, combined with a recognition that types often improve
+programmer productivity, software reliability, and performance, has
+led to the recent development of a wide variety of optional and
+gradual type systems aimed at checking existing programs written in
+existing languages.  These include Microsoft's TypeScript for
+JavaScript, Facebook's Hack for PHP and Flow for JavaScript, and MyPy
+for Python among the optional systems, and Typed Racket, Reticulated
+Python, and GradualTalk among gradually-typed system.\footnote{We
+  reserve the term ``gradual typing'' for systems which soundly
+  interoperate between typed and untyped code; systems which do not
+  enforce type invariants we describe as ``optionally typed''.}
+%FIXME: add citations for all those systems.
+
+One key lesson of these systems, indeed a lesson known to early
+developers of optional type systems such as StrongTalk, is that type
+systems for existing languages must be designed to work with the
+features and idioms of the target language. Often this takes the form
+of a core language, be it of functions or classes and objects,
+together with extensions to handle distinctive language features.
+
+
 Programming is an error prone activity, especially in the presence of
 multiple languages working together. Over the past decade, it has become increasingly
 frequent to extend existing dynamically typed languages with optional type systems.
