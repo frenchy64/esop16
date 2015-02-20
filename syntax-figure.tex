@@ -56,24 +56,19 @@ $$
                 \auxhmapsyntax{}\\
   \singletonallsyntax{}
                 \\ \\
-  \openv{}     &::=& \{\overrightarrow{\x{} \mapsto \v{}}\}
-                &\mbox{Value environments} \\
-  \tatype{}     &::=& \unknownhint{} \alt \classhint{}
-                &\mbox{tools.analyzer Types} \\ \\
+                \openvsyntax{}\\
+
+                \tatypesyntax{}\\\\
+
   \occurrencetypingsyntax{}
   \\\\
 
  \disptablesyntax{} \\
-  \taenv{}    &::=& \{ \overrightarrow{ \hastype{\x{}} {\tatype{}}} \}
-               &\mbox{tools.analyzer Environment} \\
-  \ctentrymeta{} &::=& \ctentry
-               &\mbox{Class descriptors} \\
-  \ct{}   &::=& \{ \overrightarrow{\classhint{} \mapsto \ctentrymeta{}} \}
-               &\mbox{Class Table} \\
-  \classvaluemeta{} 
-          &::=& \classvaluesyntax{}
-               &\mbox{Class Values}\\
-               \classliteralallsyntax{}
+ \typehintenvsyntax{} \\
+\classtableallsyntax{} \\
+               \classliteralallsyntax{}\\
+
+               \classvaluesyntaxentry{}\\
                       \\
   \wrongorerror{} &::=& \wrong{} \alt \errorvalv{}
                 &\mbox{Wrong or error}

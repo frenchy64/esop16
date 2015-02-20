@@ -28,7 +28,8 @@ Values include booleans, \nil{}, class literals, keywords, constants and closure
 \false{} and \nil{} are the only logically false values.
 
 Types include the top type, untagged unions, functions, singleton types
-and class instances. We abbreviate \EmptyUnion{} as \Bot{}.
+and class instances. We abbreviate \EmptyUnion{} as \Bot{}, \Value{\Nil{}} as \Nil{} and similarly
+for \True and \False.
 Function types contain \emph{latent} propositions and object, which, along with the return type,
 may refer to the parameter identifier. They are latent because they are instantiated with the
 actual object of the argument in applications before they are used in the proposition environment.
@@ -85,7 +86,8 @@ $$
                 &\mbox{Types} \\
   \singletonallsyntax{}
                 \\ \\
-  \occurrencetypingsyntax{}
+  \occurrencetypingsyntax{}\\
+  \openvsyntax{}
   %\\
   %\classliteralallsyntax{}
 \end{altgrammar}
@@ -182,7 +184,7 @@ to infer \mintinline{clojure}{(inc x)} is safe. The main insight is we can assum
 disjunction of the propositions of the first \doliteral{} argument while checking the second.
 
 To sketch how this example is checked, first T-Abs type checks the body under the 
-environment \propenv{} = {\isprop{\Union{\nil}{\Number{}}}{\x{}}}.
+environment \propenv{} = {\isprop{\Union{\Nil}{\Number{}}}{\x{}}}.
 T-Do then extracts the propositions of its first argument:
 T-If tells us \thenprop{\prop{1}} = {\orprop{\botprop{}}{\botprop{}}} and 
 \elseprop{\prop{1}} = {\orprop{\botprop{}}{\notprop{\falsy{}}{\x{}}}}
@@ -225,7 +227,7 @@ The reason to peel off one path element is subtle. For example,
 claiming {\isprop{\Value{\Object}} {\path{\classpe{}}{\x{}}}}
 might seem suitable, however it implies \inopenv{\openv{}}{\path{\classpe{}}{\x{}}}{\Object}
 which is wrong if \x{} = \makekw{a} where \inopenv{\openv{}}{\path{\classpe{}}{\x{}}}{\Keyword}.
-(In formulating \isacompareliteral we found a three year old bug in how core.typed handles this case).
+(Formulating \isacompareliteral revealed a three year old bug in the implementation).
 
 The second case handles the equality mode of \isaliteral{}
 with a non-class singleton type as the second argument, to be certain we are not in subclassing mode.
@@ -260,7 +262,7 @@ The final case gives up; we cannot distinguish between equality and subclassing 
 
 \subsection{Multimethods}
 
-\begin{figure}
+\begin{figure*}
   \footnotesize
 $$
 \begin{altgrammar}
@@ -268,21 +270,25 @@ $$
                 &\mbox{Expressions} \\
   \v{} &::=& \ldots \alt {\multi {\v{}} {\disptable{}}}
                 &\mbox{Values} \\
+  \s{}, \t{} &::=& \ldots \alt {\MultiFntype{\t{}}{\t{}}}
+                &\mbox{Types} \\
 
  \disptablesyntax{} \\
 \end{altgrammar}
 $$
 \caption{Multimethod Syntax}
-\end{figure}
+\label{figure:mmsyntax}
+\end{figure*}
 
 \begin{figure}
   \footnotesize
-\begin{mathpar}
-  \TDefMulti{}
+  \begin{mathpar}
+    \TDefMulti{}
 
-  \TDefMethod{}
-\end{mathpar}
-\caption{Multimethod typing rules}
+    \TDefMethod{}
+  \end{mathpar}
+  \caption{Multimethod typing rules}
+  \label{figure:mmtyping}
 \end{figure}
 
 \begin{figure}
@@ -297,44 +303,59 @@ $$
 \begin{figure}
   \footnotesize
   \getmethodfigure{}
-\begin{mathpar}
+  \begin{mathpar}
+    \BDefMulti{}
 
-       \BDefMulti{}
+    \BDefMethod{}
 
-       \BDefMethod{}
-
-  \BBetaMulti{}
-\end{mathpar}
-\caption{Multimethod semantics}
+    \BBetaMulti{}
+  \end{mathpar}
+  \caption{Multimethod semantics}
+  \label{figure:mmsemantics}
 \end{figure}
 
-Clojure provides multimethods which can dispatch on the result of an
-arbitrary function, the \emph{dispatch function}. \emph{Methods} are
-added to the multimethod
-which are associated with a \emph{dispatch value}, which is compared to the
-result of apply the dispatch function to the argument passed to the
-multimethod. If this comparison unambiguously dispatches to one method,
-that method is then called with the current arguments.
+A multimethod in Clojure is a function with a dispatch mechanism to
+of internal methods. Multimethods are created with {\mintinline{clojure}{defmulti}}
+and methods are installed via {\mintinline{clojure}{defmethod}}.
+They are called like regular functions.
 
-Occurrence typing, in particular when extended with paths,
-for checking method definitions for arbitrary dispatch functions.
+\begin{minted}{clojure}
+(ann foo [Any -> String])
+(defmulti foo class)
+(defmethod foo Number [x] (str (inc x)))
+(defmethod foo Keyword [x] (str (name x)))
+(foo :a) ;=> "a"
+(foo 1)  ;=> "2"
+\end{minted}
 
-\begin{lstlisting}
-(ns example.mm
-  (:require 
-    [clojure.core.typed :refer [ann]]))
+To ease presentation, we present \emph{immutable}
+multimethods (figure~\ref{figure:mmsyntax}). \defmethodliteral{} returns a new extended multimethod
+without changing the original multimethod. The above is now written
 
-(ann my-mm [Any -> Number])
-(defmulti my-mm class)
+%$\letexp{foo}{\defmultiexp {\ArrowOne{\x{}}{\Top}{\mintinline{clojure}{String}}{\filterset{\topprop{}}{\topprop{}}}{\emptyobject{}}}
+%                       {\classconst{}}}
+%                     {\\ bar}$
 
-(defmethod my-mm Float [f] (inc f))
-\end{lstlisting}
+\begin{minted}{clojure}
+(let [foo (defmulti [Any -> String] class)
+      foo (defmethod foo Number [x] (str (inc x)))
+      foo (defmethod foo Keyword [x] (str (name x)))]
+  (foo :a)) ;=> "a"
+\end{minted}
 
-\begin{lstlisting}
-(ann clojure.core/class
-  [Any -> (U nil Class)
-   :object {:id 0, :path [Class]}])
-\end{lstlisting}
+Multimethod semantics are in figure~\ref{figure:mmsemantics}.
+B-DefMulti creates a multimethod with a dispatch function and an empty dispatch table.
+B-DefMethod returns a new multimethod with an extended dispatch table.
+B-BetaMulti invokes the dispatch function with the evaluated argument to get the dispatch value,
+which \getmethodliteral{} uses to choose the method to invoke.
+
+The typing rules (figure~\ref{figure:mmtyping}) utilse the {\MultiFntype{\s{}}{\t{}}}
+type, where \s{} is the interface type for beta reduction, and \t{} is the type for
+the dispatch function. T-DefMulti uses the provided interface type and dispatch function
+to infer the multimethod type. T-DefMethod uses \isacompareliteral{} to infer the proposition
+that must be true if this method is being invoked. The example can be type checked without
+changes since we infer \isprop{\Number}{\x{}} and \isprop{\Keyword}{\x{}} for the respective
+method bodies.
 
 \subsection{Heterogenous maps}
 
@@ -394,20 +415,23 @@ restrict lookup and extension to keyword keys.
 
 \subsection{Java interoperability}
 
-\begin{figure}
+\begin{figure*}
   \footnotesize
   $$
   \begin{altgrammar}
-    \e{} &::=& \ldots \alt \reflectiveexpsyntax{}\\
-            &\alt&  \localhintsyntax{} \alt \lethintsyntax{}
+    \e{} &::=& \ldots \alt \reflectiveexpsyntax{}
+            \alt  \localhintsyntax{} \alt \lethintsyntax{}
     &\mbox{Expressions} \\
     \v{} &::=& \ldots \alt {\classvalue{\classhint{}} {\overrightarrow {\classfieldpair{\fld{}} {\v{}}}}}
     &\mbox{Values} \\
+    \tatypesyntax{}\\
+    \typehintenvsyntax{}\\
+    \classtableallsyntax{}
   \end{altgrammar}
   $$
   \caption{Java Interoperability Terms and Types}
   \label{figure:reflectivesyntax}
-\end{figure}
+\end{figure*}
 
 As Clojure supports Java interoperability, Typed Clojure has some
 integration with Java's type system. Calls to Java methods from
@@ -430,20 +454,20 @@ to resolve ambiguities in Java interop like overloaded methods.
 
 \subsection{Clojure type hints}
 
-\begin{figure}
+\begin{figure*}
   \footnotesize
   $$
   \begin{altgrammar}
-    \e{} &::=& \ldots \alt \mininonreflectiveexpsyntax{}\\
-    &&\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \
-    \ \ \ \ \ \ \ \  \ \ \ \ \ \ \ \ \ \ \ \ \ \ \
+    \e{} &::=& \ldots \alt \mininonreflectiveexpsyntax{}
+    %&&\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \
+    %\ \ \ \ \ \ \ \  \ \ \ \ \ \ \ \ \ \ \ \ \ \ \
 
-    \mbox{Expressions}
+    &\mbox{Expressions}
   \end{altgrammar}
   $$
-  \caption{Non-Reflective Java Interoperability Syntax}
+  \caption{Internal Language Non-Reflective Java Interoperability Syntax}
   \label{figure:nonreflectivesyntax}
-\end{figure}
+\end{figure*}
 
 \begin{figure*}
   \footnotesize

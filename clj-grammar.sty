@@ -726,7 +726,7 @@
                           {\filterset {\thenprop {\propp{}}}
                                       {\elseprop {\propp{}}}}
                           {\objectp{}}}
-                \\\\
+                \\
 \judgementtwo {\propenv{}} {\hastype {\e{}} {\sp{}}}
 }
 {
@@ -818,7 +818,7 @@
   {\hastype {\e{m}} {\Unionsplice {{\overrightarrow {\HMapgeneric {\mandatory{}} {\absent{}}}}^i}}}
            {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}}
            {\object{}}
-           \\\\
+           \\
   \judgementtwo {\propenv{}} {\hastype {\e{k}} {\Value {k}}}
              \\
              {\overrightarrow{\inmandatory{\k{}}{\t{}}{\mandatory{}}}}^i
@@ -836,7 +836,7 @@
 { \judgement {\propenv{}} {\hastype {\e{m}} {\HMapgeneric {\mandatory{}} {\absent}}}
            {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}}
            {\object{}}
-         \\\\
+         \\
   \judgementtwo {\propenv{}} {\hastype {\e{k}} {\Value {k}}}
              \\
              {\inabsent{\k{}}{\absent{}}}
@@ -856,9 +856,9 @@
 { \judgement {\propenv{}} {\hastype {\e{m}} {\HMapp {\mandatory{}} {\absent}}}
            {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}}
            {\object{}}
-         \\\\
+         \\
   \judgementtwo {\propenv{}} {\hastype {\e{k}} {\Value {k}}}
-             \\
+             \\\\
              {\notinmandatory{\k{}}{\t{}}{\mandatory{}}}
              \\
              {\notinabsent{\k{}}{\absent{}}}
@@ -1118,18 +1118,16 @@ $$
   \opsem {\openv{}}
          {\e{v}}
          {\v{v}}
-         \\\\
+         \\
   \opsem {\openv{}}
          {\e{f}}
          {\v{f}}
-         \\
-         \disptablep{} = {\extenddisptable {\disptable{}} 
-                                {\v{v}}
-                                {\v{f}}}
 }
 {\opsem {\openv{}}
         {\extendmultiexp {\e{m}} {\e{v}} {\e{f}}}
-        {\multi {\v{d}} {\disptablep{}}}
+        {\multi {\v{d}} {\extenddisptable {\disptable{}} 
+                                {\v{v}}
+                                {\v{f}}}}
       }
      }
 
@@ -1478,6 +1476,34 @@ $$
 
 \newcommand\classvaluesyntax[0]{
   {\classvalue{\classhint{}} {\overrightarrow {\classfieldpair{\fld{}} {\v{}}}}}
+}
+
+\newcommand\openvsyntax[0]{
+  \openv{}     &::=& \{\overrightarrow{\x{} \mapsto \v{}}\}
+                &\mbox{Value environments}
+}
+
+\newcommand\tatypesyntax[0]{
+  \tatype{}     &::=& \unknownhint{} \alt \classhint{}
+                &\mbox{Type Hints}
+              }
+
+\newcommand\typehintenvsyntax[0]{
+  \taenv{}    &::=& \{ \overrightarrow{ \hastype{\x{}} {\tatype{}}} \}
+               &\mbox{Type Hint Environment}
+             }
+
+\newcommand\classtableallsyntax[0]{
+  \ctentrymeta{} &::=& \ctentry
+               &\mbox{Class descriptors} \\
+  \ct{}   &::=& \{ \overrightarrow{\classhint{} \mapsto \ctentrymeta{}} \}
+               &\mbox{Class Table}
+             }
+
+\newcommand\classvaluesyntaxentry[0]{
+  \classvaluemeta{} 
+          &::=& \classvaluesyntax{}
+               &\mbox{Class Values}
 }
 
 % reflection resolution rewrite 
