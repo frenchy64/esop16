@@ -1888,6 +1888,16 @@ then \judgement{}{\hastype{\v{}}{\t{}}}{\filterset{\thenprop{\propp{}}}{\elsepro
 \end{theorem}
 }
 
+\newcommand\nilinvoketheorem[0]{
+\begin{theorem}[\nil{} invocation is disallowed in typed code] \label{theorem:nilinvoke}
+
+\begin{proof}
+  Corollary of lemma \ref{lemma:soundness}.
+\end{proof}
+
+\end{theorem}
+}
+
 \newcommand\consistentwithdefinition[0]{
 \begin{definition} \label{definition:consistentwith}
   \consistentwith{\v{}}{\openv{}}
