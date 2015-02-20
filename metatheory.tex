@@ -1,11 +1,45 @@
 \section{Metatheory}
 
+Our proof for type soundness is similar to~\cite{TF10}. We add
+errors and prove well-typed programs can never go wrong.
+
+We make our assumptions about Java explicit. We concede that
+method and constructor calls may diverge or error, but we assume they can
+never go wrong.
+
 {\javaassumptionsall}
+
+For readability we define logical truth in Clojure.
 
 {\istruefalsedefinitions}
 
+We use an extra lemma to support our main soundness lemma. Consistency
+ensures that occurrence typing does not claim the outer 
+\mintinline{clojure}{x} is a keyword. 
+
+\begin{minted}{clojure}
+(let [x 1]
+  ((let [x :a]
+     (fn [] x))))
+\end{minted}
+
 {\consistentwithdefinition}
 
-\begin{lemma}
+Our main lemma says if there is a defined reduction, then the propositions, object
+and type are correct.
+The metavariable \definedreduction{} ranges over \v{}, \errorvalv{} and \wrong{}.
+
+\begin{lemma}\label{lemma:soundness}
+
   {\soundnesslemmahypothesis}
+  \begin{proof}
+    By induction on the derivation of the typing judgement.
+  \end{proof}
 \end{lemma}
+
+
+
+% Uses above lemma:soundness label ^^^
+{\soundnesstheorem}
+
+{\wrongtheorem}

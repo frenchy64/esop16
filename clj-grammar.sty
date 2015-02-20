@@ -1858,6 +1858,36 @@ and all of the following hold:
 \end{itemize}
 }
 
+\newcommand\soundnesstheorem[0]{
+\begin{theorem}[Type soundness] \label{theorem:soundness}
+If \judgement{\propenv{}}{\hastype{\e{}}{\t{}}}{\filterset{\thenprop{\prop{}}}{\elseprop{\prop{}}}}{\object{}}
+and \opsem {\openv{}} {\e{}} {\v{}} 
+then \judgement{}{\hastype{\v{}}{\t{}}}{\filterset{\thenprop{\propp{}}}{\elseprop{\propp{}}}}{\objectp{}}
+        for some \thenprop{\propp{}}, \elseprop{\propp{}} and {\objectp{}}
+
+\begin{proof}
+  Corollary of lemma \ref{lemma:soundness}.
+\end{proof}
+
+\end{theorem}
+
+}
+
+\newcommand\wrongtheorem[0]{
+\begin{theorem}[Well-typed programs don't go wrong] \label{theorem:wrong}
+  If {\judgement {} {\hastype {\e{}} {\t{}}} {\filterset {\thenprop{\prop{}}}{\elseprop{\prop{}}}} {\object{}}}
+  then \notopsem{}{\e{}}{\wrong{}}.
+
+\begin{proof}
+  Corollary of lemma~\ref{lemma:soundness}, since by lemma~\ref{lemma:soundness}
+  when {\judgement {} {\hastype {\e{}} {\t{}}} {\filterset {\thenprop{\prop{}}}{\elseprop{\prop{}}}} {\object{}}}, 
+ either
+    \opsem {} {\e{}} {\v{}} or
+    \opsem {} {\e{}} {\errorvalv{}}, therefore \notopsem{}{\e{}}{\wrong{}}.
+\end{proof}
+\end{theorem}
+}
+
 \newcommand\consistentwithdefinition[0]{
 \begin{definition} \label{definition:consistentwith}
   \consistentwith{\v{}}{\openv{}}
