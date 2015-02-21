@@ -303,19 +303,19 @@
 \newcommand\extendopenv[3]{\ma{#1[#2 \mapsto #3]}}
 \newcommand\opsem[3]{\ma{#1 \vdash #2 \Downarrow #3}}
 \newcommand\notopsem[3]{\ma{#1 \not\vdash #2 \Downarrow #3}}
-\newcommand\closuresuffixliteral[0]{\metafunctionfont{clos}}
+\newcommand\closuresuffixliteral[0]{\metafunctionfont{c}}
 \newcommand\closure[2]{\ma{[#1, #2]_{\closuresuffixliteral}}}
 % multimethod semantics
-\newcommand\multisuffixliteral[0]{\metafunctionfont{mm}}
+\newcommand\multisuffixliteral[0]{\metafunctionfont{m}}
 \newcommand\multi[2]{\ma{[#1, #2]_{\multisuffixliteral}}}
 \newcommand\emptydisptable[0]{\{\}}
 \newmeta\disptable{t}
 \newmeta\disptablep{t'}
 \newmeta\mapval{m}
 \newcommand\extenddisptable[3]{\ma{#1[#2 \mapsto #3]}}
-\newcommand\getmethodliteral[0]{\ma{\metafunctionfont{GetMethod}}}
-\newcommand\getmethod[3]{\getmethodliteral(#1, #2) = #3}
-\newcommand\getmethodalign[3]{\getmethodliteral(#1, #2) &=& #3}
+\newcommand\getmethodliteral[0]{\ma{\metafunctionfont{GM}}}
+\newcommand\getmethoderr[3]{\getmethodliteral(#1, #2) = #3}
+\newcommand\getmethod[4]{\getmethodliteral(#1, #2) = #4}
 
 % java reflection rewrite 
 \newcommand\rewrite[3]{\ma{#1\ \vdash^{\ct{}}_{\metafunctionfont{r}} #2 \Rightarrow #3}}
@@ -667,7 +667,7 @@
 \javatotc {\classhint{i}}
           {\t{i}}
           }
-  \\\\
+  \\
   \javatotc {\classhint{}}
             {\t{}}
   \\\\
@@ -686,7 +686,7 @@
 \newcommand\TFieldStatic[0]{
 \infer [T-FieldStatic]
 { \javatotc {\classhint{1}} {\s{}}
-             \\\\
+             \\
   \javatotcnil {\classhint{2}} {\t{}}
   \\\\
   \judgementtwo {\propenv{}} {\hastype {\e{}} {\s{}}}
@@ -701,11 +701,11 @@
 { 
   \overrightarrow{\javatotc {\classhint{i}} {\t{i}}}
              \\
-             \javatotc {\classhint{1}} {\class{}}
+             \javatotc {\classhint{1}} {\s{}}
              \\\\
              \javatotcnil {\classhint{2}} {\t{}}
              \\
-  \judgementtwo {\propenv{}} {\hastype {\e{}} {\class{}}}
+  \judgementtwo {\propenv{}} {\hastype {\e{}} {\s{}}}
              \\
              \overrightarrow{
   \judgementtwo {\propenv{}} {\hastype {\e{i}} {\t{i}}}
@@ -793,8 +793,7 @@
                          {\elseprop {\propp{}}}}
                        {\object{}}
   \\
-  \judgementtwo
-             {\propenv{}} {\hastype {\ep{}} {\t{}}}
+  \judgementtwo {\propenv{}} {\hastype {\ep{}} {\t{}}}
              \\
   \isacompare{\s{}}{\object{}}{\t{}}{\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}}
 }
@@ -1053,27 +1052,28 @@
 \newcommand\BBetaMulti[0]{
 \infer [B-BetaMulti]
 { \opsem {\openv{}}
-         {\e{f}}
+         {\e{}}
          {\multi {\v{d}} {\disptable{}}}
          \\\\
   \opsem {\openv{}}
-         {\e{a}}
-         {\v{a}}
-         \\
+         {\ep{}}
+         {\vp{}}
+         \\\\
   \opsem {\openv{}}
-         {\appexp {\v{d}} {\v{a}}}
+         {\appexp {\v{d}} {\vp{}}}
          {\v{e}}
          \\\\
   \getmethod {\disptable{}}
              {\v{e}}
-             {\roundpair{\v{k}}{\v{f}}}
+             {\v{k}}
+             {\v{f}}
          \\\\
   \opsem {\openv{}}
-         {\appexp {\v{f}} {\v{a}}}
+         {\appexp {\v{f}} {\vp{}}}
          {\v{}}
        }
 { \opsem {\openv{}}
-         {\appexp {\e{f}} {\e{a}}}
+         {\appexp {\e{}} {\ep{}}}
          {\v{}}
        }
      }
@@ -1084,7 +1084,8 @@ $$
 
   \getmethod {\disptable{}}
              {\v{e}}
-             {\roundpair{\v{v}}{\v{f}}}
+             {\v{v}}
+             {\v{f}}
              \\
              \ \ \ \ 
              \text{let } {\overrightarrow{\v{fs}}} = 
@@ -1097,7 +1098,7 @@ $$
              \text{ if } {\overrightarrow{\v{fs}}} = \{{\roundpair{\v{v}}{\v{f}}}\}
 
              \\
-  \getmethod {\disptable{}}
+  \getmethoderr {\disptable{}}
              {\v{e}}
              {\mmerror{}} & \text{otherwise}
 
@@ -1107,12 +1108,13 @@ $$
 
      \newcommand\BDefMulti[0]{
 \infer [B-DefMulti]
-{ \opsem {\openv{}} {\e{d}} {\v{d}}
-  \\ \v{} = {\multi {\v{d}} {\emptydisptable}}
+{ \opsem {\openv{}} {\e{}} {\v{d}}
+  \\\\ 
+  \v{} = {\multi {\v{d}} {\emptydisptable}}
 }
 {\opsem {\openv{}}
         {\createmultiexp {\t{}}
-                         {\e{d}}}
+                         {\e{}}}
         {\v{}}
 }
      }
@@ -1120,22 +1122,25 @@ $$
      \newcommand\BDefMethod[0]{
 \infer [B-DefMethod]
 { \opsem {\openv{}}
-         {\e{m}}
+         {\e{}}
          {\multi {\v{d}} {\disptable{}}}
-         \\
+         \\\\
   \opsem {\openv{}}
-         {\e{v}}
+         {\ep{}}
          {\v{v}}
-         \\
+         \\\\
   \opsem {\openv{}}
          {\e{f}}
          {\v{f}}
-}
-{\opsem {\openv{}}
-        {\extendmultiexp {\e{m}} {\e{v}} {\e{f}}}
+         \\\\
+         \v{} = 
         {\multi {\v{d}} {\extenddisptable {\disptable{}} 
                                 {\v{v}}
                                 {\v{f}}}}
+}
+{\opsem {\openv{}}
+        {\extendmultiexp {\e{}} {\ep{}} {\e{f}}}
+        {\v{}}
       }
      }
 
@@ -1452,8 +1457,7 @@ $$
                    {\notprop{\Value{\singletonmeta{}}}{\x{}}}}
                    {\object{}}
                    {\x{}}}
-                 \\
-                   && \text{if}\ {\singletonmeta{}} \not= \class{}
+                   & \text{if}\ {\singletonmeta{}} \not= \class{}
                \\
   \isacomparealign{\s{}}{\object{}}{\t{}}
                   {\filterset{\topprop{}}

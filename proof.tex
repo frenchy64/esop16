@@ -1022,7 +1022,8 @@ so we know $\forall v \in \fv{\thenprop{\prop{}}} - \x{}$,
     \item
   \getmethod {\disptable{}}
              {\v{e}}
-             {\roundpair{\v{l}}{\v{g}}},
+             {\v{l}}
+             {\v{g}},
     \item
   \opsem {\openv{}}
          {\appexp {\v{g}} {\v{2}}}
@@ -1065,6 +1066,7 @@ so we know $\forall v \in \fv{\thenprop{\prop{}}} - \x{}$,
     \item \object{2} = \emptyobject{} or \inopenv{\openv{}}{\object{2}}{\v{2}}.
   \end{enumerate}
 
+  % TODO getmethod has changed to not include {\v{k}}. Need a lemma for the below.
   We know by the definition of \getmethodliteral that
   \begin{enumerate}[resume]
     \item $\{ \v{v} | {\roundpair{\v{k}}{\v{v}}} \in \disptable{} \text{ and } \isaopsem{\v{k}}{\v{e}} = {\true{}} \} = {\roundpair{\v{l}}{\v{g}}}$, so

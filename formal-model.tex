@@ -300,12 +300,11 @@ $$
   \footnotesize
   \getmethodfigure{}
   \begin{mathpar}
+    \BDefMethod{}
     \BDefMulti{}
     \BBetaMulti{}
-
-    \BDefMethod{}
   \end{mathpar}
-  \caption{Multimethod semantics}
+  \caption{Multimethod and method resolution semantics}
   \label{main:figure:mmsemantics}
 \end{figure}
 
@@ -530,17 +529,17 @@ to help the compiler eliminate reflection.
   \caption{Java Interoperability Semantics}
 \end{figure}
 
-\begin{figure}
+\begin{figure*}
   \footnotesize
   \begin{mathpar}
     {\TNewStatic}
-    {\TFieldStatic}
 
+    {\TFieldStatic}
     {\TMethodStatic}
   \end{mathpar}
   \caption{Java Interoperability Typing Rules}
   \label{main:figure:javatyping}
-\end{figure}
+\end{figure*}
 
 Clojure supports \emph{type hints}, an optional type system to improve performance
 and disambiguate Java calls.
