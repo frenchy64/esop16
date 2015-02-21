@@ -1,8 +1,8 @@
 \section{Soundness for Typed Clojure}
 
-{\javaassumptionsall}
+{\javaassumptionsall{appendix}}
 
-\begin{lemma} \label{lemma:envagree}
+\begin{lemma} \label{appendix:lemma:envagree}
   If \openv{} and \openvp{} agree on \fv{\prop{}}
   and \satisfies{\openv{}}{\prop{}}
   then \satisfies{\openvp{}}{\prop{}}.
@@ -11,7 +11,7 @@
 \end{proof}
 \end{lemma}
 
-\begin{lemma} \label{lemma:substfilter}
+\begin{lemma} \label{appendix:lemma:substfilter}
   If 
   \begin{itemize}
     \item \prop{1} = {\replacefor {\prop{2}} {\object{}} {\x{}}},
@@ -30,7 +30,7 @@
   \end{proof}
 \end{lemma}
 
-\begin{lemma} \label{lemma:satisfies}
+\begin{lemma} \label{appendix:lemma:satisfies}
   If \satisfies{\openv{}}{\propenv{}} and \inpropenv{\propenv{}}{\prop{}} then \satisfies{\openv{}}{\prop{}}.
 
   \begin{proof}
@@ -83,7 +83,7 @@
   \end{proof}
 \end{lemma}
 
-\begin{lemma} \label{lemma:goodobjects+ve}
+\begin{lemma} \label{appendix:lemma:goodobjects+ve}
   If \inpropenv{\propenv{}}{\isprop{\t{}}{\path{\pathelem{}}{\x{}}}},
   \satisfies{\openv{}}{\propenv{}}
   and {\openv{}}({\path{\pathelem{}}{\x{}}}) = \v{}
@@ -91,11 +91,11 @@
   \judgement{}{\hastype{\v{}}{\t{}}}{\filterset{\thenprop{\propp{}}}{\elseprop{\propp{}}}}{\objectp{}}
   for some {\thenprop{\propp{}}}, {\elseprop{\propp{}}} and {\objectp{}}.
   \begin{proof}
-    Corollary of lemma \ref{lemma:satisfies}.
+    Corollary of lemma~\ref{appendix:lemma:satisfies}.
   \end{proof}
 \end{lemma}
 
-\begin{lemma}[Paths are independent] \label{lemma:pathindependent}
+\begin{lemma}[Paths are independent] \label{appendix:lemma:pathindependent}
   If \inopenvnoeq{\openv{}}{\object{}} = \inopenvnoeq{\openv{1}}{\objectp{}}
   then \inopenvnoeq{\openv{}}{\path{\pathelem{}}{\object{}}} =
        \inopenvnoeq{\openv{1}}{\path{\pathelem{}}{\objectp{}}}
@@ -135,7 +135,7 @@
  \end{proof}
 \end{lemma}
 
-\begin{lemma}[\classconst]\label{lemma:classconst}
+\begin{lemma}[\classconst]\label{appendix:lemma:classconst}
   If
   {\opsem{\openv{}}{\appexp{\classconst{}}{\openv{}({\path{\pathelem{}}{\x{}}})}}{\class{}}} then
   {\satisfies{\openv{}}{\isprop{\class{}}{\path{\pathelem{}}{\x{}}}}}.
@@ -145,11 +145,11 @@
   \end{proof}
 \end{lemma}
 
-{\consistentwithdefinition}
+{\consistentwithdefinition{appendix}}
 
-{\istruefalsedefinitions}
+{\istruefalsedefinitions{appendix}}
 
-\begin{lemma} \label{lemma:soundness}
+\begin{lemma} \label{appendix:lemma:soundness}
 {\soundnesslemmahypothesis}
 \begin{proof}
 By induction on the derivation of the typing judgement.
@@ -404,7 +404,7 @@ cannot be constructed with \newliteral, so the only case is \v{} $\not=$ \false\
 where \thenprop{\prop{}} = \topprop{} so \satisfies{\openv{}}{\thenprop{\prop{}}}.
 
 Part 3 holds as B-New reduces to a \emph{non-nilable}
-instance of \class{} via \newjavaliteral (by assumption \ref{assumption:new}), and \javatotc{\classhint{}}{\t{}}.
+instance of \class{} via \newjavaliteral (by assumption~\ref{appendix:assumption:new}), and \javatotc{\classhint{}}{\t{}}.
 
 \end{subcase}
   \item[]
@@ -460,7 +460,7 @@ Part 1 is trivial as \object{} is always \emptyobject{}.
 Part 2 holds trivially, \v{} can be either a true or false value
 and both {\thenprop{\prop{}}} and {\elseprop{\prop{}}}
 are \topprop{}.
-Part 3 relies on the semantics of \getfieldliteral (assumption \ref{assumption:field})
+Part 3 relies on the semantics of \getfieldliteral (assumption~\ref{appendix:assumption:field})
 in B-Field, which returns a \emph{nilable} instance of \classhint{2},
 and \javatotcnil{\classhint{2}} {\t{}}.
 \end{subcase}
@@ -514,7 +514,7 @@ Part 1 is trivial as \object{} is always \emptyobject{}.
 Part 2 holds trivially, \v{} can be either a true or false value
 and both {\thenprop{\prop{}}} and {\elseprop{\prop{}}}
 are \topprop{}.
-Part 3 relies on the semantics of \invokejavamethodliteral (assumption \ref{assumption:method})
+Part 3 relies on the semantics of \invokejavamethodliteral (assumption~\ref{appendix:assumption:method})
 in B-Method, which returns a \emph{nilable} instance of \classhint{2},
 and \javatotcnil{\classhint{2}} {\t{}}.
 \end{subcase}
@@ -902,7 +902,7 @@ by noting \judgementtwo {} {\hastype {\v{d}} {\t{d}}},
                  which implies 
                  \inopenvnoeq {\extendopenv {\openv{c}} {\x{}} {\v{2}}}{\x{}} = 
                  \inopenvnoeq{\openv{}}{\object{2}},
-                 and by applying lemma \ref{lemma:pathindependent}
+                 and by applying lemma~\ref{appendix:lemma:pathindependent}
                  we can derive
                  \inopenvnoeq{\openv{}}{\path{\pathelem{f}}{\object{2}}} =
                  \inopenvnoeq{\extendopenv {\openv{c}} {\x{}} {\v{2}}}
@@ -927,7 +927,7 @@ by noting \judgementtwo {} {\hastype {\v{d}} {\t{d}}},
              \inopenvnoeq{\extendopenv {\openv{c}} {\x{}} {\v{2}}}{\y{}} = 
              \inopenvnoeq{\openv{}}{\y{}}.
 
-             We apply lemma \ref{lemma:pathindependent} with this fact
+             We apply lemma~\ref{appendix:lemma:pathindependent} with this fact
              to derive
              \inopenvnoeq {\extendopenv {\openv{c}} {\x{}} {\v{2}}}
                           {\path {\pathelem{f}} {\y{}}}
@@ -979,7 +979,7 @@ so we know $\forall v \in \fv{\thenprop{\prop{}}} - \x{}$,
                             \inopenvnoeq{\extendopenv {\openv{c}} {\x{}} {\v{2}}}{\x{}} = \inopenvnoeq{\openv{}}{\object{2}}
                               \end{enumerate}
                               we can apply
-                            lemma \ref{lemma:substfilter},
+                            lemma~\ref{appendix:lemma:substfilter},
                             to derive \satisfies{\openv{}}{\thenprop{\prop{}}}
                             and we are done.
            \item if \v{} $=$ \false\ (or \nil) then \satisfies{\openv{}}{\elseprop{\prop{}}}.
@@ -1274,7 +1274,7 @@ so we know $\forall v \in \fv{\thenprop{\prop{}}} - \x{}$,
 %                    By inversion {\v{1}} = {\class{}}, via T-Class.
 %
 %                    Since {\opsem{\openv{}}{\appexp{\classconst{}}{\openv{}({\path{\pathelem{}}{\x{}}})}}{\class{}}}
-%                    we conclude by lemma \ref{lemma:classconst}
+%                    we conclude by lemma~\ref{appendix:lemma:classconst}
 %                    with {\satisfies{\openv{}}{\isprop{\class{}} {\path{\pathelem{}}{\x{}}}}}.
 
                   \end{subcase}
@@ -1357,7 +1357,7 @@ so we know $\forall v \in \fv{\thenprop{\prop{}}} - \x{}$,
 
                     Since {\opsem{\openv{}}{\appexp{\classconst{}}{\openv{}({\path{\pathelem{}}{\x{}}})}}{\class{1}}},
                     as {\v{1}} = {\class{1}},
-                    we can derive from lemma \ref{lemma:classconst}
+                    we can derive from lemma~\ref{appendix:lemma:classconst}
                     {\satisfies{\openv{}}{\isprop{\class{1}} {\path{\pathelem{}}{\x{}}}}}.
 
                     By the induction hypothesis we can derive 
@@ -1365,7 +1365,7 @@ so we know $\forall v \in \fv{\thenprop{\prop{}}} - \x{}$,
                     and with the fact {\issubtypein{}{\class{1}}{\class{2}}}
                     we can use L-Sub to conclude 
                     {\inpropenv{\propenv{}}{\isprop{\class{2}} {\path{\pathelem{}}{\x{}}}}},
-                    and finally by lemma \ref{lemma:satisfies}
+                    and finally by lemma~\ref{appendix:lemma:satisfies}
                     we derive
                     {\satisfies{\openv{}}{\isprop{\class{2}} {\path{\pathelem{}}{\x{}}}}}.
 
@@ -2033,43 +2033,43 @@ Part 3 holds because \e{} is of type \tp{} and
 
 \end{lemma}
 
-{\wrongtheorem}
+{\wrongtheorem{appendix}}
 
-{\soundnesstheorem}
+{\soundnesstheorem{appendix}}
 
-\begin{theorem}[\nil{} cannot be accidentally introduced] \label{theorem:nullpointer}
+\begin{theorem}[\nil{} cannot be accidentally introduced] \label{appendix:theorem:nullpointer}
 If \judgement{\propenv{}}{\hastype{\v{}}{\t{}}}{\filterset{\thenprop{\prop{}}}{\elseprop{\prop{}}}}{\object{}}
 and \notsubtypein{}{\Nil{}}{\t{}}
 then {\v{}} $\not=$ \nil{}.
 \begin{proof}
-  Corollary of lemma \ref{lemma:soundness}.
+  Corollary of lemma~\ref{appendix:lemma:soundness}.
 \end{proof}
 
 \end{theorem}
 
-\begin{lemma}[Field lookup never fails] \label{lemma:fieldgood}
+\begin{lemma}[Field lookup never fails] \label{appendix:lemma:fieldgood}
   %If \judgement{\propenv{}}{\hastype{\
 
 \begin{proof}
-  Corollary of lemma \ref{lemma:soundness}.
+  Corollary of lemma~\ref{appendix:lemma:soundness}.
 \end{proof}
 
 \end{lemma}
 
-\begin{theorem}[Field lookup on \nil{} is disallowed] \label{theorem:fieldnil}
+\begin{theorem}[Field lookup on \nil{} is disallowed] \label{appendix:theorem:fieldnil}
 
 \begin{proof}
-  Corollary of lemma \ref{lemma:fieldgood}.
+  Corollary of lemma~\ref{appendix:lemma:fieldgood}.
 \end{proof}
 
 \end{theorem}
 
-\begin{theorem}[Method invocation on \nil{} is disallowed] \label{theorem:methodnil}
+\begin{theorem}[Method invocation on \nil{} is disallowed] \label{appendix:theorem:methodnil}
 
 \begin{proof}
-  Corollary of lemma \ref{lemma:soundness}.
+  Corollary of lemma~\ref{appendix:lemma:soundness}.
 \end{proof}
 
 \end{theorem}
 
-{\nilinvoketheorem}
+{\nilinvoketheorem{appendix}}

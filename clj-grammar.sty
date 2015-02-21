@@ -1750,8 +1750,8 @@ $$
 }
 
 % java assumptions
-\newcommand\javaassumptionsall[0]{
-\begin{assumption}[\newjavaliteral] \label{assumption:new}
+\newcommand\javaassumptionsall[1]{
+\begin{assumption}[\newjavaliteral] \label{#1:assumption:new}
   If\ $\forall i.\ {\v{i}} = {\classvalue{\classhint{i}}{\overrightarrow{\classfieldpair{\fld{j}} {\v{j}}}}}\ or\ {\v{i}}= {\nil}$
   and {\v{i}}
   then either
@@ -1772,7 +1772,7 @@ $$
   \end{itemize}
 \end{assumption}
 
-\begin{assumption}[\getfieldliteral] \label{assumption:field}
+\begin{assumption}[\getfieldliteral] \label{#1:assumption:field}
   If\ {\v{1}} = ${\classvalue{\classhint{1}}{{\classfieldpair{\fld{}}{\v{f}}, {\overrightarrow{\classfieldpair{\fld{l}} {\v{l}}}}}}}$,
   then either
   \begin{itemize}
@@ -1791,7 +1791,7 @@ $$
   \end{itemize}
 \end{assumption}
 
-\begin{assumption}[\invokejavamethodliteral] \label{assumption:method}
+\begin{assumption}[\invokejavamethodliteral] \label{#1:assumption:method}
   If\ {\v{1}} = {\classvalue{\classhint{1}}{\overrightarrow{\classfieldpair{\fld{l}} {\v{l}}}}},
   $\forall i.\ {\v{i}}={\classvalue{\classhint{i}}{\overrightarrow{\classfieldpair{\fld{j}} {\v{j}}}}}\ or\ {\v{i}}={\nil}$
          then either
@@ -1822,13 +1822,13 @@ $$
 \end{assumption}
 }
 
-\newcommand\istruefalsedefinitions[0]{
-\begin{definition} \label{definition:istrueval}
+\newcommand\istruefalsedefinitions[1]{
+\begin{definition} \label{#1:definition:istrueval}
   \istrueval{\v{}} iff {\v{}} $\not=$ \false\ and {\v{}} $\not=$ \nil.
 
 \end{definition}
 
-\begin{definition} \label{definition:isfalseval}
+\begin{definition} \label{#1:definition:isfalseval}
   \isfalseval{\v{}} iff {\v{}} $=$ \false\ or {\v{}} $=$ \nil.
 
 \end{definition}
@@ -1858,28 +1858,28 @@ and all of the following hold:
 \end{itemize}
 }
 
-\newcommand\soundnesstheorem[0]{
-\begin{theorem}[Type soundness] \label{theorem:soundness}
+\newcommand\soundnesstheorem[1]{
+\begin{theorem}[Type soundness] \label{#1:theorem:soundness}
 If \judgement{\propenv{}}{\hastype{\e{}}{\t{}}}{\filterset{\thenprop{\prop{}}}{\elseprop{\prop{}}}}{\object{}}
 and \opsem {\openv{}} {\e{}} {\v{}} 
 then \judgement{}{\hastype{\v{}}{\t{}}}{\filterset{\thenprop{\propp{}}}{\elseprop{\propp{}}}}{\objectp{}}
         for some \thenprop{\propp{}}, \elseprop{\propp{}} and {\objectp{}}
 
 \begin{proof}
-  Corollary of lemma \ref{lemma:soundness}.
+  Corollary of lemma \ref{#1:lemma:soundness}.
 \end{proof}
 
 \end{theorem}
 
 }
 
-\newcommand\wrongtheorem[0]{
-\begin{theorem}[Well-typed programs don't go wrong] \label{theorem:wrong}
+\newcommand\wrongtheorem[1]{
+\begin{theorem}[Well-typed programs don't go wrong] \label{#1:theorem:wrong}
   If {\judgement {} {\hastype {\e{}} {\t{}}} {\filterset {\thenprop{\prop{}}}{\elseprop{\prop{}}}} {\object{}}}
   then \notopsem{}{\e{}}{\wrong{}}.
 
 \begin{proof}
-  Corollary of lemma~\ref{lemma:soundness}, since by lemma~\ref{lemma:soundness}
+  Corollary of lemma~\ref{#1:lemma:soundness}, since by lemma~\ref{#1:lemma:soundness}
   when {\judgement {} {\hastype {\e{}} {\t{}}} {\filterset {\thenprop{\prop{}}}{\elseprop{\prop{}}}} {\object{}}}, 
  either
     \opsem {} {\e{}} {\v{}} or
@@ -1888,22 +1888,22 @@ then \judgement{}{\hastype{\v{}}{\t{}}}{\filterset{\thenprop{\propp{}}}{\elsepro
 \end{theorem}
 }
 
-\newcommand\nilinvoketheorem[0]{
-\begin{theorem}[\nil{} invocation is disallowed in typed code] \label{theorem:nilinvoke}
+\newcommand\nilinvoketheorem[1]{
+\begin{theorem}[\nil{} invocation is disallowed in typed code] \label{#1:theorem:nilinvoke}
   If \judgement{\propenv{}}{\hastype{\e{}}{\t{}}}{\filterset{\thenprop{\prop{}}}{\elseprop{\prop{}}}}{\object{}} then \e{} is not
   \appexp{\nil{}}{\ep{}}, 
   \fieldexp{\fld{}}{\nil{}}, or
   $\methodexp{\mth{}}{\nil{}}{\overrightarrow{\ep{}}}$.
 
 \begin{proof}
-  Corollary of lemma \ref{lemma:soundness}.
+  Corollary of lemma \ref{#1:lemma:soundness}.
 \end{proof}
 
 \end{theorem}
 }
 
-\newcommand\consistentwithdefinition[0]{
-\begin{definition} \label{definition:consistentwith}
+\newcommand\consistentwithdefinition[1]{
+\begin{definition} \label{#1:definition:consistentwith}
   \consistentwith{\v{}}{\openv{}}
   iff $\forall$ \closure{\openv{1}}{\abs{\x{}}{\s{}}{\e{}}} in \v{},
 
@@ -1925,7 +1925,7 @@ then \judgement{}{\hastype{\v{}}{\t{}}}{\filterset{\thenprop{\propp{}}}{\elsepro
 % this property guarantees that the x's don't get confused.
 \end{definition}
 
-\begin{definition} \label{definition:isconsistent}
+\begin{definition} \label{#1:definition:isconsistent}
   \isconsistent{\openv{}}
   iff
 

@@ -7,11 +7,11 @@ We make our assumptions about Java explicit. We concede that
 method and constructor calls may diverge or error, but we assume they can
 never go wrong.
 
-{\javaassumptionsall}
+{\javaassumptionsall{main}}
 
 For readability we define logical truth in Clojure.
 
-{\istruefalsedefinitions}
+{\istruefalsedefinitions{main}}
 
 We use an extra lemma to support our main soundness lemma. Consistency
 ensures that occurrence typing does not claim the outer 
@@ -23,28 +23,29 @@ ensures that occurrence typing does not claim the outer
      (fn [] x))))
 \end{minted}
 
-{\consistentwithdefinition}
+{\consistentwithdefinition{main}}
 
 Our main lemma says if there is a defined reduction, then the propositions, object
 and type are correct.
 The metavariable \definedreduction{} ranges over \v{}, \errorvalv{} and \wrong{}.
 
-\begin{lemma}\label{lemma:soundness}
+\begin{lemma}\label{main:lemma:soundness}
 
   {\soundnesslemmahypothesis}
   \begin{proof}
-    By induction on the derivation of the typing judgement.
+    By induction on the derivation of the typing judgement. 
+    (Full proof given as theorem~\ref{appendix:lemma:soundness}).
+
   \end{proof}
 \end{lemma}
 
 
 We can now state our soundness theorem.
 
-% Uses above lemma:soundness label ^^^
-{\soundnesstheorem}
+{\soundnesstheorem{main}}
 
-{\wrongtheorem}
+{\wrongtheorem{main}}
 
 Null-pointer exceptions are ruled-out in typed code.
 
-{\nilinvoketheorem}
+{\nilinvoketheorem{main}}
