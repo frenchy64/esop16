@@ -15,17 +15,17 @@ $$
                       \alt {\HintedExp{}}
                       \alt {\HashMapExp{}}
                 &\mbox{Expressions} \\
-  \v{} &::=&
-                      \true{} \alt \false{} \alt \nil{}
-                      \alt \class{} \alt \classvaluemeta{}
-                      \alt \k{}
+  \v{} &::=&          \singletonmeta{}
+                      \alt \classvaluemeta{}
                       \alt {\emptymap{}}
                       \alt {\const{}}
                       %\alt {\num{}}
-                      \alt {\curlymapvaloverright{\v{}}{\v{}}}
+                      \alt \mapval{}
                       \alt {\closure {\openv{}} {\abs {\x{}} {\t{}} {\e{}}}}
                       \alt {\multi {\v{}} {\disptable{}}}
                 &\mbox{Values} \\
+  \mapval{} &::=&  {\curlymapvaloverright{\v{}}{\v{}}}
+                &\mbox{Map Values} \\
   {\const{}}           &::=& \classconst \alt \throwconst
 
                 &\mbox{Constants} \\
@@ -86,9 +86,9 @@ $$
 \begin{figure*}
 $$
 \begin{array}{lllr}
-  \Nil &\equiv& \Value{\Nil}\\
-  \True &\equiv& \Value{\True}\\
-  \False &\equiv& \Value{\False}\\
+  \Nil &\equiv& {\ValueNil}\\
+  \True &\equiv& {\ValueTrue}\\
+  \False &\equiv& {\ValueFalse}\\
 \end{array}
 $$
 \caption{Type abbreviations}

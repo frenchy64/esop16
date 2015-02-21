@@ -28,7 +28,7 @@ Values include booleans, \nil{}, class literals, keywords, constants and closure
 \false{} and \nil{} are the only logically false values.
 
 Types include the top type, untagged unions, functions, singleton types
-and class instances. We abbreviate \EmptyUnion{} as \Bot{}, \Value{\Nil{}} as \Nil{} and similarly
+and class instances. We abbreviate \EmptyUnion{} as \Bot{}, {\ValueNil} as \Nil{} and similarly
 for \True and \False.
 Function types contain \emph{latent} propositions and object, which, along with the return type,
 may refer to the parameter identifier. They are latent because they are instantiated with the
@@ -63,11 +63,9 @@ $$
                       \alt {\ifexp {\e{}} {\e{}} {\e{}}}
                       \alt {\trdiff{\doexp {\e{}} {\e{}}}}
                       \alt {\letexp {\x{}} {\e{}} {\e{}}}
-                      \alt {\errorvalv{}}
+                      %\alt {\errorvalv{}}
                 &\mbox{Expressions} \\
-  \v{} &::=&          \true{} \alt \false{} \alt \trdiff{\nil{}}
-                      \alt \trdiff{\class{}}
-                      \alt \k{}
+  \v{} &::=&          \singletonmeta{}
                       \alt {\const{}}
                       \alt {\closure {\openv{}} {\abs {\x{}} {\t{}} {\e{}}}}
                 &\mbox{Values} \\
@@ -108,20 +106,17 @@ $$
     {\TNil}
 
     {\TDo}
-
-    {\TClass}
-
+    %{\TClass}
     {\TIf}
-
     {\TLet}
 
-    {\TKw}
+    %{\TKw}
 
     {\TApp}
 
     {\TAbs}
 
-    {\TError}
+    %{\TError}
 
     {\TSubsume}
   \end{mathpar}
@@ -156,11 +151,11 @@ $$
 
 \begin{figure*}
   \footnotesize
-\begin{mathpar}
-\standardsubtyping{}
-\end{mathpar}
-\caption{Subtyping rules}
-\label{main:figure:subtyping}
+  \begin{mathpar}
+    \standardsubtyping{}
+  \end{mathpar}
+  \caption{Subtyping rules}
+  \label{main:figure:subtyping}
 \end{figure*}
 
 \subsection{\doliteral{}}
@@ -306,10 +301,9 @@ $$
   \getmethodfigure{}
   \begin{mathpar}
     \BDefMulti{}
+    \BBetaMulti{}
 
     \BDefMethod{}
-
-    \BBetaMulti{}
   \end{mathpar}
   \caption{Multimethod semantics}
   \label{main:figure:mmsemantics}
@@ -382,9 +376,7 @@ method bodies. T-App handles beta reduction because multimethods are subtypes of
   \footnotesize
   \begin{mathpar}
     {\BAssoc}
-
     {\BGet}
-
     {\BGetMissing}
   \end{mathpar}
   \caption{HMap Semantics}
@@ -426,8 +418,8 @@ HMap can assume all entries not in {\mandatory{}} as absent. We disallow keys to
 
 \getliteral{} and \assocliteral{} lookup and extend immutable maps respectively.
 To simplify presentation, we only allow the empty map literal and
-restrict lookup and extension to keyword keys. The runtime value of maps {\curlymapvaloverright{\k{}}{\v{}}}
-is not part of the language syntax.
+restrict lookup and extension to keyword keys. The metavariable \mapval{}
+ranges over the runtime value of maps {\curlymapvaloverright{\k{}}{\v{}}}.
 
 Figure~\ref{main:figure:hmapsem} shows the semantics for HMaps, where B-Get returns the associated
 entry if it is present and B-GetMissing returns \nil{} otherwise. B-Assoc returns a new extended
@@ -531,9 +523,9 @@ to help the compiler eliminate reflection.
   \begin{mathpar}
     \BField{}
 
-    \BMethod{}
-
     \BNew{}
+
+    \BMethod{}
   \end{mathpar}
   \caption{Java Interoperability Semantics}
 \end{figure}
@@ -542,7 +534,6 @@ to help the compiler eliminate reflection.
   \footnotesize
   \begin{mathpar}
     {\TNewStatic}
-
     {\TFieldStatic}
 
     {\TMethodStatic}

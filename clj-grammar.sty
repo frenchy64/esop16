@@ -41,12 +41,12 @@
 
 % types
 \newbfop\int{int}
-\newbfop\Boolean{Boolean}
+\newbfop\Boolean{B}
 \newbfop\Booleanhint{Boolean}
 \newbfop\IFn{IFn}
 \newbfop\MultiFn{MultiFn}
 \newbfop\PMulti{Multi}
-\newbfop\IPersistentMapLiteral{IPersistentMap}
+\newbfop\IPersistentMapLiteral{IMap}
 \newbfop\MapLiteral{Map}
 \newbfop\Uliteral{\ma{\bigcup}}
 \newbfop\Iliteral{\ma{\bigcap}}
@@ -62,7 +62,7 @@
 \newbfop\Object{Object}
 \newcommand\MultiFntype[2]{(\PMulti #1\ #2)}
 \newcommand\proctype[2]{(#1 \to #2)}
-\newcommand\EmptyUnion[0]{(\ma{\Uliteral})}
+\newcommand\EmptyUnion[0]{\ma{(\Uliteral)}}
 \newcommand\Unionsplice[1]{(\ma{\Uliteral\ #1})}
 \newcommand\Union[2]{(\ma{\Uliteral\ #1\ #2})}
 \newcommand\In[1]{(\ma{\Iliteral\ #1})}
@@ -80,12 +80,18 @@
 
 \newcommand\All[2]{(\ma{\Allliteral\ [#1]\ #2})}
 \newcommand\TFn[2]{(\ma{\TFnliteral\ [#1]\ #2})}
-\newcommand\Value[1]{(\ma{\Valueliteral #1})}
+\newcommand\Value[1]{(\ma{\Valueliteral\ #1})}
+\newcommand\ValueFalse[0]{(\ma{\Valueliteral \false})}
+\newcommand\ValueNil[0]{(\ma{\Valueliteral \nil})}
+\newcommand\ValueTrue[0]{(\ma{\Valueliteral \true})}
+\newcommand\ValueBool[0]{(\ma{\Valueliteral \bool{}})}
+\newcommand\ValueClass[0]{(\ma{\Valueliteral \class{}})}
+\newcommand\ValueKw[0]{(\ma{\Valueliteral \k{}})}
 \newmeta\singletonmeta{s}
 \newbfop\Top{\ma{\top}}
 \newbfop\Bottom{\ma{\bot}}
 \newbfop\Bot{\ma{\bot}}
-\newbfop\Keyword{Keyword}
+\newbfop\Keyword{K}
 \newbfop\Keywordhint{Keyword}
 \newbfop\Symbol{Symbol}
 \newbfop\Number{Number}
@@ -138,7 +144,7 @@
 \newmeta\protocol{P}
 \newmeta\k{k}
 \newmeta\num{n}
-\newmeta\b{b}
+\newmeta\bool{b}
 \newcommand\operatorfont[1]{\ma{{\mathsf{#1}}}}
 \newcommand\literalfont[1]{\ma{{\mathsf{#1}}}}
 \newcommand\nil[0]{{\literalfont{nil}}}
@@ -296,12 +302,15 @@
 \newcommand\extendopenv[3]{\ma{#1[#2 \mapsto #3]}}
 \newcommand\opsem[3]{\ma{#1 \vdash #2 \Downarrow #3}}
 \newcommand\notopsem[3]{\ma{#1 \not\vdash #2 \Downarrow #3}}
-\newcommand\closure[2]{\ma{[#1, #2]_{clos}}}
+\newcommand\closuresuffixliteral[0]{\metafunctionfont{clos}}
+\newcommand\closure[2]{\ma{[#1, #2]_{\closuresuffixliteral}}}
 % multimethod semantics
-\newcommand\multi[2]{\ma{[#1, #2]_{multi}}}
+\newcommand\multisuffixliteral[0]{\metafunctionfont{mm}}
+\newcommand\multi[2]{\ma{[#1, #2]_{\multisuffixliteral}}}
 \newcommand\emptydisptable[0]{\{\}}
-\newmeta\disptable{m}
-\newmeta\disptablep{m'}
+\newmeta\disptable{t}
+\newmeta\disptablep{t'}
+\newmeta\mapval{m}
 \newcommand\extenddisptable[3]{\ma{#1[#2 \mapsto #3]}}
 \newcommand\getmethodliteral[0]{\ma{\metafunctionfont{GetMethod}}}
 \newcommand\getmethod[3]{\getmethodliteral(#1, #2) = #3}
@@ -427,12 +436,12 @@
 \newcommand\replacefor[3]{\ma{#1 [#2 / #3]}}
 
 % Java type conversion functions
-\newcommand\javatotcliteral[0]{\ma{\metafnfont{JavaToTC}}}
+\newcommand\javatotcliteral[0]{\ma{\metafnfont{Convert}}}
 \newcommand\javatotcnilliteral[0]{\ma{\javatotcliteral_{\nil{}}}}
-\newcommand\javatotc[2]{\javatotcliteral(\ma{#1})\ =\ #2}
-\newcommand\javatotcnil[2]{\ma{\javatotcnilliteral(\ma{#1})\ =\ #2}}
-\newcommand\javatotcalign[2]{\javatotcliteral(\ma{#1})\ &=&\ #2}
-\newcommand\javatotcalignnil[2]{\javatotcliteral_{\nil{}}(\ma{#1})\ &=&\ #2}
+\newcommand\javatotc[2]{\javatotcliteral\ma{(#1)}\ =\ #2}
+\newcommand\javatotcnil[2]{\ma{\javatotcnilliteral\ma{(#1)}\ =\ #2}}
+\newcommand\javatotcalign[2]{\javatotcliteral\ma{(#1)}\ &=&\ #2}
+\newcommand\javatotcalignnil[2]{\javatotcliteral_{\nil{}}\ma{(#1)}\ &=&\ #2}
 
 % # Runtime semantics
 % ## Runtime class syntax
@@ -442,15 +451,16 @@
 
 % ## metafunction to invoke java
 % Class Target Method ArgTypes Args ReturnType ReturnValue
-\newcommand\invokejavamethodliteral[0]{\ma{JVM_{invokestatic}}}
+\newcommand\JVMliteral[0]{\ma{\metafunctionfont{JVM}}}
+\newcommand\invokejavamethodliteral[0]{\ma{\JVMliteral_{\metafunctionfont{invokestatic}}}}
 \newcommand\invokejavamethodnoeq[6]{\ma{\invokejavamethodliteral[#1, #2, #3, [#4], [#5], #6]}}
 \newcommand\invokejavamethod[7]{\ma{\invokejavamethodnoeq{#1}{#2}{#3}{#4}{#5}{#6} = #7}} % Class Args ReturnValue
 % Class ArgTypes Args ReturnValue
-\newcommand\newjavaliteral[0]{\ma{JVM_{new}}}
+\newcommand\newjavaliteral[0]{\ma{\JVMliteral_{\metafunctionfont{new}}}}
 \newcommand\newjavanoeq[3]{\ma{\newjavaliteral[#1, [#2], [#3]]}}
 \newcommand\newjava[4]{\ma{\newjavanoeq{#1}{#2}{#3} = #4}}
 % Class Target Field FieldType ReturnValue
-\newcommand\getfieldliteral[0]{\ma{JVM_{getstatic}}}
+\newcommand\getfieldliteral[0]{\ma{\JVMliteral_{\metafunctionfont{getstatic}}}}
 \newcommand\getfieldjavanoeq[4]{\ma{\getfieldliteral[#1, #2, #3, #4]}}
 \newcommand\getfieldjava[5]{\ma{\getfieldjavanoeq{#1}{#2}{#3}{#4} = #5}}
 % Class Target Bool
@@ -656,10 +666,10 @@
 \javatotc {\classhint{i}}
           {\t{i}}
           }
-  \\
+  \\\\
   \javatotc {\classhint{}}
             {\t{}}
-  \\
+  \\\\
   \overrightarrow{
   \judgementtwo {\propenv{}}
                     {\hastype {\e{i}} {\t{i}}}
@@ -674,13 +684,13 @@
 
 \newcommand\TFieldStatic[0]{
 \infer [T-FieldStatic]
-{ \javatotc {\classhint{1}} {\class{}}
-             \\
+{ \javatotc {\classhint{1}} {\s{}}
+             \\\\
   \javatotcnil {\classhint{2}} {\t{}}
-  \\
-  \judgementtwo {\propenv{}} {\hastype {\e{1}} {\class{}}}
+  \\\\
+  \judgementtwo {\propenv{}} {\hastype {\e{}} {\s{}}}
            }
-{ \judgement {\propenv{}} {\hastype {\fieldstaticexp {\classhint{1}} {\classhint{2}} {\fld{}} {\e{1}}} {\t{}}}
+{ \judgement {\propenv{}} {\hastype {\fieldstaticexp {\classhint{1}} {\classhint{2}} {\fld{}} {\e{}}} {\t{}}}
              {\filterset {\topprop{}} {\topprop}}
              {\emptyobject{}}}
          }
@@ -924,10 +934,12 @@
 \newcommand\singletonallsyntax[0]{
   \singletonmeta{}     &::=& \k{} 
                              \alt {\trdiff{\class{}}}
-                             \alt {\trdiff{\Nil}}
-                             \alt {\True}
-                             \alt {\False}
-                &\mbox{Value types}
+                             \alt {\trdiff{\nil}}
+                             \alt \bool{}
+                &\mbox{Value types}\\
+  \bool{}              &::=& 
+                             {\true} \alt {\false}
+                &\mbox{Boolean values}
               }
 
 % common operational semantics
@@ -1042,7 +1054,7 @@
 { \opsem {\openv{}}
          {\e{f}}
          {\multi {\v{d}} {\disptable{}}}
-         \\
+         \\\\
   \opsem {\openv{}}
          {\e{a}}
          {\v{a}}
@@ -1054,7 +1066,7 @@
   \getmethod {\disptable{}}
              {\v{e}}
              {\roundpair{\v{k}}{\v{f}}}
-         \\
+         \\\\
   \opsem {\openv{}}
          {\appexp {\v{f}} {\v{a}}}
          {\v{}}
@@ -1095,11 +1107,12 @@ $$
      \newcommand\BDefMulti[0]{
 \infer [B-DefMulti]
 { \opsem {\openv{}} {\e{d}} {\v{d}}
+  \\ \v{} = {\multi {\v{d}} {\emptydisptable}}
 }
 {\opsem {\openv{}}
         {\createmultiexp {\t{}}
                          {\e{d}}}
-        {\multi {\v{d}} {\emptydisptable}}
+        {\v{}}
 }
      }
 
@@ -1144,7 +1157,7 @@ $$
 { \opsem {\openv{}}
          {\e{}} 
        {\v{1}}
-         \\
+         \\\\
          \getfieldjava{\classhint{1}} {\v{1}} {\fld{}} {\classhint{2}} {\v{}}
        }
 { \opsem {\openv{}}
@@ -1184,7 +1197,7 @@ $$
          {\e{i}}
          {\v{i}}
        }
-         \\
+         \\\\
          \newjava {\classhint{1}}
                   {\overrightarrow{\classhint{i}}}
                   {\overrightarrow{\v{i}}}
@@ -1199,17 +1212,19 @@ $$
 \newcommand\BAssoc[0]{
 \infer [B-Assoc]
 {\opsem {\openv{}}
-        {\e{m}} {\curlymapvaloverright{\v{a}}{\v{b}}}
-        \\
+        {\e{}} {\mapval{}}
+        \\\\
  \opsem {\openv{}} {\e{k}} {\k{}}
         \\
  \opsem {\openv{}} {\e{v}} {\v{v}}
+ \\\\
+ {\v{}} = {\extendmap{\mapval{}}
+                {\k{}}{\v{v}}}
 }
 {
  \opsem {\openv{}}
-        {\assocexp {\e{m}} {\e{k}} {\e{v}}} 
-        {\extendmap{\curlymapvaloverright{\v{a}}{\v{b}}}
-                {\k{}}{\v{v}}}
+        {\assocexp {\e{}} {\e{k}} {\e{v}}} 
+      {\v{}}
                 }
               }
 
@@ -1217,21 +1232,21 @@ $$
 \newcommand\BGet[0]{
 \infer [B-Get]
 {\opsem {\openv{}}
-        {\e{m}} {\curlymapvaloverright{\v{a}}{\v{b}}}
-        \\
+        {\e{}} {\mapval{}}
+        \\\\
  \opsem {\openv{}}
-        {\e{k}} {\k{}}
+        {\ep{}} {\k{}}
         \\\\
- \keyinmap{\k{}}{\curlymapvaloverright{\v{a}}{\v{b}}}
+ \keyinmap{\k{}}{\mapval{}}
         \\\\
- \getmap{\curlymapvaloverright{\v{a}}{\v{b}}}
+ \getmap{\mapval{}}
         {\k{}}
         =
         {\v{}}
 }
 {
  \opsem {\openv{}}
-        {\getexp {\e{m}} {\e{k}}}
+        {\getexp {\e{}} {\ep{}}}
         {\v{}}
 }
 }
@@ -1239,16 +1254,16 @@ $$
 \newcommand\BGetMissing[0]{
 \infer [B-GetMissing]
 {\opsem {\openv{}}
-        {\e{m}} {\curlymapvaloverright{\v{a}}{\v{b}}}
+        {\e{}} {\mapval{}}
         \\\\
  \opsem {\openv{}}
-        {\e{k}} {\k{}}
+        {\ep{}} {\k{}}
         \\\\
- \keynotinmap{\k{}}{\curlymapvaloverright{\v{a}}{\v{b}}}
+ \keynotinmap{\k{}}{\mapval{}}
 }
 {
  \opsem {\openv{}}
-        {\getexp {\e{m}} {\e{k}}}
+        {\getexp {\e{}} {\ep{}}}
         {\nil{}}
 }
 }
@@ -1260,7 +1275,6 @@ $$
 \infer [SO-Refl]
 {}
 { \issubobjin {} {\object{}} {\object{}}}
-
 
 \infer [SO-Top]
 {}
@@ -1282,6 +1296,40 @@ $$
 \infer [S-UnionSub]
 { {\overrightarrow {\issubtypein {} {\t{i}} {\s{}}}}^{i}}
 { \issubtypein {} {\Unionsplice{\overrightarrow{\t{}}^{i}}} {\s{}}}
+
+\infer [S-SKw]
+{}
+{\issubtypein {}
+  {\ValueKw}
+  {\Keyword}}
+
+\infer [S-FunMono]
+{}
+{\issubtypein {}
+  {\ArrowOne {\x{}} {\s{}}
+             {\t{}}
+             {\filterset {\thenprop{\prop{}}}
+                         {\elseprop{\prop{}}}}
+             {\object{}}}
+  {\IFn{}}}
+
+\infer [S-Object]
+{}
+{\issubtypein {}
+  {\class{}}
+  {\Object{}}}
+
+\infer [S-SClass]
+{}
+{\issubtypein {}
+  {\ValueClass}
+  {\Class{}}}
+
+\infer [S-SBool]
+{}
+{\issubtypein {}
+  {\ValueBool}
+  {\Boolean{}}}
 
 \infer [S-Fun]
 { \issubtypein {} {\sp{}} {\s{}}
@@ -1306,47 +1354,7 @@ $$
                           {\elseprop {\propp{}}}}
               {\objectp{}}}}
 
-\infer [S-SKw]
-{}
-{\issubtypein {}
-  {\Value{\k{}}}
-  {\Keyword}}
 
-\infer [S-SClass]
-{}
-{\issubtypein {}
-  {\Value{\class{}}}
-  {\Class{}}}
-
-\infer [S-STrue]
-{}
-{\issubtypein {}
-  {\Value{\True}}
-  {\Boolean{}}}
-
-\infer [S-SFalse]
-{}
-{\issubtypein {}
-  {\Value{\False}}
-  {\Boolean{}}}
-
-
-\infer [S-Object]
-{}
-{\issubtypein {}
-  {\class{}}
-  {\Object{}}}
-
-
-\infer [S-FunMono]
-{}
-{\issubtypein {}
-  {\ArrowOne {\x{}} {\s{}}
-             {\t{}}
-             {\filterset {\thenprop{\prop{}}}
-                         {\elseprop{\prop{}}}}
-             {\object{}}}
-  {\IFn{}}}
 
 }
 
@@ -1376,12 +1384,6 @@ $$
 }
 
 \newcommand\Multisubtyping[0]{
-\infer [S-PMulti]
-{ \issubtypein {} {\s{}} {\sp{}}
-  \\
-  \issubtypein {} {\t{}} {\tp{}}}
-{ \issubtypein {} {\MultiFntype {\s{}} {\t{}}}{\MultiFntype {\sp{}} {\tp{}}}}
-
 \infer [S-PMultiFn]
 { \issubtypein {}
   {\s{t}}
@@ -1389,7 +1391,7 @@ $$
                                   {\filterset {\thenprop {\prop{}}}
                                               {\elseprop {\prop{}}}}
                                       {\object{}}}
-                                      \\
+                                      \\\\
   \issubtypein {}
   {\s{d}}
   {\ArrowOne {\x{}} {\s{}} {\tp{}}
@@ -1402,6 +1404,11 @@ $$
                              {\filterset {\thenprop {\prop{}}}
                                          {\elseprop {\prop{}}}}
                              {\object{}}}}
+\infer [S-PMulti]
+{ \issubtypein {} {\s{}} {\sp{}}
+  \\
+  \issubtypein {} {\t{}} {\tp{}}}
+{ \issubtypein {} {\MultiFntype {\s{}} {\t{}}}{\MultiFntype {\sp{}} {\tp{}}}}
 
 \infer [S-MultiMono]
 {}
