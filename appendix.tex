@@ -1,0 +1,45 @@
+\counterwithin{figure}{section}
+\counterwithin{assumption}{section}
+\counterwithin{theorem}{section}
+\counterwithin{lemma}{section}
+\counterwithin{definition}{section}
+
+\onecolumn
+\appendix
+
+\input{proof}
+
+\input{syntax-figure}
+
+\input{typing-rules}
+
+\input{tools-analyzer-figure}
+
+\input{subtyping}
+
+%$$
+%\begin{tdisplay}{Evaluation Contexts}
+%  \begin{altgrammar}
+%    \E{} &::=& [ ] % application rules
+%              \alt (\c{}\ \overrightarrow{\v{}}\ \E{}\ \overrightarrow{\exp{}}) % eval arguments left-to-right
+%              % map rules
+%              \alt \{\overrightarrow{\v{}\ \v{}}\ \E{}\ \exp{}\ \overrightarrow{\exp{}\ \exp{}} \} % key first
+%              \alt \{\overrightarrow{\v{}\ \v{}}\ \v{}\ \E{}\ \overrightarrow{\exp{}\ \exp{}} \}   % value next
+%              &\mbox{Evaluation Contexts}
+%  \end{altgrammar}
+%\end{tdisplay}
+%$$ 
+
+\input{convert-types-figure}
+\input{constant}
+
+\input{isa-figure}
+\input{get-method}
+
+\clearpage
+
+\input{operational-semantics}
+\input{update}
+\input{satisfaction}
+\input{proof-system}
+\input{subst}
