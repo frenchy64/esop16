@@ -24,29 +24,33 @@ of a core language, be it of functions or classes and objects,
 together with extensions to handle distinctive language features.
 
 
-Programming is an error prone activity, especially in the presence of
-multiple languages working together. Over the past decade, it has
-become increasingly frequent to extend existing dynamically typed
-languages with optional type systems.  The guarantees that a sound
-type system provides can be the difference between choosing a language
-that supports a type system or one that does not.
+We synthesize these lessons to present \emph{Typed Clojure}, an
+optional type system for Clojure. Typed Clojure builds on the core
+type checking approach of Typed Racket, an existing gradual type
+system for Racket. However, Typed Clojure extends this basic framework
+in multiple ways to accommodate the unique idioms and features of
+Clojure, producing an expressive synthesis of ideas and demonstrating
+a surprising coincidence between the multiple dispatch approach of
+Clojure and the occurrence typing framework of Typed Racket. 
 
-% presenting clojure
+The essence of Typed Clojure, of course, is Clojure, a dynamically
+typed language in the Lisp family built to run on the Java Virtual
+Machine (JVM) which has recently gained popularity as an alternative
+JVM language.  It offers the flexibility of a Lisp dialect, including
+macros, emphasizes a functional style via a
+standard library of immutable data structures, and provides
+interoperability with existing Java code, allowing programmers to use
+existing Java libraries without leaving Clojure.
+%
+Since its initial release in 2007, Clojure has been widely adopted for
+``backend'' development in places where its support for paralleism,
+functional programming, and Lisp-influenced abstraction is desired on
+the JVM. As a result, it now has an extensive base of existing untyped
+programs, many of whose developers can benefit from Typed Clojure. As
+a result, Typed Clojure is now used in industry, experience we discuss
+in this paper.
 
-Clojure is a dynamically typed language built to run on the Java Virtual Machine (JVM)
-which has recently gained popularity as an alternative JVM language.
-It offers the flexibility of a Lisp dialect, including Common Lisp-style macros,
-emphasising a functional style via a standard library of immutable datastructures. 
-Clojure has good interoperability with existing Java code, allowing programmers to
-use existing Java libaries without leaving Clojure.
-
-%problem?
-
-Clojure
-
-Typed Clojure is a gradual type system for Clojure, based on the
-static portion of Typed Racket.
-
+\begin{figure}
 \begin{minted}[]{clojure}
 (ann parent [(U nil File) -> (U nil File)])
 (defn parent [^File f]
@@ -55,6 +59,26 @@ static portion of Typed Racket.
       (assert s "Expected parent string, got nil")
       (new File s))))
 \end{minted}
+\caption{A simple Typed Clojure program}
+\label{fig:ex1}
+\end{figure}
+Figure~\ref{fig:ex1} presents a simple program demonstrating several
+aspects of our system, from simple type annotations to explicit
+handling of Java's \texttt{null} in interoperation, as well as an
+extended form of occurrence typing and Clojure's \emph{type hints},
+which are central to Typed Clojure's approach to interoperability. 
+
+In the remainder of this paper, we describe Typed Clojure's central
+innovations, including Java interoperability, multimethods, and
+heterogenously-typed immutable maps, following an example-driven
+presentation in Section~\ref{sec:overview}. We then incrementatlly
+present a core calculus for Typed Clojure covering all of these
+features together in Section~\ref{sec:formal} and prove type
+soundness(section \ref{sec:sound}). We then discuss the full
+implementation of Typed Clojure, dubbed \texttt{core.typed}, which
+extends the formal model in many ways, and the experience gained from
+its use in Section~\ref{sec:exp}. Finally, we discuss related work and
+conclude. 
 
 %$$
 %\abs{\x{}}{\Union{\Nil}{\File}}
@@ -78,34 +102,34 @@ static portion of Typed Racket.
 %    (.getParent f)))
 %\end{lstlisting}
 
-\begin{minted}[]{clojure}
-(defalias Expr
-  (U '{:op :if :test Expr :then Expr :else Expr}
-     '{:op :const :val Any} ...))
-(ann tree-str [Expr -> String])
-(defmulti tree-str (fn [e :- Expr] (get :op e)))
-(defmethod tree-str :if [{:keys [test then else]}] 
-  (str (tree-str test) (tree-str then) (tree-str else)))
-(defmethod tree-str :const [{:keys [val]}] 
-  (str val))
-\end{minted}
+%% \begin{minted}[]{clojure}
+%% (defalias Expr
+%%   (U '{:op :if :test Expr :then Expr :else Expr}
+%%      '{:op :const :val Any} ...))
+%% (ann tree-str [Expr -> String])
+%% (defmulti tree-str (fn [e :- Expr] (get :op e)))
+%% (defmethod tree-str :if [{:keys [test then else]}] 
+%%   (str (tree-str test) (tree-str then) (tree-str else)))
+%% (defmethod tree-str :const [{:keys [val]}] 
+%%   (str val))
+%% \end{minted}
 
-\subsection{Contributions}
+%% \subsection{Contributions}
 
-%The main idea is....... SPJ
-In this paper we present a practical type system for Clojure.
+%% %The main idea is....... SPJ
+%% In this paper we present a practical type system for Clojure.
 
-\begin{itemize}
+%% \begin{itemize}
 
-  \item We formalise Typed Clojure and prove that typed code
-    \begin{itemize}
-      \item disallows null-pointer exceptions, (Section ?)
-      \item statically resolves Java interoperability (Section ?)
-    \end{itemize}
-  \item We reveal the surprising synthesis between Clojure multimethods
-        and occurrence typing.
-  \item We 
-\end{itemize}
+%%   \item We formalise Typed Clojure and prove that typed code
+%%     \begin{itemize}
+%%       \item disallows null-pointer exceptions, (Section ?)
+%%       \item statically resolves Java interoperability (Section ?)
+%%     \end{itemize}
+%%   \item We reveal the surprising synthesis between Clojure multimethods
+%%         and occurrence typing.
+%%   \item We 
+%% \end{itemize}
 
 % what are the goals of Typed Clojure?
 % where do they differ from Typed Racket? why?
