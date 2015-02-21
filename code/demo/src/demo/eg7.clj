@@ -1,20 +1,7 @@
-(ns demo.core
-  (:require [clojure.core.typed :as t]))
-
-;; Multimethod Variant identity
-(t/defalias E (t/U '[':if E E E]
-                   '[':do E E]
-                   '[':val t/Any]))
-(t/ann variant [E -> E])
-(defmulti variant first)
-(defmethod variant :if [[_ test then else]]
-  [:if test then else])
-(defmethod variant :do [[_ e1 e2]]
-  [:do e1 e2])
-(defmethod variant :val [[_ v]]
-  [:val v])
-
-(variant [:if [:val 1] [:do [:val 2] [:val 3]] [:val 4]])
+(ns demo.eg7
+  (:require [clojure.core.typed :as t]
+            [demo.eg5 :refer [M]]
+            [demo.eg6 :refer [E]]))
 
 ;; Multimethod variant+map double dispatch
 (t/defalias C (t/U '{:op ':if :test C :then C :else C}
@@ -23,7 +10,8 @@
 (t/ann change [M E -> C])
 (defmulti change (t/fn [m :- M, v :- E] 
                    [(:op m) (first v)]))
-(defmethod change [:if :if] [{:keys [test then else]} [_ vtest vthen velse]]
+(defmethod change [:if :if] 
+  [{:keys [test then else]} [_ vtest vthen velse]]
   {:op :if
    :test (change test vtest)
    :then (change then vthen)
@@ -41,3 +29,4 @@
                 :e2 {:op :val :val 3}}
          :else {:op :val :val 4}}
         [:if [:val 1] [:do [:val 2] [:val 3]] [:val 4]])
+
