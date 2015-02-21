@@ -25,4 +25,6 @@
     (is (check-ns 'demo.eg7)))
   (testing "file parent"
     (is (check-ns 'demo.parent)))
+  (testing "file parent with aliasing"
+    (is (check-ns 'demo.parent2)))
   )
