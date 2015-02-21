@@ -796,7 +796,7 @@
 \newcommand\TAssoc[0]{
 \infer [T-AssocHMap]
 { 
-  \judgementtwo {\propenv{}} {\hastype {\e{m}} {\HMapgeneric {\mandatory{}} {\absent}}}
+  \judgementtwo {\propenv{}} {\hastype {\e{}} {\HMapgeneric {\mandatory{}} {\absent}}}
   \\
   \judgementtwo {\propenv{}} {\hastype {\e{k}} {\Value{\k{}}}}
   \\
@@ -805,7 +805,7 @@
   {\k{}} \not\in {\absent{}}
 }
 { \judgement {\propenv{}} 
-             {\hastype {\assocexp {\e{m}} {\e{k}} {\e{v}}}
+             {\hastype {\assocexp {\e{}} {\e{k}} {\e{v}}}
                        {\HMapgeneric {\extendmandatoryset {\mandatory{}}{\k{}}{\t{}}} {\absent}}}
              {\filterset {\topprop{}} {\botprop{}}}
              {\emptyobject{}}
@@ -814,16 +814,14 @@
 
 \newcommand\TGetHMap[0]{
 \infer [T-GetHMap]
-{ \judgement {\propenv{}} 
-  {\hastype {\e{m}} {\Unionsplice {{\overrightarrow {\HMapgeneric {\mandatory{}} {\absent{}}}}^i}}}
-           {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}}
-           {\object{}}
+{ \judgementtwo {\propenv{}} 
+  {\hastype {\e{}} {\Unionsplice {{\overrightarrow {\HMapgeneric {\mandatory{}} {\absent{}}}}^i}}}
            \\
   \judgementtwo {\propenv{}} {\hastype {\e{k}} {\Value {k}}}
              \\
              {\overrightarrow{\inmandatory{\k{}}{\t{}}{\mandatory{}}}}^i
        }
-{ \judgement {\propenv{}} {\hastype {\getexp {\e{m}} {\e{k}}} {\Unionsplice {{\overrightarrow {\t{}}}^i}}}
+{ \judgement {\propenv{}} {\hastype {\getexp {\e{}} {\e{k}}} {\Unionsplice {{\overrightarrow {\t{}}}^i}}}
              {\filterset {\topprop{}} {\topprop{}}}
              {\replacefor {\path {\keype{k}} {\x{}}}
                           {\object{}}
@@ -833,15 +831,13 @@
 
 \newcommand\TGetAbsent[0]{
 \infer [T-GetHMapAbsent]
-{ \judgement {\propenv{}} {\hastype {\e{m}} {\HMapgeneric {\mandatory{}} {\absent}}}
-           {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}}
-           {\object{}}
+{ \judgementtwo {\propenv{}} {\hastype {\e{}} {\HMapgeneric {\mandatory{}} {\absent}}}
          \\
   \judgementtwo {\propenv{}} {\hastype {\e{k}} {\Value {k}}}
              \\
              {\inabsent{\k{}}{\absent{}}}
        }
-{ \judgement {\propenv{}} {\hastype {\getexp {\e{m}} {\e{k}}}
+{ \judgement {\propenv{}} {\hastype {\getexp {\e{}} {\e{k}}}
                                     {\Nil{}}}
              {\filterset {\topprop{}} {\topprop{}}}
              {\replacefor
@@ -853,17 +849,15 @@
 
 \newcommand\TGetHMapPartialDefault[0]{
 \infer [T-GetHMapPartialDefault]
-{ \judgement {\propenv{}} {\hastype {\e{m}} {\HMapp {\mandatory{}} {\absent}}}
-           {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}}
-           {\object{}}
+{ \judgementtwo {\propenv{}} {\hastype {\e{}} {\HMapp {\mandatory{}} {\absent}}}
          \\
   \judgementtwo {\propenv{}} {\hastype {\e{k}} {\Value {k}}}
-             \\\\
+             \\
              {\notinmandatory{\k{}}{\t{}}{\mandatory{}}}
              \\
              {\notinabsent{\k{}}{\absent{}}}
        }
-{ \judgement {\propenv{}} {\hastype {\getexp {\e{m}} {\e{k}}}
+{ \judgement {\propenv{}} {\hastype {\getexp {\e{}} {\e{k}}}
                                     {\Top{}}}
              {\filterset {\topprop{}} {\topprop{}}}
              {\replacefor
@@ -1931,4 +1925,59 @@ then \judgement{}{\hastype{\v{}}{\t{}}}{\filterset{\thenprop{\propp{}}}{\elsepro
 
   $\forall \v{} \in rng(\openv{})$, \consistentwith{\v{}}{\openv{}}.
 \end{definition}
+}
+
+% class table lookup
+\newcommand\classtablelookupfigure[0]{
+\begin{figure*}
+$$
+\begin{altgrammar}
+
+  \methodtypealign
+  {\ct{}}
+  {\classhint{}}
+  {\mth{}}
+  {\overrightarrow{\classhint{p}}}
+  {\classhint{}}
+  {\overrightarrow{\classhint{p}}}
+  {\classhint{r}}
+  & \text{if}\ \ctmthentry{\mth{}}{\overrightarrow{\classhint{p}}}{\classhint{r}} \in {\ctlookupmethods{\ct{}}{\classhint{}}}
+      \\
+  \fieldtypealign 
+  {\ct{}}
+  {\classhint{}}
+  {\fld{}}
+  {\classhint{}}
+  {\classhint{f}}
+  & \text{if}\ \ctfldentry{\fld{}}{\classhint{f}} \in {\ctlookupfields{\ct{}}{\classhint{}}}
+      \\
+  \ctorparamsalign 
+      {\ct{}}
+      {\classhint{}}
+      {\overrightarrow{\class{p{}}}}
+      {\overrightarrow{\class{p{}}}}
+  & \text{if}\ \ctctorentry{\overrightarrow{\class{p{}}}} \in {\ctlookupctors{\ct{}}{\classhint{}}}
+\end{altgrammar}
+$$
+\caption{Class table lookup}
+\end{figure*}
+}
+
+% convert Java types
+\newcommand\convertjavatypefigure[1]{
+\begin{#1}
+$$
+\begin{altgrammar}
+\javatotcalign {\Void{}} {\Nil}
+\\
+\javatotcalignnil {\Void{}} {\Nil}
+\\
+\javatotcalign {\class{}} \class{}
+\\
+\javatotcalignnil {\class{}} {\Union {\Nil} {\class{}}}
+
+\end{altgrammar}
+$$
+\caption{Java Type Conversion}
+\end{#1}
 }

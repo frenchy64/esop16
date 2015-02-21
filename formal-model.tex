@@ -19,7 +19,7 @@ The propositions inform conditionals on what they can assume down the then and e
 branches if the expression is used as a test.
 The object is a possibly-empty symbolic representation of the expression.
 
-Syntax is given in figure~\ref{figure:termsyntax}. Expressions include variables, values,
+Syntax is given in figure~\ref{main:figure:termsyntax}. Expressions include variables, values,
 application, abstractions, conditionals, do (sequencing) expressions and let expressions.
 We model throwable errors without a catching mechanism. All binding forms introduce fresh
 variables.
@@ -40,15 +40,15 @@ Type propositions contain a non-empty object which it claims type information ab
 
 Proposition environments are sequences of propositions in conjunctive normal form.
 
-Typing rules are in figure~\ref{figure:typingrules}.
+Typing rules are in figure~\ref{main:figure:typingrules}.
 T-Error neither returns logically true or false as it does not return normally.
 T-Do uses the propositions learnt in the first expression to type check the second.
 Other than compensating for the extra logically false value \nil{}, the rest are standard.
 
-Figure~\ref{figure:standardopsem} contains the operational semantics, which are standard
+Figure~\ref{main:figure:standardopsem} contains the operational semantics, which are standard
 except for \nil{} being false.
 
-Subtyping (figure~\ref{figure:subtyping}) says singleton types are instances of their respective classes
+Subtyping (figure~\ref{main:figure:subtyping}) says singleton types are instances of their respective classes
 and \Object is transitively a supertype to everything except {\Nil{}},
 so \Top{} = {\Union{\Nil}{\Object}}.
 
@@ -93,7 +93,7 @@ $$
 \end{altgrammar}
 $$
 \caption{Syntax of Terms, Types, Propositions and Objects}
-\label{figure:termsyntax}
+\label{main:figure:termsyntax}
 \end{figure*}
 
 \begin{figure*}
@@ -126,7 +126,7 @@ $$
     {\TSubsume}
   \end{mathpar}
   \caption{Typing rules}
-  \label{figure:typingrules}
+  \label{main:figure:typingrules}
 \end{figure*}
 
 \begin{figure*}
@@ -151,7 +151,7 @@ $$
     \BDelta{}
   \end{mathpar}
   \caption{Operational Semantics}
-  \label{figure:standardopsem}
+  \label{main:figure:standardopsem}
 \end{figure*}
 
 \begin{figure*}
@@ -160,7 +160,7 @@ $$
 \standardsubtyping{}
 \end{mathpar}
 \caption{Subtyping rules}
-\label{figure:subtyping}
+\label{main:figure:subtyping}
 \end{figure*}
 
 \subsection{\doliteral{}}
@@ -179,7 +179,7 @@ roughly expands to
       (inc x)))
 \end{minted}
 
-With an elegant extension in T-Do (figure~\ref{figure:typingrules}) we can follow this reasoning
+With an elegant extension in T-Do (figure~\ref{main:figure:typingrules}) we can follow this reasoning
 to infer \mintinline{clojure}{(inc x)} is safe. The main insight is we can assume the
 disjunction of the propositions of the first \doliteral{} argument while checking the second.
 
@@ -200,7 +200,7 @@ so T-Local says \mintinline{clojure}{x} is a \Number.
 One interesting Clojure function we modeled is \isaliteral.
 It takes two arguments, and returns \true{} if they are the same (equality mode)
 or if they are both classes and the left is a subtype of the right (subclassing mode),
-otherwise returns \false{}, as described in figure~\ref{figure:isasemantics}.
+otherwise returns \false{}, as described in figure~\ref{main:figure:isasemantics}.
 
 For example, {\isaapp{\Keyword}{\Object}} = \true{} but 
 {\isaapp{\Object}{\Keyword}} = \false{}.
@@ -210,7 +210,7 @@ is a test for \x{} being a \Keyword{}, and also
 as an equality test like
 {\isaapp{\x{}}{\makekw{a}}}.
 
-We encode this behaviour in figure~\ref{figure:isatyping}. 
+We encode this behaviour in figure~\ref{main:figure:isatyping}. 
 \isacompareliteral{} is the interesting part,
 which takes the object of the first argument 
 and the type of the second argument, and returns the then and else propositions
@@ -245,7 +245,7 @@ The final case gives up; we cannot distinguish between equality and subclassing 
     \BIsA{}
   \end{mathpar}
   \caption{\isaliteral{} semantics}
-  \label{figure:isasemantics}
+  \label{main:figure:isasemantics}
 \end{figure}
 
 \begin{figure}
@@ -256,7 +256,7 @@ The final case gives up; we cannot distinguish between equality and subclassing 
     \TIsA{}
   \end{mathpar}
   \caption{\isaliteral{} typing rules}
-  \label{figure:isatyping}
+  \label{main:figure:isatyping}
 \end{figure}
 
 
@@ -277,7 +277,7 @@ $$
 \end{altgrammar}
 $$
 \caption{Multimethod Syntax}
-\label{figure:mmsyntax}
+\label{main:figure:mmsyntax}
 \end{figure*}
 
 \begin{figure}
@@ -288,7 +288,7 @@ $$
     \TDefMethod{}
   \end{mathpar}
   \caption{Multimethod typing rules}
-  \label{figure:mmtyping}
+  \label{main:figure:mmtyping}
 \end{figure}
 
 \begin{figure}
@@ -297,7 +297,7 @@ $$
     \Multisubtyping{}
   \end{mathpar}
   \caption{Multimethod subtyping rules}
-  \label{figure:mmsubtype}
+  \label{main:figure:mmsubtype}
 \end{figure}
 
 
@@ -312,7 +312,7 @@ $$
     \BBetaMulti{}
   \end{mathpar}
   \caption{Multimethod semantics}
-  \label{figure:mmsemantics}
+  \label{main:figure:mmsemantics}
 \end{figure}
 
 A multimethod in Clojure is a function with a dispatch mechanism to
@@ -330,7 +330,7 @@ They are called like regular functions.
 \end{minted}
 
 To ease presentation, we present \emph{immutable}
-multimethods (figure~\ref{figure:mmsyntax}). \defmethodliteral{} returns a new extended multimethod
+multimethods (figure~\ref{main:figure:mmsyntax}). \defmethodliteral{} returns a new extended multimethod
 without changing the original multimethod. The above is now written
 
 %$\letexp{foo}{\defmultiexp {\ArrowOne{\x{}}{\Top}{\mintinline{clojure}{String}}{\filterset{\topprop{}}{\topprop{}}}{\emptyobject{}}}
@@ -344,20 +344,20 @@ without changing the original multimethod. The above is now written
   (foo :a)) ;=> "a"
 \end{minted}
 
-Multimethod semantics are in figure~\ref{figure:mmsemantics}.
+Multimethod semantics are in figure~\ref{main:figure:mmsemantics}.
 B-DefMulti creates a multimethod with a dispatch function and an empty dispatch table.
 B-DefMethod returns a new multimethod with an extended dispatch table.
 B-BetaMulti invokes the dispatch function with the evaluated argument to get the dispatch value,
 which \getmethodliteral{} uses to choose the method to invoke.
 
-The typing rules (figure~\ref{figure:mmtyping}) use the multimethod type {\MultiFntype{\s{}}{\t{}}}, 
+The typing rules (figure~\ref{main:figure:mmtyping}) use the multimethod type {\MultiFntype{\s{}}{\t{}}}, 
 where \s{} is the interface type for beta reduction, and \t{} is the type for
 the dispatch function. T-DefMulti uses the provided interface type and dispatch function
 to infer the multimethod type. T-DefMethod uses \isacompareliteral{} to infer the proposition
 that must be true if this method is being invoked. The example can be type checked without
 changes since we infer \isprop{\Number}{\x{}} and \isprop{\Keyword}{\x{}} for the respective
 method bodies. T-App handles beta reduction because multimethods are subtypes of functions
-(figure~\ref{figure:mmsubtype}).
+(figure~\ref{main:figure:mmsubtype}).
 
 \subsection{Heterogenous maps}
 
@@ -375,7 +375,7 @@ method bodies. T-App handles beta reduction because multimethods are subtypes of
   \end{altgrammar}
   $$
   \caption{HMap Terms and Types}
-  \label{figure:hmapsyntax}
+  \label{main:figure:hmapsyntax}
 \end{figure}
 
 \begin{figure}
@@ -388,7 +388,7 @@ method bodies. T-App handles beta reduction because multimethods are subtypes of
     {\BGetMissing}
   \end{mathpar}
   \caption{HMap Semantics}
-  \label{figure:hmapsem}
+  \label{main:figure:hmapsem}
 \end{figure}
 
 \begin{figure}
@@ -403,7 +403,7 @@ method bodies. T-App handles beta reduction because multimethods are subtypes of
     {\TAssoc}
   \end{mathpar}
   \caption{HMap Typing Rules}
-  \label{figure:hmaptyping}
+  \label{main:figure:hmaptyping}
 \end{figure}
 
 \begin{figure}
@@ -412,12 +412,12 @@ method bodies. T-App handles beta reduction because multimethods are subtypes of
     \HMapsubtyping{}
   \end{mathpar}
   \caption{HMap subtyping rules}
-  \label{figure:hmapsubtype}
+  \label{main:figure:hmapsubtype}
 \end{figure}
 
 It is common in Clojure to use plain immutable hash maps to represent ad-hoc
 objects with a known set of keyword entries. We use \HMapliteral{}
-types (figure~\ref{figure:hmapsyntax}) to track known present, known absent and unknown keyword entries.
+types (figure~\ref{main:figure:hmapsyntax}) to track known present, known absent and unknown keyword entries.
 
 The metavariable \completenessmeta{} tracks whether a HMap is fully ({\complete{}}) or partially ({\partial{}})
 specified. \mandatory{} specifies a set of known present keyword entries, \absent{} tracks known absent keyword
@@ -429,17 +429,17 @@ To simplify presentation, we only allow the empty map literal and
 restrict lookup and extension to keyword keys. The runtime value of maps {\curlymapvaloverright{\k{}}{\v{}}}
 is not part of the language syntax.
 
-Figure~\ref{figure:hmapsem} shows the semantics for HMaps, where B-Get returns the associated
+Figure~\ref{main:figure:hmapsem} shows the semantics for HMaps, where B-Get returns the associated
 entry if it is present and B-GetMissing returns \nil{} otherwise. B-Assoc returns a new extended
 map.
 
-Typing rules are given in figure~\ref{figure:hmaptyping}. T-GetHMap handles the simple
+Typing rules are given in figure~\ref{main:figure:hmaptyping}. T-GetHMap handles the simple
 case where we know a lookup will succeed and use B-Get. In T-GetHMapAbsent we know B-GetMissing will give
 a \Nil{} return type.
 T-GetHMapPartialDefault does not know if the key is present or absent and has a \Top{} return type.
 T-Assoc extends the known keyword entries, overwriting previous entries with the same key.
 
-S-HMap (figure~\ref{figure:hmapsubtype}) says that HMap subtypes must have all present entries to also be
+S-HMap (figure~\ref{main:figure:hmapsubtype}) says that HMap subtypes must have all present entries to also be
 subtypes and also cover the absent keys.
 Complete maps are subtypes of partial maps by S-HMapP.
 
@@ -455,7 +455,7 @@ Complete maps are subtypes of partial maps by S-HMapP.
   \end{altgrammar}
   $$
   \caption{Java Interoperability Terms and Types}
-  \label{figure:reflectivesyntax}
+  \label{main:figure:reflectivesyntax}
 \end{figure*}
 
 Clojure supports interoperability with Java, including the ability to
@@ -464,11 +464,11 @@ these operations in a restricted setting without class inheritance,
 overloading or Java Generics. 
 
 We extend the external language with Java field lookups and calls to
-methods and constructors (figure~\ref{figure:nonreflectivesyntax}).
+methods and constructors (figure~\ref{main:figure:nonreflectivesyntax}).
 There are no typing or evaluation rules for these syntaxes because
 Typed Clojure must be convinced that Java interactions are \emph{non-reflective},
 ie., are unambiguously resolved at compile-time. Programmers use
-type hinted expressions (figure~\ref{figure:nonreflectivesyntax}) 
+type hinted expressions (figure~\ref{main:figure:nonreflectivesyntax}) 
 to help the compiler eliminate reflection.
 
 \begin{figure*}
@@ -487,7 +487,7 @@ to help the compiler eliminate reflection.
   \end{altgrammar}
   $$
   \caption{Internal Language Reflection Resolution Extensions}
-  \label{figure:nonreflectivesyntax}
+  \label{main:figure:nonreflectivesyntax}
 \end{figure*}
 
 \begin{figure*}
@@ -505,8 +505,8 @@ to help the compiler eliminate reflection.
 
     \RLetHint{}
   \end{mathpar}
-\caption{Reflection Elimination}
-\label{figure:rewrite}
+\caption{Reflection Elimination (select rules, figure~\ref{appendix:figure:rewrite} for full rules)}
+\label{main:figure:rewrite}
 \end{figure*}
 
 \begin{figure*}
@@ -522,8 +522,8 @@ to help the compiler eliminate reflection.
 
     \TALet{}
   \end{mathpar}
-\caption{Type Hint Inference}
-\label{figure:hintinfer}
+\caption{Type Hint Inference (select rules, figure~\ref{appendix:figure:hintinfer} for full rules)}
+\label{main:figure:hintinfer}
 \end{figure*}
 
 \begin{figure}
@@ -548,7 +548,7 @@ to help the compiler eliminate reflection.
     {\TMethodStatic}
   \end{mathpar}
   \caption{Java Interoperability Typing Rules}
-  \label{figure:javatyping}
+  \label{main:figure:javatyping}
 \end{figure}
 
 Clojure supports \emph{type hints}, an optional type system to improve performance
@@ -559,13 +559,13 @@ and the programmer is free to add them where they like.
 
 core.typed uses tools.analyzer to obtain a rich abstract syntax tree that includes resolved
 reflection, however to tell the full story we include a rewrite relation 
-in figure~\ref{figure:rewrite} to eliminate reflection when sufficient type hints are provided.
-Figure~\ref{figure:hintinfer} shows the interesting cases in type hint inference.
+in figure~\ref{main:figure:rewrite} to eliminate reflection when sufficient type hints are provided.
+Figure~\ref{main:figure:hintinfer} shows the interesting cases in type hint inference.
 
 We now have two languages: an internal language that may contain non-reflective Java calls (figure 
-  \ref{figure:nonreflectivesyntax}) 
+  \ref{main:figure:nonreflectivesyntax}) 
   and an external language that resembles Clojure, where we must rely on type-hints to resolve
-  reflective Java calls (figure~\ref{figure:reflectivesyntax}).
+  reflective Java calls (figure~\ref{main:figure:reflectivesyntax}).
 
 For example, R-FieldElimRefl, which rewrites a reflective field call to be non-reflective,
 rewrites the target expression and uses the result to infer a class type hint as the field target.
@@ -573,7 +573,7 @@ rewrites the target expression and uses the result to infer a class type hint as
 field name and returns the actual target and result type hints which we store in the rewritten rule.
 
 We then extract these type hints in T-FieldStatic for typing checking 
-(figure~\ref{figure:javatyping}), which converts type hints
+(figure~\ref{main:figure:javatyping}), which converts type hints
 with \javatotcliteral{} to obtain a \emph{non-nilable} type to type check the target expression (which prevents
 dereferencing nil) and \javatotcnilliteral{} to get a \emph{nilable} return type (because fields can be nil).
 
@@ -584,4 +584,5 @@ We rewrite to our internal language before type checking and remaining reflectiv
 
 \input{constant}
 \input{update}
-\input{convert-types-figure}
+
+{\convertjavatypefigure{figure}}
