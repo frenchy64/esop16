@@ -23,4 +23,6 @@
     (is (check-ns 'demo.eg6)))
   (testing "double dispatch multimethod"
     (is (check-ns 'demo.eg7)))
+  (testing "file parent"
+    (is (check-ns 'demo.parent)))
   )

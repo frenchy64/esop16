@@ -51,17 +51,11 @@ a result, Typed Clojure is now used in industry, experience we discuss
 in this paper.
 
 \begin{figure}
-\begin{minted}[]{clojure}
-(ann parent [(U nil File) -> (U nil File)])
-(defn parent [^File f]
-  (when f
-    (let [s (.getParent f)]
-      (assert s "Expected parent string, got nil")
-      (new File s))))
-\end{minted}
+\inputminted[firstline=5,lastline=10]{clojure}{code/demo/src/demo/parent.clj}
 \caption{A simple Typed Clojure program}
 \label{fig:ex1}
 \end{figure}
+
 Figure~\ref{fig:ex1} presents a simple program demonstrating several
 aspects of our system, from simple type annotations to explicit
 handling of Java's \texttt{null} in interoperation, as well as an
