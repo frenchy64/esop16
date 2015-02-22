@@ -2,6 +2,41 @@
 
 Typed Clojure has been used in production Clojure systems for 2 years.
 
+\subsection{Let-aliasing}
+
+\begin{mathpar}
+  \footnotesize
+\infer [T-LocalAlias]
+{ \Theta[\x{}] = \object{}
+  \\
+  \inpropenv {\propenv{}} {\isprop {\t{}} {\object{}}}
+  \\\\
+  \s{} = {\falsy} }
+{ \judgement {\Theta; \propenv{}} 
+             {\hastype {\x{}} {\t{}}}
+             {\filterset {{\notprop {\s{}} {\object{}}}} {{\isprop {\s{}} {\object{}}}}}
+             {\object{}}
+                   }
+
+\infer [T-LetAlias]
+{ \judgement {\Theta; \propenv{}} {\hastype {\e{1}} {\s{}}} {\filterset {\thenprop {\prop{1}}} {\elseprop {\prop{1}}}}
+             {\object{1}}
+  \\\\
+  \object{1} \notequal \emptyobject{}
+  \\\\
+  \judgement
+       {\Theta[\x{} \mapsto \object{1}];
+         \propenv{}}
+             {\hastype {\e{}} {\t{}}} {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}}
+             {\object{}} 
+             }
+{ \judgement {\Theta; \propenv{}} {\hastype {\letexp {\x{}} {\e{1}} {\e{}}} {\t{}}}
+             {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}}
+             {\object{}} 
+             }
+\end{mathpar}
+
+
 \subsection{Higher-rank polymorphism}
 
 Typed Clojure supports f-bounded polymorphism and higher-rank
