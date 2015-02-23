@@ -4,5 +4,5 @@
 
 (ann parent ['{:file (U nil File)} -> (U nil Str)])
 (defn parent [{:keys [^File file] :as m}]
-  (when (instance? File (:file m))
+  (when (:file m)
     (.getParent file)))
