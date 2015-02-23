@@ -23,7 +23,7 @@ Syntax is given in figure~\ref{main:figure:termsyntax}. Expressions include vari
 application, abstractions, conditionals, do (sequencing) expressions and let expressions.
 All binding forms introduce fresh variables.
 
-Values include booleans, \nil{}, class literals, keywords (written with a : prefix like \mintinline{clojure}{:a}), 
+Values include booleans, \nil{}, class literals, keywords (written with a : prefix like \clj{:a}), 
 constants and closures.  \false{} and \nil{} are logically false; all other values are logically true.
 
 Types include the top type, untagged unions, functions, singleton types
@@ -213,14 +213,14 @@ T-Do formalises this intuition.
 
 The introduction of errors, specifically as an expression that is neither true nor false, 
 makes our insight interesting.
-For example, in checking \mintinline{clojure}{(do (throw (Exception.)) (inc :a))}
-by T-Error we assume \orprop{\botprop{}}{\botprop{}} in checking \mintinline{clojure}{(inc :a)},
+For example, in checking \clj{(do (throw (Exception.)) (inc :a))}
+by T-Error we assume \orprop{\botprop{}}{\botprop{}} in checking \clj{(inc :a)},
 which is a contradiction by the logic system (L-False, figure~\ref{appendix:figure:proofsystem})
-which allows us to assume \mintinline{clojure}{(inc :a)} is unreachable (and it clearly is by BE-Do1).
+which allows us to assume \clj{(inc :a)} is unreachable (and it clearly is by BE-Do1).
 
 This works similarly with our motivating example. Intuitively, when evaluating
-\mintinline{clojure}{(inc x)} we know \mintinline{clojure}{(assert (number? x))} has evaluated to a value,
-so we assume \mintinline{clojure}{x} is a number.
+\clj{(inc x)} we know \clj{(assert (number? x))} has evaluated to a value,
+so we assume \clj{x} is a number.
 In detail, the example is checked first by T-Abs, which checks the body with the 
 environment \propenv{} = {\isprop{\Union{\Nil}{\Number{}}}{\x{}}}.
 Since the body is a \doliteral{},
@@ -230,10 +230,10 @@ T-If says
 by T-Nil and T-Subsume and
 \elseprop{\prop{1}} = {\orprop{\botprop{}}{\botprop{}}} by T-Error.
 Now {\orprop {\thenprop {\prop{1}}} {\elseprop {\prop{1}}}} = {\notprop{\falsy}{\x{}}}
-and we check \mintinline{clojure}{(inc x)} in the extended environment 
+and we check \clj{(inc x)} in the extended environment 
 \ma{{\propenv{},{\notprop{\falsy}{\x{}}}}}.
 By L-Update (figure~\ref{appendix:figure:proofsystem}) we know {\isprop{\Number}{\x{}}},
-so T-Local checks \mintinline{clojure}{x} as a \Number.
+so T-Local checks \clj{x} as a \Number.
 
 \subsection{Multimethod dispatch mechanism: \isaliteral}
 
@@ -249,26 +249,22 @@ Before tackling multimethods we model their core dispatch mechanism
 (isa? (class :a) Keyword) ;=> true
 \end{minted}
 
-B-IsA with the metafunction \isaopsemliteral{} give the operational semantics.
+B-IsA with the metafunction \isaopsemliteral{} reflect these semantics.
 
-\smallskip
-$
+$$
 \begin{array}{ll}
   \vcenter{\hbox{\BIsA{}}}
   &
   \vcenter{\hbox{\isaopsemfigure{}}}
 \end{array}
-$
-\smallskip
+$$
 
-For the typing rules, we add rules for type checking keyword and class literals
-as singleton types, and define T-IsA, which infers the propositions of an \isaliteral{} 
-expression by passing
- the \emph{object} of the left argument and the \emph{type}
-of the right argument to \isacompareliteral{}.
+For the typing rules, we add T-Kw and T-Class for type checking keyword and class literals
+as singleton types, and T-IsA for \isaliteral{} expressions, which 
+uses the \emph{object} of the left argument and the \emph{type} of the right argument
+to infer the final proposition set.
 
-\smallskip
-$
+$$
 \begin{array}{ll}
 \vcenter{\hbox{
     \TIsA{}}} &
@@ -279,25 +275,41 @@ $
       {\TClass}
     \end{array}$}}
 \end{array}
-$
-\smallskip
+$$
 
-\begin{figure*}
+The definition of \isacompareliteral{} (figure~\ref{main:figure:isaprops}) is deliberately conservative.
+The first line considers the case where the object of the left argument
+is a non-empty path ending in \classpe{} and the type of the right argument is a singleton class.
+The simplest example
+
+\begin{minted}{clojure}
+  (isa? (class x) Keyword)
+\end{minted}
+
+has the proposition set \isacompare{\s{}}{\path{\classpe{}}{\x{}}}{\Value{\Keyword}}{\filterset{\isprop{\Keyword}{\x{}}}{\notprop{\Keyword}{\x{}}}},
+that is if the expression is true then \clj{x} is a keyword, otherwise \clj{x} is not a keyword.
+
+We can also finally define \nil{} test
+
+\begin{minted}{clojure}
+(ann nil? (Pred nil))
+(defn nil? [x]
+  (isa? (class (class x)) Class))
+\end{minted}
+
+with the proposition set 
+\isacompare{\s{}}{\classpe{}({\path{\classpe{}}{\x{}}})}{\Value{\Class}}{\filterset{\isprop{\Class}{\path{\classpe{}}{\x{}}}}{\notprop{\Class}{\path{\classpe{}}{\x{}}}}},
+
+\begin{figure}
+  \footnotesize
   \begin{mathpar}
     \isapropsfigure{}
   \end{mathpar}
-  \caption{\isaopsemliteral Proposition set Metafunction}
-\end{figure*}
 
-\begin{mathpar}
-    {\TKw}
-
-    {\TClass}
-
-    \isapropsfigure{}
-
-    \TIsA{}
-\end{mathpar}
+  \center{Takes \emph{object} of the left parameter and \emph{type} of the right parameter.}
+  \caption{Proposition Set for \isaliteral{} expressions}
+  \label{main:figure:isaprops}
+\end{figure}
 
 For example, {\isaapp{\Keyword}{\Object}} = \true{} but 
 {\isaapp{\Object}{\Keyword}} = \false{}.
@@ -333,17 +345,6 @@ Substitution is used to ensure well formed propositions.
 The final case gives up; we cannot distinguish between equality and subclassing mode.
 
 \isaliteral{} serves as the default dispatch mechanism for multimethods in Clojure.
-
-\begin{figure}
-  \footnotesize
-  \begin{mathpar}
-    \isapropsfigure{}
-
-    \TIsA{}
-  \end{mathpar}
-  \caption{\isaliteral{} typing rules}
-  \label{main:figure:isatyping}
-\end{figure}
 
 
 \subsection{Multimethods}
@@ -400,8 +401,8 @@ $$
 \end{figure}
 
 A multimethod in Clojure is a function with a dispatch mechanism to
-of internal methods. Multimethods are created with {\mintinline{clojure}{defmulti}}
-and methods are installed via {\mintinline{clojure}{defmethod}}.
+of internal methods. Multimethods are created with {\clj{defmulti}}
+and methods are installed via {\clj{defmethod}}.
 They are called like regular functions.
 
 \begin{minted}{clojure}
@@ -417,7 +418,7 @@ To ease presentation, we present \emph{immutable}
 multimethods (figure~\ref{main:figure:mmsyntax}). \defmethodliteral{} returns a new extended multimethod
 without changing the original multimethod. The above is now written
 
-%$\letexp{foo}{\defmultiexp {\ArrowOne{\x{}}{\Top}{\mintinline{clojure}{String}}{\filterset{\topprop{}}{\topprop{}}}{\emptyobject{}}}
+%$\letexp{foo}{\defmultiexp {\ArrowOne{\x{}}{\Top}{\clj{String}}{\filterset{\topprop{}}{\topprop{}}}{\emptyobject{}}}
 %                       {\classconst{}}}
 %                     {\\ bar}$
 

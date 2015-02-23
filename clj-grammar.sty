@@ -43,10 +43,10 @@
 \newbfop\int{int}
 \newbfop\Boolean{B}
 \newbfop\Booleanhint{Boolean}
-\newbfop\IFn{IFn}
+\newbfop\IFn{Fn}
 \newbfop\MultiFn{MultiFn}
 \newbfop\PMulti{Multi}
-\newbfop\IPersistentMapLiteral{IMap}
+\newbfop\IPersistentMapLiteral{Map}
 \newbfop\MapLiteral{Map}
 \newbfop\Uliteral{\ma{\bigcup}}
 \newbfop\Iliteral{\ma{\bigcap}}
@@ -81,7 +81,7 @@
 \newcommand\coretyped[0]{\texttt{core.typed}}
 \newcommand\All[2]{(\ma{\Allliteral\ [#1]\ #2})}
 \newcommand\TFn[2]{(\ma{\TFnliteral\ [#1]\ #2})}
-\newcommand\Value[1]{(\ma{\Valueliteral\ #1})}
+\newcommand\Value[1]{(\ma{\Valueliteral #1})}
 \newcommand\ValueFalse[0]{(\ma{\Valueliteral \false})}
 \newcommand\ValueNil[0]{(\ma{\Valueliteral \nil})}
 \newcommand\ValueTrue[0]{(\ma{\Valueliteral \true})}
@@ -1464,8 +1464,8 @@ $$
                {\filtersetparen{\isprop{\Value{\singletonmeta{}}} {\x{}}}
                    {\notprop{\Value{\singletonmeta{}}}{\x{}}}}
                    {\object{}}
-                   {\x{}}}
-                   & \text{if}\ {\singletonmeta{}} \not= \class{}
+                   {\x{}}}\\
+                   && \ \text{if}\ {\singletonmeta{}} \not= \class{}
                \\
   \isacomparealign{\s{}}{\object{}}{\t{}}
                   {\filterset{\topprop{}}

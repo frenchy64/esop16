@@ -53,24 +53,28 @@
 
 % ClassPE
 \\
-\update{\t{}}{\Value{\class{}}}{\classpe{}}
-&=& \restrict{\t{}}{\class{}}
+\update{\t{}}{\Value{\class{}}}{\destructpath{\pathelem{}}{\classpe{}}}
+&=& \update{\t{}}{\class{}}{\pathelem{}}
 \\
-\update{\t{}}{\nottype{\Value{\class{}}}}{\classpe{}}
-&=& \remove{\t{}}{\class{}}
+\update{\t{}}{\nottype{\Value{\class{}}}}{\destructpath{\pathelem{}}{\classpe{}}}
+&=& \update{\t{}}{\nottype{\class{}}}{\pathelem{}}
 & \text{if}\ \not\exists \classp{}.\ {\issubtypein{}{\classp{}}{\class{}}}\ \text{and}\ {\classp{}} \not= \class{}
 \\
-\update{\t{}}{\Object}{\classpe{}}
-&=& \restrict{\t{}}{\Object}
+\update{\t{}}{\s}{\destructpath{\pathelem{}}{\classpe{}}}
+&=& \update{\t{}}{\Object}{\pathelem{}}
+& \text{if}\ \issubtypein{}{\s{}}{\Object{}}
 \\
-\update{\t{}}{\nottype{\Object}}{\classpe{}}
-&=& \remove{\t{}}{\Object}
+\update{\t{}}{\nottype{\s{}}}{\destructpath{\pathelem{}}{\classpe{}}}
+&=& \update{\t{}}{\Nil{}}{\pathelem{}}
+& \text{if}\ \issubtypein{}{\Object{}}{\s{}}
 \\
-\update{\t{}}{\Nil}{\classpe{}}
-&=& \restrict{\t{}}{\Nil}
+\update{\t{}}{\s}{\destructpath{\pathelem{}}{\classpe{}}}
+&=& \update{\t{}}{\Nil}{\pathelem{}}
+& \text{if}\ \issubtypein{}{\s{}}{\Nil{}}
 \\
-\update{\t{}}{\nottype{\Nil}}{\classpe{}}
-&=& \remove{\t{}}{\Nil}
+\update{\t{}}{\nottype{\s{}}}{\destructpath{\pathelem{}}{\classpe{}}}
+&=& \update{\t{}}{\Object}{\pathelem{}}
+& \text{if}\ \issubtypein{}{\Nil{}}{\s{}}
 
 % What if \s{} is a union of class singletons?
 % this just seems wrong
@@ -81,6 +85,8 @@
 %\\
 %\update{\t{}}{\nottype{\s{}}}{\classpe{}}
 %&=& \remove{\t{}}{\s{}}
+
+% Don't need base case covers \Top
 \\
 \update{\t{}}{\propisnotmeta{}}{\destructpath {\pathelem{}} {\classpe{}}}
 &=& {\t{}}
