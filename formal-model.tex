@@ -47,19 +47,18 @@ Subtyping (figure~\ref{main:figure:subtyping}) says singleton types are instance
 and \Object is transitively a supertype to everything except {\Nil{}},
 so \Top{} = {\Union{\Nil}{\Object}}.
 
-\begin{figure*}
+\begin{figure}
   \footnotesize
 $$
-\begin{altgrammar}
+\begin{array}{lrlr}
   \expd{}, \e{} &::=& \x{}
                       \alt \v{} 
                       \alt {\comb {\e{}} {\e{}}} 
-                      \alt {\abs {\x{}} {\t{}} {\e{}}}
-                      \alt {\ifexp {\e{}} {\e{}} {\e{}}}
+                      \alt {\abs {\x{}} {\t{}} {\e{}}} &\mbox{Expressions} \\
+                      &\alt& {\ifexp {\e{}} {\e{}} {\e{}}}
                       %\alt {\trdiff{\doexp {\e{}} {\e{}}}}
-                      \alt {\letexp {\x{}} {\e{}} {\e{}}}
+                      \alt {\letexp {\x{}} {\e{}} {\e{}}}\\
                       %\alt {\errorvalv{}}
-                &\mbox{Expressions} \\
   \v{} &::=&          \singletonmeta{}
                       \alt {\const{}}
                       \alt {\closure {\openv{}} {\abs {\x{}} {\t{}} {\e{}}}}
@@ -72,20 +71,20 @@ $$
                                    {\t{}}
                                    {\filterset {\prop{}} {\prop{}}}
                                    {\object{}}}
-                      \alt {\Value \singletonmeta{}} 
-                      \alt \trdiff{\class{}}
                 &\mbox{Types} \\
+                      &\alt& {\Value \singletonmeta{}} 
+                      \alt \trdiff{\class{}}\\
   \singletonallsyntax{}
                 \\ \\
   \occurrencetypingsyntax{}\\
   \openvsyntax{}
   %\\
   %\classliteralallsyntax{}
-\end{altgrammar}
+\end{array}
 $$
 \caption{Syntax of Terms, Types, Propositions and Objects}
 \label{main:figure:termsyntax}
-\end{figure*}
+\end{figure}
 
 \begin{figure*}
   \footnotesize
@@ -98,7 +97,7 @@ $$
 
     {\TNil}
 
-    {\TDo}
+    %{\TDo}
     %{\TClass}
     {\TIf}
     {\TLet}
@@ -117,30 +116,30 @@ $$
   \label{main:figure:typingrules}
 \end{figure*}
 
-\begin{figure*}
+\begin{figure}
   \footnotesize
   \begin{mathpar}
-    {\BLocal}
-
-    %{\BDo}
-
-    {\BLet}
-
-    \BVal{}
-
+%    {\BLocal}
+%
+%    %{\BDo}
+%
+%    {\BLet}
+%
+%    \BVal{}
+%
     \BIfTrue{}
 
-    \BIfFalse{}
-
-    \BAbs{}
-
-    \BBetaClosure{}
-
-    \BDelta{}
+%    \BIfFalse{}
+%
+%    \BAbs{}
+%
+%    \BBetaClosure{}
+%
+%    \BDelta{}
   \end{mathpar}
   \caption{Operational Semantics}
   \label{main:figure:standardopsem}
-\end{figure*}
+\end{figure}
 
 \begin{figure*}
   \footnotesize
@@ -543,41 +542,41 @@ to help the compiler eliminate reflection.
   \label{main:figure:nonreflectivesyntax}
 \end{figure*}
 
-\begin{figure*}
+\begin{figure}
   \footnotesize
   \begin{mathpar}
-    \RAbs{}
-
-    \RNewElimRefl{}
-
-    \RMethodElimRefl{}
-
+    %\RAbs{}
+%
+%    \RNewElimRefl{}
+%
+%    \RMethodElimRefl{}
+%
     \RFieldElimRefl{}
-
-    \RLet{}
-
+%
+%    \RLet{}
+%
     \RLetHint{}
   \end{mathpar}
 \caption{Reflection Elimination (select rules, figure~\ref{appendix:figure:rewrite} for full rules)}
 \label{main:figure:rewrite}
-\end{figure*}
+\end{figure}
 
-\begin{figure*}
-  \footnotesize
-  \begin{mathpar}
-    \TALocal{}
-
-    \TANil{}
-
-    \TANewStatic{}
-
-    \TALetHint{}
-
-    \TALet{}
-  \end{mathpar}
-\caption{Type Hint Inference (select rules, figure~\ref{appendix:figure:hintinfer} for full rules)}
-\label{main:figure:hintinfer}
-\end{figure*}
+%\begin{figure}
+%  \footnotesize
+%  \begin{mathpar}
+%%    \TALocal{}
+%%
+%%    \TANil{}
+%%
+%%    \TANewStatic{}
+%%
+%%    \TALetHint{}
+%
+%%    \TALet{}
+%  \end{mathpar}
+%\caption{Type Hint Inference (select rules, figure~\ref{appendix:figure:hintinfer} for full rules)}
+%\label{main:figure:hintinfer}
+%\end{figure}
 
 \begin{figure}
   \footnotesize
@@ -611,13 +610,33 @@ and the programmer is free to add them where they like.
 
 core.typed uses tools.analyzer to obtain a rich abstract syntax tree that includes resolved
 reflection, however to tell the full story we include a rewrite relation 
-in figure~\ref{main:figure:rewrite} to eliminate reflection when sufficient type hints are provided.
-Figure~\ref{main:figure:hintinfer} shows the interesting cases in type hint inference.
+
+$$
+\rewrite {\taenv{}} {\e{}} {\ep{}}
+$$
+
+to eliminate reflection when sufficient type hints are provided.
+
+To help infer type hints 
+
+$$
+\tajudgement {\taenv{}} {\hastype {\e{}} {\tatype{}}}
+$$
+
+gives the type hint \tatype{} of expression \e{} in environemtn \taenv{}.
+
+$$
+\TALetHint{}
+$$
 
 We now have two languages: an internal language that may contain non-reflective Java calls (figure 
   \ref{main:figure:nonreflectivesyntax}) 
   and an external language that resembles Clojure, where we must rely on type-hints to resolve
   reflective Java calls (figure~\ref{main:figure:reflectivesyntax}).
+
+  $$
+    \RFieldElimRefl{}
+  $$
 
 For example, R-FieldElimRefl, which rewrites a reflective field call to be non-reflective,
 rewrites the target expression and uses the result to infer a class type hint as the field target.
@@ -636,7 +655,24 @@ We rewrite to our internal language before type checking and remaining reflectiv
 
 {\footnotesize
 \input{constant}
-\input{update}
+
+\begin{figure*}
+  $$
+\begin{array}{lllll}
+\updatefigure
+\end{array}
+$$
+\caption{Type Update}
+\end{figure*}
 }
 
 {\convertjavatypefigure{figure}{\footnotesize}}
+
+\begin{figure}
+  $$
+\begin{array}{lllll}
+  \restrictremovefigure{}
+\end{array}
+  $$
+  \caption{Restrict and Remove}
+\end{figure}

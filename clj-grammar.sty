@@ -326,9 +326,9 @@
 \newcommand\tajudgement[2]{\ma{#1 \vdash_{\metafunctionfont{h}} #2}}
 
 % type hints
-\newmeta\tatypeunknown{\gamma^{?}}
-\newmeta\tatype{\gamma}
-\newmeta\tatypep{\gamma'}
+\newmeta\tatypeunknown{\ma{\gamma^{?}}}
+\newmeta\tatype{\ma{\gamma}}
+\newmeta\tatypep{\ma{\gamma'}}
 \newmeta\classhint{C}
 \newmeta\primitivehint{p}
 \newmeta\unknownhint{\mathbbm{?}}
@@ -344,7 +344,7 @@
 \newcommand\mmenv{\Delta}
 \newcommand\mmenvp{\mmenv'}
 \newcommand\mmenvpp{\mmenvp'}
-\newcommand\taenv{\Sigma}
+\newcommand\taenv{\ma{\Sigma}}
 \newcommand\taenvp{\taenv'}
 
 % multimethod envs
@@ -900,11 +900,11 @@
   \prop{}       &::=& {\isprop {\t{}} {\path {\pathelem{}} {\x{}}}}
                       \alt {\notprop {\t{}} {\path {\pathelem{}} {\x{}}}}
                       \alt {\impprop {\prop{}} {\prop{}}}
-                      \alt {\andprop {\prop{}} {\prop{}}}
+                &\mbox{Propositions} \\
+                      &\alt& {\andprop {\prop{}} {\prop{}}}
                       \alt {\orprop {\prop{}} {\prop{}}}
                       \alt \topprop{}
-                      \alt \botprop{}
-                &\mbox{Propositions} \\
+                      \alt \botprop{}\\
   \object{}     &::=& {\path {\pathelem{}} {\x{}}}
                       \alt \emptyobject{}
                 &\mbox{Objects} \\
@@ -1763,8 +1763,7 @@ $$
 }
 }
 
-% java assumptions
-\newcommand\javaassumptionsall[1]{
+\newcommand\javanewassumption[1]{
 \begin{assumption}[\newjavaliteral] \label{#1:assumption:new}
   If\ $\forall i.\ {\v{i}} = {\classvalue{\classhint{i}}{\overrightarrow{\classfieldpair{\fld{j}} {\v{j}}}}}\ or\ {\v{i}}= {\nil}$
   and {\v{i}}
@@ -1785,6 +1784,12 @@ $$
                 is undefined.
   \end{itemize}
 \end{assumption}
+}
+
+
+% java assumptions
+\newcommand\javaassumptionsall[1]{
+\javanewassumption{#1}
 
 \begin{assumption}[\getfieldliteral] \label{#1:assumption:field}
   If\ {\v{1}} = ${\classvalue{\classhint{1}}{{\classfieldpair{\fld{}}{\v{f}}, {\overrightarrow{\classfieldpair{\fld{l}} {\v{l}}}}}}}$,
@@ -1872,13 +1877,24 @@ and all of the following hold:
 \end{itemize}
 }
 
-\newcommand\soundnesstheorem[1]{
-\begin{theorem}[Type soundness] \label{#1:theorem:soundness}
+\newcommand\soundnesstheorembody[1]{
 If \judgement{\propenv{}}{\hastype{\e{}}{\t{}}}{\filterset{\thenprop{\prop{}}}{\elseprop{\prop{}}}}{\object{}}
 and \opsem {\openv{}} {\e{}} {\v{}} 
 then \judgement{}{\hastype{\v{}}{\t{}}}{\filterset{\thenprop{\propp{}}}{\elseprop{\propp{}}}}{\objectp{}}
         for some \thenprop{\propp{}}, \elseprop{\propp{}} and {\objectp{}}
+      }
 
+\newcommand\soundnesstheoremnoproof[1]{
+\begin{theorem}[Type soundness] \label{#1:theorem:soundnessnoproof}
+\soundnesstheorembody{#1}
+
+\end{theorem}
+
+}
+
+\newcommand\soundnesstheorem[1]{
+\begin{theorem}[Type soundness] \label{#1:theorem:soundness}
+\soundnesstheorembody{#1}
 \begin{proof}
   Corollary of lemma \ref{#1:lemma:soundness}.
 \end{proof}
@@ -1887,10 +1903,20 @@ then \judgement{}{\hastype{\v{}}{\t{}}}{\filterset{\thenprop{\propp{}}}{\elsepro
 
 }
 
-\newcommand\wrongtheorem[1]{
-\begin{theorem}[Well-typed programs don't go wrong] \label{#1:theorem:wrong}
+\newcommand\wrongtheorembody[1]{
   If {\judgement {} {\hastype {\e{}} {\t{}}} {\filterset {\thenprop{\prop{}}}{\elseprop{\prop{}}}} {\object{}}}
   then \notopsem{}{\e{}}{\wrong{}}.
+}
+
+\newcommand\wrongtheoremnoproof[1]{
+\begin{theorem}[Well-typed programs don't go wrong] \label{#1:theorem:wrongnoproof}
+\wrongtheorembody{#1}
+\end{theorem}
+}
+
+\newcommand\wrongtheorem[1]{
+\begin{theorem}[Well-typed programs don't go wrong] \label{#1:theorem:wrong}
+\wrongtheorembody{#1}
 
 \begin{proof}
   Corollary of lemma~\ref{#1:lemma:soundness}, since by lemma~\ref{#1:lemma:soundness}
@@ -1902,12 +1928,23 @@ then \judgement{}{\hastype{\v{}}{\t{}}}{\filterset{\thenprop{\propp{}}}{\elsepro
 \end{theorem}
 }
 
-\newcommand\nilinvoketheorem[1]{
-\begin{theorem}[\nil{} invocation is disallowed in typed code] \label{#1:theorem:nilinvoke}
+\newcommand\nilinvoketheorembody[1]{
   If \judgement{\propenv{}}{\hastype{\e{}}{\t{}}}{\filterset{\thenprop{\prop{}}}{\elseprop{\prop{}}}}{\object{}} then \e{} is not
   \appexp{\nil{}}{\ep{}}, 
   \fieldexp{\fld{}}{\nil{}}, or
   $\methodexp{\mth{}}{\nil{}}{\overrightarrow{\ep{}}}$.
+}
+
+\newcommand\nilinvoketheoremnoproof[1]{
+\begin{theorem}[\nil{} invocation is disallowed in typed code] \label{#1:theorem:nilinvokenoproof}
+  \nilinvoketheorembody{#1}
+
+\end{theorem}
+}
+
+\newcommand\nilinvoketheorem[1]{
+\begin{theorem}[\nil{} invocation is disallowed in typed code] \label{#1:theorem:nilinvoke}
+  \nilinvoketheorembody{#1}
 
 \begin{proof}
   Corollary of lemma \ref{#1:lemma:soundness}.
@@ -1916,20 +1953,16 @@ then \judgement{}{\hastype{\v{}}{\t{}}}{\filterset{\thenprop{\propp{}}}{\elsepro
 \end{theorem}
 }
 
-\newcommand\consistentwithdefinition[1]{
+\newcommand\consistentwithonlydef[1]{
 \begin{definition} \label{#1:definition:consistentwith}
   \consistentwith{\v{}}{\openv{}}
   iff $\forall$ \closure{\openv{1}}{\abs{\x{}}{\s{}}{\e{}}} in \v{},
-
   if \judgement{}{\hastype{\closure{\openv{1}}{\abs{\x{}}{\s{}}{\e{}}}}{\t{}}}{\filterset{\topprop{}}{\botprop{}}}{\emptyobject{}}
   and $\forall$ \objectp{} in \t{}, either 
-\begin{itemize}
-  \item \objectp{} = \emptyobject{}, or 
-  \item \objectp{} = {\path{\pathelemp{}}{\x{}}},
+  \objectp{} = \emptyobject{}, or 
+  \objectp{} = {\path{\pathelemp{}}{\x{}}},
   or 
-\item 
 \inopenvnoeq{\openv{}}{\objectp{}} = {\inopenvnoeq{\openv{1}}{\objectp{}}}.
-\end{itemize}
 
 % In code like
 % (let [x true]
@@ -1938,6 +1971,10 @@ then \judgement{}{\hastype{\v{}}{\t{}}}{\filterset{\thenprop{\propp{}}}{\elsepro
 %    2))
 % this property guarantees that the x's don't get confused.
 \end{definition}
+}
+
+\newcommand\consistentwithdefinition[1]{
+\consistentwithonlydef{#1}
 
 \begin{definition} \label{#1:definition:isconsistent}
   \isconsistent{\openv{}}
@@ -2009,3 +2046,126 @@ $$
 
                 &\mbox{Constants}
               }
+
+\newcommand\updatefigure[0]{
+\update{\HMapgeneric {\mandatory} {\absent}}{\propisnotmeta{}}{\destructpath {\pathelem{}} {\keype{\k{}}}}
+&=&
+{\HMapgeneric {\extendmandatoryset{\mandatory}{\k{}}{\update{\t{}}{\propisnotmeta{}}{\pathelem{}}}}{\absent}}
+& {\inmandatory{\k{}}{\t{}}{\mandatory{}}}
+%& Present Key
+\\
+\update{\HMapgeneric {\mandatory} {\absent}}{\t{}}{\destructpath {\pathelem{}} {\keype{\k{}}}}
+&=&
+{\Bottom{}}
+& {\notsubtypein {} {\Nil{}} {\t{}}}\ \text{and}\ {\inabsent{\k{}}{\absent{}}}
+%& Bad absent +
+\\
+\update{\HMapgeneric {\mandatory} {\absent}}{\nottype{\t{}}}{\destructpath {\pathelem{}} {\keype{\k{}}}}
+&=&
+{\Bottom{}}
+& {\issubtypein {} {\Nil{}} {\t{}}}\ \text{and}\ {\inabsent{\k{}}{\absent{}}}
+%& Bad absent -
+\\
+\update{\HMapgeneric {\mandatory} {\absent}}{\propisnotmeta{}}{\destructpath {\pathelem{}} {\keype{\k{}}}}
+&=&
+{\HMapgeneric {\mandatory} {\absent}}
+& {\inabsent{\k{}}{\absent{}}}
+%& Consistent absent
+\\
+\update{\HMapp {\mandatory} {\absent}}{\t{}}{\destructpath {\pathelem{}} {\keype{\k{}}}}
+&=&
+{\Union {\HMapp {\extendmandatoryset {\mandatory} {\k{}}
+                                     {\t{}}}
+                {\absent}}
+        {\HMapp {\mandatory} {\extendabsentset{\absent}{\k{}}}}}
+& {\issubtypein {} {\Nil{}} {\t{}}},\ 
+{\notinmandatory{\k{}}{\s{}}{\mandatory{}}}\ \text{and}\ {\notinabsent{\k{}}{\absent{}}}
+\\
+\update{\HMapp {\mandatory} {\absent}}{\propisnotmeta{}}{\destructpath {\pathelem{}} {\keype{\k{}}}}
+&=&
+{\HMapp {\extendmandatoryset {\mandatory} {\k{}}{\update{\Top}{\propisnotmeta{}}{\pathelem{}}}} {\absent}}
+& 
+{\notinmandatory{\k{}}{\s{}}{\mandatory{}}}\ \text{and}\ {\notinabsent{\k{}}{\absent{}}}
+
+\\
+\update{\HMapp {\mandatory} {\absent}}{\propisnotmeta{}}{\destructpath {\pathelem{}} {\keype{\k{}}}}
+&=&
+{\HMapp {\extendmandatoryset {\mandatory} {\k{}}{\update{\Top}{\propisnotmeta{}}{\pathelem{}}}} {\absent}}
+\\
+\update{\Unionsplice{{\overrightarrow{\HMapgeneric {\mandatory} {\absent}}}^i}}{\propisnotmeta{}}{\destructpath {\pathelem{}} {\keype{\k{}}}}
+&=&
+\Unionsplice{{\overrightarrow{\update{\HMapgeneric {\mandatory} {\absent}}{\propisnotmeta{}}{\destructpath {\pathelem{}} {\keype{\k{}}}}}}^i}
+
+
+% ClassPE
+\\
+\update{\t{}}{\Value{\class{}}}{\destructpath{\pathelem{}}{\classpe{}}}
+&=& \update{\t{}}{\class{}}{\pathelem{}}
+\\
+\update{\t{}}{\nottype{\Value{\class{}}}}{\destructpath{\pathelem{}}{\classpe{}}}
+&=& \update{\t{}}{\nottype{\class{}}}{\pathelem{}}
+& \text{if}\ \not\exists \classp{}.\ {\issubtypein{}{\classp{}}{\class{}}}\ \text{and}\ {\classp{}} \not= \class{}
+\\
+\update{\t{}}{\s}{\destructpath{\pathelem{}}{\classpe{}}}
+&=& \update{\t{}}{\Object}{\pathelem{}}
+& \text{if}\ \issubtypein{}{\s{}}{\Object{}}
+\\
+\update{\t{}}{\nottype{\s{}}}{\destructpath{\pathelem{}}{\classpe{}}}
+&=& \update{\t{}}{\Nil{}}{\pathelem{}}
+& \text{if}\ \issubtypein{}{\Object{}}{\s{}}
+\\
+\update{\t{}}{\s}{\destructpath{\pathelem{}}{\classpe{}}}
+&=& \update{\t{}}{\Nil}{\pathelem{}}
+& \text{if}\ \issubtypein{}{\s{}}{\Nil{}}
+\\
+\update{\t{}}{\nottype{\s{}}}{\destructpath{\pathelem{}}{\classpe{}}}
+&=& \update{\t{}}{\Object}{\pathelem{}}
+& \text{if}\ \issubtypein{}{\Nil{}}{\s{}}
+
+% What if \s{} is a union of class singletons?
+% this just seems wrong
+%\\
+%\update{\t{}}{\s{}}{\classpe{}}
+%&=& \restrict{\t{}}{\s{}}
+%
+%\\
+%\update{\t{}}{\nottype{\s{}}}{\classpe{}}
+%&=& \remove{\t{}}{\s{}}
+
+% Don't need base case covers \Top
+\\
+\update{\t{}}{\propisnotmeta{}}{\destructpath {\pathelem{}} {\classpe{}}}
+&=& {\t{}}
+
+\\
+\update{\t{}}{\s{}}{\emptypath{}}
+&=&
+\restrict{\t{}}{\s{}}
+\\
+\update{\t{}}{\nottype{\s{}}}{\emptypath{}}
+&=&
+\remove{\t{}}{\s{}}
+
+              }
+
+\newcommand\restrictremovefigure[0]{
+\restrict{\t{}} {\s{}} &=& \Bot{}\\
+                       & & \text{if} \not\exists \v{}.\  
+                          {\judgement {} {\hastype {\v{}} {\t{}}} {\prop{1}}{\object{1}}}\\
+                       & &\text{and}\ 
+                          {\judgement {} {\hastype {\v{}} {\s{}}} {\prop{2}}{\object{2}}}
+                          \\
+\restrict{\Unionsplice{\overrightarrow{{\t{}}}}}{\s{}} &=& 
+\Unionsplice{\overrightarrow{\restrict{{\t{}}}{\s{}}}}
+\\
+\restrict{\t{}}{\s{}} &=& {\t{}} & \text{if}\ {\issubtypein {} {\t{}} {\s{}}}
+\\
+\restrict{\t{}}{\s{}} &=& {\s{}} & \text{otherwise}
+\\\\
+\remove{\t{}}{\s{}} &=& {\Bot{}} & \text{if}\ {\issubtypein {} {\t{}} {\s{}}}
+\\
+\remove{\Unionsplice{\overrightarrow{{\t{}}}}}{\s{}} &=& 
+\Unionsplice{\overrightarrow{\remove{{\t{}}}{\s{}}}}
+\\
+\remove{\t{}}{\s{}} &=& {\t{}} & \text{otherwise}
+}
