@@ -31,4 +31,8 @@
   ;  (is (check-ns 'demo.nil)))
   (testing "isa nil test"
     (is (check-ns 'demo.isa-nil)))
+  (testing "do"
+    (is (check-ns 'demo.do)))
+  (testing "hmap"
+    (is (check-ns 'demo.hmap)))
   )

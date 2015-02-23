@@ -1,96 +1,164 @@
 \section{Overview of Typed Clojure}
 
-Typed Clojure is a gradual type system for Clojure. It is designed
-to type check normal Clojure code by adding annotations. It is implemented
-as a library, and can be seamlessly included in any Clojure project; no
-separate compiler or language is needed.
+\subsection{Clojure}
 
-{\smallsection {Based on Typed Racket}}
-Initially, the similarities between untyped Racket and Clojure and Typed Racket's 
-ability to type check Racket code led us to investigate a similar type system for Clojure.
-After two years of development, the solid basis of Typed Racket 
-helps us type check many Clojure idioms without significant differences
-in implementation or theory. We found that extending Typed Clojure to check
-those idioms that have no obvious Racket equivalent did not significantly alter the structure
-of the type system.
+\subsection{Typed Racket and occurrence typing}
 
-{\smallsection {Occurrence typing}}
-\citet{TF08,TF10} developed \emph{occurrence typing}, which helps improve types at branches.
-Typed Clojure uses occurrence typing in a similar way to Typed Racket, with
-some extensions (discussed in in Section [?]). %FIXME
+Classic occurrence typing concentrates on conditional
+control flow like the following example.
 
-{\smallsection {Practical Variable-Arity Polymorphism}}
-Functions with non-trivial variable parameters are common in Racket.
-For example, Racket provides \emph{map} which takes a function and a
-variable number of collections and applies the function simultaneously
-to each element of the provided collections, returning a list of results.
-\citet*{STF09} developed a practical system that handles advanced variable parameters
-which can handle applications of functions like \emph{map}.
-
-Clojure has a similar emphasis on variable-arity functions. In some ways,
-Clojure's core library encourages even more complicated variable-parameter schemes.
-The \emph{assoc} core function, for example, takes three parameters and
-then a quantity of variable parameters that is a multiple of two.
-This is beyond what Typed Racket (and Typed Clojure) can currently handle. 
-
-Functions like \emph{map} are common in Clojure, so we provide an implementation
-of variable-arity polymorphism which has similar capabilities as Typed Racket's
-implementation.
-
-{\smallsection {Local Type Inference}}
-We use Pierce and Turner's Local Type Inference~\cite{PT00} to infer some polymorphic
-applications. Our implementation is based on Typed Racket's, which has extensions
-to support applications of polymorphic variable-arity functions like \emph{map}.
-
-{\smallsection {Unions and intersections}}
-Like Typed Racket, we include union and ordered intersection types. Unions define
-a least-upper-bound for a set of types. For example, we can express a type that is
-either \Number or \Symbol by including them in a union: {\Union {\Number} {\Symbol}}
-
-Ordered intersections (described further by \citet{SA+12})
-are used for overloading function types. We can express a function that takes
-a \Number and returns a \Symbol, and vice-versa with an ordered intersection function type:
-
-\begin{lstlisting}[label=lst:ordered]
-(Fn [Number -> Symbol]
-    [Symbol -> Number])
-\end{lstlisting}
-
-As our intersections are \emph{ordered}, we can express fine invariants in the
-case where arity parameter types overlap. Similar to a pattern match, earlier arities 
-are tried first, and the first arity to match ``wins''.
-
-For example, applying an \lstinline|Integer| argument to a function of type
-
-\begin{lstlisting}
-(Fn [Integer -> Integer]
-    [Number -> Number])
-\end{lstlisting}
-
-returns an \lstinline|Integer|. Reversing the arities however gives
-type \lstinline|Number|, because the arity taking a \lstinline|Number|
-always matches first.
-
-{\smallsection {Hosted on the Java Virtual Machine}}
-Clojure is built to run on the Java Virtual Machine (JVM),
-offering good interoperability with existing Java code.
-Typed Clojure helps programmers correctly call Java code
-by integrating with Java's type system.
-
-We give Java arrays and Java's \emph{null} special treatment
-when involved with interoperability. Arrays are treated as \emph{read-only}
-when sourced from Java methods, discussed in Section \ref{sec:arrays}.
-We are explicit, and conservative by default, in the positions where
-Java's \emph{null} can be passed, discussed in Section \ref{sec:null}.
-
-
+\begin{listing}
 \inputminted[firstline=1]{clojure}{code/demo/src/demo/eg1.clj}
+\caption{Occurrence typing}
+\end{listing}
+
+Here we include the full namespace, which we omit in the following
+examples. Going down the then branch in this example means that we know
+\clj{x} is a number, which is automatically updated with occurrence typing.
+
+In Clojure, exceptional control flow is almost as common, often in the form of
+runtime assertions. 
+
+
+\begin{listing}
+\inputminted[firstline=5,lastline=7]{clojure}{code/demo/src/demo/do.clj}
+\caption{Exceptional control flow}
+\end{listing}
+
+Clojure assertions expand to simple exceptional control flow,
+which we enhance our sequencing \doliteral{} expression to understand.
+
+\begin{minted}{clojure}
+(fn [x :- (U nil Number)]
+  (do (if (number? x) nil (throw (new Exception)))
+      (inc x)))
+\end{minted}
+
+Our main insight is that occurrence typing already provides
+valuable information about the left argument,
+namely if it returns a value, \clj{x} is a \clj{Number}.
+Since the right argument is evaluated after the left, we can assume
+\clj{x} is a \clj{Number} when evaluating \clj{(inc x)}, verifying
+the programmer's attempt to avoid null-pointer exceptions without further annotations.
+
+\subsection{Heterogeneous hash-maps}
+
+Hash-maps with keyword keys play a major role in Clojure programming.
+
+HMaps track the presense and absense of entries.
+
+$$
+\clj{(HMap :mandatory {:a Num})} 
+$$
+
+is the type of a map with at least an \clj{:a} entry mapped to a number,
+also written \clj{'{:a Num}}. If \clj{:b} is known to be an absent entry
+then
+
+% '#' not allowed in mintinline
+\smallskip
+\begin{minted}{clojure}
+  (HMap :mandatory {:a Num} :absent-keys #{:b})
+\end{minted}
+
+declares \clj{:b} absent. If the mandatory keys fully specify the
+entries, we write
+
+$$
+\clj{(HMap :mandatory {:a Num} :complete? true)}.
+$$
+
+\clj{:complete?} defaults to \clj{false}.
+The \clj{:optional} option 
+
+$$
+\clj{(HMap :optional {:a Num})}
+$$
+
+abbreviates the union of present and absent entries
+
+\smallskip
+\begin{minted}{clojure}
+(U '{:a Num} (HMap :absent #{:a}))
+\end{minted}
+.
+
+
+We use \clj{defalias} to abbreviate HMap types.
+
+\begin{listing}
+\inputminted[firstline=5,lastline=8]{clojure}{code/demo/src/demo/hmap.clj}
+\inputminted[firstline=26,lastline=28]{clojure}{code/demo/src/demo/hmap.clj}
+\caption{A simple AST in terms of HMaps}
+\end{listing}
+
+
+HMaps are very malleable, including support for associate, merge and dissociate operations.
+
+\begin{listing}
+\inputminted[firstline=10,lastline=24]{clojure}{code/demo/src/demo/hmap.clj}
+\caption{HMap operations}
+\end{listing}
+
+Lookups on HMaps with multiple options combined with
+occurrence typing is an interesting problem.
+Testing a lookup on a mandatory entry is straightforward, since we
+know the lookup always succeeded.
+
+\begin{minted}{clojure}
+(fn [m :- '{:a (U nil Num)}] :- '{:a Num}
+  {:pre [(number? (:a m))]}
+  m)
+\end{minted}
+
+The result type is updated as expected to exclude \clj{nil}.
+Testing for \clj{nl} is more complicated, since it is the sentinel
+lookup failure indicator but may also appear as an entry value.
+If we test for \clj{nil} in an \clj{:optional} entry, the best we learn
+is that either the entry is missing or contains \clj{nil}.
+
+\begin{minted}{clojure}
+(fn [m :- (HMap :optional {:a (U nil Num)})] :- (HMap :optional {:a nil})
+  {:pre [(nil? (:a m))]}
+  m)
+\end{minted}
+
+\smallsection{Mandatory Entries}
+
+
+\smallsection{Known Absent Entries}
+
+\smallsection{Unknown Entries}
+
+\subsection{Java interoperability}
+
+Java
+
+\begin{listing}
+\inputminted[firstline=5,lastline=14]{clojure}{code/demo/src/demo/hmap.clj}
+\caption{Java Interoperability}
+\end{listing}
+
+
+\subsection{Multimethod}
+
+\subsection{Final example}
+
 \inputminted[firstline=4]{clojure}{code/demo/src/demo/eg2.clj}
 \inputminted[firstline=4]{clojure}{code/demo/src/demo/eg3.clj}
 \inputminted[firstline=4]{clojure}{code/demo/src/demo/eg4.clj}
 \inputminted[firstline=4,lastline=15]{clojure}{code/demo/src/demo/eg5.clj}
 \inputminted[firstline=4,lastline=15]{clojure}{code/demo/src/demo/eg6.clj}
 \inputminted[firstline=6,lastline=23]{clojure}{code/demo/src/demo/eg7.clj}
+
+
+
+
+
+
+
+%% Old stuff vvvv
+
 
 % TODO references
 % why is TR such a good base?
@@ -104,3 +172,88 @@ Java's \emph{null} can be passed, discussed in Section \ref{sec:null}.
 % - less sophisticated macro system
 %  - not an issue
 %  - implementation difference, AST walking vs syntax walking
+
+
+%Typed Clojure is a gradual type system for Clojure. It is designed
+%to type check normal Clojure code by adding annotations. It is implemented
+%as a library, and can be seamlessly included in any Clojure project; no
+%separate compiler or language is needed.
+%
+%{\smallsection {Based on Typed Racket}}
+%Initially, the similarities between untyped Racket and Clojure and Typed Racket's 
+%ability to type check Racket code led us to investigate a similar type system for Clojure.
+%After two years of development, the solid basis of Typed Racket 
+%helps us type check many Clojure idioms without significant differences
+%in implementation or theory. We found that extending Typed Clojure to check
+%those idioms that have no obvious Racket equivalent did not significantly alter the structure
+%of the type system.
+%
+%{\smallsection {Occurrence typing}}
+%\citet{TF08,TF10} developed \emph{occurrence typing}, which helps improve types at branches.
+%Typed Clojure uses occurrence typing in a similar way to Typed Racket, with
+%some extensions (discussed in in Section [?]). %FIXME
+%
+%{\smallsection {Practical Variable-Arity Polymorphism}}
+%Functions with non-trivial variable parameters are common in Racket.
+%For example, Racket provides \emph{map} which takes a function and a
+%variable number of collections and applies the function simultaneously
+%to each element of the provided collections, returning a list of results.
+%\citet*{STF09} developed a practical system that handles advanced variable parameters
+%which can handle applications of functions like \emph{map}.
+%
+%Clojure has a similar emphasis on variable-arity functions. In some ways,
+%Clojure's core library encourages even more complicated variable-parameter schemes.
+%The \emph{assoc} core function, for example, takes three parameters and
+%then a quantity of variable parameters that is a multiple of two.
+%This is beyond what Typed Racket (and Typed Clojure) can currently handle. 
+%
+%Functions like \emph{map} are common in Clojure, so we provide an implementation
+%of variable-arity polymorphism which has similar capabilities as Typed Racket's
+%implementation.
+%
+%{\smallsection {Local Type Inference}}
+%We use Pierce and Turner's Local Type Inference~\cite{PT00} to infer some polymorphic
+%applications. Our implementation is based on Typed Racket's, which has extensions
+%to support applications of polymorphic variable-arity functions like \emph{map}.
+%
+%{\smallsection {Unions and intersections}}
+%Like Typed Racket, we include union and ordered intersection types. Unions define
+%a least-upper-bound for a set of types. For example, we can express a type that is
+%either \Number or \Symbol by including them in a union: {\Union {\Number} {\Symbol}}
+%
+%Ordered intersections (described further by \citet{SA+12})
+%are used for overloading function types. We can express a function that takes
+%a \Number and returns a \Symbol, and vice-versa with an ordered intersection function type:
+%
+%\begin{lstlisting}[label=lst:ordered]
+%(Fn [Number -> Symbol]
+%    [Symbol -> Number])
+%\end{lstlisting}
+%
+%As our intersections are \emph{ordered}, we can express fine invariants in the
+%case where arity parameter types overlap. Similar to a pattern match, earlier arities 
+%are tried first, and the first arity to match ``wins''.
+%
+%For example, applying an \lstinline|Integer| argument to a function of type
+%
+%\begin{lstlisting}
+%(Fn [Integer -> Integer]
+%    [Number -> Number])
+%\end{lstlisting}
+%
+%returns an \lstinline|Integer|. Reversing the arities however gives
+%type \lstinline|Number|, because the arity taking a \lstinline|Number|
+%always matches first.
+%
+%{\smallsection {Hosted on the Java Virtual Machine}}
+%Clojure is built to run on the Java Virtual Machine (JVM),
+%offering good interoperability with existing Java code.
+%Typed Clojure helps programmers correctly call Java code
+%by integrating with Java's type system.
+%
+%We give Java arrays and Java's \emph{null} special treatment
+%when involved with interoperability. Arrays are treated as \emph{read-only}
+%when sourced from Java methods, discussed in Section \ref{sec:arrays}.
+%We are explicit, and conservative by default, in the positions where
+%Java's \emph{null} can be passed, discussed in Section \ref{sec:null}.
+

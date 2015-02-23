@@ -1,7 +1,7 @@
 (ns demo.eg1
-  (:require [clojure.core.typed :as t]))
+  (:refer-clojure :exclude [fn])
+  (:require [clojure.core.typed :refer [fn U Num]]))
 
-;; Occurrence typing
-(t/fn [x :- (t/U nil t/Num)]
+(fn [x :- (U nil Num)]
   (when (number? x)
     (inc x)))
