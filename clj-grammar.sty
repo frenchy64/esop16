@@ -194,7 +194,7 @@
 \newmeta\defliteral{{\bf def}}
 \newcommand\defexp[2]{(\ma{\defliteral{}\ #1\ #2})}
 \newcommand\wrong[0]{\ma{wrong}}
-\newcommand\errorval[1]{\ma{error_{#1}}}
+\newcommand\errorval[1]{\ma{\metafunctionfont{err}}}
 \newcommand\errorvalv[0]{\errorval{\v{}}}
 \newcommand\reflerror[0]{\errorval{refl}}
 \newcommand\mmerror[0]{\errorval{mm}}
@@ -531,7 +531,7 @@
              {\filterset {\thenprop {\prop{1}}} {\elseprop {\prop1}}} 
              {\object{1}}
 \\\\
-\judgement {\propenv{}, {\trdiff {\orprop {\thenprop {\prop{1}}} {\elseprop {\prop{1}}}}}}
+\judgement {\propenv{}, {\orprop {\thenprop {\prop{1}}} {\elseprop {\prop{1}}}}}
            {\hastype {\e{}} {\t{}}} 
            {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}} 
            {\object{}}
@@ -723,7 +723,7 @@
 \newcommand\TClass[0]{
 \infer [T-Class]
 {}
-{ \judgement {\propenv{}} {\hastype{\class{}}{\Value{\class{}}}}{\filterset{\topprop{}}{\botprop{}}}{\emptyobject{}}}
+{ \judgement {\propenv{}} {\hastype{\class{}}{\ValueClass}}{\filterset{\topprop{}}{\botprop{}}}{\emptyobject{}}}
          }
 
 \newcommand\TDefMulti[0]{
@@ -792,9 +792,9 @@
              {\filterset {\thenprop {\propp{}}}
                          {\elseprop {\propp{}}}}
                        {\object{}}
-  \\
+  \\\\
   \judgementtwo {\propenv{}} {\hastype {\ep{}} {\t{}}}
-             \\
+             \\\\
   \isacompare{\s{}}{\object{}}{\t{}}{\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}}
 }
 { \judgement {\propenv{}} {\hastype {\isaapp {\e{}} {\ep{}}}
@@ -881,7 +881,7 @@
 \infer [T-Kw]
 {}
 { \judgementfillcol {\propenv{}} 
-      {\hastype {\k{}} {\Value{\k{}}}}
+      {\hastype {\k{}} {\ValueKw}}
       {\filterset {\topprop{}}{\botprop{}}}
       {\emptyobject{}} 
     }
@@ -891,7 +891,7 @@
 \infer [T-Error]
 {}
 { \judgement {\propenv{}} {\hastype {\errorvalv} {\Bot}}
-            {\trdiff{\filterset {\botprop{}} {\botprop{}}}}
+            {\filterset {\botprop{}} {\botprop{}}}
            {\emptyobject{}}}
 }
 
@@ -1021,9 +1021,9 @@
 \newcommand\BIsA[0]{
 \infer [B-IsA]
 { \opsem {\openv{}} {\e{1}} {\v{1}}
-  \\
+  \\\\
   \opsem {\openv{}} {\e{2}} {\v{2}}
-  \\
+  \\\\
   \isaopsem{\v{1}}{\v{2}} = {\v{}}
 }
 {\opsem {\openv{}} {\isaapp {\e{1}} {\e{2}}} {\v{}}}
@@ -1278,21 +1278,25 @@ $$
 % subtyping syntax
 \newcommand\standardsubtyping[0]{
 
+  \begin{array}{l}
 \infer [SO-Refl]
 {}
-{ \issubobjin {} {\object{}} {\object{}}}
+{ \issubobjin {} {\object{}} {\object{}}}\\\\
 
 \infer [SO-Top]
 {}
 { \issubobjin {} {\object{}} {\emptyobject{}}}
+  \end{array}
 
+  \begin{array}{l}
 \infer [S-Refl]
 {}
-{ \issubtypein {} {\t{}} {\t{}}}
+{ \issubtypein {} {\t{}} {\t{}}}\\\\
 
 \infer [S-Top]
 {}
 { \issubtypein {} {\t{}} {\Top{}}}
+  \end{array}
 
 \infer [S-UnionSuper]
 { \exists i.\ {\issubtypein {} {\t{}} {\s{i}}}}
@@ -1302,12 +1306,6 @@ $$
 \infer [S-UnionSub]
 { {\overrightarrow {\issubtypein {} {\t{i}} {\s{}}}}^{i}}
 { \issubtypein {} {\Unionsplice{\overrightarrow{\t{}}^{i}}} {\s{}}}
-
-\infer [S-SKw]
-{}
-{\issubtypein {}
-  {\ValueKw}
-  {\Keyword}}
 
 \infer [S-FunMono]
 {}
@@ -1319,29 +1317,39 @@ $$
              {\object{}}}
   {\IFn{}}}
 
+\begin{array}{l}
 \infer [S-Object]
 {}
 {\issubtypein {}
   {\class{}}
-  {\Object{}}}
+  {\Object{}}}\\\\
 
 \infer [S-SClass]
 {}
 {\issubtypein {}
   {\ValueClass}
   {\Class{}}}
+\end{array}
 
+\begin{array}{l}
 \infer [S-SBool]
 {}
 {\issubtypein {}
   {\ValueBool}
-  {\Boolean{}}}
+  {\Boolean{}}}\\\\
+
+\infer [S-SKw]
+{}
+{\issubtypein {}
+  {\ValueKw}
+  {\Keyword}}
+\end{array}
 
 \infer [S-Fun]
 { \issubtypein {} {\sp{}} {\s{}}
   \\
   \issubtypein {} {\t{}} {\tp{}}
-  \\\\
+  \\
   \inpropenv {\thenprop {\prop{}}} {\thenprop {\propp{}}}
   \\
   \inpropenv {\elseprop {\prop{}}} {\elseprop {\propp{}}}
@@ -1437,9 +1445,9 @@ $$
 \newcommand\isaopsemfigure[0]{
   \ma{
 \begin{array}{lllr}
-  \isaopsem{\v{}}{\v{}} &=& {\true{}} & \text{if}\ \v{} \notequal {\class{}} \\
-  \isaopsem{\class{1}}{\class{2}} &=& {\true{}} & \text{if}\ \issubtypein{}{\class{1}}{\class{2}}\\
-  \isaopsem{\v{1}}{\v{2}} &=& {\false{}} & \text{otherwise}
+  \isaopsem{\v{}}{\v{}} &=& {\true{}} & \v{} \notequal {\class{}} \\
+  \isaopsem{\class{}}{\classp{}} &=& {\true{}} & \issubtypein{}{\class{}}{\classp{}}\\
+  \isaopsem{\v{}}{\vp{}} &=& {\false{}} & \text{otherwise}
 \end{array}
   }
 }
@@ -1994,3 +2002,10 @@ $$
 \caption{Java Type Conversion}
 \end{#1}
 }
+
+% constants syntax
+\newcommand\constantssyntax[0]{
+  {\const{}}           &::=& \classconst %\alt \throwconst
+
+                &\mbox{Constants}
+              }

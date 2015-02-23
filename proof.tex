@@ -1169,25 +1169,25 @@ so we know $\forall v \in \fv{\thenprop{\prop{}}} - \x{}$,
                   \end{subcase}
         \end{itemize}
       \end{subcase}
-    \item[]
-      \begin{subcase}[\const{} = \throwconst]
-        {\ArrowOne {\x{}} {\s{}}
-                                                       {\t{f}}
-                                                       {\filterset {\thenprop {\prop{f}}}
-                                                                   {\elseprop {\prop{f}}}}
-                                                       {\object{f}}}
-                                                       =
-        {\ArrowOne {\x{}} {\Top{}}
-                                      {\Bot{}}
-                                      {\filterset {\botprop{}}
-                                                  {\botprop{}}}
-                                      {\emptyobject{}}}
+    %\item[]
+    %  \begin{subcase}[\const{} = \throwconst]
+    %    {\ArrowOne {\x{}} {\s{}}
+    %                                                   {\t{f}}
+    %                                                   {\filterset {\thenprop {\prop{f}}}
+    %                                                               {\elseprop {\prop{f}}}}
+    %                                                   {\object{f}}}
+    %                                                   =
+    %    {\ArrowOne {\x{}} {\Top{}}
+    %                                  {\Bot{}}
+    %                                  {\filterset {\botprop{}}
+    %                                              {\botprop{}}}
+    %                                  {\emptyobject{}}}
 
-                                      Part 1 is trivial since \object{} = \emptyobject{} after substitution.
-                                      Part 2 holds vacuously as both propositions are \botprop{} after substitution.
-                                      Finally part 3 holds since {\judgementtwo{}{\hastype{\errorval{\v{2}}}{\Bot{}}}}.
+    %                                  Part 1 is trivial since \object{} = \emptyobject{} after substitution.
+    %                                  Part 2 holds vacuously as both propositions are \botprop{} after substitution.
+    %                                  Finally part 3 holds since {\judgementtwo{}{\hastype{\errorval{\v{2}}}{\Bot{}}}}.
 
-      \end{subcase}
+    %  \end{subcase}
   \end{itemize}
 
 \end{subcase}
