@@ -4,4 +4,4 @@
 
 (ann nil? (Pred nil))
 (defn nil? [x]
-  (isa? (class (class x)) clojure.lang.Keyword))
+  (isa? (class (class x)) Keyword))

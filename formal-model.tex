@@ -289,16 +289,13 @@ The simplest example
 has the proposition set \isacompare{\s{}}{\path{\classpe{}}{\x{}}}{\Value{\Keyword}}{\filterset{\isprop{\Keyword}{\x{}}}{\notprop{\Keyword}{\x{}}}},
 that is if the expression is true then \clj{x} is a keyword, otherwise \clj{x} is not a keyword.
 
-We can also finally define \nil{} test
+We can use \isaliteral{} as a crude \nil{} test
 
-\begin{minted}{clojure}
-(ann nil? (Pred nil))
-(defn nil? [x]
-  (isa? (class (class x)) Class))
-\end{minted}
+\inputminted[firstline=5]{clojure}{code/demo/src/demo/isa_nil.clj}
 
-with the proposition set 
-\isacompare{\s{}}{\classpe{}({\path{\classpe{}}{\x{}}})}{\Value{\Class}}{\filterset{\isprop{\Class}{\path{\classpe{}}{\x{}}}}{\notprop{\Class}{\path{\classpe{}}{\x{}}}}},
+because the then proposition is {\isprop{\Class}{\path{\classpe{}}{\x{}}}}, so
+we know {\isprop{\Object}{\x{}}} by L-Update, and combined with the fact {\isprop{\Union{\Nil{}}{\Number}}{\x{}}}
+we can infer {\isprop{\Number}{\x{}}} by L-Update.
 
 \begin{figure}
   \footnotesize
@@ -311,41 +308,14 @@ with the proposition set
   \label{main:figure:isaprops}
 \end{figure}
 
-For example, {\isaapp{\Keyword}{\Object}} = \true{} but 
-{\isaapp{\Object}{\Keyword}} = \false{}.
-This is useful in combination with \classconst{}
-with a fixed second argument, where {\isaapp{\appexp{\classconst}{\x{}}}{\Keyword}}
-is a test for \x{} being a \Keyword{}, and also
-as an equality test like
-{\isaapp{\x{}}{\makekw{a}}}.
+The second \isacompareliteral{} line handles the equality mode of \isaliteral{}
+with a non-class singleton type as the second argument.
 
-We encode this behaviour in figure~\ref{main:figure:isatyping}. 
-\isacompareliteral{} is the interesting part,
-which takes the object of the first argument 
-and the type of the second argument, and returns the then and else propositions
-of the expression.
 
-The first case handles subclassing mode
-in expressions like {\isaapp{\appexp{\classconst}{\x{}}}{\Object}},
-where the first argument has an object ending in \classpe{} and the second argument has a singleton class type.
-For example, in this case \isacomparetwo{\path{\classpe{}}{\x{}}}{\Value{\Object}}
-gives a then proposition {\isprop{\Object} {\x{}}}
-and an else proposition {\notprop{\Object}{\x{}}}.
 
-The reason to peel off one path element is subtle. For example,
-claiming {\isprop{\Value{\Object}} {\path{\classpe{}}{\x{}}}}
-might seem suitable, however it implies \inopenv{\openv{}}{\path{\classpe{}}{\x{}}}{\Object}
-which is wrong if \x{} = \makekw{a} where \inopenv{\openv{}}{\path{\classpe{}}{\x{}}}{\Keyword}.
-(Formulating \isacompareliteral revealed a three year old bug in the implementation).
-
-The second case handles the equality mode of \isaliteral{}
-with a non-class singleton type as the second argument, to be certain we are not in subclassing mode.
 Substitution is used to ensure well formed propositions.
 
 The final case gives up; we cannot distinguish between equality and subclassing mode.
-
-\isaliteral{} serves as the default dispatch mechanism for multimethods in Clojure.
-
 
 \subsection{Multimethods}
 

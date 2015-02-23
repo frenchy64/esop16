@@ -27,4 +27,8 @@
     (is (check-ns 'demo.parent)))
   (testing "file parent with aliasing"
     (is (check-ns 'demo.parent2)))
+  ;(testing "nil"
+  ;  (is (check-ns 'demo.nil)))
+  (testing "isa nil test"
+    (is (check-ns 'demo.isa-nil)))
   )
