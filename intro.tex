@@ -56,23 +56,39 @@ in this paper.
 \label{fig:ex1}
 \end{figure}
 
-Figure~\ref{fig:ex1} presents a simple program demonstrating several
+Figure~\ref{fig:ex1} presents a simple program demonstrating many
 aspects of our system, from simple type annotations to explicit
 handling of Java's \texttt{null} in interoperation, as well as an
 extended form of occurrence typing and Clojure's \emph{type hints},
 which are central to Typed Clojure's approach to interoperability. 
 
-In the remainder of this paper, we describe Typed Clojure's central
-innovations, including Java interoperability, multimethods, and
-heterogenously-typed immutable maps, following an example-driven
-presentation in Section~\ref{sec:overview}. We then incrementatlly
+The \clj{parent} function has the type 
+$$
+\clj{['{:file (U nil File)} -> (U nil Str)]}
+$$
+which means that it takes a hash table whose \clj{:file} key maps to either
+\clj{nil} or a \clj{File}, and it produces either \clj{nil} or a
+\clj{String}. The \clj{parent} function uses the \clj{:file} keyword
+as an accessor to get the file, checks that it isn't \clj{nil}, and
+then obtains the parent by making a Java method call.
+%
+The annotation \clj{^File} is a type hint, which instructs the Clojure
+compiler (running prior to Typed Clojure typechecking) to statically
+resolve method calls to the relevant object using the Java \clj{File}
+class, rather than using reflective method calls at runtime.
+
+In the remainder of this paper, we describe how Typed Clojure's
+central innovations, including Java interoperability, multimethods,
+and heterogenously-typed immutable maps, enable this example and many
+others. We begin with an example-driven presentation of the main type
+system features in Section~\ref{sec:overview}. We then incrementatlly
 present a core calculus for Typed Clojure covering all of these
 features together in Section~\ref{sec:formal} and prove type
 soundness(section \ref{sec:sound}). We then discuss the full
-implementation of Typed Clojure, dubbed \coretyped{}, which
-extends the formal model in many ways, and the experience gained from
-its use in Section~\ref{sec:exp}. Finally, we discuss related work and
-conclude. 
+implementation of Typed Clojure, dubbed \coretyped{}, which extends
+the formal model in many ways, and the experience gained from its use
+in Section~\ref{sec:exp}. Finally, we discuss related work and
+conclude.
 
 %$$
 %\abs{\x{}}{\Union{\Nil}{\File}}
