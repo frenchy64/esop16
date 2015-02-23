@@ -510,9 +510,8 @@ Complete maps are subtypes of partial maps by S-HMapP.
   \label{main:figure:reflectivesyntax}
 \end{figure*}
 
-Clojure supports interoperability with Java, including the ability to
-call constructors, methods and access fields. We model
-these operations in a restricted setting without class inheritance,
+We model
+Java interoperability in a restricted setting without class inheritance,
 overloading or Java Generics. 
 
 We extend the external language with Java field lookups and calls to
@@ -601,12 +600,6 @@ to help the compiler eliminate reflection.
   \caption{Java Interoperability Typing Rules}
   \label{main:figure:javatyping}
 \end{figure*}
-
-Clojure supports \emph{type hints}, an optional type system to improve performance
-and disambiguate Java calls.
-Programmers communicate to the Clojure compiler via type hints
-to resolve Java methods and prevent boxing in loops. Tags are propagated bidirectionally
-and the programmer is free to add them where they like.
 
 core.typed uses tools.analyzer to obtain a rich abstract syntax tree that includes resolved
 reflection, however to tell the full story we include a rewrite relation 

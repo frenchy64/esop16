@@ -12,11 +12,11 @@ control flow like the following example.
 \caption{Occurrence typing}
 \end{listing}
 
-Here we include the full namespace, which we omit in the following
+Here we include the full \clj{ns} form, which we omit in the following
 examples. Going down the then branch in this example means that we know
 \clj{x} is a number, which is automatically updated with occurrence typing.
 
-In Clojure, exceptional control flow is almost as common, often in the form of
+In Clojure, exceptional control flow is also common, often in the form of
 runtime assertions. 
 
 
@@ -35,7 +35,7 @@ which we enhance our sequencing \doliteral{} expression to understand.
 \end{minted}
 
 Our main insight is that occurrence typing already provides
-valuable information about the left argument,
+valuable information about the left argument of \doliteral{} expressions,
 namely if it returns a value, \clj{x} is a \clj{Number}.
 Since the right argument is evaluated after the left, we can assume
 \clj{x} is a \clj{Number} when evaluating \clj{(inc x)}, verifying
@@ -52,7 +52,7 @@ $$
 $$
 
 is the type of a map with at least an \clj{:a} entry mapped to a number,
-also written \clj{'{:a Num}}. If \clj{:b} is known to be an absent entry
+also written \clj{'{:a Num}}. If \clj{:b} is also known to be an absent entry
 then
 
 % '#' not allowed in mintinline
@@ -84,7 +84,7 @@ abbreviates the union of present and absent entries
 .
 
 
-We use \clj{defalias} to abbreviate HMap types.
+\clj{defalias} defines a custom type abbreviation, often for unions of HMaps.
 
 \begin{listing}
 \inputminted[firstline=5,lastline=8]{clojure}{code/demo/src/demo/hmap.clj}
@@ -112,32 +112,48 @@ know the lookup always succeeded.
 \end{minted}
 
 The result type is updated as expected to exclude \clj{nil}.
-Testing for \clj{nl} is more complicated, since it is the sentinel
+Testing for \clj{nil} is more complicated, since it is the sentinel
 lookup failure indicator but may also appear as an entry value.
 If we test for \clj{nil} in an \clj{:optional} entry, the best we learn
 is that either the entry is missing or contains \clj{nil}.
 
 \begin{minted}{clojure}
-(fn [m :- (HMap :optional {:a (U nil Num)})] :- (HMap :optional {:a nil})
+(fn [m :- (HMap :optional {:a (U nil Num)})] 
+  :- (HMap :optional {:a nil})
   {:pre [(nil? (:a m))]}
   m)
 \end{minted}
 
-\smallsection{Mandatory Entries}
-
-
-\smallsection{Known Absent Entries}
-
-\smallsection{Unknown Entries}
-
 \subsection{Java interoperability}
 
-Java
+Clojure supports interoperability with Java, including the ability to
+call constructors, methods and access fields.
+
+Clojure supports \emph{type hints}, an optional type system to improve performance
+and disambiguate Java calls.
+Programmers communicate to the Clojure compiler via type hints
+to resolve Java methods and prevent boxing in loops. Tags are propagated bidirectionally
+and the programmer is free to add them where they like.
+
+Here we use \clj{ann} to annotate static types for the function, and the type hint
+\clj{^File} directs the Clojure compiler to assume \clj{f} is a \clj{File}
+when resolving Java calls at compile time.
 
 \begin{listing}
-\inputminted[firstline=5,lastline=14]{clojure}{code/demo/src/demo/hmap.clj}
+  \begin{minted}{clojure}
+(ann parent [(U nil File) -> (U nil Str)]
+(defn parent [^File f]
+  (when f
+    (.getParent f)))
+  \end{minted}
 \caption{Java Interoperability}
 \end{listing}
+
+While \clj{f} has the type hint \clj{File}, it also has the static type \clj{(U nil File)},
+and Typed Clojure disallows invoking \clj{nil} even if the compiler
+has statically resolved a method.
+Typed Clojure also conservatively assumes fields and method returns are nullable,
+and guarantees null-pointer exceptions cannot happen in typed code.
 
 
 \subsection{Multimethod}
