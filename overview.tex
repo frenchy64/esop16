@@ -155,19 +155,81 @@ has statically resolved a method.
 Typed Clojure also conservatively assumes fields and method returns are nullable,
 and guarantees null-pointer exceptions cannot happen in typed code.
 
-
 \subsection{Multimethod}
+
+A multimethod in Clojure is a function with a dispatch mechanism to
+of internal methods. Multimethods are created with {\clj{defmulti}}
+and methods are installed via {\clj{defmethod}}.
+They are called like regular functions.
+
+\begin{minted}{clojure}
+(ann rep [Any -> String])
+(defmulti rep class)
+(defmethod rep Number [x] (str (inc x)))
+(defmethod rep Keyword [x] (str (name x)))
+
+(rep :a) ;=> "a"
+(rep 1)  ;=> "2"
+\end{minted}
+
+The \clj{class} function returns the class of an object, or \clj{nil}
+if given \clj{nil}. This multimethod's dispatch function returns the class of its
+argument. The underlying dispatch strategy features \clj{isa?}, a function
+that is a subclassing check when provided with classes
+
+\begin{minted}{clojure}
+  (isa? Keyword Object) ;=> true
+  (isa? Keyword Number) ;=> false
+\end{minted}
+
+otherwise an equality check.
+
+\begin{minted}{clojure}
+  (isa? :a :a) ;=> true
+  (isa? :a 1) ;=> false
+\end{minted}
+
+So in the previous example, \clj{(rep :a)} dispatched to the method
+where \clj{(isa? (class :a) v)} returned true, where \clj{v} is the dispatch value.
+Since \clj{(isa? (class :a) Keyword)} is true, the second method is chosen.
+
+The flexibility of \clj{isa?} is key to the generality of multimethods. 
+For instance, we can dispatch on the value of
+a map entry, even if it is not a class.
+
+\inputminted[firstline=4,lastline=23]{clojure}{code/demo/src/demo/eg5.clj}
+
+\clj{isa?} is further special-case with vectors: with two vectors of the
+same length, it returns the logical conjunction of the pairwise applications
+of \clj{isa?}.
+
+\begin{minted}{clojure}
+  (isa? [Keyword :a] [Object :a]) ;=> true
+  (isa? [Keyword Keyword] [Object Object]) ;=> true
+\end{minted}
+
+We can use this to dispatch on more than one thing. Here we perform
+double dispatch on the class of each argument.
+
+\inputminted[firstline=6,lastline=23]{clojure}{code/demo/src/demo/eg7.clj}
+
+No extra annotations are needed to follow the type-directed control flow.
+For instance, the middle method is has inferred the left argument is a number
+and thus safe to increment, and the right argument is a keyword and safe to
+extract its name.
+
+A dispatch value can also be the keyword \clj{:default} to specify a default
+method if no preferred method is found. The static type of both arguments
+remains unchanged.
 
 \subsection{Final example}
 
-\inputminted[firstline=4]{clojure}{code/demo/src/demo/eg2.clj}
-\inputminted[firstline=4]{clojure}{code/demo/src/demo/eg3.clj}
-\inputminted[firstline=4]{clojure}{code/demo/src/demo/eg4.clj}
-\inputminted[firstline=4,lastline=15]{clojure}{code/demo/src/demo/eg5.clj}
-\inputminted[firstline=4,lastline=15]{clojure}{code/demo/src/demo/eg6.clj}
-\inputminted[firstline=6,lastline=23]{clojure}{code/demo/src/demo/eg7.clj}
+The final example combines everything we will cover for the rest of the paper:
+multimethod dispatch, reflection resolution via type hints, Java method
+and constructor calls, conditional and exceptional flow reasoning
+and use of HMaps.
 
-
+\inputminted[firstline=6,lastline=20]{clojure}{code/demo/src/demo/eg8.clj}
 
 
 

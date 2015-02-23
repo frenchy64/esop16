@@ -369,20 +369,6 @@ $$
   \label{main:figure:mmsemantics}
 \end{figure}
 
-A multimethod in Clojure is a function with a dispatch mechanism to
-of internal methods. Multimethods are created with {\clj{defmulti}}
-and methods are installed via {\clj{defmethod}}.
-They are called like regular functions.
-
-\begin{minted}{clojure}
-(ann foo [Any -> String])
-(defmulti foo class)
-(defmethod foo Number [x] (str (inc x)))
-(defmethod foo Keyword [x] (str (name x)))
-(foo :a) ;=> "a"
-(foo 1)  ;=> "2"
-\end{minted}
-
 To ease presentation, we present \emph{immutable}
 multimethods (figure~\ref{main:figure:mmsyntax}). \defmethodliteral{} returns a new extended multimethod
 without changing the original multimethod. The above is now written

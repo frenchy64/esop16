@@ -1,32 +1,20 @@
 (ns demo.eg7
-  (:require [clojure.core.typed :as t]
-            [demo.eg5 :refer [M]]
-            [demo.eg6 :refer [E]]))
+  (:refer-clojure :exclude [fn])
+  (:import (clojure.lang Keyword))
+  (:require [clojure.core.typed :as t :refer [defalias ann fn Assoc Num U Kw Str]]))
 
-;; Multimethod variant+map double dispatch
-(t/defalias C (t/U '{:op ':if :test C :then C :else C}
-                   '[':do C C]
-                   '{:op ':val :val t/Any}))
-(t/ann change [M E -> C])
-(defmulti change (t/fn [m :- M, v :- E] 
-                   [(:op m) (first v)]))
-(defmethod change [:if :if] 
-  [{:keys [test then else]} [_ vtest vthen velse]]
-  {:op :if
-   :test (change test vtest)
-   :then (change then vthen)
-   :else (change else velse)})
-(defmethod change [:do :do] [{:keys [e1 e2]} [_ ve1 ve2]]
-  [:do (change e1 ve1) (change e2 ve2)])
-(defmethod change [:val :val] [{:keys [val]} [_ vval]]
-  (assert (= val vval))
-  {:op :val :val val})
+(defalias NK (U Num Kw))
 
-(change {:op :if 
-         :test {:op :val :val 1}
-         :then {:op :do 
-                :e1 {:op :val :val 2} 
-                :e2 {:op :val :val 3}}
-         :else {:op :val :val 4}}
-        [:if [:val 1] [:do [:val 2] [:val 3]] [:val 4]])
+(ann mult [NK NK -> Str])
+(defmulti mult (fn [l :- NK r :- NK]
+                 [(class l) (class r)]))
+(defmethod mult [Keyword Keyword] [k1 k2]
+  (str "Keywords " (name k1) (name k2)))
+(defmethod mult [Number Keyword] [n1 k2]
+  (str "NK " (inc n1) (name k2)))
+(defmethod mult :default [nk1 nk2]
+  (str "Default " nk1 nk2))
 
+(mult :a 12) ;=> "Default :a12"
+(mult :a :b) ;=> "Keywords ab"
+(mult 42 :x) ;=> "NK 43x"
