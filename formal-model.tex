@@ -320,11 +320,35 @@ Typing rules are given in figure~\ref{main:figure:hmaptyping}. T-GetHMap handles
 case where we know a lookup will succeed and use B-Get. In T-GetHMapAbsent we know B-GetMissing will give
 a \Nil{} return type.
 T-GetHMapPartialDefault does not know if the key is present or absent and has a \Top{} return type.
+Even though their types vary significantly, we still use the same object.
 T-Assoc extends the known keyword entries, overwriting previous entries with the same key.
 
 S-HMap (figure~\ref{main:figure:hmapsubtype}) says that HMap subtypes must have all present entries to also be
 subtypes and also cover the absent keys.
 Complete maps are subtypes of partial maps by S-HMapP.
+
+\subsection{Proof system}
+
+The essential piece of occurrence typing's logical system is L-Update.
+(The metavariable \propisnotmeta{} ranges over \t{} and \nottype{\t{}} (without variables).)
+
+\begin{mathpar}
+{\LUpdate}
+\end{mathpar}
+
+This is where we combine propositions with similar objects
+to learn new facts.
+The full definition of \updateliteral{} is given
+in
+
+\begin{figure*}
+  $$
+\begin{array}{lllll}
+\updatefigure
+\end{array}
+$$
+\caption{Type Update}
+\end{figure*}
 
 \subsection{Java Interoperability and Type Hints}
 
@@ -658,16 +682,6 @@ method bodies. T-App handles beta reduction because multimethods are subtypes of
 
 {\footnotesize
 \constantsemfigure{}
-
-\begin{figure*}
-  $$
-\begin{array}{lllll}
-\updatefigure
-\end{array}
-$$
-\caption{Type Update}
-\end{figure*}
-}
 
 {\convertjavatypefigure{figure}{\footnotesize}}
 

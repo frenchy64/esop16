@@ -1,9 +1,26 @@
 \section{Experience}
 
-Typed Clojure has been used in production Clojure systems for 2 years.
+Typed Clojure is implemented as a Clojure library in the form of \coretyped{}.
+In contrast to Racket, Clojure does not provide extension
+points to the macroexpander. To satisfy our goals of providing
+Typed Clojure as a library that works with the latest version of the Clojure
+compiler, \coretyped{} is implemented as an external static analysis pass
+that is explicitly invoked by the programmer.
+In this way \coretyped{} is effectively a linter that programmers invoke at the REPL
+when needed.
+
+This means that type checking is truly optional. 
+On the positive side, using \coretyped{} is flexible to the needs of a dynamically
+typed programmer, encouraging experimentation with programs that do not necessarily
+type check.
+On the negative side, programmers must remember to type check their namespaces.
+Also programs cannot depend on the static semantics provided by Typed Clojure, including
+type-based optimisation. If this were not the case, we could dispose of type-hints
+all together, and simply use static types to resolve reflection.
 
 \subsection{Case Study}
 
+Typed Clojure has been used in production Clojure systems for at least 2 years.
 CircleCI has a Clojure code base of approximately 50,000 lines, including around 10,000 
 lines that uses Typed Clojure.
 

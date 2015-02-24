@@ -2220,3 +2220,12 @@ $$
 \caption{Primitives}
 \end{figure}
 }
+
+% proof system
+\newcommand\LUpdate[0]{
+\infer [L-Update]
+{ \inpropenv {\propenv{}} {\isprop {\t{}} {\path {\pathelemp{}} {\x{}}}}
+\\
+  \inpropenv {\propenv{}} {\isprop {\propisnotmeta{}} {{\pathelem{}}({\path {\pathelemp{}} {\x{}}})}}}
+{ \inpropenv {\propenv{}} {\isprop {\update {\t{}} {\propisnotmeta{}} {\pathelem{}}} {\path {\pathelemp{}} {\x{}}}}}
+}

@@ -65,11 +65,8 @@
 { \inpropenv {\propenv{}} {\isprop {\Bot} {\path {\pathelem{}} {\x{}}}}}
 { \inpropenv {\propenv{}} {\prop{}}}
 
-\infer [L-Update]
-{ \inpropenv {\propenv{}} {\isprop {\t{}} {\path {\pathelemp{}} {\x{}}}}
-\\
-  \inpropenv {\propenv{}} {\isprop {\propisnotmeta{}} {{\pathelem{}}({\path {\pathelemp{}} {\x{}}})}}}
-{ \inpropenv {\propenv{}} {\isprop {\update {\t{}} {\propisnotmeta{}} {\pathelem{}}} {\path {\pathelemp{}} {\x{}}}}}
+{\LUpdate}
+
 \\
 
 \text{(The metavariable \propisnotmeta{} ranges over \t{} and \nottype{\t{}} (without variables).)}
