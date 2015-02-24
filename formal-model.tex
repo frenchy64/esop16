@@ -327,6 +327,26 @@ S-HMap (figure~\ref{main:figure:hmapsubtype}) says that HMap subtypes must have 
 subtypes and also cover the absent keys.
 Complete maps are subtypes of partial maps by S-HMapP.
 
+\subsection{\classconst{}}
+
+The \classconst{} function is modeled as a constant which returns
+an object's \Class{}, or \nil{} if provided \nil{}.
+
+\begin{mathpar}
+\constanttypefigure{}
+\end{mathpar}
+
+Our second path element \classpe{} is the symbolic representation
+of a call to \classconst{}.
+
+$$
+\begin{array}{lrlr}
+  \pesyntax{}   &::=& \ldots \alt {\classpe{}}
+                &\mbox{Path Elements}
+\end{array}
+$$
+
+
 \subsection{Proof system}
 
 The essential piece of occurrence typing's logical system is L-Update,
@@ -382,8 +402,35 @@ deriving \inpropenv {\propenv{}} {\isprop {\Keyword} {\x{}}}
 by \restrictliteral{} (figure~\ref{main:figure:restrictremove}).
 
 \smallsection{\keype{\k{}}}
+Consider the then branch of
 
-\smallsection{Combination}
+\begin{minted}{clojure}
+(fn [x :- '{:kw (U nil Keyword)}]
+  (when (get x :kw)
+    ; here
+    ))
+\end{minted}
+
+Similar to before,
+by T-Abs
+{\isprop {\HMapp{\mandatorysetsingleton{\makekw{kw}}{\Union{\Nil}{\Keyword}}}{\emptyabsent}} {\x{}}},
+the test's object is {\path{\keype{\makekw{kw}}}{\x{}}} by T-App
+and by T-If we assume
+{\notprop {\falsy{}} {\path{\keype{\makekw{kw}}}{\x{}}}} in the then branch.
+
+T-Update combines these propositions
+$$
+\inpropenv {\propenv{}} {\isprop {\update {\HMapp{\mandatorysetsingleton{\makekw{kw}}{\Union{\Nil}{\Keyword}}}{\emptyabsent}} {\nottype {\falsy{}}} {\keype{\makekw{kw}}}} {\x{}}}.
+$$
+matching the \updateliteral{} case which pushes the \updateliteral{} inside the map
+$$
+{\HMapp{\mandatorysetsingleton{\makekw{kw}}{\update{\Union{\Nil}{\Keyword}}{\nottype {\falsy{}}}{\emptypath{}}}}{\emptyabsent}}
+$$
+concluding with
+$$
+\inpropenv {\propenv{}}
+{\isprop {\HMapp{\mandatorysetsingleton{\makekw{kw}}{\Keyword}}{\emptyabsent}}   {\x{}}}.
+$$
 
 \begin{figure*}
   $$
@@ -538,25 +585,6 @@ Method and constructor calls are similar, but T-MethodStatic and T-NewStatic dis
 we assume methods can return \nil{} and we assume constructors cannot.
 
 We rewrite to our internal language before type checking and remaining reflective calls are type errors.
-
-\subsection{\classconst{}}
-
-The \classconst{} function is modeled as a constant which returns
-an object's \Class{}, or \nil{} if provided \nil{}.
-
-\begin{mathpar}
-\constanttypefigure{}
-\end{mathpar}
-
-Our second path element \classpe{} is the symbolic representation
-of a call to \classconst{}.
-
-$$
-\begin{array}{lrlr}
-  \pesyntax{}   &::=& \ldots \alt {\classpe{}}
-                &\mbox{Path Elements}
-\end{array}
-$$
 
 \subsection{Multimethod dispatch mechanism: \isaliteral}
 
