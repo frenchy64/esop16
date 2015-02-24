@@ -1,6 +1,31 @@
 \section{Overview of Typed Clojure}
 
+\label{sec:overview}
+
+We now begin a tour of the central features of Typed Clojure,
+beginning with Clojure itself. In our presentation, we will make 
+use of the full Typed Clojure system to illustrate the key type system
+ideas, before studying the key features in detail in
+section~\ref{sec:formal}. 
+
 \subsection{Clojure}
+
+Clojure~\cite{something-for-clojure} is a Lisp built to run on the
+Java Virtual Machine with exemplary support for concurrent programming
+and immutable data structures. It emphaisizes mostly-functional
+programming, restricting imperative updates to a limited set of
+structures which have specific thread synchronization behavior. By
+default, it provides fast implemenations of immutable lists, vectors,
+and hash tables, which are used for most data structures, although it
+also provides means for defining new records.
+
+One of Clojure's primary advantages is easy interoperation with
+existing Java libraries. It automatically generates appropriate JVM
+bytecode to make Java method and constructor calls, and treats Java
+values as any other Clojure value. However, this smooth
+interoperability comes at the cost of pervasive \clj{null}, which
+leads to the possibility of null pointer exceptions---a drawback we
+address in Typed Clojure.
 
 \subsection{Typed Racket and occurrence typing}
 
