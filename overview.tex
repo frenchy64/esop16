@@ -32,10 +32,13 @@ address in Typed Clojure.
 Classic occurrence typing concentrates on conditional
 control flow like the following example.
 
+
+\begin{exmp}
 \begin{listing}
 \inputminted[firstline=1]{clojure}{code/demo/src/demo/eg1.clj}
-\caption{Occurrence typing}
+%\caption{Occurrence typing}
 \end{listing}
+\end{exmp}
 
 Here we include the full \clj{ns} form, which we omit in the following
 examples. Going down the then branch in this example means that we know
@@ -45,19 +48,24 @@ In Clojure, exceptional control flow is also common, often in the form of
 runtime assertions. 
 
 
+
+\begin{exmp}
 \begin{listing}
 \inputminted[firstline=5,lastline=7]{clojure}{code/demo/src/demo/do.clj}
-\caption{Exceptional control flow}
+%\caption{Exceptional control flow}
 \end{listing}
+\end{exmp}
 
 Clojure assertions expand to simple exceptional control flow,
 which we enhance our sequencing \doliteral{} expression to understand.
 
-\begin{minted}{clojure}
+\begin{exmp}
+  \begin{minted}{clojure}
 (fn [x :- (U nil Number)]
   (do (if (number? x) nil (throw (new Exception)))
       (inc x)))
-\end{minted}
+  \end{minted}
+\end{exmp}
 
 Our main insight is that occurrence typing already provides
 valuable information about the left argument of \doliteral{} expressions,

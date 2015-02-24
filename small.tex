@@ -34,6 +34,14 @@
 \include{bibliography.bib}
 \usepackage{chngcntr}
 
+\newcounter{ex}
+\newenvironment{exmp}{
+\refstepcounter{ex}%
+\par\vspace{.8em}\hfill\framebox{\small Example~\theex}\nopagebreak
+\\[-2.5em]\nopagebreak}
+{\relax}
+
+
 \begin{document}
 
 \special{papersize=8.5in,11in}
