@@ -329,17 +329,35 @@ Complete maps are subtypes of partial maps by S-HMapP.
 
 \subsection{Proof system}
 
-The essential piece of occurrence typing's logical system is L-Update.
+The essential piece of occurrence typing's logical system is L-Update,
+where we combine propositions that have similar objects to learn new facts.
 (The metavariable \propisnotmeta{} ranges over \t{} and \nottype{\t{}} (without variables).)
 
 \begin{mathpar}
-{\LUpdate}
+  {\LUpdate}
 \end{mathpar}
 
-This is where we combine propositions with similar objects
-to learn new facts.
-The full definition of \updateliteral{} is given
-in
+For example, if \inpropenv {\propenv{}} {\isprop {\Union{\Keyword}{\Nil}} {\x{}}}
+and
+\inpropenv {\propenv{}} {\notprop {\Nil{}} {\x{}}},
+then
+$$
+\inpropenv {\propenv{}} {\isprop {\update {\Union{\Keyword}{\Nil}} {\nottype{\Nil{}}} {\emptypath{}}} {\x{}}},
+$$
+so we learn \inpropenv {\propenv{}} {\isprop {\Keyword{}} {\x{}}} using \removeliteral{} (figure~\ref{main:figure:restrictremove}).
+
+Now that we have our path elements \classpe{} and \keype{\k{}}
+and the typings rules that introduce them, we look at \updateliteral{} 
+(figure~\ref{main:figure:update}) and give one interesting example for each.
+
+\smallsection{\classpe{}}
+If \inpropenv {\propenv{}} {\isprop {\Union{\Keyword}{\Nil}} {\x{}}}
+and
+\inpropenv {\propenv{}} {\isprop {\Value{\Keyword}} {\path{\classpe{}}{\x{}}}}
+
+\smallsection{\keype{\k{}}}
+
+\smallsection{Combination}
 
 \begin{figure*}
   $$
@@ -348,6 +366,7 @@ in
 \end{array}
 $$
 \caption{Type Update}
+\label{main:figure:update}
 \end{figure*}
 
 \subsection{Java Interoperability and Type Hints}
@@ -684,6 +703,7 @@ method bodies. T-App handles beta reduction because multimethods are subtypes of
 \constantsemfigure{}
 
 {\convertjavatypefigure{figure}{\footnotesize}}
+}
 
 \begin{figure}
   $$
@@ -692,4 +712,5 @@ method bodies. T-App handles beta reduction because multimethods are subtypes of
 \end{array}
   $$
   \caption{Restrict and Remove}
+  \label{main:figure:restrictremove}
 \end{figure}
