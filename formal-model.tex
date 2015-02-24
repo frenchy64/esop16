@@ -351,9 +351,35 @@ and the typings rules that introduce them, we look at \updateliteral{}
 (figure~\ref{main:figure:update}) and give one interesting example for each.
 
 \smallsection{\classpe{}}
-If \inpropenv {\propenv{}} {\isprop {\Union{\Keyword}{\Nil}} {\x{}}}
-and
-\inpropenv {\propenv{}} {\isprop {\Value{\Keyword}} {\path{\classpe{}}{\x{}}}}
+Consider the then branch of the following program:
+
+\begin{minted}{clojure}
+(fn [x :- (U nil Keyword)]
+  (when (class x)
+    ; here
+    ))
+\end{minted}
+
+Intuitively, since \clj{(class x)} is a true value it must be a class, therefore
+\clj{x} is an object (not \clj{nil}).
+
+From checking the body with T-Abs we know {\isprop {\Union{\Keyword}{\Nil}} {\x{}}}
+The test has the object {\path{\classpe{}}{\x{}}} by T-App.
+By T-If we can assume
+{\notprop {\falsy{}} {\path{\classpe{}}{\x{}}}} in the then branch.
+Since the object of the first proposition {\x{}} is a prefix of the second proposition's object
+{\path{\classpe{}}{\x{}}}, 
+by T-Update 
+$$
+\inpropenv {\propenv{}} {\isprop {\update {\Union{\Keyword}{\Nil}} {\nottype {\falsy{}}} {\classpe{}}} {\x{}}}.
+$$
+
+This hits the sixth \classpe{} case of \updateliteral{}, which returns
+$$
+{\update {\Union{\Keyword}{\Nil}} {\Object} {\emptypath{}}}
+$$
+deriving \inpropenv {\propenv{}} {\isprop {\Keyword} {\x{}}} 
+by \restrictliteral{} (figure~\ref{main:figure:restrictremove}).
 
 \smallsection{\keype{\k{}}}
 

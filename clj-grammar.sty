@@ -240,7 +240,7 @@
 % update function
 \newcommand\metafunctionfont[1]{{\mathsf{#1}}}
 \newcommand\updateliteral[0]{\ma{\metafunctionfont{update}}}
-\newcommand\update[3]{\updateliteral(#1 , #2, #3)}
+\newcommand\update[3]{\updateliteral({#1}, {#2}, {#3})}
 \newcommand\restrictliteral[0]{\ma{\metafunctionfont{restrict}}}
 \newcommand\restrict[2]{\restrictliteral(#1, #2)}
 \newcommand\removeliteral[0]{\ma{\metafunctionfont{remove}}}
@@ -2112,7 +2112,7 @@ $$
 &=& \update{\t{}}{\nottype{\class{}}}{\pathelem{}}
 & \text{if}\ \not\exists \classp{}.\ {\issubtypein{}{\classp{}}{\class{}}}\ \text{and}\ {\classp{}} \not= \class{}
 \\
-\update{\t{}}{\s}{\destructpath{\pathelem{}}{\classpe{}}}
+\update{\t{}}{\s{}}{\destructpath{\pathelem{}}{\classpe{}}}
 &=& \update{\t{}}{\Object}{\pathelem{}}
 & \text{if}\ \issubtypein{}{\s{}}{\Object{}}
 \\
@@ -2120,7 +2120,7 @@ $$
 &=& \update{\t{}}{\Nil{}}{\pathelem{}}
 & \text{if}\ \issubtypein{}{\Object{}}{\s{}}
 \\
-\update{\t{}}{\s}{\destructpath{\pathelem{}}{\classpe{}}}
+\update{\t{}}{\s{}}{\destructpath{\pathelem{}}{\classpe{}}}
 &=& \update{\t{}}{\Nil}{\pathelem{}}
 & \text{if}\ \issubtypein{}{\s{}}{\Nil{}}
 \\

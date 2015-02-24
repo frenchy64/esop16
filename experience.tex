@@ -6,8 +6,7 @@ points to the macroexpander. To satisfy our goals of providing
 Typed Clojure as a library that works with the latest version of the Clojure
 compiler, \coretyped{} is implemented as an external static analysis pass
 that is explicitly invoked by the programmer.
-In this way \coretyped{} is effectively a linter that programmers invoke at the REPL
-when needed.
+In this way \coretyped{} is effectively a linter.
 
 This means that type checking is truly optional. 
 On the positive side, using \coretyped{} is flexible to the needs of a dynamically
@@ -18,7 +17,7 @@ but since type checking is a function call away, it is easily integrated as edit
 shortcuts or continuous integration.
 Also programs cannot depend on the static semantics provided by Typed Clojure, including
 type-based optimisation. If this were not the case, we could dispose of type-hints
-all together, and simply use static types to resolve reflection.
+altogether, and simply use static types to resolve reflection.
 
 \subsection{Case Study}
 
