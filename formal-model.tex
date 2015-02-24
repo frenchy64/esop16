@@ -17,15 +17,14 @@ proposition environment $\propenv{}$, with
 `then' proposition {\thenprop {\prop{}}}, `else' proposition {\elseprop {\prop{}}}
 and object \object{}.
 
-The propositions inform conditionals on what they can assume down the then and else
-branches if the expression is used as a test.
-The object is a possibly-empty symbolic representation of the expression.
+The propositions capture what can be assumed if an expression tests as logically true or false
+respectively. The object is a possibly-empty symbolic representation of the expression.
 
 Syntax is given in figure~\ref{main:figure:termsyntax}. Expressions include variables, values,
-application, abstractions, conditionals, do (sequencing) expressions and let expressions.
+application, abstractions, conditionals and let expressions.
 All binding forms introduce fresh variables.
 
-Values include booleans, \nil{}, class literals, keywords (written with a : prefix like \clj{:a}), 
+Values include booleans, \nil{}, class literals, keywords (written with a : prefix like \makekw{a}), 
 constants and closures.  \false{} and \nil{} are logically false; all other values are logically true.
 
 Types include the top type, untagged unions, functions, singleton types
@@ -35,7 +34,7 @@ Function types contain \emph{latent} propositions and object, which, along with 
 may refer to the parameter identifier. They are latent because they are instantiated with the
 actual object of the argument in applications before they are used in the proposition environment.
 
-Propositions are identical to~\cite{TF10}; positive and negative type propositions, implications,
+Propositions are identical to~\cite{TF10}---positive and negative type propositions, implications,
 conjunctions, disjuctions, trivial and impossible propositions.
 Type propositions contain a non-empty object which it claims type information about.
 
