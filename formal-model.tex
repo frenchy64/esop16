@@ -39,9 +39,14 @@ Type propositions contain a non-empty object which it claims type information ab
 
 Proposition environments are sequences of propositions in conjunctive normal form.
 
-Figures ~\ref{main:figure:typingrules} and~\ref{main:figure:standardopsem}
-contain the typing rules and operational semantics.
-They compensate for the extra logically false value \nil{}, otherwise they are standard.
+Figure ~\ref{main:figure:typingrules} contains the standard typing rules.
+The operational semantics are standard, except \nil{} is logically false:
+
+\begin{mathpar}
+    \BIfTrue{}
+
+    \BIfFalse{}
+\end{mathpar}
 
 Subtyping (figure~\ref{main:figure:subtyping}) says singleton types are instances of their respective classes
 and \Object is transitively a supertype to everything except {\Nil{}},
@@ -50,7 +55,7 @@ so \Top{} = {\Union{\Nil}{\Object}}.
 \begin{figure}
   \footnotesize
 $$
-\begin{array}{lrlr}
+\begin{array}{lrll}
   \expd{}, \e{} &::=& \x{}
                       \alt \v{} 
                       \alt {\comb {\e{}} {\e{}}} 
@@ -77,6 +82,7 @@ $$
   \singletonallsyntax{}
                 \\ \\
   \occurrencetypingsyntax{}\\
+  \propenvsyntax{}\\
   \openvsyntax{}
   %\\
   %\classliteralallsyntax{}
@@ -116,9 +122,9 @@ $$
   \label{main:figure:typingrules}
 \end{figure*}
 
-\begin{figure}
-  \footnotesize
-  \begin{mathpar}
+%\begin{figure}
+%  \footnotesize
+%  \begin{mathpar}
 %    {\BLocal}
 %
 %    %{\BDo}
@@ -127,7 +133,7 @@ $$
 %
 %    \BVal{}
 %
-    \BIfTrue{}
+    %\BIfTrue{}
 
 %    \BIfFalse{}
 %
@@ -136,10 +142,10 @@ $$
 %    \BBetaClosure{}
 %
 %    \BDelta{}
-  \end{mathpar}
-  \caption{Operational Semantics}
-  \label{main:figure:standardopsem}
-\end{figure}
+%  \end{mathpar}
+%  \caption{Operational Semantics}
+%  \label{main:figure:standardopsem}
+%\end{figure}
 
 \begin{figure*}
   \footnotesize
@@ -169,7 +175,7 @@ roughly expands to
 \end{minted}
 
 We extend our model with sequencing expressions and errors, where {\errorvalv{}}
-is equivalent to a Clojure throw expression.
+is equivalent to Clojure's throw.
 
 \smallskip
 $
@@ -233,6 +239,255 @@ and we check \clj{(inc x)} in the extended environment
 \ma{{\propenv{},{\notprop{\falsy}{\x{}}}}}.
 By L-Update (figure~\ref{appendix:figure:proofsystem}) we know {\isprop{\Number}{\x{}}},
 so T-Local checks \clj{x} as a \Number.
+
+\subsection{Heterogenous maps}
+
+\begin{figure}
+  \footnotesize
+  $$
+  \begin{altgrammar}
+    \e{} &::=& \ldots \alt \hmapexpressionsyntax{}
+    &\mbox{Expressions} \\
+    \v{} &::=& \ldots \alt {\emptymap{}}
+    &\mbox{Values} \\
+    \t{} &::=& \ldots \alt {\HMapgeneric {\mandatory{}} {\absent{}}}
+    &\mbox{Types} \\
+    \auxhmapsyntax{}\\
+    \pesyntax{}   &::=& \ldots \alt {\keype{\k{}}}
+                  &\mbox{Path Elements}
+  \end{altgrammar}
+  $$
+  \caption{HMap Terms and Types}
+  \label{main:figure:hmapsyntax}
+\end{figure}
+
+\begin{figure}
+  \footnotesize
+  \begin{mathpar}
+    {\BAssoc}
+    {\BGet}
+    {\BGetMissing}
+  \end{mathpar}
+  \caption{HMap Semantics}
+  \label{main:figure:hmapsem}
+\end{figure}
+
+\begin{figure}
+  \footnotesize
+  \begin{mathpar}
+    {\TGetHMap}
+
+    {\TGetAbsent}
+
+    {\TGetHMapPartialDefault}
+
+    {\TAssoc}
+  \end{mathpar}
+  \caption{HMap Typing Rules}
+  \label{main:figure:hmaptyping}
+\end{figure}
+
+\begin{figure}
+  \footnotesize
+  \begin{mathpar}
+    \HMapsubtyping{}
+  \end{mathpar}
+  \caption{HMap subtyping rules}
+  \label{main:figure:hmapsubtype}
+\end{figure}
+
+We now present \HMapliteral{} types in detail.
+Figure~\ref{main:figure:hmapsyntax} extends the syntax for terms and types.
+\clj{(HMap :mandatory p :absent-keys a)} is written \HMapgeneric{\mandatory{}}{\absent{}}.
+The metavariable \completenessmeta{} tracks whether a HMap is fully ({\complete{}}) or partially ({\partial{}})
+specified. \mandatory{} specifies a set of known present keyword entries, \absent{} tracks known absent keyword
+entries and we abbreviate \HMapcwithabsent{\mandatory{}}{\absent{}} as \HMapc{\mandatory{}}. Keys cannot be both present and absent.
+
+\getliteral{} and \assocliteral{} lookup and extend immutable maps respectively.
+To simplify presentation, we only provide syntax for the empty map literal and
+restrict lookup and extension to keyword keys. The metavariable \mapval{}
+ranges over the runtime value of maps {\curlymapvaloverright{\k{}}{\v{}}}.
+
+We introduce our first path element {\keype{\k{}}}, the symbolic representation
+of a \getliteral{} expression on keyword \k{} where the sentinel value for
+a missing entry is \nil{}.
+
+Figure~\ref{main:figure:hmapsem} shows the semantics for HMaps. B-Get returns the associated
+value if the entry is present otherwise  B-GetMissing returns \nil{}. B-Assoc returns a new extended
+map.
+
+Typing rules are given in figure~\ref{main:figure:hmaptyping}. T-GetHMap handles the simple
+case where we know a lookup will succeed and use B-Get. In T-GetHMapAbsent we know B-GetMissing will give
+a \Nil{} return type.
+T-GetHMapPartialDefault does not know if the key is present or absent and has a \Top{} return type.
+T-Assoc extends the known keyword entries, overwriting previous entries with the same key.
+
+S-HMap (figure~\ref{main:figure:hmapsubtype}) says that HMap subtypes must have all present entries to also be
+subtypes and also cover the absent keys.
+Complete maps are subtypes of partial maps by S-HMapP.
+
+\subsection{Java Interoperability and Type Hints}
+
+We model
+Java interoperability in a restricted setting without class inheritance,
+overloading or Java Generics. 
+
+  $$
+  \begin{altgrammar}
+    \e{} &::=& \ldots   \localhintsyntax{} \alt \lethintsyntax{} &\mbox{Expressions}\\
+            &\alt& \reflectiveexpsyntax{} 
+  \end{altgrammar}
+  $$
+
+We extend the external language with Java field lookups and calls to
+methods and constructors.
+These come without typing or evaluation rules:
+Typed Clojure requires the Clojure compiler to statically resolve all Java interactions
+in typed code.
+Type hinted expressions such as \localhintsyntax{} 
+to help the compiler eliminate reflection.
+
+\begin{figure*}
+  \footnotesize
+  $$
+  \begin{altgrammar}
+    \e{} &::=& \ldots \alt \mininonreflectiveexpsyntax{}
+    &\mbox{Expressions}\\
+
+    \v{} &::=& \ldots \alt {\classvalue{\classhint{}} {\overrightarrow {\classfieldpair{\fld{}} {\v{}}}}}
+    &\mbox{Values} \\
+
+    \tatypesyntax{}\\
+    \typehintenvsyntax{}\\
+    \classtableallsyntax{}
+  \end{altgrammar}
+  $$
+  \caption{Internal Language Reflection Resolution Extensions}
+  \label{main:figure:nonreflectivesyntax}
+\end{figure*}
+
+\begin{figure}
+  \footnotesize
+  \begin{mathpar}
+    %\RAbs{}
+%
+%    \RNewElimRefl{}
+%
+%    \RMethodElimRefl{}
+%
+    \RFieldElimRefl{}
+%
+%    \RLet{}
+%
+
+    \RLetHint{}
+  \end{mathpar}
+\caption{Reflection Elimination %(select rules, figure~\ref{appendix:figure:rewrite} for full rules)
+}
+\label{main:figure:rewrite}
+\end{figure}
+
+%\begin{figure}
+%  \footnotesize
+%  \begin{mathpar}
+%%    \TALocal{}
+%%
+%%    \TANil{}
+%%
+%%    \TANewStatic{}
+%%
+%%    \TALetHint{}
+%
+%%    \TALet{}
+%  \end{mathpar}
+%\caption{Type Hint Inference (select rules, figure~\ref{appendix:figure:hintinfer} for full rules)}
+%\label{main:figure:hintinfer}
+%\end{figure}
+
+\begin{figure}
+  \footnotesize
+  \begin{mathpar}
+    \BField{}
+
+    \BNew{}
+
+    \BMethod{}
+  \end{mathpar}
+  \caption{Java Interoperability Semantics}
+\end{figure}
+
+\begin{figure*}
+  \footnotesize
+  \begin{mathpar}
+    {\TNewStatic}
+
+    {\TFieldStatic}
+    {\TMethodStatic}
+  \end{mathpar}
+  \caption{Java Interoperability Typing Rules}
+  \label{main:figure:javatyping}
+\end{figure*}
+
+$$
+\rewrite {\taenv{}} {\e{}} {\ep{}}
+$$
+
+rewrites expression \e{} to a possibly-less reflective expression
+\ep{} with respect to type hint environment
+\taenv{} and Java class table \ct{}.
+
+$$
+\tajudgement {\taenv{}} {\hastype {\e{}} {\tatype{}}}
+$$
+
+infers the (possibly-unknown) type hint \tatype{} of expression \e{} in environment \taenv{}.
+
+%$$
+%\TALetHint{}
+%$$
+
+We now have two languages: an internal language that may contain non-reflective Java calls (figure 
+  \ref{main:figure:nonreflectivesyntax}) 
+  and an external language that resembles Clojure, where we must rely on type-hints to resolve
+  reflective Java calls (figure~\ref{main:figure:reflectivesyntax}).
+
+  $$
+    \RFieldElimRefl{}
+  $$
+
+For example, R-FieldElimRefl, which rewrites a reflective field call to be non-reflective,
+rewrites the target expression and uses the result to infer a class type hint as the field target.
+\fieldtypeliteral{} uses the inferred type hint to lookup if the inferred class has the appropriate
+field name and returns the actual target and result type hints which we store in the rewritten rule.
+
+We then extract these type hints in T-FieldStatic for typing checking 
+(figure~\ref{main:figure:javatyping}), which converts type hints
+with \javatotcliteral{} to obtain a \emph{non-nilable} type to type check the target expression (which prevents
+dereferencing nil) and \javatotcnilliteral{} to get a \emph{nilable} return type (because fields can be nil).
+
+Method and constructor calls are similar, but T-MethodStatic and T-NewStatic disallow passing \nil{} as arguments, 
+we assume methods can return \nil{} and we assume constructors cannot.
+
+We rewrite to our internal language before type checking and remaining reflective calls are type errors.
+
+\subsection{\classconst{}}
+
+The \classconst{} function is modeled as a constant which returns
+an object's \Class{}, or \nil{} if provided \nil{}.
+
+\begin{mathpar}
+\constanttypefigure{}
+\end{mathpar}
+
+Our second path element \classpe{} is the symbolic representation
+of a call to \classconst{}.
+
+$$
+\begin{array}{lrlr}
+  \pesyntax{}   &::=& \ldots \alt {\classpe{}}
+                &\mbox{Path Elements}
+\end{array}
+$$
 
 \subsection{Multimethod dispatch mechanism: \isaliteral}
 
@@ -399,241 +654,10 @@ changes since we infer \isprop{\Number}{\x{}} and \isprop{\Keyword}{\x{}} for th
 method bodies. T-App handles beta reduction because multimethods are subtypes of functions
 (figure~\ref{main:figure:mmsubtype}).
 
-\subsection{Heterogenous maps}
 
-\begin{figure}
-  \footnotesize
-  $$
-  \begin{altgrammar}
-    \e{} &::=& \ldots \alt \hmapexpressionsyntax{}
-    &\mbox{Expressions} \\
-    \v{} &::=& \ldots \alt {\emptymap{}}
-    &\mbox{Values} \\
-    \t{} &::=& \ldots \alt {\HMapgeneric {\mandatory{}} {\absent{}}}
-    &\mbox{Types} \\
-    \auxhmapsyntax{}\\
-  \end{altgrammar}
-  $$
-  \caption{HMap Terms and Types}
-  \label{main:figure:hmapsyntax}
-\end{figure}
-
-\begin{figure}
-  \footnotesize
-  \begin{mathpar}
-    {\BAssoc}
-    {\BGet}
-    {\BGetMissing}
-  \end{mathpar}
-  \caption{HMap Semantics}
-  \label{main:figure:hmapsem}
-\end{figure}
-
-\begin{figure}
-  \footnotesize
-  \begin{mathpar}
-    {\TGetHMap}
-
-    {\TGetAbsent}
-
-    {\TGetHMapPartialDefault}
-
-    {\TAssoc}
-  \end{mathpar}
-  \caption{HMap Typing Rules}
-  \label{main:figure:hmaptyping}
-\end{figure}
-
-\begin{figure}
-  \footnotesize
-  \begin{mathpar}
-    \HMapsubtyping{}
-  \end{mathpar}
-  \caption{HMap subtyping rules}
-  \label{main:figure:hmapsubtype}
-\end{figure}
-
-It is common in Clojure to use plain immutable hash maps to represent ad-hoc
-objects with a known set of keyword entries. We use \HMapliteral{}
-types (figure~\ref{main:figure:hmapsyntax}) to track known present, known absent and unknown keyword entries.
-
-The metavariable \completenessmeta{} tracks whether a HMap is fully ({\complete{}}) or partially ({\partial{}})
-specified. \mandatory{} specifies a set of known present keyword entries, \absent{} tracks known absent keyword
-entries and we write \HMapcwithabsent{\mandatory{}}{\absent{}} as \HMapc{\mandatory{}} as a fully specified
-HMap can assume all entries not in {\mandatory{}} as absent. We disallow keys to be both present and absent.
-
-\getliteral{} and \assocliteral{} lookup and extend immutable maps respectively.
-To simplify presentation, we only allow the empty map literal and
-restrict lookup and extension to keyword keys. The metavariable \mapval{}
-ranges over the runtime value of maps {\curlymapvaloverright{\k{}}{\v{}}}.
-
-Figure~\ref{main:figure:hmapsem} shows the semantics for HMaps, where B-Get returns the associated
-entry if it is present and B-GetMissing returns \nil{} otherwise. B-Assoc returns a new extended
-map.
-
-Typing rules are given in figure~\ref{main:figure:hmaptyping}. T-GetHMap handles the simple
-case where we know a lookup will succeed and use B-Get. In T-GetHMapAbsent we know B-GetMissing will give
-a \Nil{} return type.
-T-GetHMapPartialDefault does not know if the key is present or absent and has a \Top{} return type.
-T-Assoc extends the known keyword entries, overwriting previous entries with the same key.
-
-S-HMap (figure~\ref{main:figure:hmapsubtype}) says that HMap subtypes must have all present entries to also be
-subtypes and also cover the absent keys.
-Complete maps are subtypes of partial maps by S-HMapP.
-
-\subsection{Java Interoperability and Type Hints}
-
-\begin{figure*}
-  \footnotesize
-  $$
-  \begin{altgrammar}
-    \e{} &::=& \ldots \alt \reflectiveexpsyntax{}
-            \alt  \localhintsyntax{} \alt \lethintsyntax{}
-    &\mbox{Expressions}
-  \end{altgrammar}
-  $$
-  \caption{Java Interoperability Terms and Types}
-  \label{main:figure:reflectivesyntax}
-\end{figure*}
-
-We model
-Java interoperability in a restricted setting without class inheritance,
-overloading or Java Generics. 
-
-We extend the external language with Java field lookups and calls to
-methods and constructors (figure~\ref{main:figure:nonreflectivesyntax}).
-There are no typing or evaluation rules for these syntaxes because
-Typed Clojure must be convinced that Java interactions are \emph{non-reflective},
-ie., are unambiguously resolved at compile-time. Programmers use
-type hinted expressions (figure~\ref{main:figure:nonreflectivesyntax}) 
-to help the compiler eliminate reflection.
-
-\begin{figure*}
-  \footnotesize
-  $$
-  \begin{altgrammar}
-    \e{} &::=& \ldots \alt \mininonreflectiveexpsyntax{}
-    &\mbox{Expressions}\\
-
-    \v{} &::=& \ldots \alt {\classvalue{\classhint{}} {\overrightarrow {\classfieldpair{\fld{}} {\v{}}}}}
-    &\mbox{Values} \\
-
-    \tatypesyntax{}\\
-    \typehintenvsyntax{}\\
-    \classtableallsyntax{}
-  \end{altgrammar}
-  $$
-  \caption{Internal Language Reflection Resolution Extensions}
-  \label{main:figure:nonreflectivesyntax}
-\end{figure*}
-
-\begin{figure}
-  \footnotesize
-  \begin{mathpar}
-    %\RAbs{}
-%
-%    \RNewElimRefl{}
-%
-%    \RMethodElimRefl{}
-%
-    \RFieldElimRefl{}
-%
-%    \RLet{}
-%
-    \RLetHint{}
-  \end{mathpar}
-\caption{Reflection Elimination (select rules, figure~\ref{appendix:figure:rewrite} for full rules)}
-\label{main:figure:rewrite}
-\end{figure}
-
-%\begin{figure}
-%  \footnotesize
-%  \begin{mathpar}
-%%    \TALocal{}
-%%
-%%    \TANil{}
-%%
-%%    \TANewStatic{}
-%%
-%%    \TALetHint{}
-%
-%%    \TALet{}
-%  \end{mathpar}
-%\caption{Type Hint Inference (select rules, figure~\ref{appendix:figure:hintinfer} for full rules)}
-%\label{main:figure:hintinfer}
-%\end{figure}
-
-\begin{figure}
-  \footnotesize
-  \begin{mathpar}
-    \BField{}
-
-    \BNew{}
-
-    \BMethod{}
-  \end{mathpar}
-  \caption{Java Interoperability Semantics}
-\end{figure}
-
-\begin{figure*}
-  \footnotesize
-  \begin{mathpar}
-    {\TNewStatic}
-
-    {\TFieldStatic}
-    {\TMethodStatic}
-  \end{mathpar}
-  \caption{Java Interoperability Typing Rules}
-  \label{main:figure:javatyping}
-\end{figure*}
-
-core.typed uses tools.analyzer to obtain a rich abstract syntax tree that includes resolved
-reflection, however to tell the full story we include a rewrite relation 
-
-$$
-\rewrite {\taenv{}} {\e{}} {\ep{}}
-$$
-
-to eliminate reflection when sufficient type hints are provided.
-
-To help infer type hints 
-
-$$
-\tajudgement {\taenv{}} {\hastype {\e{}} {\tatype{}}}
-$$
-
-gives the type hint \tatype{} of expression \e{} in environemtn \taenv{}.
-
-$$
-\TALetHint{}
-$$
-
-We now have two languages: an internal language that may contain non-reflective Java calls (figure 
-  \ref{main:figure:nonreflectivesyntax}) 
-  and an external language that resembles Clojure, where we must rely on type-hints to resolve
-  reflective Java calls (figure~\ref{main:figure:reflectivesyntax}).
-
-  $$
-    \RFieldElimRefl{}
-  $$
-
-For example, R-FieldElimRefl, which rewrites a reflective field call to be non-reflective,
-rewrites the target expression and uses the result to infer a class type hint as the field target.
-\fieldtypeliteral{} uses the inferred type hint to lookup if the inferred class has the appropriate
-field name and returns the actual target and result type hints which we store in the rewritten rule.
-
-We then extract these type hints in T-FieldStatic for typing checking 
-(figure~\ref{main:figure:javatyping}), which converts type hints
-with \javatotcliteral{} to obtain a \emph{non-nilable} type to type check the target expression (which prevents
-dereferencing nil) and \javatotcnilliteral{} to get a \emph{nilable} return type (because fields can be nil).
-
-Method and constructor calls are similar, but T-MethodStatic and T-NewStatic disallow passing \nil{} as arguments, 
-we assume methods can return \nil{} and we assume constructors cannot.
-
-We rewrite to our internal language before type checking and remaining reflective calls are type errors.
 
 {\footnotesize
-\input{constant}
+\constantsemfigure{}
 
 \begin{figure*}
   $$

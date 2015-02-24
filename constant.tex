@@ -1,47 +1,8 @@
 \begin{figure}
 \begin{mathpar}
-
-\begin{array}{lllr}
-
-  \constanttype{\classconst} &=& {\ArrowOne {\x{}} {\Top{}}
-                                      {\Union{\nil{}}{\Class{}}}
-                                      {\filterset {\topprop{}}
-                                                  {\topprop{}}}
-                                      {\path {\classpe{}} {\x{}}}}
-%                                      \\
-%
-%  \constanttype{\throwconst} &=& {\ArrowOne {\x{}} {\Top{}}
-%                                      {\Bot{}}
-%                                      {\filterset {\botprop{}}
-%                                                  {\botprop{}}}
-%                                      {\emptyobject{}}}
-%
-\end{array}
+\constanttypefigure{}
 \end{mathpar}
 \caption{Constant Typing}
 \end{figure}
 
-\begin{figure}
-\begin{mathpar}
-
-\begin{array}{lllr}
-
-\constantopsem{\classconst}{\classvalue{\class{}} {\overrightarrow {\classfieldpair{\fld{}} {\v{}}}}} &=& \class{}\\
-\constantopsem{\classconst}{\class{}} &=& \Class{}\\
-\constantopsem{\classconst}{\true{}} &=& \Boolean{}\\
-\constantopsem{\classconst}{\false{}} &=& \Boolean{}\\
-\constantopsem{\classconst}{\closure {\openv{}} {\abs {\x{}} {\t{}} {\e{}}}} &=& \IFn{}\\
-\constantopsem{\classconst}{\multi {\v{d}} {\disptable{}}} &=& \PMulti{}\\
-\constantopsem{\classconst}{\curlymapvaloverright{\v{1}}{\v{2}}} &=& \HMapInstance{}\\
-\constantopsem{\classconst}{\k{}} &=& \Keyword{}\\
-%\constantopsem{\classconst}{\num{}} &=& \Number{}\\
-\constantopsem{\classconst}{\nil{}} &=& \nil{}
-  %\constantopsem{\classconst}{\v{}} &=& \wrong{} & otherwise\\
-%  \\\\
-%\constantopsem{\throwconst}{\v{}} &=& \errorval{\v{}}\\
-
-
-\end{array}
-\end{mathpar}
-\caption{Primitives}
-\end{figure}
+\constantsemfigure{}

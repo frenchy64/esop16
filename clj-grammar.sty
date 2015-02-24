@@ -248,7 +248,7 @@
 \newcommand\emptypath[0]{\ma{\epsilon}}
 
 % class table
-\newcommand\ct[0]{\mathcal{CT}}
+\newcommand\ct[0]{\ma{\mathcal{CT}}}
 \newmeta\ctentrymeta{ce}
 \newmeta\ctmethod{m}
 \newmeta\ctfield{f}
@@ -895,6 +895,16 @@
            {\emptyobject{}}}
 }
 
+\newcommand\pathelemsyntax[0]{
+  \pesyntax{}   &::=& \trdiff{\classpe{}} \alt \trdiff{\keype{\k{}}}
+                &\mbox{Path Elements}
+}
+
+\newcommand\propenvsyntax[0]{
+  \propenv{}   &::=& \overrightarrow{\prop{}}
+               &\mbox{Proposition Environment}
+             }
+
 % common Syntax
 \newcommand\occurrencetypingsyntax[0]{
   \prop{}       &::=& {\isprop {\t{}} {\path {\pathelem{}} {\x{}}}}
@@ -910,10 +920,6 @@
                 &\mbox{Objects} \\
   \pathelem{}   &::=& \overrightarrow{\pesyntax{}}
                 &\mbox{Paths} \\
-  \pesyntax{}   &::=& \trdiff{\classpe{}} \alt \trdiff{\keype{\k{}}}
-                &\mbox{Path Elements}\\
-  \propenv{}   &::=& \overrightarrow{\prop{}}
-               &\mbox{Proposition Environment} \\
               }
 
 \newcommand\classliteralallsyntax[0]{
@@ -1221,7 +1227,7 @@ $$
         {\e{}} {\mapval{}}
         \\\\
  \opsem {\openv{}} {\e{k}} {\k{}}
-        \\
+        \\\\
  \opsem {\openv{}} {\e{v}} {\v{v}}
  \\\\
  {\v{}} = {\extendmap{\mapval{}}
@@ -2168,4 +2174,49 @@ $$
 \Unionsplice{\overrightarrow{\remove{{\t{}}}{\s{}}}}
 \\
 \remove{\t{}}{\s{}} &=& {\t{}} & \text{otherwise}
+}
+
+\newcommand\constanttypefigure[0]{
+\begin{array}{lllr}
+  \constanttype{\classconst} &=& {\ArrowOne {\x{}} {\Top{}}
+                                      {\Union{\nil{}}{\Class{}}}
+                                      {\filterset {\topprop{}}
+                                                  {\topprop{}}}
+                                      {\path {\classpe{}} {\x{}}}}
+%                                      \\
+%
+%  \constanttype{\throwconst} &=& {\ArrowOne {\x{}} {\Top{}}
+%                                      {\Bot{}}
+%                                      {\filterset {\botprop{}}
+%                                                  {\botprop{}}}
+%                                      {\emptyobject{}}}
+%
+\end{array}
+}
+
+\newcommand\constantsemfigure[0]{
+\begin{figure}
+\begin{mathpar}
+
+\begin{array}{lllr}
+
+\constantopsem{\classconst}{\classvalue{\class{}} {\overrightarrow {\classfieldpair{\fld{}} {\v{}}}}} &=& \class{}\\
+\constantopsem{\classconst}{\class{}} &=& \Class{}\\
+\constantopsem{\classconst}{\true{}} &=& \Boolean{}\\
+\constantopsem{\classconst}{\false{}} &=& \Boolean{}\\
+\constantopsem{\classconst}{\closure {\openv{}} {\abs {\x{}} {\t{}} {\e{}}}} &=& \IFn{}\\
+\constantopsem{\classconst}{\multi {\v{d}} {\disptable{}}} &=& \PMulti{}\\
+\constantopsem{\classconst}{\mapval{}} &=& \HMapInstance{}\\
+\constantopsem{\classconst}{\k{}} &=& \Keyword{}\\
+%\constantopsem{\classconst}{\num{}} &=& \Number{}\\
+\constantopsem{\classconst}{\nil{}} &=& \nil{}
+  %\constantopsem{\classconst}{\v{}} &=& \wrong{} & otherwise\\
+%  \\\\
+%\constantopsem{\throwconst}{\v{}} &=& \errorval{\v{}}\\
+
+
+\end{array}
+\end{mathpar}
+\caption{Primitives}
+\end{figure}
 }
