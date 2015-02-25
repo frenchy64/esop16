@@ -27,6 +27,7 @@
     (is (check-ns 'demo.parent)))
   (testing "file parent with aliasing"
     (is (check-ns 'demo.parent2)))
+  (is (check-ns 'demo.parent3))
   ;(testing "nil"
   ;  (is (check-ns 'demo.nil)))
   (testing "isa nil test"
@@ -35,4 +36,6 @@
     (is (check-ns 'demo.do)))
   (testing "hmap"
     (is (check-ns 'demo.hmap)))
+  (is (check-ns 'demo.hmap-path))
   )
+

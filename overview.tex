@@ -23,13 +23,13 @@ One of Clojure's primary advantages is easy interoperation with
 existing Java libraries. It automatically generates appropriate JVM
 bytecode to make Java method and constructor calls, and treats Java
 values as any other Clojure value. However, this smooth
-interoperability comes at the cost of pervasive \clj{null}, which
+interoperability comes at the cost of pervasive \java{null}, which
 leads to the possibility of null pointer exceptions---a drawback we
 address in Typed Clojure.
 
 \subsection{Typed Racket and occurrence typing}
 
-Tobin-Hochstadt and Felleisen~\cite{TF10}
+\citet{TF10}
 introduced Typed Racket with occurrence typing,
 an inference technique for conditional control flow.
 They introduce the concept of occurrence typing 
@@ -54,7 +54,7 @@ This is a regular Clojure file compiled with
 the Clojure compiler except it declares a runtime dependency on
 \clj{clojure.core.typed}, Typed Clojure's core namespace.
 Programmers import typed versions of certain constructs as needed, like
-a \clj{fn} variant that support annotations,
+a \clj{fn} variant that supports annotations,
 and use the provided \clj{check-ns} function to type check the current namespace
 when convenient.
 
@@ -73,8 +73,9 @@ to assert type-related invariants.
 \end{exmp}
 
 We combine the sequencing form \clj{do} and a thrown exception with
-\clj{throw} to avoid a possible null-pointer exception by incrementing \clj{nil}.
-(We omit \clj{ns} forms for the rest of the examples).
+\clj{throw} to avoid a null-pointer exception from attempting to increment \clj{nil}.
+(We omit \clj{ns} forms for the rest of the examples)
+\footnote{See <this> github repo for full working examples}.
 
 To check this example, we note that
 occurrence typing already provides
@@ -133,10 +134,13 @@ than those declared \clj{:mandatory} or \clj{:optional}.
 and \clj{:complete?} defaults to \clj{false}.
 
 HMaps interact with occurrence typing in interesting ways.
-What do we learn about the map \clj{m} in the following test?
+The next example branches on the result of a lookup, and the types
+inferred for \clj{f} are subtle.
 
 \begin{exmp}
+\begin{listing}
 \inputminted[firstline=5,lastline=9]{racket}{code/demo/src/demo/hmap_path.clj}
+\end{listing}
 \end{exmp}
 
 In the then branch Typed Clojure infers \clj{'{:a Num}}, in the else branch
@@ -149,32 +153,85 @@ Section~\ref{sec:hmapformal} discusses this in greater detail.
 
 Clojure supports interoperability with Java, including the ability to
 call constructors, methods and access fields.
+Method calls use prefix syntax, for example this call to 
+\clj{java.io.File}'s \clj{getParent} method.
 
-Clojure supports \emph{type hints}, an optional type system to improve performance
-and disambiguate Java calls.
-Programmers communicate to the Clojure compiler via type hints
-to resolve Java methods and prevent boxing in loops. Tags are propagated bidirectionally
-and the programmer is free to add them where they like.
+\begin{minted}{clj}
+  (fn [f] (.getParent f))
+\end{minted}
 
-Here we use \clj{ann} to annotate static types for the function, and the type hint
-\clj{^File} directs the Clojure compiler to assume \clj{f} is a \clj{File}
-when resolving Java calls at compile time.
+We have a problem: Clojure's compiler does not know which method to call.
+Instead, \clj{f} is inspected at runtime and an appropriate method is selected based
+and then invoked by \emph{Java reflection}.
+Unfortunately, reflection is slow and Clojure's algorithm for
+choosing methods at runtime is undefined in some cases.
 
+To resolve reflective calls, Clojure supports \emph{type-hints}.
+
+\begin{minted}{clj}
+  (fn [^File f] (.getParent f))
+\end{minted}
+
+The Clojure compiler uses the type hint on \clj{f}
+to statically resolve the method call to the \clj{java.io.File}
+method with the Java signature
+
+\begin{minted}{java}
+  public String getParent()
+\end{minted}
+
+Typed Clojure ignores type-hints, so to check this we must
+annotate the parameter's static type.
+
+\begin{minted}{clj}
+  (fn [f :- File] (.getParent f))
+\end{minted}
+
+However Typed Clojure disallows reflection in typed code, so we
+must add a type hint.
+
+\inputminted[firstline=10,lastline=10]{clojure}{code/demo/src/demo/parent3.clj}
+
+Now we have a well-typed expression free of reflection.
+
+Typed Clojure and Java treat \java{null} differently.
+In Clojure, where it is known as \clj{nil}, Typed Clojure assigns it an explicit type
+called \clj{nil}. In Java \java{null} is implicitly a member of any reference type.
+This means the Java static type \java{String} is equivalent to
+\clj{(U nil String)} in Typed Clojure.
+
+To guarantee \java{null} is never accidentally leaked into a Typed Clojure program,
+we must assume methods are nullable.
+
+\begin{exmp}
+\inputminted[firstline=12,lastline=13]{clojure}{code/demo/src/demo/parent3.clj}
+\end{exmp}
+
+In contrast, JVM invariants guarantee that  constructor cannot return \java{null},
+so we are safe to assume constructors are non-nullable.
+
+\begin{exmp}
 \begin{listing}
-  \begin{minted}{clojure}
-(ann parent [(U nil File) -> (U nil Str)]
-(defn parent [^File f]
-  (when f
-    (.getParent f)))
-  \end{minted}
-\caption{Java Interoperability}
+\inputminted[firstline=15,lastline=16]{clojure}{code/demo/src/demo/parent3.clj}
 \end{listing}
+\end{exmp}
 
-While \clj{f} has the type hint \clj{File}, it also has the static type \clj{(U nil File)},
-and Typed Clojure disallows invoking \clj{nil} even if the compiler
-has statically resolved a method.
-Typed Clojure also conservatively assumes fields and method returns are nullable,
-and guarantees null-pointer exceptions cannot happen in typed code.
+Notice a type hint is used in an argument position to help choose the \java{File(String pathname)}
+constructor. By default Typed Clojure conservatively assumes method and constructor arguments to be \emph{non-nullable},
+but can be configured globally for particular positions if needed.
+
+Finally, Typed Clojure guarantees typed code cannot throw a null-pointer exception
+by attempting to dereference \clj{nil}. This can happen in several ways, including
+calling a method or a field on \clj{nil}.
+The next example calls a method on once-nullable local binding.
+(\clj{ann} annotates a var with an expected type).
+
+\begin{exmp}
+\inputminted[firstline=6,lastline=8]{clojure}{code/demo/src/demo/parent3.clj}
+\end{exmp}
+
+The test on \clj{f} is essential to check this example---only then can Typed Clojure
+prove null-pointer exceptions are impossible.
 
 \subsection{Multimethod}
 

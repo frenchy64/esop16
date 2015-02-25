@@ -5,4 +5,4 @@
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :repositories {"sonatype-oss-public" "https://oss.sonatype.org/content/groups/public/"}
   :dependencies [[org.clojure/clojure "1.6.0"]
-                 [org.clojure/core.typed "0.2.82"]])
+                 [org.clojure/core.typed "0.2.83"]])
