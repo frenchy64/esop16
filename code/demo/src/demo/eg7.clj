@@ -6,12 +6,12 @@
 (defalias NK (U Num Kw))
 
 (ann mult [NK NK -> Str])
-(defmulti mult (fn [l :- NK r :- NK]
+(defmulti mult (fn [l r]
                  [(class l) (class r)]))
-(defmethod mult [Keyword Keyword] [k1 k2]
-  (str "Keywords " (name k1) (name k2)))
 (defmethod mult [Number Keyword] [n1 k2]
   (str "NK " (inc n1) (name k2)))
+(defmethod mult [Keyword Keyword] [k1 k2]
+  (str "Keywords " (name k1) (name k2)))
 (defmethod mult :default [nk1 nk2]
   (str "Default " nk1 nk2))
 

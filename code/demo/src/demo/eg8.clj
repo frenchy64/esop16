@@ -10,10 +10,9 @@
 (ann process [PayLoad -> (U nil Str)])
 (defmulti process :p)
 (defmethod process :F [{:keys [^File file]}]
-  (when file
-    (.getParent file)))
+  (if file (.getParent file) nil))
 (defmethod process :S [{:keys [^String str]}]
-  (assert str "Must provide string")
+  (if str nil (throw (Exception.)))
   (.toUpperCase str))
 
 (process {:p :S :str "a"}) ;=> "a"

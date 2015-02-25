@@ -264,97 +264,120 @@ The next example calls a method on once-nullable local binding.
 The test on \clj{f} is essential to check this example---only then can Typed Clojure
 prove null-pointer exceptions are impossible.
 
-\subsection{Multimethod}
+\subsection{Multimethods}
 
-A multimethod in Clojure is a function with a dispatch mechanism to
-of internal methods. Multimethods are created with {\clj{defmulti}}
-and methods are installed via {\clj{defmethod}}.
-They are called like regular functions.
+A multimethod in Clojure is a function that contains a dispatch
+function and methods. Multimethods are created with {\clj{defmulti}}.
+\begin{minted}{clojure}
+(ann rep [Any -> String])
+(defmulti rep class)
+\end{minted}
+\clj{rep} is a multimethod of type \clj{[Any -> String]} with an empty \emph{dispatch table}
+and \emph{dispatch function} \clj{class}, a function that returns the argument's class or \clj{nil} if none.
+There are no methods to dispatch to so invocations of \clj{rep} will fail at runtime.
+\begin{minted}{clojure}
+  (rep :a) ;=> IllegalArgumentException ...
+\end{minted}
+
+Methods are installed via {\clj{defmethod}}.
+\begin{minted}{clojure}
+(defmethod rep Keyword [x] (str (name x)))
+\end{minted}
+We extend \clj{rep}'s dispatch table, mapping
+the \emph{dispatch value} \clj{Number} to the function
+\clj{(fn [x] (str (name x)))}. The call \clj{(rep arg)}
+uses the value of \clj{(isa? (disp-fn arg) disp-val)}
+on each method entry to pick a winner \clj{mth}, and finally returns \clj{(mth arg)}.
+\clj{isa?} is a subclassing check when provided with classes
+\begin{minted}{clojure}
+  (isa? Keyword Object) ;=> true
+  (isa? Keyword Number) ;=> false
+\end{minted}
+otherwise an equality check.
+\begin{minted}{clojure}
+  (isa? :a :a) ;=> true
+  (isa? :a 1) ;=> false
+\end{minted}
+
+For example
+\clj{(rep :a)}
+picks the \clj{Keyword} method because
+\clj{(isa? (class :a) Keyword)} returns true,
+and finally returns \clj{"a"}, the value of
+\clj{((fn [x] (str (name x))) :a)}.
+We give the full definition of \clj{rep}.
 
 \begin{Code}
 \begin{exmp}
 \begin{minted}{clojure}
 (ann rep [Any -> String])
 (defmulti rep class)
-(defmethod rep Number [x] (str (inc x)))
 (defmethod rep Keyword [x] (str (name x)))
+(defmethod rep Number [x] (str (inc x)))
 
 (rep :a) ;=> "a"
 (rep 1)  ;=> "2"
 \end{minted}
 \end{exmp}
 \end{Code}
-
-The \clj{class} function returns the class of an object, or \clj{nil}
-if given \clj{nil}. This multimethod's dispatch function returns the class of its
-argument. The underlying dispatch strategy features \clj{isa?}, a function
-that is a subclassing check when provided with classes
-
-\begin{minted}{clojure}
-  (isa? Keyword Object) ;=> true
-  (isa? Keyword Number) ;=> false
-\end{minted}
-
-otherwise an equality check.
-
-\begin{minted}{clojure}
-  (isa? :a :a) ;=> true
-  (isa? :a 1) ;=> false
-\end{minted}
-
-So in the previous example, \clj{(rep :a)} dispatched to the method
-where \clj{(isa? (class :a) v)} returned true, where \clj{v} is the dispatch value.
-Since \clj{(isa? (class :a) Keyword)} is true, the second method is chosen.
+Typed Clojure does not statically ensure multimethod calls dispatch successfully---
+\clj{(rep "a")} type checks but throws a runtime error.
 
 The flexibility of \clj{isa?} is key to the generality of multimethods. 
-For instance, we can dispatch on the value of
-a map entry, even if it is not a class.
-
+We can dispatch on the \clj{:op} key 
+of our HMap AST \clj{Expr}.
+Keywords are functions that look themselves up in their argument, so \clj{:op}
+is our dispatch function.
 \begin{Code}
 \begin{exmp}
 \inputminted[firstline=4,lastline=23]{clojure}{code/demo/src/demo/eg5.clj}
 \end{exmp}
 \end{Code}
+The destructuring syntax \clj{(fn [{:keys [val] :as m}] ...)} binds
+\clj{m} to the value of the first argument, and \clj{val} to \clj{(:val m)}.
 
-\clj{isa?} is further special-case with vectors: with two vectors of the
-same length, it returns the logical conjunction of the pairwise applications
-of \clj{isa?}.
-
+\clj{isa?} is special with vectors---vectors of the
+same length recursively call \clj{isa?} on the elements pairwise.
 \begin{minted}{clojure}
   (isa? [Keyword :a] [Object :a]) ;=> true
   (isa? [Keyword Keyword] [Object Object]) ;=> true
+  (isa? [Keyword Object] [Object Object]) ;=> false
 \end{minted}
 
-We can use this to dispatch on more than one thing. Here we perform
-double dispatch on the class of each argument.
-
+Now multiple dispatch is possible---we dispatch on the class of both
+arguments simultaneously by defining a dispatch function that returns
+a vector containing the classes of the arguments.
 \begin{Code}
 \begin{exmp}
 \inputminted[firstline=6,lastline=23]{clojure}{code/demo/src/demo/eg7.clj}
 \end{exmp}
 \end{Code}
+The dispatch values are also vectors---the first method is picked
+when the left argument is a \clj{Number} and the right is a \clj{Keyword},
+and is thus safe to increment and extract its name respectively.
+The dispatch value \clj{:default} specifies a default
+method if no preferred method is found.
 
-No extra annotations are needed to follow the type-directed control flow.
-For instance, the middle method is has inferred the left argument is a number
-and thus safe to increment, and the right argument is a keyword and safe to
-extract its name.
-
-A dispatch value can also be the keyword \clj{:default} to specify a default
-method if no preferred method is found. The static type of both arguments
-remains unchanged.
+No extra annotations are needed to follow type-directed control flow
+in multimethod dispatch.
 
 \subsection{Final example}
 
 The final example combines everything we will cover for the rest of the paper:
 multimethod dispatch, reflection resolution via type hints, Java method
 and constructor calls, conditional and exceptional flow reasoning
-and use of HMaps.
-
+and use of HMaps. 
 \begin{Code}
 \begin{exmp}
 \inputminted[firstline=6,lastline=20]{clojure}{code/demo/src/demo/eg8.clj}
 \end{exmp}
 \end{Code}
+\clj{PayLoad} is either a HMap containing a file
+or a string. We dispatch on \clj{:p} to distinguish the two cases---for example on \clj{:F}
+we know the \clj{:file} is a file.
+The body of the first method uses type-hints to resolve reflection
+and conditional control flow to prove null-pointer exceptions are impossible.
+The second method is similar except it uses exceptional control flow.
 
 
 
