@@ -2197,7 +2197,7 @@ $$
 \end{array}
 }
 
-\newcommand\constantsemfigure[0]{
+\newcommand\constantsemfigure[1]{
 \begin{figure}
 \begin{mathpar}
 
@@ -2221,6 +2221,7 @@ $$
 \end{array}
 \end{mathpar}
 \caption{Primitives}
+\label{#1:figure:primitivesem}
 \end{figure}
 }
 
@@ -2232,3 +2233,13 @@ $$
   \inpropenv {\propenv{}} {\isprop {\propisnotmeta{}} {{\pathelem{}}({\path {\pathelemp{}} {\x{}}})}}}
 { \inpropenv {\propenv{}} {\isprop {\update {\t{}} {\propisnotmeta{}} {\pathelem{}}} {\path {\pathelemp{}} {\x{}}}}}
 }
+
+\newcommand\TConst[0]{
+\infer [T-Const]
+{}
+{ \judgement {\propenv{}} 
+             {\hastype {\const{}} {\constanttype{\const{}}}}
+             {\filterset {\topprop{}}{\botprop{}}}
+             {\emptyobject{}}
+                   }
+                 }

@@ -2,20 +2,21 @@
 
 \label{sec:formal}
 
-We describe our type system in a similar way to Typed Racket (\citet{TF10}),
+We formalise our type system like \citet{TF10}
 with differences highlighted in $\trdiff{\text{blue}}$.
 The typing judgement 
-$
+$$
 {\judgement   {\propenv}
               {\hastype {\e{}} {\t{}}}
   {\filterset {\thenprop {\prop{}}}
               {\elseprop {\prop{}}}}
   {\object{}}}
-$
+$$
 says expression \e{} is of type \t{} in the 
 proposition environment $\propenv{}$, with 
 `then' proposition {\thenprop {\prop{}}}, `else' proposition {\elseprop {\prop{}}}
-and object \object{}.
+and object \object{}. We sometimes write 
+{\judgementtwo{\propenv}{\hastype {\e{}} {\t{}}} if we are only interested in the type.
 
 The propositions capture what can be assumed if an expression tests as logically true or false
 respectively. The object is a possibly-empty symbolic representation of the expression.
@@ -23,9 +24,8 @@ respectively. The object is a possibly-empty symbolic representation of the expr
 Syntax is given in figure~\ref{main:figure:termsyntax}. Expressions include variables, values,
 application, abstractions, conditionals and let expressions.
 All binding forms introduce fresh variables.
-
-Values include booleans, \nil{}, class literals, keywords (written with a : prefix like \makekw{a}), 
-constants and closures.  \false{} and \nil{} are logically false; all other values are logically true.
+Values include booleans, \nil{}, class literals, keywords, 
+constants and closures. \false{} and \nil{} are logically false, otherwise values are true.
 
 Types include the top type, untagged unions, functions, singleton types
 and class instances. We abbreviate \EmptyUnion{} as \Bot{}, {\ValueNil} as \Nil{} and similarly
@@ -34,13 +34,15 @@ Function types contain \emph{latent} propositions and object, which, along with 
 may refer to the parameter identifier. They are latent because they are instantiated with the
 actual object of the argument in applications before they are used in the proposition environment.
 
-Propositions are identical to~\cite{TF10}---positive and negative type propositions, implications,
-conjunctions, disjuctions, trivial and impossible propositions.
-Type propositions contain a non-empty object which it claims type information about.
+Propositions are standard---{\isprop {\t{}} {\path {\pathelem{}} {\x{}}}}
+and {\notprop {\t{}} {\path {\pathelem{}} {\x{}}}}
+say object {\path {\pathelem{}} {\x{}}} is and is not of type \t{}
+respectively.
+We include implications,
+conjunctions, disjuctions, and the trivial and impossible propositions.
+Proposition environments are sequences of propositions.
 
-Proposition environments are sequences of propositions in conjunctive normal form.
-
-Figure ~\ref{main:figure:typingrules} contains the standard typing rules.
+Figure~\ref{main:figure:typingrules} contains the standard typing rules.
 The operational semantics are standard, except \nil{} is logically false:
 
 \begin{mathpar}
@@ -108,6 +110,7 @@ $$
     %{\TClass}
     {\TIf}
     {\TLet}
+    {\TConst}
 
     %{\TKw}
 
@@ -160,22 +163,6 @@ $$
 \subsection{Reasoning about Exceptional Control Flow}
 \label{sec:doformal}
 
-Clojure assertions expand to simple exceptional control flow.
-
-\begin{minted}{clojure}
-(fn [x :- (U nil Number)] 
-  (assert (number? x))
-  (inc x))
-\end{minted}
-
-roughly expands to
-
-\begin{minted}{clojure}
-(fn [x :- (U nil Number)]
-  (do (if (number? x) nil (throw (new Exception)))
-      (inc x)))
-\end{minted}
-
 We extend our model with sequencing expressions and errors, where {\errorvalv{}}
 is equivalent to Clojure's throw.
 
@@ -187,24 +174,24 @@ $
 $
 
 \smallskip
-
-B-Do simply evaluates its arguments sequentially and returns the right argument.
-Since errors are not values, we define error propagation semantics
-like BE-Do1 (figure~\ref{appendix:figure:errorstuck} for the full rules).
-
-\begin{mathpar}
-    {\BDo}
-
-\infer [BE-Error]
-{}
-{ \opsem {\openv{}} 
-         {\errorvalv{}}
-         {\errorvalv{}}}
-
-\infer [BE-Do1]
-{ \opsem {\openv{}} {\e{1}} {\errorvalv{}} }
-{ \opsem {\openv{}} {\doexp{\e{1}}{\e{}}} {\errorvalv{}}}
-\end{mathpar}
+%
+%B-Do simply evaluates its arguments sequentially and returns the right argument.
+%Since errors are not values, we define error propagation semantics
+%like BE-Do1 (figure~\ref{appendix:figure:errorstuck} for the full rules).
+%
+%\begin{mathpar}
+%    {\BDo}
+%
+%\infer [BE-Error]
+%{}
+%{ \opsem {\openv{}} 
+%         {\errorvalv{}}
+%         {\errorvalv{}}}
+%
+%\infer [BE-Do1]
+%{ \opsem {\openv{}} {\e{1}} {\errorvalv{}} }
+%{ \opsem {\openv{}} {\doexp{\e{1}}{\e{}}} {\errorvalv{}}}
+%\end{mathpar}
 
 Our main insight is as follows: 
 if the left argument reduces to a value, then it is either logically true or false.
@@ -223,9 +210,10 @@ makes our insight interesting.
 For example, in checking \clj{(do (throw (Exception.)) (inc :a))}
 by T-Error we assume \orprop{\botprop{}}{\botprop{}} in checking \clj{(inc :a)},
 which is a contradiction by the logic system (L-False, figure~\ref{appendix:figure:proofsystem})
-which allows us to assume \clj{(inc :a)} is unreachable (and it clearly is by BE-Do1).
+which allows us to assume \clj{(inc :a)} is unreachable.
 
-This works similarly with our motivating example. Intuitively, when evaluating
+Now we can check example~\ref{example:doexception}.
+Intuitively, when evaluating
 \clj{(inc x)} we know \clj{(assert (number? x))} has evaluated to a value,
 so we assume \clj{x} is a number.
 In detail, the example is checked first by T-Abs, which checks the body with the 
@@ -267,17 +255,6 @@ so T-Local checks \clj{x} as a \Number.
 \begin{figure}
   \footnotesize
   \begin{mathpar}
-    {\BAssoc}
-    {\BGet}
-    {\BGetMissing}
-  \end{mathpar}
-  \caption{HMap Semantics}
-  \label{main:figure:hmapsem}
-\end{figure}
-
-\begin{figure}
-  \footnotesize
-  \begin{mathpar}
     {\TGetHMap}
 
     {\TGetAbsent}
@@ -293,6 +270,17 @@ so T-Local checks \clj{x} as a \Number.
 \begin{figure}
   \footnotesize
   \begin{mathpar}
+    {\BAssoc}
+    {\BGet}
+    {\BGetMissing}
+  \end{mathpar}
+  \caption{HMap Semantics}
+  \label{main:figure:hmapsem}
+\end{figure}
+
+\begin{figure}
+  \footnotesize
+  \begin{mathpar}
     \HMapsubtyping{}
   \end{mathpar}
   \caption{HMap subtyping rules}
@@ -301,30 +289,29 @@ so T-Local checks \clj{x} as a \Number.
 
 We now present \HMapliteral{} types in detail.
 Figure~\ref{main:figure:hmapsyntax} extends the syntax for terms and types.
-\clj{(HMap :mandatory p :absent-keys a)} is written \HMapgeneric{\mandatory{}}{\absent{}}.
-The metavariable \completenessmeta{} tracks whether a HMap is fully ({\complete{}}) or partially ({\partial{}})
-specified. \mandatory{} specifies a set of known present keyword entries, \absent{} tracks known absent keyword
-entries and we abbreviate \HMapcwithabsent{\mandatory{}}{\absent{}} as \HMapc{\mandatory{}}. Keys cannot be both present and absent.
+$$
+\clj{(HMap :mandatory p :absent-keys a :complete? b)}
+$$
+is written \HMapgeneric{\mandatory{}}{\absent{}},
+where the metavariable \completenessmeta{} is {\complete{}} if \clj{b} is \clj{true} otherwise {\partial{}}. 
+\mandatory{} specifies a set of known present keyword entries. \absent{} tracks known absent keys.
+\HMapcwithabsent{\mandatory{}}{\absent{}} is abbreviated to \HMapc{\mandatory{}}. Keys cannot be both present and absent.
 
-\getliteral{} and \assocliteral{} lookup and extend immutable maps respectively.
+\clj{(get m :a)} is identical to \clj{(:a m)}.
 To simplify presentation, we only provide syntax for the empty map literal and
 restrict lookup and extension to keyword keys. The metavariable \mapval{}
 ranges over the runtime value of maps {\curlymapvaloverright{\k{}}{\v{}}}.
 
 We introduce our first path element {\keype{\k{}}}, the symbolic representation
-of a \getliteral{} expression on keyword \k{} where the sentinel value for
-a missing entry is \nil{}.
+of \clj{(get m k)} where \clj{m} represents the path after {\keype{\k{}}}---{\path{\keype{\makekw{b}}}{\path{\keype{\makekw{a}}}{\x{}}}}
+  represents \clj{(get (get x :a) :b)}.
 
-Figure~\ref{main:figure:hmapsem} shows the semantics for HMaps. B-Get returns the associated
-value if the entry is present otherwise  B-GetMissing returns \nil{}. B-Assoc returns a new extended
-map.
-
-Typing rules are given in figure~\ref{main:figure:hmaptyping}. T-GetHMap handles the simple
-case where we know a lookup will succeed and use B-Get. In T-GetHMapAbsent we know B-GetMissing will give
-a \Nil{} return type.
-T-GetHMapPartialDefault does not know if the key is present or absent and has a \Top{} return type.
-Even though their types vary significantly, we still use the same object.
-T-Assoc extends the known keyword entries, overwriting previous entries with the same key.
+Figure~\ref{main:figure:hmaptyping} contains the typing rules. T-GetHMap models a lookup
+that will certainly succeed, T-GetHMapAbsent a lookup that will certainly fail
+and T-GetHMapPartialDefault a lookup with unknown results.
+T-Assoc extends a HMap with a mandatory entry.
+Figure~\ref{main:figure:hmapsem} contains the semantics for \getliteral{}
+and \assocliteral{}.
 
 S-HMap (figure~\ref{main:figure:hmapsubtype}) says that HMap subtypes must have all present entries to also be
 subtypes and also cover the absent keys.
@@ -333,23 +320,26 @@ Complete maps are subtypes of partial maps by S-HMapP.
 \subsection{\classconst{}}
 
 The \classconst{} function is modeled as a constant which returns
-an object's \Class{}, or \nil{} if provided \nil{}.
+the argument's class or \nil{}.
+
+$$
+\begin{array}{lrlr}
+  \constantssyntax\\
+  \pesyntax{}   &::=& \ldots \alt {\classpe{}}
+                &\mbox{Path Elements}
+\end{array}
+$$
 
 \begin{mathpar}
 \constanttypefigure{}
 \end{mathpar}
 
 Our second path element \classpe{} is the symbolic representation
-of a call to \classconst{}.
+of a call to \classconst{}---{\path{\classpe{}}{\path{\keype{\makekw{a}}}{\x{}}}}
+represents \clj{(class (get x :a))}.
+Figure~\ref{main:figure:primitivesem} contains the semantics for \classconst{}.
 
-$$
-\begin{array}{lrlr}
-  \pesyntax{}   &::=& \ldots \alt {\classpe{}}
-                &\mbox{Path Elements}
-\end{array}
-$$
-
-% TODO semantics
+\constantsemfigure{main}
 
 \subsection{Proof system}
 
@@ -360,7 +350,6 @@ where we combine propositions that have similar objects to learn new facts.
 \begin{mathpar}
   {\LUpdate}
 \end{mathpar}
-
 For example, if \inpropenv {\propenv{}} {\isprop {\Union{\Keyword}{\Nil}} {\x{}}}
 and
 \inpropenv {\propenv{}} {\notprop {\Nil{}} {\x{}}},
@@ -368,20 +357,21 @@ then
 $$
 \inpropenv {\propenv{}} {\isprop {\update {\Union{\Keyword}{\Nil}} {\nottype{\Nil{}}} {\emptypath{}}} {\x{}}},
 $$
-so we learn \inpropenv {\propenv{}} {\isprop {\Keyword{}} {\x{}}} using \removeliteral{} (figure~\ref{main:figure:restrictremove}).
+so by the definition of \updateliteral{} (figure~\ref{main:figure:update})
+\inpropenv {\propenv{}} {\isprop {\Keyword{}} {\x{}}} using \removeliteral{} (figure~\ref{main:figure:restrictremove}).
 
 Now that we have our path elements \classpe{} and \keype{\k{}}
-and the typings rules that introduce them, we look at \updateliteral{} 
-(figure~\ref{main:figure:update}) and give one interesting example for each.
+and the typing rules that introduce them, we give a detailed example how
+each path element interacts with T-Update.
 
 \smallsection{\classpe{}}
 Consider the then branch of the following program:
 
 \begin{minted}{clojure}
 (fn [x :- (U nil Keyword)]
-  (when (class x)
+  (if (class x)
     ; here
-    ))
+    nil))
 \end{minted}
 
 Intuitively, since \clj{(class x)} is a true value it must be a class, therefore
@@ -397,7 +387,6 @@ by T-Update
 $$
 \inpropenv {\propenv{}} {\isprop {\update {\Union{\Keyword}{\Nil}} {\nottype {\falsy{}}} {\classpe{}}} {\x{}}}.
 $$
-
 This hits the sixth \classpe{} case of \updateliteral{}, which returns
 $$
 {\update {\Union{\Keyword}{\Nil}} {\Object} {\emptypath{}}}
@@ -410,9 +399,9 @@ Consider the then branch of
 
 \begin{minted}{clojure}
 (fn [x :- '{:kw (U nil Keyword)}]
-  (when (get x :kw)
+  (if (get x :kw)
     ; here
-    ))
+    nil))
 \end{minted}
 
 Similar to before,
@@ -551,15 +540,12 @@ to help the compiler eliminate reflection.
 $$
 \rewrite {\taenv{}} {\e{}} {\ep{}}
 $$
-
 rewrites expression \e{} to a possibly-less reflective expression
 \ep{} with respect to type hint environment
-\taenv{} and Java class table \ct{}.
-
+\taenv{} and Java class table \ct{} and
 $$
 \tajudgement {\taenv{}} {\hastype {\e{}} {\tatype{}}}
 $$
-
 infers the (possibly-unknown) type hint \tatype{} of expression \e{} in environment \taenv{}.
 
 %$$
@@ -644,8 +630,7 @@ The simplest example
 has the proposition set \isacompare{\s{}}{\path{\classpe{}}{\x{}}}{\Value{\Keyword}}{\filterset{\isprop{\Keyword}{\x{}}}{\notprop{\Keyword}{\x{}}}},
 that is if the expression is true then \clj{x} is a keyword, otherwise \clj{x} is not a keyword.
 
-We can use \isaliteral{} as a crude \nil{} test
-
+We can rewrite example~\ref{example:conditionalflow} as
 \inputminted[firstline=5]{clojure}{code/demo/src/demo/isa_nil.clj}
 
 because the then proposition is {\isprop{\Class}{\path{\classpe{}}{\x{}}}}, so
@@ -668,9 +653,9 @@ with a non-class singleton type as the second argument.
 
 
 
-Substitution is used to ensure well formed propositions.
+%Substitution is used to ensure well formed propositions.
 
-The final case gives up; we cannot distinguish between equality and subclassing mode.
+The final line gives up---we cannot distinguish between equality and subclassing mode.
 
 \subsection{Multimethods}
 
@@ -727,17 +712,12 @@ $$
 
 To ease presentation, we present \emph{immutable}
 multimethods (figure~\ref{main:figure:mmsyntax}). \defmethodliteral{} returns a new extended multimethod
-without changing the original multimethod. The above is now written
-
-%$\letexp{foo}{\defmultiexp {\ArrowOne{\x{}}{\Top}{\clj{String}}{\filterset{\topprop{}}{\topprop{}}}{\emptyobject{}}}
-%                       {\classconst{}}}
-%                     {\\ bar}$
-
+without changing the original multimethod. Example~\ref{example:rep} is now written
 \begin{minted}{clojure}
-(let [foo (defmulti [Any -> String] class)
-      foo (defmethod foo Number [x] (str (inc x)))
-      foo (defmethod foo Keyword [x] (str (name x)))]
-  (foo :a)) ;=> "a"
+(let [rep (defmulti [Any -> String] class)
+      rep (defmethod rep Keyword [x] (str (name x)))
+      rep (defmethod rep Number [x] (str (inc x)))]
+  (rep :a)) ;=> "a"
 \end{minted}
 
 Multimethod semantics are in figure~\ref{main:figure:mmsemantics}.
@@ -757,11 +737,7 @@ method bodies. T-App handles beta reduction because multimethods are subtypes of
 
 
 
-{\footnotesize
-\constantsemfigure{}
-
 {\convertjavatypefigure{figure}{\footnotesize}}
-}
 
 \begin{figure}
   $$
