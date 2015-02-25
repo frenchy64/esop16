@@ -1,6 +1,7 @@
 (ns demo.hmap
   (:refer-clojure :exclude [fn defn])
-  (:require [clojure.core.typed :refer [defalias Num U fn ann-form defn Kw]]))
+  (:require [clojure.core.typed :refer [defalias Num U fn ann-form defn Kw
+                                        Any]]))
 
 (defalias Expr
   (U '{:op ':if :test Expr :then Expr :else Expr}
@@ -53,3 +54,20 @@
 ;; 
 ;; Arguments:
 ;; 	Any Any
+
+(defalias Mand
+  (HMap :mandatory {:a Num}))
+
+(defn mand [] :- Mand, {:a 1})
+
+(fn [m :- Mand] :- Num, (:a m))
+(fn [m :- Mand] :- Any, (:b m))
+
+(defalias Abs
+  (HMap :mandatory {:a Num}
+        :absent-keys #{:b}))
+
+(defn abs [] :- Abs, {:a 1})
+
+(fn [m :- Abs] :- Num, (:a m))
+(fn [m :- Abs] :- nil, (:b m))

@@ -90,12 +90,12 @@ ruling out the possibility of null-pointer exceptions
 Hash-maps with keyword keys play a major role in Clojure programming.
 HMap types model the most common usages of keyword maps.
 
+\begin{Code}
 \begin{exmp}
-\begin{listing}
-\inputminted[firstline=5,lastline=8]{clojure}{code/demo/src/demo/hmap.clj}
+\inputminted[firstline=6,lastline=8]{clojure}{code/demo/src/demo/hmap.clj}
 \inputminted[firstline=26,lastline=28]{clojure}{code/demo/src/demo/hmap.clj}
-\end{listing}
 \end{exmp}
+\end{Code}
 
 Here we define a type abbreviation with \clj{defalias} called \clj{Expr}
 that describes the structure of a recursively-defined AST as a union of HMaps.
@@ -103,24 +103,37 @@ that describes the structure of a recursively-defined AST as a union of HMaps.
 
 HMaps support various options to track the presence and absence of entries.
 \clj{'{:a Num}} is a shorthand for the \clj{:mandatory} option---entries that
-must be present:
-$$
-\clj{(HMap :mandatory {:a Num})}.
-$$
+must be present.
+
+\begin{Code}
+\begin{exmp}
+\inputminted[firstline=58,lastline=64]{clojure}{code/demo/src/demo/hmap.clj}
+\end{exmp}
+\end{Code}
+
+Looking up \clj{:a} simply returns the associated type.
+Keys other than \clj{:a} are unaccounted for in \clj{Mand}, so 
+the best we can infer is \clj{Any}, the supertype of all types.
 
 \clj{:absent-keys} is a set of keywords that are known to not have entries.
-The value \clj{{:a 1 :b nil}} is not a member of the type
-% '#' not allowed in mintinline
-\smallskip
-\begin{minted}{clojure}
-  (HMap :mandatory {:a Num} :absent-keys #{:b}).
-\end{minted}
+We take advantage of this to infer a better type for lookups on known absent keys.
+
+\begin{Code}
+\begin{exmp}
+\inputminted[firstline=66,lastline=73]{clojure}{code/demo/src/demo/hmap.clj}
+\end{exmp}
+\end{Code}
 
 \clj{:optional} is a map that declares entries either absent or
-present with a specific type. Concretely
-$$
-\clj{(HMap :optional {:a Num})}
-$$
+present with a specific type. 
+
+\begin{Code}
+\begin{exmp}
+\inputminted[firstline=5,lastline=12]{clojure}{code/demo/src/demo/hmap_path.clj}
+\end{exmp}
+\end{Code}
+
+Concretely \clj{(HMap :optional {:a Num})}
 is the same as
 \begin{minted}{clojure}
       (U '{:a Num} (HMap :absent-keys #{:a})).
@@ -130,18 +143,30 @@ is the same as
 \clj{:complete?} is \clj{true} if there are no further entries
 than those declared \clj{:mandatory} or \clj{:optional}.
 
-\clj{:mandatory}, \clj{:optional} and \clj{:absent-keys} default to empty
-and \clj{:complete?} defaults to \clj{false}.
+\begin{Code}
+\begin{exmp}
+\inputminted[firstline=17,lastline=23]{clojure}{code/demo/src/demo/hmap_path.clj}
+\end{exmp}
+\end{Code}
+
+Typed Clojure knows that this \clj{merge} will preserve the entries
+of the left hand map.
+
+\begin{Code}
+\begin{exmp}
+\inputminted[firstline=25,lastline=25]{clojure}{code/demo/src/demo/hmap_path.clj}
+\end{exmp}
+\end{Code}
 
 HMaps interact with occurrence typing in interesting ways.
 The next example branches on the result of a lookup, and the types
 inferred for \clj{f} are subtle.
 
+\begin{Code}
 \begin{exmp}
-\begin{listing}
-\inputminted[firstline=5,lastline=9]{racket}{code/demo/src/demo/hmap_path.clj}
-\end{listing}
+\inputminted[firstline=14,lastline=15]{clojure}{code/demo/src/demo/hmap_path.clj}
 \end{exmp}
+\end{Code}
 
 In the then branch Typed Clojure infers \clj{'{:a Num}}, in the else branch
 \clj{(HMap :optional {:a nil})}. Failed lookups return \clj{nil},
@@ -210,11 +235,11 @@ we must assume methods are nullable.
 In contrast, JVM invariants guarantee that  constructor cannot return \java{null},
 so we are safe to assume constructors are non-nullable.
 
+\begin{Code}
 \begin{exmp}
-\begin{listing}
 \inputminted[firstline=15,lastline=16]{clojure}{code/demo/src/demo/parent3.clj}
-\end{listing}
 \end{exmp}
+\end{Code}
 
 Notice a type hint is used in an argument position to help choose the \java{File(String pathname)}
 constructor. By default Typed Clojure conservatively assumes method and constructor arguments to be \emph{non-nullable},
