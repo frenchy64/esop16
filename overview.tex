@@ -30,7 +30,7 @@ address in Typed Clojure.
 \subsection{Typed Racket and occurrence typing}
 
 \citet{TF10}
-introduced Typed Racket with occurrence typing,
+presented Typed Racket with occurrence typing,
 an inference technique for conditional control flow.
 They introduce the concept of occurrence typing 
 with the following example.
@@ -81,9 +81,10 @@ To check this example, we note that
 occurrence typing already provides
 valuable information about the conditional expression---namely that it cannot return logically true and if it returns logically false 
 then \clj{x} is a \clj{Number}. Equivalently, if it returns a value then \clj{x} is a \clj{Number}.
-We use this assumption to check \clj{(inc x)}, automatically
-ruling out the possibility of null-pointer exceptions
-(said formally in section~\ref{sec:doformal}).
+We use this assumption to check \clj{(inc x)} with an automatic
+guarantee that a null-pointer exception is impossible
+(modelled formally in section~\ref{sec:doformal} and proved
+in section~\ref{sec:metatheory}).
 
 \subsection{Heterogeneous hash-maps}
 
@@ -93,7 +94,7 @@ HMap types model the most common usages of keyword maps.
 \begin{Code}
 \begin{exmp}
 \inputminted[firstline=6,lastline=8]{clojure}{code/demo/src/demo/hmap.clj}
-\inputminted[firstline=26,lastline=28]{clojure}{code/demo/src/demo/hmap.clj}
+\inputminted[firstline=27,lastline=29]{clojure}{code/demo/src/demo/hmap.clj}
 \end{exmp}
 \end{Code}
 
@@ -102,29 +103,28 @@ that describes the structure of a recursively-defined AST as a union of HMaps.
 \clj{an-exp} is a function verified to return an \clj{Expr}.
 
 HMaps support various options to track the presence and absence of entries.
-\clj{'{:a Num}} is a shorthand for the \clj{:mandatory} option---entries that
-must be present.
+\clj{:mandatory} declares entries that must be present.
 
 \begin{Code}
 \begin{exmp}
 \inputminted[firstline=58,lastline=64]{clojure}{code/demo/src/demo/hmap.clj}
 \end{exmp}
 \end{Code}
-
-Looking up \clj{:a} simply returns the associated type.
+Looking up \clj{:a} simply returns the associated type \clj{Num}.
 Keys other than \clj{:a} are unaccounted for in \clj{Mand}, so 
 the best we can infer is \clj{Any}, the supertype of all types.
+\clj{'{:a Num}} is shorthand for \clj{(HMap :mandatory {:a Num})}.
 
 \clj{:absent-keys} is a set of keywords that are known to not have entries.
-We take advantage of this to infer a better type for lookups on known absent keys.
-
 \begin{Code}
 \begin{exmp}
 \inputminted[firstline=66,lastline=73]{clojure}{code/demo/src/demo/hmap.clj}
 \end{exmp}
 \end{Code}
+We can infer a better type for \clj{(:b m)}---\clj{:b} is absent in \clj{Abs}
+so it looking up \clj{:b} returns \clj{nil}.
 
-\clj{:optional} is a map that declares entries either absent or
+\clj{:optional} is a map that declares entries either absent \emph{or}
 present with a specific type. 
 
 \begin{Code}
@@ -142,12 +142,15 @@ is the same as
 
 \clj{:complete?} is \clj{true} if there are no further entries
 than those declared \clj{:mandatory} or \clj{:optional}.
-
 \begin{Code}
 \begin{exmp}
-\inputminted[firstline=17,lastline=23]{clojure}{code/demo/src/demo/hmap_path.clj}
+\inputminted[firstline=17,lastline=26]{clojure}{code/demo/src/demo/hmap_path.clj}
 \end{exmp}
 \end{Code}
+\clj{:a} is \clj{:mandatory} in \clj{Comp} so lookups return \clj{Num}.
+\clj{:b} is \clj{:optional} so lookups return \clj{(U nil Kw)}.
+\clj{:c} is not mentioned, but since \clj{:complete?} is \clj{true}
+it must be absent so a lookup returns \clj{nil}.
 
 The next example is a real Typed Clojure program written by CircleCI, who maintain a large production
 installation of Clojure (see section~\ref{sec:casestudy} for a case study).
@@ -159,7 +162,8 @@ installation of Clojure (see section~\ref{sec:casestudy} for a case study).
 \end{Code}
 
 \clj{enc-keypair} takes an unencrypted keypair and returns an encrypted keypair by
-removing the raw private key and attaching an encrypted private key.
+removing the raw \clj{:private-key} entry and associating an encrypted private key
+as \clj{:enc-private-key}.
 Since \clj{EncKeyPair} is \clj{:complete?}, Typed Clojure enforces the return type
 does not contain an entry \clj{:private-key}, and would complain if the \clj{dissoc}
 operation forgot to remove it.
@@ -174,10 +178,15 @@ inferred for \clj{f} are subtle.
 \end{exmp}
 \end{Code}
 
-In the then branch Typed Clojure infers \clj{'{:a Num}}, in the else branch
-\clj{(HMap :optional {:a nil})}. Failed lookups return \clj{nil},
-so we cannot distinguish between \clj{'{:a nil}} and \clj{(HMap :optional {:a nil})}
-by testing the result of looking up \clj{:a}.
+Typed Clojure infers \clj{m} as \clj{'{:a Num}} in the then branch
+and \clj{(HMap :optional {:a nil})}
+in the else branch.
+We cannot infer 
+\begin{minted}{clojure}
+ (HMap :absent-keys #{:a})
+\end{minted}
+in the else branch because \clj{m} could be the value \clj{{:a nil}}
+by the definiton of \clj{Opt}.
 Section~\ref{sec:hmapformal} discusses this in greater detail.
 
 \subsection{Java interoperability}

@@ -1,6 +1,6 @@
 (ns demo.hmap-path
   (:refer-clojure :exclude [fn defn])
-  (:require [clojure.core.typed :refer [Num U fn HMap defalias defn]] [demo.hmap :refer [mand Mand]]))
+  (:require [clojure.core.typed :refer [Num U fn HMap defalias defn Kw]] [demo.hmap :refer [mand Mand]]))
 
 (defalias Opt
   (HMap :optional {:a (U nil Num)}))
@@ -15,11 +15,12 @@
   (if (:a m) (inc (:a m)) 0))
 
 (defalias Comp
-  (HMap :complete? true))
+  (HMap :mandatory {:a Num}
+        :optional {:b Kw}
+        :complete? true))
 
-(defn cmap [] :- Comp, {})
+(defn cmap [] :- Comp, {:a 1 :b :kw})
 
-(fn [m :- Comp] :- nil, (:a m))
-(fn [m :- Comp] :- nil, (:b m))
-
-(fn [] :- Mand, (merge (mand) (cmap)))
+(fn [m :- Comp] :- Num, (:a m))
+(fn [m :- Comp] :- (U nil Kw), (:b m))
+(fn [m :- Comp] :- nil, (:c m))

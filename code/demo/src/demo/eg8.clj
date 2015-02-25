@@ -12,8 +12,8 @@
 (defmethod process :F [{:keys [^File file]}]
   (if file (.getParent file) nil))
 (defmethod process :S [{:keys [^String str]}]
-  (if str nil (throw (Exception.)))
-  (.toUpperCase str))
+  (do (if str nil (throw (Exception.)))
+      (.toUpperCase str)))
 
-(process {:p :S :str "a"}) ;=> "a"
+(process {:p :S :str "a"}) ;=> "A"
 (process {:p :F :file (File. "dir/a")}) ;=> "dir"
