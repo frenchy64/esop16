@@ -149,14 +149,20 @@ than those declared \clj{:mandatory} or \clj{:optional}.
 \end{exmp}
 \end{Code}
 
-Typed Clojure knows that this \clj{merge} will preserve the entries
-of the left hand map.
+The next example is a real Typed Clojure program written by CircleCI, who maintain a large production
+installation of Clojure (see section~\ref{sec:casestudy} for a case study).
 
 \begin{Code}
 \begin{exmp}
-\inputminted[firstline=25,lastline=25]{clojure}{code/demo/src/demo/hmap_path.clj}
+\inputminted[firstline=10,lastline=22]{clojure}{code/demo/src/demo/key.clj}
 \end{exmp}
 \end{Code}
+
+\clj{enc-keypair} takes an unencrypted keypair and returns an encrypted keypair by
+removing the raw private key and attaching an encrypted private key.
+Since \clj{EncKeyPair} is \clj{:complete?}, Typed Clojure enforces the return type
+does not contain an entry \clj{:private-key}, and would complain if the \clj{dissoc}
+operation forgot to remove it.
 
 HMaps interact with occurrence typing in interesting ways.
 The next example branches on the result of a lookup, and the types
@@ -265,6 +271,8 @@ of internal methods. Multimethods are created with {\clj{defmulti}}
 and methods are installed via {\clj{defmethod}}.
 They are called like regular functions.
 
+\begin{Code}
+\begin{exmp}
 \begin{minted}{clojure}
 (ann rep [Any -> String])
 (defmulti rep class)
@@ -274,6 +282,8 @@ They are called like regular functions.
 (rep :a) ;=> "a"
 (rep 1)  ;=> "2"
 \end{minted}
+\end{exmp}
+\end{Code}
 
 The \clj{class} function returns the class of an object, or \clj{nil}
 if given \clj{nil}. This multimethod's dispatch function returns the class of its
@@ -300,7 +310,11 @@ The flexibility of \clj{isa?} is key to the generality of multimethods.
 For instance, we can dispatch on the value of
 a map entry, even if it is not a class.
 
+\begin{Code}
+\begin{exmp}
 \inputminted[firstline=4,lastline=23]{clojure}{code/demo/src/demo/eg5.clj}
+\end{exmp}
+\end{Code}
 
 \clj{isa?} is further special-case with vectors: with two vectors of the
 same length, it returns the logical conjunction of the pairwise applications
@@ -314,7 +328,11 @@ of \clj{isa?}.
 We can use this to dispatch on more than one thing. Here we perform
 double dispatch on the class of each argument.
 
+\begin{Code}
+\begin{exmp}
 \inputminted[firstline=6,lastline=23]{clojure}{code/demo/src/demo/eg7.clj}
+\end{exmp}
+\end{Code}
 
 No extra annotations are needed to follow the type-directed control flow.
 For instance, the middle method is has inferred the left argument is a number
@@ -332,7 +350,11 @@ multimethod dispatch, reflection resolution via type hints, Java method
 and constructor calls, conditional and exceptional flow reasoning
 and use of HMaps.
 
+\begin{Code}
+\begin{exmp}
 \inputminted[firstline=6,lastline=20]{clojure}{code/demo/src/demo/eg8.clj}
+\end{exmp}
+\end{Code}
 
 
 
