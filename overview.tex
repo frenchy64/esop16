@@ -267,7 +267,7 @@ The next example calls a method on once-nullable local binding.
 (\clj{ann} annotates a var with an expected type).
 
 \begin{exmp}
-\inputminted[firstline=6,lastline=8]{clojure}{code/demo/src/demo/parent3.clj}
+\inputminted[firstline=5,lastline=8]{clojure}{code/demo/src/demo/parent3.clj}
 \end{exmp}
 
 The test on \clj{f} is essential to check this example---only then can Typed Clojure
@@ -318,15 +318,7 @@ We give the full definition of \clj{rep}.
 
 \begin{Code}
 \begin{exmp}
-\begin{minted}{clojure}
-(ann rep [Any -> String])
-(defmulti rep class)
-(defmethod rep Keyword [x] (str (name x)))
-(defmethod rep Number [x] (str (inc x)))
-
-(rep :a) ;=> "a"
-(rep 1)  ;=> "2"
-\end{minted}
+\inputminted[firstline=5,lastline=11]{clojure}{code/demo/src/demo/rep.clj}
 \end{exmp}
 \end{Code}
 Typed Clojure does not statically ensure multimethod calls dispatch successfully---
@@ -339,7 +331,7 @@ Keywords are functions that look themselves up in their argument, so \clj{:op}
 is our dispatch function.
 \begin{Code}
 \begin{exmp}
-\inputminted[firstline=4,lastline=23]{clojure}{code/demo/src/demo/eg5.clj}
+\inputminted[firstline=5,lastline=23]{clojure}{code/demo/src/demo/eg5.clj}
 \end{exmp}
 \end{Code}
 The destructuring syntax \clj{(fn [{:keys [val] :as m}] ...)} binds
