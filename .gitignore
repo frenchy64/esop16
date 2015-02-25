@@ -5,3 +5,5 @@
 *.bbl
 *.blg
 code/demo/:
+_minted-small/
+*~

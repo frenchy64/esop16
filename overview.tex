@@ -12,10 +12,10 @@ section~\ref{sec:formal}.
 
 Clojure~\cite{Hic08} is a Lisp built to run on the
 Java Virtual Machine with exemplary support for concurrent programming
-and immutable data structures. It emphaisizes mostly-functional
+and immutable data structures. It emphasizes mostly-functional
 programming, restricting imperative updates to a limited set of
-structures which have specific thread synchronization behavior. By
-default, it provides fast implemenations of immutable lists, vectors,
+structures which have specific thread synchronization behaviour. By
+default, it provides fast implementations of immutable lists, vectors,
 and hash tables, which are used for most data structures, although it
 also provides means for defining new records.
 
@@ -29,133 +29,121 @@ address in Typed Clojure.
 
 \subsection{Typed Racket and occurrence typing}
 
-Classic occurrence typing concentrates on conditional
-control flow like the following example.
+Tobin-Hochstadt and Felleisen~\cite{TF10}
+introduced Typed Racket with occurrence typing,
+an inference technique for conditional control flow.
+They introduce the concept of occurrence typing 
+with the following example.
 
+\inputminted[firstline=1]{racket}{code/tr/example1.rkt}
+
+This function takes a value that is either \emph{\#f} % mintinline really hates #
+or a number, represented by an untagged \emph{union type}.
+The `then' branch has an implicit invariant
+that \rkt{x} is a number, which is automatically inferred with occurrence typing
+and type checked without further annotations.
+Here is same program in Typed Clojure.
 
 \begin{exmp}
-\begin{listing}
 \inputminted[firstline=1]{clojure}{code/demo/src/demo/eg1.clj}
-%\caption{Occurrence typing}
-\end{listing}
 \end{exmp}
 
-Here we include the full \clj{ns} form, which we omit in the following
-examples. Going down the then branch in this example means that we know
-\clj{x} is a number, which is automatically updated with occurrence typing.
+Clojure uses \emph{namespaces}, declared with the
+\clj{ns} form, to manage top-level \emph{vars}.
+This is a regular Clojure file compiled with
+the Clojure compiler except it declares a runtime dependency on
+\clj{clojure.core.typed}, Typed Clojure's core namespace.
+Programmers import typed versions of certain constructs as needed, like
+a \clj{fn} variant that support annotations,
+and use the provided \clj{check-ns} function to type check the current namespace
+when convenient.
 
-In Clojure, exceptional control flow is also common, often in the form of
-runtime assertions. 
+Typed Clojure can check all the examples in the occurrence typing
+paper---the rest of this section describes the extensions necessary
+to check Clojure code.
 
+\subsection{Exceptional control flow}
 
+Along with conditional control flow,
+Clojure programmers rely on \emph{exceptions}
+to assert type-related invariants.
 
 \begin{exmp}
-\begin{listing}
-\inputminted[firstline=5,lastline=7]{clojure}{code/demo/src/demo/do.clj}
-%\caption{Exceptional control flow}
-\end{listing}
+\inputminted[firstline=13,lastline=15]{clojure}{code/demo/src/demo/do.clj}
 \end{exmp}
 
-Clojure assertions expand to simple exceptional control flow,
-which we enhance our sequencing \doliteral{} expression to understand.
+We combine the sequencing form \clj{do} and a thrown exception with
+\clj{throw} to avoid a possible null-pointer exception by incrementing \clj{nil}.
+(We omit \clj{ns} forms for the rest of the examples).
 
-\begin{exmp}
-  \begin{minted}{clojure}
-(fn [x :- (U nil Number)]
-  (do (if (number? x) nil (throw (new Exception)))
-      (inc x)))
-  \end{minted}
-\end{exmp}
-
-Our main insight is that occurrence typing already provides
-valuable information about the left argument of \doliteral{} expressions,
-namely if it returns a value, \clj{x} is a \clj{Number}.
-Since the right argument is evaluated after the left, we can assume
-\clj{x} is a \clj{Number} when evaluating \clj{(inc x)}, verifying
-the programmer's attempt to avoid null-pointer exceptions without further annotations.
+To check this example, we note that
+occurrence typing already provides
+valuable information about the conditional expression---namely that it cannot return logically true and if it returns logically false 
+then \clj{x} is a \clj{Number}. Equivalently, if it returns a value then \clj{x} is a \clj{Number}.
+We use this assumption to check \clj{(inc x)}, automatically
+ruling out the possibility of null-pointer exceptions
+(said formally in section~\ref{sec:doformal}).
 
 \subsection{Heterogeneous hash-maps}
 
 Hash-maps with keyword keys play a major role in Clojure programming.
+HMap types model the most common usages of keyword maps.
 
-HMaps track the presense and absense of entries.
-
-$$
-\clj{(HMap :mandatory {:a Num})} 
-$$
-
-is the type of a map with at least an \clj{:a} entry mapped to a number,
-also written \clj{'{:a Num}}. If \clj{:b} is also known to be an absent entry
-then
-
-% '#' not allowed in mintinline
-\smallskip
-\begin{minted}{clojure}
-  (HMap :mandatory {:a Num} :absent-keys #{:b})
-\end{minted}
-
-declares \clj{:b} absent. If the mandatory keys fully specify the
-entries, we write
-
-$$
-\clj{(HMap :mandatory {:a Num} :complete? true)}.
-$$
-
-\clj{:complete?} defaults to \clj{false}.
-The \clj{:optional} option 
-
-$$
-\clj{(HMap :optional {:a Num})}
-$$
-
-abbreviates the union of present and absent entries
-
-\smallskip
-\begin{minted}{clojure}
-(U '{:a Num} (HMap :absent #{:a}))
-\end{minted}
-.
-
-
-\clj{defalias} defines a custom type abbreviation, often for unions of HMaps.
-
+\begin{exmp}
 \begin{listing}
 \inputminted[firstline=5,lastline=8]{clojure}{code/demo/src/demo/hmap.clj}
 \inputminted[firstline=26,lastline=28]{clojure}{code/demo/src/demo/hmap.clj}
-\caption{A simple AST in terms of HMaps}
 \end{listing}
+\end{exmp}
 
+Here we define a type abbreviation with \clj{defalias} called \clj{Expr}
+that describes the structure of a recursively-defined AST as a union of HMaps.
+\clj{an-exp} is a function verified to return an \clj{Expr}.
 
-HMaps are very malleable, including support for associate, merge and dissociate operations.
+HMaps support various options to track the presence and absence of entries.
+\clj{'{:a Num}} is a shorthand for the \clj{:mandatory} option---entries that
+must be present:
+$$
+\clj{(HMap :mandatory {:a Num})}.
+$$
 
-\begin{listing}
-\inputminted[firstline=10,lastline=24]{clojure}{code/demo/src/demo/hmap.clj}
-\caption{HMap operations}
-\end{listing}
-
-Lookups on HMaps with multiple options combined with
-occurrence typing is an interesting problem.
-Testing a lookup on a mandatory entry is straightforward, since we
-know the lookup always succeeded.
-
+\clj{:absent-keys} is a set of keywords that are known to not have entries.
+The value \clj{{:a 1 :b nil}} is not a member of the type
+% '#' not allowed in mintinline
+\smallskip
 \begin{minted}{clojure}
-(fn [m :- '{:a (U nil Num)}] :- '{:a Num}
-  {:pre [(number? (:a m))]}
-  m)
+  (HMap :mandatory {:a Num} :absent-keys #{:b}).
 \end{minted}
 
-The result type is updated as expected to exclude \clj{nil}.
-Testing for \clj{nil} is more complicated, since it is the sentinel
-lookup failure indicator but may also appear as an entry value.
-If we test for \clj{nil} in an \clj{:optional} entry, the best we learn
-is that either the entry is missing or contains \clj{nil}.
-
+\clj{:optional} is a map that declares entries either absent or
+present with a specific type. Concretely
+$$
+\clj{(HMap :optional {:a Num})}
+$$
+is the same as
 \begin{minted}{clojure}
-(fn [m :- (HMap :optional {:a (U nil Num)})] 
-  :- (HMap :optional {:a nil})
-  {:pre [(nil? (:a m))]}
-  m)
+      (U '{:a Num} (HMap :absent-keys #{:a})).
 \end{minted}
+
+
+\clj{:complete?} is \clj{true} if there are no further entries
+than those declared \clj{:mandatory} or \clj{:optional}.
+
+\clj{:mandatory}, \clj{:optional} and \clj{:absent-keys} default to empty
+and \clj{:complete?} defaults to \clj{false}.
+
+HMaps interact with occurrence typing in interesting ways.
+What do we learn about the map \clj{m} in the following test?
+
+\begin{exmp}
+\inputminted[firstline=5,lastline=9]{racket}{code/demo/src/demo/hmap_path.clj}
+\end{exmp}
+
+In the then branch Typed Clojure infers \clj{'{:a Num}}, in the else branch
+\clj{(HMap :optional {:a nil})}. Failed lookups return \clj{nil},
+so we cannot distinguish between \clj{'{:a nil}} and \clj{(HMap :optional {:a nil})}
+by testing the result of looking up \clj{:a}.
+Section~\ref{sec:hmapformal} discusses this in greater detail.
 
 \subsection{Java interoperability}
 

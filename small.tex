@@ -54,6 +54,7 @@
 \doi{nnnnnnn.nnnnnnn}
 
 \newcommand{\clj}[1]{\mintinline{clojure}{#1}}
+\newcommand{\rkt}[1]{\mintinline{racket}{#1}}
 
 % Uncomment one of the following two, if you are not going for the 
 % traditional copyright transfer agreement.
@@ -86,9 +87,9 @@
 Typed Clojure is an optional type system for Clojure, a dynamic
 language in the Lisp family that targets the JVM. Typed Clojure's type
 system build on the design of Typed Racket, repurposing in particular
-\emph{occurence typing}, its approach to statically reasoning about
+\emph{occurrence typing}, its approach to statically reasoning about
 predicate tests. However, in adapting the type system to Clojure,
-changes and extensions are required to accomodate both additional
+changes and extensions are required to accommodate both additional
 language features and  idioms used by Clojure programmers.
 
 In this paper, we describe Typed Clojure and present these type system
@@ -101,7 +102,7 @@ idiomatically use immutable dictionaries for data structures; Typed
 Clojure handles this in the type system with multiple forms of
 heterogenous dictionary types. Third, multimethods provide extensible
 operations, and their Clojure semantics turns out to have a surprising
-synergy with the underlying occurence typing framework.
+synergy with the underlying occurrence typing framework.
 
 We provide a formal model of the Typed Clojure type system
 incorporating these and other features, with a proof of

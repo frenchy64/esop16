@@ -3,5 +3,4 @@
   (:require [clojure.core.typed :refer [fn U Num]]))
 
 (fn [x :- (U nil Num)]
-  (when (number? x)
-    (inc x)))
+  (if (number? x) (inc x) 0))

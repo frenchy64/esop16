@@ -18,6 +18,6 @@
                   :right {:op :val :val 3}}
            :else {:op :val :val 4}})
 ;=> {:op :if :test {:op :val :val 2}
-;    :then {:op :do :right {:op :val :val 4} 
-;           :left {:op :val :val 3}}
+;    :then {:op :do :left {:op :val :val 3}
+;           :right {:op :val :val 4}}
 ;    :else {:op :val :val 5}}
