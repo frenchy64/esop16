@@ -137,13 +137,29 @@ Values include booleans, \nil{}, class literals, keywords,
 constants and closures. \false{} and \nil{} are logically false, otherwise values are true.
 
 Types include the top type, \emph{untagged} unions, functions, singleton types
-and class instances. We abbreviate \EmptyUnion{} as \Bot{}, {\ValueNil} as \Nil{}, 
+and class instances. 
+We write the class literal \clj{Boolean} as \Boolean{} and \clj{Keyword} as \Keyword{}.
+The type \Value{\Keyword} is inhabited by \clj{Keyword} and \clj{:a} is of type \Keyword{}.
+We abbreviate \EmptyUnion{} as \Bot{}, {\ValueNil} as \Nil{}, 
 {\ValueTrue} as \True and {\ValueFalse} as {\False}.
 Function types contain \emph{latent}(terminology from~\cite{Lucassen88polymorphiceffect}) propositions and object, which, along with the return type,
 may refer to the parameter identifier. They are latent because they are instantiated with the
 actual object of the argument in applications before they are used in the proposition environment.
 
 Figure~\ref{main:figure:typingrules} contains the standard typing rules.
+The first interesting rule is T-If. The propositions of the test \thenprop{\prop{1}} and \elseprop{\prop{1}}
+are used as assumptions in the then and else branch respectively.
+If the result of the \ifliteral{} is true, then the value either
+came from \e{2}, in which case \thenprop{\prop{2}} is true, or from \e{3},
+which implies \thenprop{\prop{3}} is true. 
+The else proposition is \orprop{\elseprop{\prop{2}}}{\elseprop{\prop{3}}} for
+similar reasons, but instead for when each branch is a false value.
+The second interesting rule is T-Local, where we actually utilise the logic system
+to extract a type for a local binding. This rule is why L-Update is crucial---T-Local
+looks for positive type propositions in \propenv{} with the same object as the binding.
+By subsumption we can choose the most specific positive proposition and thus
+T-Local can return the most specific type inferred by the logic system.
+
 We can now demonstrate how to check example~\ref{example:conditionalflow}.
 We abbreviate \clj{Num} as \clj{N},  \clj{Boolean} as \clj{B} and \clj{number?} as \clj{n?}.
 The test is checked with T-App, 
@@ -157,7 +173,7 @@ $$
 $$
 By T-Local.
 $$
-\judgement{\isprop{\clj{N}}{\x{}}}{\hastype{\clj{x}}{\clj{N}}}{\filterset{\topprop{}}{\topprop{}}}{\x{}}
+\judgement{\isprop{\clj{N}}{\x{}}}{\hastype{\clj{x}}{\clj{N}}}{\filterset{\notprop{\clj{(U nil false)}}{\x{}}}{\isprop{\clj{(U nil false)}}{\x{}}}}{\x{}}
 $$
 Now we check both branches.
 $$
@@ -166,20 +182,24 @@ $$
 $$
 \judgement{\notprop{\clj{N}}{\x{}}}{\hastype{\clj{0}}{\clj{N}}}{\filterset{\topprop{}}{\topprop{}}}{\emptyobject{}}
 $$
+\clj{inc} has type
+$$
+{\ArrowOne{\x{}}{\clj{N}}{\clj{N}}
+        {\filterset{\topprop{}}{\topprop{}}}{\emptyobject{}}}
+$$
 We can now check the conditional with T-If.
 $$
 \judgement{\isprop{\clj{N}}{\x{}}}{\hastype{\clj{(if (n? x) (inc x) 0)}}{\clj{N}}}{\filterset{\orprop{\isprop{\clj{N}}{\x{}}}{\topprop{}}}{\orprop{\notprop{\clj{N}}{\x{}}}{\topprop{}}}}{\emptyobject{}}
 $$
-Finally the function can be checked with T-Abs.
+Finally the function can be checked with T-Abs
 $$
 \judgement{}{\hastype{\clj{(fn ...)}}
                                              {\ArrowOne{\x{}}{\clj{(U nil N)}}{\clj{N}}
         {\filterset{\orprop{\isprop{\clj{N}}{\x{}}}{\topprop{}}}{\orprop{\notprop{\clj{N}}{\x{}}}{\topprop{}}}}{\emptyobject{}}}}
   {\filterset{\topprop{}}{\botprop{}}}{\emptyobject{}}
 $$
-By T-Abs
 
-The operational semantics are standard, except \nil{} is logically false:
+The operational semantics for our language are standard, except \nil{} is a false value:
 
 \begin{mathpar}
     \BIfTrue{}
@@ -187,9 +207,18 @@ The operational semantics are standard, except \nil{} is logically false:
     \BIfFalse{}
 \end{mathpar}
 
-Subtyping (figure~\ref{main:figure:subtyping}) says singleton types are instances of their respective classes
-and \Object is transitively a supertype to everything except {\Nil{}},
+Subtyping (figure~\ref{main:figure:subtyping}) 
+is a reflexive and transitive relation with top type \Top. All objects are subtypes
+of \emptyobject{}.
+Singleton types are instances of their respective classes---boolean singleton types
+are of type \Boolean{}, class literals are instances of \Class{} and keywords are
+instances of \Keyword{}.
+Instances of classes \class{} are subtypes of \Object{}. Since function types 
+are subtypes of \IFn{}, all types except for \Nil{} are subtypes of \Object{},
 so \Top{} = {\Union{\Nil}{\Object}}.
+Function subtyping is contravariant left of the arrow---latent propositions, object
+and the result type are covariant.
+Subtyping for untagged unions is standard.
 
 \begin{figure*}
   \footnotesize
