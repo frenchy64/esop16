@@ -377,7 +377,7 @@ $$
 \judgement{\isprop{\clj{(U nil N)}}{\x{}}}{\hastype{\clj{(do (if (n? x) nil}\ {\errorvalv{}}{\clj{) (inc x))}}}{\clj{N}}}{\filterset{\topprop{}}{\topprop{}}}{\emptyobject{}}
 $$
 
-\subsection{Heterogenous maps}
+\subsection{Heterogeneous maps}
 \label{sec:hmapformal}
 
 \begin{figure}
@@ -415,50 +415,85 @@ $$
     {\BGet}
     {\BGetMissing}
   \end{mathpar}
-  \caption{HMap Semantics}
-  \label{main:figure:hmapsem}
-\end{figure}
-
-\begin{figure}
-  \footnotesize
   \begin{mathpar}
     \HMapsubtyping{}
   \end{mathpar}
-  \caption{HMap subtyping rules}
-  \label{main:figure:hmapsubtype}
+  \caption{HMap Semantics and Subtyping rules}
+  \label{main:figure:hmapsem}
 \end{figure}
+
 
 We now present \HMapliteral{} types in detail.
 Figure~\ref{main:figure:hmapsyntax} extends the syntax for terms and types.
+The syntax 
 $$
 \clj{(HMap :mandatory p :absent-keys a :complete? b)}
 $$
-is written \HMapgeneric{\mandatory{}}{\absent{}},
-where the metavariable \completenessmeta{} is {\complete{}} if \clj{b} is \clj{true} otherwise {\partial{}}. 
-\mandatory{} specifies a set of known present keyword entries. \absent{} tracks known absent keys.
-\HMapcwithabsent{\mandatory{}}{\absent{}} is abbreviated to \HMapc{\mandatory{}}. Keys cannot be both present and absent.
+we introduced in section~\ref{sec:overview}
+is now written \HMapgeneric{\mandatory{}}{\absent{}},
+where \completenessmeta{} is {\complete{}} if \clj{b} is \clj{true} and is {\partial{}} otherwise. 
+The \mandatory{} entry specifies a set of known present keyword entries and \absent{} tracks known absent keys.
+To ease presentation, 
+if a HMap is declared as \complete{} then \absent{} implicitly contains all other keywords not specified in \mandatory{}.
+%\HMapcwithabsent{\mandatory{}}{\absent{}} is abbreviated to \HMapc{\mandatory{}}. 
+Keys cannot be both present and absent.
 
-\clj{(get m :a)} is identical to \clj{(:a m)}.
+The expressions \clj{(get m :a)} and \clj{(:a m)} are semantically identical, though
+we only model the former to avoid the added complexity of keywords being functions.
 To simplify presentation, we only provide syntax for the empty map literal and
 restrict lookup and extension to keyword keys. The metavariable \mapval{}
 ranges over the runtime value of maps {\curlymapvaloverright{\k{}}{\v{}}}.
 
-\subsection{Paths}
-
-We introduce our first path element {\keype{\k{}}}, the symbolic representation
-of \clj{(get m k)} where \clj{m} represents the path after {\keype{\k{}}}---{\path{\keype{\makekw{b}}}{\path{\keype{\makekw{a}}}{\x{}}}}
-  represents \clj{(get (get x :a) :b)}.
+Subtyping for HMaps (figure~\ref{main:figure:hmapsem})
+designate \MapLiteral{} as a common supertype for all HMaps.
+S-HMap says that a HMap is a subtype of another HMap if they agree
+on \completenessmeta{}, agree on mandatory entries with subtyping
+and at least cover the absent keys of the supertype.
+Complete maps are subtypes of partial maps
+as long as they agree on the mandatory entries of the partial map via subtyping (S-HMapP).
 
 Figure~\ref{main:figure:hmapsyntax} contains the typing rules. T-GetHMap models a lookup
 that will certainly succeed, T-GetHMapAbsent a lookup that will certainly fail
 and T-GetHMapPartialDefault a lookup with unknown results.
+We only handle unions of HMaps in T-GetHMap, where every element in the union
+contains the key we are looking up, in particular to support operations like
+looking up \clj{:op} on a map of type \clj{Expr} (example~\ref{example:decleaf}).
+The object in each T-Get rule is now more complicated than in T-Local---the 
+next section discusses this in detail.
 T-Assoc extends a HMap with a mandatory entry.
+
 Figure~\ref{main:figure:hmapsem} contains the semantics for \getliteral{}
 and \assocliteral{}.
+The B-Get rule evaluates first evaluates the map and the key, asserts
+the key must be present in the map and returns the associated key. If
+the entry is missing, B-GetMissing says we return \nil{}.
 
-S-HMap (figure~\ref{main:figure:hmapsubtype}) says that HMap subtypes must have all present entries to also be
-subtypes and also cover the absent keys.
-Complete maps are subtypes of partial maps by S-HMapP.
+\subsection{Paths}
+
+Recall the first insight of occurrence typing---not
+only do we want to reason about components of the runtime environment, that
+is, variables, but \emph{subcomponents} of the environment.
+We have already mentioned paths \path{\pathelem{}}{\x{}}
+where \pathelem{} is a sequence of selectors on \x{} called \emph{path elements},
+but we have not yet defined what components of a path can be.
+\citet{TF10} introduce the path elements \carpe{} and \cdrpe{}
+to reason about selector operations on cons cells.
+We instead want to reason about HMap lookups.
+
+We introduce our first path element
+{\keype{\k{}}}, which represents the operation of looking up
+a key \k{}.
+We directly relate this to our typing rule T-GetHMap
+(figure~\ref{main:figure:hmapsyntax}) by
+demonstrating how the first conditional test is checked in example~\ref{example:decleaf}.
+First we unfold the destructuring syntax.
+\begin{minted}{clojure}
+  (fn [m :- Expr]
+    (let [op (:op m)]
+      (if (= :if (:op m))
+        {:op :if, ...}
+        (if ...))))
+\end{minted}
 
 The \classconst{} function is a constant which returns
 the argument's class or \nil{}.
@@ -474,95 +509,7 @@ $$
 \constanttypefigure{}
 \end{mathpar}
 
-Our second path element \classpe{} is the symbolic representation
-of a call to \classconst{}---{\path{\classpe{}}{\path{\keype{\makekw{a}}}{\x{}}}}
-represents \clj{(class (get x :a))}.
-Figure~\ref{main:figure:primitivesem} contains the semantics for \classconst{}.
-
 \constantsemfigure{main}
-
-\subsection{Proof system}
-
-The essential piece of occurrence typing's logical system is L-Update,
-where we combine propositions that have similar objects to learn new facts.
-
-\begin{mathpar}
-  {\LUpdate}
-\end{mathpar}
-For example, if \inpropenv {\propenv{}} {\isprop {\Union{\Keyword}{\Nil}} {\x{}}}
-and
-\inpropenv {\propenv{}} {\notprop {\Nil{}} {\x{}}},
-then
-$$
-\inpropenv {\propenv{}} {\isprop {\update {\Union{\Keyword}{\Nil}} {\nottype{\Nil{}}} {\emptypath{}}} {\x{}}},
-$$
-so by the definition of \updateliteral{} (figure~\ref{main:figure:update})
-\inpropenv {\propenv{}} {\isprop {\Keyword{}} {\x{}}} using \removeliteral{} (figure~\ref{main:figure:restrictremove}).
-
-Now that we have our path elements \classpe{} and \keype{\k{}}
-and the typing rules that introduce them, we give a detailed example how
-each path element interacts with L-Update.
-
-\smallsection{\classpe{}}
-Consider the then branch of the following program:
-
-\begin{minted}{clojure}
-(fn [x :- (U nil Keyword)]
-  (if (class x)
-    ; here
-    nil))
-\end{minted}
-
-Intuitively, since \clj{(class x)} is a true value it must be a class, therefore
-\clj{x} is an object (not \clj{nil}).
-
-From checking the body with T-Abs we know {\isprop {\Union{\Keyword}{\Nil}} {\x{}}}
-The test has the object {\path{\classpe{}}{\x{}}} by T-App.
-By T-If we can assume
-{\notprop {\falsy{}} {\path{\classpe{}}{\x{}}}} in the then branch.
-Since the object of the first proposition {\x{}} is a prefix of the second proposition's object
-{\path{\classpe{}}{\x{}}}, 
-by L-Update 
-$$
-\inpropenv {\propenv{}} {\isprop {\update {\Union{\Keyword}{\Nil}} {\nottype {\falsy{}}} {\classpe{}}} {\x{}}}.
-$$
-This hits the sixth \classpe{} case of \updateliteral{}, which returns
-$$
-{\update {\Union{\Keyword}{\Nil}} {\Object} {\emptypath{}}}
-$$
-deriving \inpropenv {\propenv{}} {\isprop {\Keyword} {\x{}}} 
-by \restrictliteral{} (figure~\ref{main:figure:restrictremove}).
-
-\smallsection{\keype{\k{}}}
-Consider the then branch of
-
-\begin{minted}{clojure}
-(fn [x :- '{:kw (U nil Keyword)}]
-  (if (get x :kw)
-    ; here
-    nil))
-\end{minted}
-
-Similar to before,
-by T-Abs
-{\isprop {\HMapp{\mandatorysetsingleton{\makekw{kw}}{\Union{\Nil}{\Keyword}}}{\emptyabsent}} {\x{}}},
-the test's object is {\path{\keype{\makekw{kw}}}{\x{}}} by T-App
-and by T-If we assume
-{\notprop {\falsy{}} {\path{\keype{\makekw{kw}}}{\x{}}}} in the then branch.
-
-L-Update combines these propositions
-$$
-\inpropenv {\propenv{}} {\isprop {\update {\HMapp{\mandatorysetsingleton{\makekw{kw}}{\Union{\Nil}{\Keyword}}}{\emptyabsent}} {\nottype {\falsy{}}} {\keype{\makekw{kw}}}} {\x{}}}.
-$$
-matching the \updateliteral{} case which pushes the \updateliteral{} inside the map
-$$
-{\HMapp{\mandatorysetsingleton{\makekw{kw}}{\update{\Union{\Nil}{\Keyword}}{\nottype {\falsy{}}}{\emptypath{}}}}{\emptyabsent}}
-$$
-concluding with
-$$
-\inpropenv {\propenv{}}
-{\isprop {\HMapp{\mandatorysetsingleton{\makekw{kw}}{\Keyword}}{\emptyabsent}}   {\x{}}}.
-$$
 
 \begin{figure*}
   $$

@@ -125,6 +125,7 @@
 \newcommand\extendmandatoryset[3]{(#1, (#2\ #3))}
 \newmeta\mandatory{p}
 \newmeta\absent{a}
+\newmeta\absentp{a'}
 \newcommand\absentoverright[1]{\ma{\{{\overrightarrow{#1}}\}}}
 \newcommand\emptyabsent[0]{\ma{\{\}}}
 \newcommand\inabsent[2]{\ma{#1 \in #2}}
@@ -432,8 +433,11 @@
 \newmeta\pathelemp{\pi'}
 % abstract syntax for pathelem
 \newmeta\pesyntax{pe}
-\newmeta\classpe{\ma{\textbf{class}}}
-\newcommand\keype[1]{\ma{\textbf{key}_{\ma{#1}}}}
+\newcommand\pefont[1]{\textbf{#1}}
+\newmeta\classpe{\ma{\pefont{class}}}
+\newcommand\keype[1]{\ma{\pefont{key}_{\ma{#1}}}}
+\newcommand\carpe[0]{\ma{\pefont{car}}}
+\newcommand\cdrpe[0]{\ma{\pefont{cdr}}}
 
 \newcommand\destructpath[2]{\ma{#1 :: #2}}
 
@@ -828,8 +832,10 @@
 
 \newcommand\TGetHMap[0]{
 \infer [T-GetHMap]
-{ \judgementtwo {\propenv{}} 
+{ \judgement {\propenv{}} 
   {\hastype {\e{}} {\Unionsplice {{\overrightarrow {\HMapgeneric {\mandatory{}} {\absent{}}}}^i}}}
+  {\filterset {\thenprop{\prop{1}}}{\elseprop{\prop{1}}}}
+  {\object{}}
            \\
   \judgementtwo {\propenv{}} {\hastype {\e{k}} {\Value {k}}}
              \\
@@ -845,7 +851,9 @@
 
 \newcommand\TGetAbsent[0]{
 \infer [T-GetHMapAbsent]
-{ \judgementtwo {\propenv{}} {\hastype {\e{}} {\HMapgeneric {\mandatory{}} {\absent}}}
+{ \judgement {\propenv{}} {\hastype {\e{}} {\HMapgeneric {\mandatory{}} {\absent}}}
+  {\filterset {\thenprop{\prop{1}}}{\elseprop{\prop{1}}}}
+  {\object{}}
          \\
   \judgementtwo {\propenv{}} {\hastype {\e{k}} {\Value {k}}}
              \\
@@ -863,7 +871,9 @@
 
 \newcommand\TGetHMapPartialDefault[0]{
 \infer [T-GetHMapPartialDefault]
-{ \judgementtwo {\propenv{}} {\hastype {\e{}} {\HMapp {\mandatory{}} {\absent}}}
+{ \judgement {\propenv{}} {\hastype {\e{}} {\HMapp {\mandatory{}} {\absent}}}
+  {\filterset {\thenprop{\prop{1}}}{\elseprop{\prop{1}}}}
+  {\object{}}
          \\
   \judgementtwo {\propenv{}} {\hastype {\e{k}} {\Value {k}}}
              \\
@@ -1397,10 +1407,9 @@ $$
 { \forall i.\ ({\k{i}},\ \s{i}) \in \mandatory{} \text{ and } \issubtypein {} {\s{i{}}} {\t{i{}}}
 }
 {\issubtypein {} 
-  {\HMapc {\mandatory{}}}
-  {\HMapp {\overrightarrow{(\k{},\ \t{})}^i} {\absent{}}}
+  {\HMapcwithabsent {\mandatory{}}{\absentp{}}}
+  {\HMapp {{\mandatorysetoverright{\k{}}{\t{}}}^i} {\absent{}}}
                }
-
 \infer [S-HMapMono]
 {}
 {\issubtypein {} 

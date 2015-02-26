@@ -71,7 +71,7 @@ and itself.
 \clj{assoc} and \clj{dissoc} associate and dissociate entries
 from immutable maps.
 The \clj{=} function returns true if all its arguments are structurally equal---in this
-paper we treat it as pointer equality.
+paper we use it only for pointer equality.
 Everything is an instance of some class
 except for \clj{nil}. Predicates like \clj{number?} are equivalent to
 a Java \java{instanceof} test, in this case on \clj{java.lang.Number}.
@@ -83,16 +83,6 @@ In binding positions like \clj{(fn [^File x] ...)}
 the metadata is preserved in occurrences of \clj{x}.
 
 \emph{Commas} are always whitespace.
-\emph{Destructuring} is binding position syntax for pattern matching.
-A \emph{map destructuring} contains pairs of symbols and keywords that bind the symbols
-to lookups on that keyword with the current argument, optionally terminated by
-\clj{:as} and a symbol, which binds the symbol to the current argument.
-$$
-\clj{(fn [{x :x, y :y, :as m}] ...)}
-$$ 
-binds \clj{m} to the first argument,
-\clj{x} to \clj{(get m :x)} and
-\clj{y} to \clj{(get m :y)} in the function body. Type hints are preserved as expected.
 
 Clojure uses \emph{namespaces}, declared with the
 \clj{ns} form, to manage top-level \emph{vars} and
@@ -109,24 +99,49 @@ when convenient.
 We omit \clj{ns} forms for the rest of the examples.
 \footnote{See <this> github repo for full working examples}
 
-
 Java methods and fields are called in prefix notation
 like \clj{(.method target args*)} and \clj{(.field target)} respectively,
 with method and field names prefixed with a dot and methods taking some number of arguments.
-Constructors are the class name with a dot suffix and arguments like \clj{(class. args*)}.
+The canonical form for methods is \clj{(. target (method args*))} 
+and for fields \clj{(. target field)} using the dot special form, which we utilise occasionally
+for clarity.
+Constructors are the class name with a dot suffix and arguments like \clj{(class. args*)}
+or equivalently \clj{(new class args*)} with the \clj{new} special form.
 
 The \clj{if} special form is a standard two-armed conditional.
 The \clj{do} special form sequentially evaluates any number of expressions
-left-to-right, returning \nil{} on zero arguments.
-The \clj{when} macro is a one-armed \clj{if} that returns \clj{nil} if the test fails.
+left-to-right, returning the last expression or \nil{}.
+The \clj{when} macro is a one-armed \clj{if} with an implicit \clj{do}
+around arguments after the test, and returns \clj{nil} if the test fails.
 The \clj{throw} special form is exactly Java's \java{throw}, which takes an
-instance of \clj{Throwable} and throws an exception with it.
+instance of \clj{Throwable} and throws it as an exception.
 The \clj{fn} macro creates a function---it takes a parameter vector of symbols indicating parameter names
 and any number of expressions in an implicit \clj{do} for the body of the function.
+The \clj{let} macro takes a vector of bindings, a flat vector of binding-value pairs,
+and scopes them in the body, an implicit \clj{do}.
+Scoping works like \clj{let*} in Scheme---that is values in the binding vector can refer
+to variables previously introduced in the same binder.
 The typed
 variant of \clj{fn} supports an optional keyword \clj{:-} and type following
 each parameter to declare their static types, and similarly after
 the parameter vector to declare the return type.
+
+\emph{Destructuring} is binding position syntax for pattern matching.
+A \emph{map destructuring} contains pairs of symbols and keywords that bind the symbols
+to lookups on that keyword with the current argument, optionally terminated by
+\clj{:as} and a symbol, which binds the symbol to the current argument. For example
+$$
+\clj{(fn [{^File x :x, ^String y :y, :as m}] ...)}
+$$ 
+expands to
+\begin{minted}{clojure}
+  (fn [m___0]
+    (let [m m___0,
+          ^File x (:x m),
+          ^String y (:y m)]
+      ...))
+\end{minted}
+Destructuring is supported similarly by \clj{let}.
 
 In a static type, a quoted keyword \clj{':if} is a singleton type containing just the keyword.
 Quoted maps like \clj{'{:op ':const, :val Num}} are HMap types representing
@@ -135,7 +150,7 @@ The keys are not quoted because only keyword keys
 are allowed. The type constructor \clj{U} indicates an untagged union type, which can take
 any number of types.
 
-The \clj{defalias} macro defines a type abbreviation which can be recursively defined.
+The \clj{defalias} macro defines a type abbreviation which can reference itself recursively.
 
 \subsection{Exceptional control flow}
 
@@ -165,6 +180,7 @@ HMap types model the most common usages of keyword maps.
 \begin{Code}
 \begin{exmp}
 \inputminted[firstline=6,lastline=13]{clojure}{code/demo/src/demo/hmap.clj}
+\label{example:decleaf}
 \end{exmp}
 \end{Code}
 
