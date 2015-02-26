@@ -134,7 +134,11 @@ Syntax is given in figure~\ref{main:figure:termsyntax}. Expressions include vari
 application, abstractions, conditionals and let expressions.
 All binding forms introduce fresh variables.
 Values include booleans, \nil{}, class literals, keywords, 
-constants and closures. \false{} and \nil{} are logically false, otherwise values are true.
+constants and closures. 
+Value environments map local bindings to values.
+Closures contain the value environment \openv{} when the function was created,
+which is used during beta reduction to ensure the abstraction respects lexical scoping.
+\false{} and \nil{} are logically false, otherwise values are true.
 
 Types include the top type, \emph{untagged} unions, functions, singleton types
 and class instances. 
@@ -206,6 +210,11 @@ The operational semantics for our language are standard, except \nil{} is a fals
 
     \BIfFalse{}
 \end{mathpar}
+
+For example,
+B-IfTrue evaluates \e{1} in the environment \openv{} with the result \v{1}.
+If \v{1} is not \nil{} or \false{} then the conditional returns the result of evaluating the then branch \e{2}
+in \openv{}.
 
 Subtyping (figure~\ref{main:figure:subtyping}) 
 is a reflexive and transitive relation with top type \Top. All objects are subtypes
@@ -289,7 +298,8 @@ Subtyping for untagged unions is standard.
 \label{sec:doformal}
 
 We extend our model with sequencing expressions and errors, where {\errorvalv{}}
-models Clojure's throw special form.
+models the result of calling Clojure's \clj{throw} special form
+with some \clj{Throwable}.
 
 \smallskip
 $
@@ -337,29 +347,34 @@ makes our insight interesting.
 Now we can check example~\ref{example:doexception}.
 We check the test with T-App.
 $$
-\judgement{\isprop{\clj{(U nil Num)}}{\x{}}}{\hastype{\clj{(number? x)}}{\clj{B}}}{\filterset{\isprop{\clj{Num}}{\x{}}}{\notprop{\clj{Num}}{\x{}}}}{\emptyobject{}}
+\judgement{\isprop{\clj{(U nil N)}}{\x{}}}{\hastype{\clj{(n? x)}}{\clj{B}}}{\filterset{\isprop{\clj{N}}{\x{}}}{\notprop{\clj{N}}{\x{}}}}{\emptyobject{}}
 $$
 By T-Nil and subsumption we derive the same information in both propositions.
 $$
-\judgement{\isprop{\clj{Num}}{\x{}}}{\hastype{\clj{nil}}{\clj{nil}}}{\filterset{\isprop{\clj{Num}}{\x{}}}{\notprop{\clj{Num}}{\x{}}}}{\emptyobject{}}
+\judgement{\isprop{\clj{N}}{\x{}}}{\hastype{\clj{nil}}{\clj{nil}}}{\filterset{\isprop{\clj{N}}{\x{}}}{\notprop{\clj{N}}{\x{}}}}{\emptyobject{}}
 $$
 By T-Error we can assume anything about the return of an error.
 $$
-\judgement{\notprop{\clj{Num}}{\x{}}}{\hastype{\errorvalv{}}{\Bot}}{\filterset{\botprop{}}{\botprop{}}}{\emptyobject{}}
+\judgement{\notprop{\clj{N}}{\x{}}}{\hastype{\errorvalv{}}{\Bot}}{\filterset{\botprop{}}{\botprop{}}}{\emptyobject{}}
 $$
 Using the above as premises to T-If we learn {\orprop{\isprop{\clj{Num}}{\x{}}}{\botprop{}}}
 in both propositions.
 $$
-\judgement{\isprop{\clj{(U nil Num)}}{\x{}}}{\hastype{\clj{(if (number? x) nil}\ {\errorvalv{}{\clj{)}}}}{\clj{B}}}
-          {\filterset{\orprop{\isprop{\clj{Num}}{\x{}}}{\botprop{}}}{\orprop{\notprop{\clj{Num}}{\x{}}}{\botprop{}}}}{\emptyobject{}}
+\judgement{\isprop{\clj{(U nil N)}}{\x{}}}{\hastype{\clj{(if (n? x) nil}\ {\errorvalv{}{\clj{)}}}}{\clj{B}}}
+          {\filterset{\orprop{\isprop{\clj{N}}{\x{}}}{\botprop{}}}{\orprop{\notprop{\clj{N}}{\x{}}}{\botprop{}}}}{\emptyobject{}}
 $$
-By T-Local we know \clj{x} is a \clj{Num}.
+By T-Local we know \clj{x} is a \clj{N}.
 $$
-\judgement{\orprop{\isprop{\clj{Num}}{\x{}}}{\botprop{}}}{\hastype{\clj{x}}{\clj{Num}}}{\filterset{\topprop{}}{\topprop{}}}{\x{}}
+\judgement{\orprop{\isprop{\clj{N}}{\x{}}}{\botprop{}}}{\hastype{\clj{x}}{\clj{N}}}{\filterset{\notprop{\clj{(U nil false)}}{\x{}}}{\isprop{\clj{(U nil false)}}{\x{}}}}{\x{}}
 $$
+By T-App,
 \clj{inc} requires a \clj{Num} argument which we just proved.
 $$
-\judgement{\orprop{\isprop{\clj{Num}}{\x{}}}{\botprop{}}}{\hastype{\clj{(inc x)}}{\clj{Num}}}{\filterset{\topprop{}}{\topprop{}}}{\emptyobject{}}
+\judgement{\orprop{\isprop{\clj{N}}{\x{}}}{\botprop{}}}{\hastype{\clj{(inc x)}}{\clj{N}}}{\filterset{\topprop{}}{\topprop{}}}{\emptyobject{}}
+$$
+Finally we conclude with T-Do using the conditional and increment expressions as premises.
+$$
+\judgement{\isprop{\clj{(U nil N)}}{\x{}}}{\hastype{\clj{(do (if (n? x) nil}\ {\errorvalv{}}{\clj{) (inc x))}}}{\clj{N}}}{\filterset{\topprop{}}{\topprop{}}}{\emptyobject{}}
 $$
 
 \subsection{Heterogenous maps}
@@ -380,12 +395,6 @@ $$
                   &\mbox{Path Elements}
   \end{altgrammar}
   $$
-  \caption{HMap Terms and Types}
-  \label{main:figure:hmapsyntax}
-\end{figure}
-
-\begin{figure}
-  \footnotesize
   \begin{mathpar}
     {\TGetHMap}
 
@@ -395,8 +404,8 @@ $$
 
     {\TAssoc}
   \end{mathpar}
-  \caption{HMap Typing Rules}
-  \label{main:figure:hmaptyping}
+  \caption{HMap Terms, Types and Typing Rules}
+  \label{main:figure:hmapsyntax}
 \end{figure}
 
 \begin{figure}
@@ -440,7 +449,7 @@ We introduce our first path element {\keype{\k{}}}, the symbolic representation
 of \clj{(get m k)} where \clj{m} represents the path after {\keype{\k{}}}---{\path{\keype{\makekw{b}}}{\path{\keype{\makekw{a}}}{\x{}}}}
   represents \clj{(get (get x :a) :b)}.
 
-Figure~\ref{main:figure:hmaptyping} contains the typing rules. T-GetHMap models a lookup
+Figure~\ref{main:figure:hmapsyntax} contains the typing rules. T-GetHMap models a lookup
 that will certainly succeed, T-GetHMapAbsent a lookup that will certainly fail
 and T-GetHMapPartialDefault a lookup with unknown results.
 T-Assoc extends a HMap with a mandatory entry.
