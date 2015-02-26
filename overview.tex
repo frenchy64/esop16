@@ -42,7 +42,31 @@ or a number, represented by an untagged \emph{union type}.
 The `then' branch has an implicit invariant
 that \rkt{x} is a number, which is automatically inferred with occurrence typing
 and type checked without further annotations.
-Here is same program in Typed Clojure.
+
+We chose to build on the ideas and implementation
+of Typed Racket to implement a type system targeting Clojure for several reasons.
+Initially, the similarities between Racket and Clojure drew us to
+investigate the effectiveness of repurposing occurrence typing
+for a Clojure type system---both languages share a Lisp heritage,
+similar standard functions 
+(for instance \clj{map}
+in both languages is variable-arity)
+and idioms.
+While Typed Racket is gradually typed and has sophisticated
+dynamic semantics for cross-language interaction, we 
+chose to first implement
+the static semantics
+with the hope to extend Typed Clojure to be gradually typed at a future date.
+Finally,
+Typed Racket's combination of bidirectional checking
+and occurrence typing presents a successful model for 
+type checking dynamically typed programs without compromising
+soundness, where other approaches like success typing~\cite{todo-dialyzer-paper}
+or soft typing~\cite{successtyping-todo}
+fail to prove strong properties about programs
+and have proved too complicated in practice respectively.
+
+Here is above program in Typed Clojure.
 
 \begin{exmp}
 \inputminted[firstline=1]{clojure}{code/demo/src/demo/eg1.clj}
@@ -77,10 +101,11 @@ except for \clj{nil}. Predicates like \clj{number?} are equivalent to
 a Java \java{instanceof} test, in this case on \clj{java.lang.Number}.
 
 Symbols support \emph{metadata}, an arbitrary map of
-data. The syntax \clj{^File x} is a single expression that is the symbol \clj{x} 
+data. The syntax \clj{^File x}, shorthand for \clj{^{:tag File} x}, is a single expression that is the symbol \clj{x} 
 with metadata \clj{{:tag File}}.
 In binding positions like \clj{(fn [^File x] ...)}
-the metadata is preserved in occurrences of \clj{x}.
+the compile-time metadata is preserved in occurrences of \clj{x}
+and utilized by the compiler.
 
 \emph{Commas} are always whitespace.
 
@@ -131,16 +156,10 @@ A \emph{map destructuring} contains pairs of symbols and keywords that bind the 
 to lookups on that keyword with the current argument, optionally terminated by
 \clj{:as} and a symbol, which binds the symbol to the current argument. For example
 $$
-\clj{(fn [{^File x :x, ^String y :y, :as m}] ...)}
+\clj{(fn [{^File x :x, :as m}] ...)}
 $$ 
-expands to
-\begin{minted}{clojure}
-  (fn [m___0]
-    (let [m m___0,
-          ^File x (:x m),
-          ^String y (:y m)]
-      ...))
-\end{minted}
+expands to a \clj{let} that binds \clj{m} to the argument and 
+\clj{^File x} to \clj{(:x m)}.
 Destructuring is supported similarly by \clj{let}.
 
 In a static type, a quoted keyword \clj{':if} is a singleton type containing just the keyword.
@@ -222,6 +241,7 @@ HMaps interact with occurrence typing in interesting ways.
 Section~\ref{sec:hmapformal} discusses this in greater detail.
 
 \subsection{Java interoperability}
+\label{sec:overviewjavainterop}
 
 Clojure supports interoperability with Java, including the ability to
 call constructors, methods and access fields.

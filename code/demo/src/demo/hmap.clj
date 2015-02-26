@@ -13,13 +13,13 @@
     {:op :do, :left v, :right v}))
 
 (ann dec-leaf [Expr -> Expr])
-(defn dec-leaf [{op :op :as m}]
-  (if (= :if op)
+(defn dec-leaf [m]
+  (if (= (:op m) :if)
     {:op :if, 
      :test (dec-leaf (:test m)),
      :then (dec-leaf (:then m)),
      :else (dec-leaf (:else m))}
-    (if (= :do op)
+    (if (= (:op m) :do)
       {:op :do,
        :left  (dec-leaf (:left m)),
        :right (dec-leaf (:right m))}

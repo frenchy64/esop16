@@ -42,7 +42,7 @@
 % types
 \newbfop\int{int}
 \newbfop\Boolean{B}
-\newbfop\Booleanlong{B}
+\newbfop\Booleanlong{Boolean}
 \newbfop\Booleanhint{Boolean}
 \newbfop\IFn{Fn}
 \newbfop\MultiFn{MultiFn}
@@ -61,11 +61,13 @@
 \newbfop\Throwable{Throwable}
 \newbfop\Class{Class}
 \newbfop\Object{Object}
+\newbfop\Expr{Expr}
 \newcommand\MultiFntype[2]{(\PMulti #1\ #2)}
 \newcommand\proctype[2]{(#1 \to #2)}
 \newcommand\EmptyUnion[0]{\ma{(\Uliteral)}}
 \newcommand\Unionsplice[1]{(\ma{\Uliteral\ #1})}
 \newcommand\Union[2]{(\ma{\Uliteral\ #1\ #2})}
+\newcommand\UnionNilNum[0]{\ma{\Union{\Nil}{\Number}}}
 \newcommand\In[1]{(\ma{\Iliteral\ #1})}
 \newcommand\ArrayTwo[2]{(\ma{\ArrayTwoLiteral\ #1\ #2})}
 \newcommand\Array[1]{(\ArrayLiteral #1)}
@@ -94,9 +96,11 @@
 \newbfop\Bottom{\ma{\bot}}
 \newbfop\Bot{\ma{\bot}}
 \newbfop\Keyword{K}
+\newbfop\Keywordlong{Keyword}
 \newbfop\Keywordhint{Keyword}
 \newbfop\Symbol{Symbol}
-\newbfop\Number{Number}
+\newbfop\NumberFull{Number}
+\newbfop\Number{N}
 \newbfop\Nil{nil}
 \newbfop\True{true}
 \newbfop\False{false}
@@ -116,13 +120,14 @@
 \newcommand\HMapc[1]{(\ma{\HMapcliteral #1})}
 \newcommand\HMapcwithabsent[2]{(\ma{\HMapcliteral #1\ #2})}
 \newcommand\HMapp[2]{(\ma{\HMappliteral #1\ #2})}
-\newcommand\mandatoryentry[2]{\ma{({#1}, {#2})}}
+\newcommand\mandatoryentry[2]{\ma{{#1} \mapsto {#2}}}
+\newcommand\mandatoryentrykwnoarrow[2]{\ma{\makekw{#1}\ {#2}}}
 \newcommand\mandatoryset[1]{\ma{\{#1\}}}
 \newcommand\mandatorysetsingleton[2]{\ma{\mandatoryset{\mandatoryentry{#1}{#2}}}}
-\newcommand\mandatorysetoverright[2]{\ma{\{\overrightarrow{(#1,\ #2)}\}}}
-\newcommand\notinmandatory[3]{\ma{(#1\ #2)} \not\in {#3}}
-\newcommand\inmandatory[3]{\ma{(#1\ #2)} \in {#3}}
-\newcommand\extendmandatoryset[3]{(#1, (#2\ #3))}
+\newcommand\mandatorysetoverright[2]{\ma{\{\overrightarrow{\mandatoryentry{#1}{#2}}\}}}
+\newcommand\notinmandatory[3]{\ma{#1} \not\in dom({#3})}
+\newcommand\inmandatory[3]{\ma{{#3}[{#1}] = {#2}}}
+\newcommand\extendmandatoryset[3]{#1[\mandatoryentry{#2}{#3}]}
 \newmeta\mandatory{p}
 \newmeta\absent{a}
 \newmeta\absentp{a'}
@@ -173,12 +178,18 @@
 \newcommand\curlymap[1]{\ma{\{#1\}}}
 \newcommand\emptymap[1]{\ma{\{\}}}
 \newcommand\roundpair[2]{\ma{(#1, #2)}}
-\newcommand\curlymapvaloverright[2]{\ma{\{{\overrightarrow{\roundpair{#1}{#2}}}\}}}
+\newcommand\mapvalentry[2]{\ma{{#1} \mapsto {#2}}}
+\newcommand\mapvalentrynoarrow[2]{\ma{{#1}\ {#2}}}
+\newcommand\mapvalentrykwkey[2]{\ma{\makekw{#1} \mapsto {#2}}}
+\newcommand\mapvalentrykwkeynoarrow[2]{\ma{\makekw{#1}\ {#2}}}
+\newcommand\curlymapvaloverright[2]{\ma{\{{\overrightarrow{\mapvalentry{#1}{#2}}}\}}}
+\newcommand\curlymapvaloverrightnoarrow[2]{\ma{\{{\overrightarrow{\mapvalentrynoarrow{#1}{#2}}}\}}}
 \newcommand\extendmap[3]{\ma{#1[#2 \mapsto #3]}}
 \newcommand\getmap[2]{\ma{#1[#2]}}
 \newcommand\keyinmap[2]{\ma{{#1} \in dom({#2})}}
 \newcommand\keynotinmap[2]{\ma{{#1} \not\in dom({#2})}}
 \newcommand\comb[2]{\ma{(#1\ #2)}}
+\newcommand\zeroliteral[0]{0}
 \newcommand\ifexp[3]{\ma{(\ifliteral{}\ #1\ #2\ #3)}}
 \newcommand\doexp[2]{\ma{(\doliteral{}\ #1\ #2)}}
 \newcommand\letexp[3]{\ma{(\letliteral{}\ [\ma{#1\ #2}]\ #3)}}
@@ -231,6 +242,8 @@
 \newcommand\isaliteral[0]{{\operatorfont{isa?}}}
 \newcommand\instanceapp[2]{{(\instanceliteral\ #1\ #2)}}
 \newcommand\isaapp[2]{(\isaliteral\ #1\ #2)}
+\newcommand\equivliteral[0]{\ma{=}}
+\newcommand\equivapp[2]{(\equivliteral\ #1\ #2)}
 
 % constant typing
 \newcommand\constanttypetwo[2]{\ma{{\delta}_{#1}(#2)}}
@@ -238,6 +251,8 @@
 \newcommand\constantopsem[2]{\ma{{\delta}(#1, #2)}}
 \newcommand\classconst[0]{\emph{class}}
 \newcommand\throwconst[0]{\emph{throw}}
+\newcommand\numberhuh[0]{\emph{number?}}
+\newcommand\inc[0]{\emph{inc}}
 
 % differences from TR
 \newcommand\trdiff[1]{\mathbin{\textcolor{blue}{#1}}}
@@ -265,11 +280,7 @@
 \newcommand\ctfldentry[2]{\ma{[#1, #2]}}
 \newcommand\ctctorentry[1]{\ma{[#1]}}
 \newcommand\set[1]{\ma{\{#1\}}}
-\newcommand\ctentry[0]{\{ \ctmethodsliteral \mapsto 
-  \set{\overrightarrow{\ctmthentry{\mth{}}{\overrightarrow{\classhint{}}}{\classhint{}}}}, \ 
-  \ctfieldsliteral \mapsto \{\overrightarrow{\ctfldentry{\fld{}}{\classhint{}}} \}, \ 
-  \ctconstructorsliteral \mapsto \{\overrightarrow{\ctctorentry{\overrightarrow{\classhint{}}}} \}
-                          \}}
+% WARNING specific formatting for figure
 \newcommand\ctlookup[2]{\ma{{#1}[#2]}}
 \newcommand\ctlookuptwo[3]{\ma{\ctlookup{({\ctlookup{#1}{#2}})}{#3}}}
 \newcommand\ctlookupmethods[2]{\ma{\ctlookuptwo{#1}{#2}{\ctmethodsliteral}}}
@@ -675,7 +686,7 @@
 \javatotc {\classhint{i}}
           {\t{i}}
           }
-  \\
+  \\\\
   \javatotc {\classhint{}}
             {\t{}}
   \\\\
@@ -694,7 +705,7 @@
 \newcommand\TFieldStatic[0]{
 \infer [T-FieldStatic]
 { \javatotc {\classhint{1}} {\s{}}
-             \\
+             \\\\
   \javatotcnil {\classhint{2}} {\t{}}
   \\\\
   \judgementtwo {\propenv{}} {\hastype {\e{}} {\s{}}}
@@ -1395,16 +1406,16 @@ $$
 
 \newcommand\HMapsubtyping[0]{
 \infer [S-HMap]
-{ \forall i.\ ({\k{i}},\ \s{i}) \in \mandatory{} \text{ and } \issubtypein {} {\s{i{}}} {\t{i{}}}
+{ \forall i.\ {\inmandatory{\k{i}}{\s{i}}{\mandatory{}}} \text{ and } \issubtypein {} {\s{i{}}} {\t{i{}}}
   \\
   {\absent{1}} \supseteq {\absent{2}}
 }
 {\issubtypein {} {\HMapgeneric {\mandatory{}} {\absent{1}}}
-  {\HMapgeneric {\overrightarrow{(\k{},\ \t{})}^i} {\absent{2}}}
+  {\HMapgeneric {{\mandatorysetoverright{\k{}}{\t{}}}^i} {\absent{2}}}
                }
 
 \infer [S-HMapP]
-{ \forall i.\ ({\k{i}},\ \s{i}) \in \mandatory{} \text{ and } \issubtypein {} {\s{i{}}} {\t{i{}}}
+{ \forall i.\ {\inmandatory{\k{i}}{\s{i}}{\mandatory{}}} \text{ and } \issubtypein {} {\s{i{}}} {\t{i{}}}
 }
 {\issubtypein {} 
   {\HMapcwithabsent {\mandatory{}}{\absentp{}}}
@@ -1500,10 +1511,10 @@ $$
  \disptable{}   &::=& \{ \overrightarrow{\v{} \mapsto \v{}} \}
                &\mbox{Multimethod dispatch table}
              }
+             % NOTE copied into multimethod syntax figure
 \newcommand\multimethodexpsyntax[0]{
   {\createmultiexp {\t{}} {\e{}}}
-                      \alt
-                              {\extendmultiexp {\e{}} {\e{}} {\e{}}}
+                      \alt {\extendmultiexp {\e{}} {\e{}} {\e{}}}
                       \alt {\isaapp {\e{}} {\e{}}}
               }
 
@@ -1550,7 +1561,12 @@ $$
 
 % small figure for nonreflective Java interop syntax
 \newcommand\mininonreflectiveexpsyntax[0]{
-  \fieldexpsyntax{} \alt \methodexpsyntax{} \alt \newexpsyntax{}
+  \methodexpsyntax{} 
+  &\mbox{Expressions}\\
+  &\alt& 
+  \fieldexpsyntax{} 
+  \alt 
+  \newexpsyntax{}
 }
 
 \newcommand\lethintsyntax[0]{
@@ -1586,8 +1602,13 @@ $$
              }
 
 \newcommand\classtableallsyntax[0]{
-  \ctentrymeta{} &::=& \ctentry
-               &\mbox{Class descriptors} \\
+  \ctentrymeta{} &::=& 
+  \{ \ctmethodsliteral \mapsto 
+  \set{\overrightarrow{\ctmthentry{\mth{}}{\overrightarrow{\classhint{}}}{\classhint{}}}},&\mbox{Class descriptors} \\
+  &&\ \ 
+  \ctfieldsliteral \mapsto \{\overrightarrow{\ctfldentry{\fld{}}{\classhint{}}} \},\\&&\ \ 
+  \ctconstructorsliteral \mapsto \{\overrightarrow{\ctctorentry{\overrightarrow{\classhint{}}}} \}
+                          \}\\
   \ct{}   &::=& \{ \overrightarrow{\classhint{} \mapsto \ctentrymeta{}} \}
                &\mbox{Class Table}
              }

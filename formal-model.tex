@@ -19,8 +19,8 @@ and relating them to types.
 \emph{Type Propositions} make assertions like ``variable \clj{x} is of type \clj{Number}'' or
 ``variable \clj{x} is not \clj{nil}''---
 in our logical system we write these as
-{\isprop{\clj{Number}}{\x{}}}
-and {\notprop{\clj{nil}}{\x{}}}. 
+{\isprop{\NumberFull}{\x{}}}
+and {\notprop{\Nil{}}{\x{}}}. 
 The other propositions are standard: the implication, conjunction,
 disjunction, trivial (\topprop{}) and impossible (\botprop{}) propositions
 (figure~\ref{main:figure:termsyntax}).
@@ -39,7 +39,7 @@ representation of a
 type environment of a map from variables to types
 with a sequence of propositions, written \propenv{}. 
 Instead of mapping \clj{x} to
-the type \clj{Number}, we instead use the proposition {\isprop{\clj{Number}}{\x{}}}.
+the type \clj{Number}, we use the proposition {\isprop{\NumberFull}{\x{}}}.
 
 The third insight is that we
 can use a logic system to learn new information about our programs.
@@ -49,10 +49,10 @@ $$
   {\LUpdate}
 $$
 For example, with L-Update we can use the knowledge of
-\inpropenv{\propenv{}}{\isprop{\clj{(U nil Number)}}{\x{}}}
+\inpropenv{\propenv{}}{\isprop{\UnionNilNum}{\x{}}}
 and 
-\inpropenv{\propenv{}}{\notprop{\clj{nil}}{\x{}}}
-to derive \inpropenv{\propenv{}}{\isprop{\clj{Number}}{\x{}}}.
+\inpropenv{\propenv{}}{\notprop{\nil{}}{\x{}}}
+to derive \inpropenv{\propenv{}}{\isprop{\Number}{\x{}}}.
 (The metavariable \propisnotmeta{} ranges over \t{} and \nottype{\t{}} (without variables).)
 We cover \updateliteral{} in section~\ref{sec:updateformalsection}.
 
@@ -69,8 +69,8 @@ a true or false value. The takeaway is that every expression has
 two extra pieces of information relevant to the logic system: a `then' proposition
 for when it reduces to a true value, and an `else' proposition
 when it reduces to a false value---for \clj{(number? x)}
-the then proposition is {\isprop{\clj{Number}}{\x{}}} and 
-the else proposition is {\notprop{\clj{Number}}{\x{}}}.
+the then proposition is {\isprop{\NumberFull}{\x{}}} and 
+the else proposition is {\notprop{\NumberFull}{\x{}}}.
 %\ref{main:figure:typingrules}
 
 \begin{figure}
@@ -142,8 +142,8 @@ which is used during beta reduction to ensure the abstraction respects lexical s
 
 Types include the top type, \emph{untagged} unions, functions, singleton types
 and class instances. 
-We write the class literal \clj{Boolean} as \Boolean{} and \clj{Keyword} as \Keyword{}.
-The type \Value{\Keyword} is inhabited by \clj{Keyword} and \clj{:a} is of type \Keyword{}.
+We write the class literal \Booleanlong{} as \Boolean{} and \Keywordlong{} as \Keyword{}.
+The type \Value{\Keyword} is inhabited by the class literal \Keyword{} and \clj{:a} is of type \Keyword{}.
 We abbreviate \EmptyUnion{} as \Bot{}, {\ValueNil} as \Nil{}, 
 {\ValueTrue} as \True and {\ValueFalse} as {\False}.
 Function types contain \emph{latent}(terminology from~\cite{Lucassen88polymorphiceffect}) propositions and object, which, along with the return type,
@@ -165,45 +165,47 @@ By subsumption we can choose the most specific positive proposition and thus
 T-Local can return the most specific type inferred by the logic system.
 
 We can now demonstrate how to check example~\ref{example:conditionalflow}.
-We abbreviate \clj{Num} as \clj{N},  \clj{Boolean} as \clj{B} and \clj{number?} as \clj{n?}.
+We abbreviate \NumberFull{} as \Number{} and \Booleanlong{} as \Boolean{}.
 The test is checked with T-App, 
 $$
-\judgement{\isprop{\clj{(U nil N)}}{\x{}}}{\hastype{\clj{(n? x)}}{\clj{B}}}{\filterset{\isprop{\clj{N}}{\x{}}}{\notprop{\clj{N}}{\x{}}}}{\emptyobject{}}
+\judgement{\isprop{\UnionNilNum{}}{\x{}}}{\hastype{\appexp{\numberhuh{}}{\x{}}}{\Boolean}}{\filterset{\isprop{\Number}{\x{}}}{\notprop{\Number}{\x{}}}}{\emptyobject{}}
 $$
-\clj{n?} has type
+\numberhuh{} has type
 $$
-{\ArrowOne{\x{}}{\clj{Any}}{\clj{B}}
-        {\filterset{\isprop{\clj{N}}{\x{}}}{\notprop{\clj{N}}{\x{}}}}{\emptyobject{}}}
+{\ArrowOne{\x{}}{\Top}{\Boolean}
+        {\filterset{\isprop{\Number}{\x{}}}{\notprop{\Number}{\x{}}}}{\emptyobject{}}}
 $$
 By T-Local.
 $$
-\judgement{\isprop{\clj{N}}{\x{}}}{\hastype{\clj{x}}{\clj{N}}}{\filterset{\notprop{\clj{(U nil false)}}{\x{}}}{\isprop{\clj{(U nil false)}}{\x{}}}}{\x{}}
+\judgement{\isprop{\Number}{\x{}}}{\hastype{\x{}}{\Number{}}}{\filterset{\notprop{\falsy{}}{\x{}}}{\isprop{\falsy{}}{\x{}}}}{\x{}}
 $$
 Now we check both branches.
 $$
-\judgement{\isprop{\clj{N}}{\x{}}}{\hastype{\clj{(inc x)}}{\clj{N}}}{\filterset{\topprop{}}{\topprop{}}}{\emptyobject{}}
+\judgement{\isprop{\Number}{\x{}}}{\hastype{\appexp{\inc{}}{\x{}}}{\Number{}}}{\filterset{\topprop{}}{\topprop{}}}{\emptyobject{}}
 $$
 $$
-\judgement{\notprop{\clj{N}}{\x{}}}{\hastype{\clj{0}}{\clj{N}}}{\filterset{\topprop{}}{\topprop{}}}{\emptyobject{}}
+\judgement{\notprop{\Number}{\x{}}}{\hastype{\zeroliteral{}}{\Number}}{\filterset{\topprop{}}{\topprop{}}}{\emptyobject{}}
 $$
-\clj{inc} has type
+\inc{} has type
 $$
-{\ArrowOne{\x{}}{\clj{N}}{\clj{N}}
+{\ArrowOne{\x{}}{\Number}{\Number}
         {\filterset{\topprop{}}{\topprop{}}}{\emptyobject{}}}
 $$
 We can now check the conditional with T-If.
 $$
-\judgement{\isprop{\clj{N}}{\x{}}}{\hastype{\clj{(if (n? x) (inc x) 0)}}{\clj{N}}}{\filterset{\orprop{\isprop{\clj{N}}{\x{}}}{\topprop{}}}{\orprop{\notprop{\clj{N}}{\x{}}}{\topprop{}}}}{\emptyobject{}}
+\judgement{\isprop{\Number}{\x{}}}{\hastype{\ifexp{\appexp{\numberhuh{}}{\x{}}}{\appexp{\inc{}}{\x{}}}{\zeroliteral{}}}{\Number}}{\filterset{\orprop{\isprop{\Number}{\x{}}}{\topprop{}}}{\orprop{\notprop{\Number}{\x{}}}{\topprop{}}}}{\emptyobject{}}
 $$
 Finally the function can be checked with T-Abs
 $$
-\judgement{}{\hastype{\clj{(fn ...)}}
-                                             {\ArrowOne{\x{}}{\clj{(U nil N)}}{\clj{N}}
-        {\filterset{\orprop{\isprop{\clj{N}}{\x{}}}{\topprop{}}}{\orprop{\notprop{\clj{N}}{\x{}}}{\topprop{}}}}{\emptyobject{}}}}
+\judgement{}{\hastype{\abs{\x{}}{\UnionNilNum}{\ ...}}
+                                             {\ArrowOne{\x{}}{\UnionNilNum}{\Number}
+        {\filterset{\orprop{\isprop{\Number}{\x{}}}{\topprop{}}}{\orprop{\notprop{\Number}{\x{}}}{\topprop{}}}}{\emptyobject{}}}}
   {\filterset{\topprop{}}{\botprop{}}}{\emptyobject{}}
 $$
 
-The operational semantics for our language are standard, except \nil{} is a false value:
+The operational semantics for our language standard defined in big-step style, 
+The notable different is \nil{} is a false value, which require changes 
+to the semantics of \ifliteral{}:
 
 \begin{mathpar}
     \BIfTrue{}
@@ -345,36 +347,42 @@ makes our insight interesting.
 \end{mathpar}
 
 Now we can check example~\ref{example:doexception}.
-We check the test with T-App.
+We check the test with T-App:
 $$
-\judgement{\isprop{\clj{(U nil N)}}{\x{}}}{\hastype{\clj{(n? x)}}{\clj{B}}}{\filterset{\isprop{\clj{N}}{\x{}}}{\notprop{\clj{N}}{\x{}}}}{\emptyobject{}}
+\judgement{\isprop{\Union{\nil{}}{\Number}}{\x{}}}{\hastype{\appexp{\numberhuh}{\x{}}}{\Boolean}}{\filterset{\isprop{\Number}{\x{}}}{\notprop{\Number}{\x{}}}}{\emptyobject{}}
 $$
 By T-Nil and subsumption we derive the same information in both propositions.
 $$
-\judgement{\isprop{\clj{N}}{\x{}}}{\hastype{\clj{nil}}{\clj{nil}}}{\filterset{\isprop{\clj{N}}{\x{}}}{\notprop{\clj{N}}{\x{}}}}{\emptyobject{}}
+\judgement{\isprop{\Number}{\x{}}}{\hastype{\nil{}}{\nil{}}}{\filterset{\isprop{\Number}{\x{}}}{\notprop{\Number}{\x{}}}}{\emptyobject{}}
 $$
 By T-Error we can assume anything about the return of an error.
 $$
-\judgement{\notprop{\clj{N}}{\x{}}}{\hastype{\errorvalv{}}{\Bot}}{\filterset{\botprop{}}{\botprop{}}}{\emptyobject{}}
+\judgement{\notprop{\Number}{\x{}}}{\hastype{\errorvalv{}}{\Bot}}{\filterset{\botprop{}}{\botprop{}}}{\emptyobject{}}
 $$
-Using the above as premises to T-If we learn {\orprop{\isprop{\clj{Num}}{\x{}}}{\botprop{}}}
+Using the above as premises to T-If we learn {\orprop{\isprop{\Number}{\x{}}}{\botprop{}}}
 in both propositions.
 $$
-\judgement{\isprop{\clj{(U nil N)}}{\x{}}}{\hastype{\clj{(if (n? x) nil}\ {\errorvalv{}{\clj{)}}}}{\clj{B}}}
-          {\filterset{\orprop{\isprop{\clj{N}}{\x{}}}{\botprop{}}}{\orprop{\notprop{\clj{N}}{\x{}}}{\botprop{}}}}{\emptyobject{}}
+\judgement{\isprop{\Union{\nil{}}{\Number}}{\x{}}}
+          {\hastype{\ifexp{\appexp{\numberhuh{}}{\x{}}}{\nil{}}{\errorvalv{}}}{\Boolean}}
+          {\filterset{\orprop{\isprop{\Number}{\x{}}}{\botprop{}}}{\orprop{\notprop{\Number}{\x{}}}{\botprop{}}}}{\emptyobject{}}
 $$
-By T-Local we know \clj{x} is a \clj{N}.
+By T-Local we know \x{} is a \Number{}.
 $$
-\judgement{\orprop{\isprop{\clj{N}}{\x{}}}{\botprop{}}}{\hastype{\clj{x}}{\clj{N}}}{\filterset{\notprop{\clj{(U nil false)}}{\x{}}}{\isprop{\clj{(U nil false)}}{\x{}}}}{\x{}}
+\judgement{\orprop{\isprop{\Number}{\x{}}}{\botprop{}}}{\hastype{\x{}}{\Number}}{\filterset{\notprop{\falsy{}}{\x{}}}{\isprop{\falsy{}}{\x{}}}}{\x{}}
 $$
 By T-App,
-\clj{inc} requires a \clj{Num} argument which we just proved.
+\inc{} requires a \Number{} argument which we just proved.
 $$
-\judgement{\orprop{\isprop{\clj{N}}{\x{}}}{\botprop{}}}{\hastype{\clj{(inc x)}}{\clj{N}}}{\filterset{\topprop{}}{\topprop{}}}{\emptyobject{}}
+\judgement{\orprop{\isprop{\Number}{\x{}}}{\botprop{}}}{\hastype{\appexp{\inc{}}{\x{}}}{\Number}}{\filterset{\topprop{}}{\topprop{}}}{\emptyobject{}}
 $$
 Finally we conclude with T-Do using the conditional and increment expressions as premises.
 $$
-\judgement{\isprop{\clj{(U nil N)}}{\x{}}}{\hastype{\clj{(do (if (n? x) nil}\ {\errorvalv{}}{\clj{) (inc x))}}}{\clj{N}}}{\filterset{\topprop{}}{\topprop{}}}{\emptyobject{}}
+\judgement{\isprop{\Union{\nil{}}{\Number}}{\x{}}}
+          {\hastype{\doexp
+                     {\ifexp{\appexp{\numberhuh{}}{\x{}}}
+                        {\nil{}}
+                        {\errorvalv{}}}
+                     {\appexp{\inc{}}{\x{}}}}{\Number}}{\filterset{\topprop{}}{\topprop{}}}{\emptyobject{}}
 $$
 
 \subsection{Heterogeneous maps}
@@ -404,12 +412,6 @@ $$
 
     {\TAssoc}
   \end{mathpar}
-  \caption{HMap Terms, Types and Typing Rules}
-  \label{main:figure:hmapsyntax}
-\end{figure}
-
-\begin{figure}
-  \footnotesize
   \begin{mathpar}
     {\BAssoc}
     {\BGet}
@@ -418,8 +420,8 @@ $$
   \begin{mathpar}
     \HMapsubtyping{}
   \end{mathpar}
-  \caption{HMap Semantics and Subtyping rules}
-  \label{main:figure:hmapsem}
+  \caption{HMap Terms, Types, Semantics, Subtyping and Typing Rules}
+  \label{main:figure:hmapsyntax}
 \end{figure}
 
 
@@ -442,9 +444,10 @@ The expressions \clj{(get m :a)} and \clj{(:a m)} are semantically identical, th
 we only model the former to avoid the added complexity of keywords being functions.
 To simplify presentation, we only provide syntax for the empty map literal and
 restrict lookup and extension to keyword keys. The metavariable \mapval{}
-ranges over the runtime value of maps {\curlymapvaloverright{\k{}}{\v{}}}.
+ranges over the runtime value of maps {\curlymapvaloverright{\k{}}{\v{}}},
+usually written {\curlymapvaloverrightnoarrow{\k{}}{\v{}}}.
 
-Subtyping for HMaps (figure~\ref{main:figure:hmapsem})
+Subtyping for HMaps (figure~\ref{main:figure:hmapsyntax})
 designate \MapLiteral{} as a common supertype for all HMaps.
 S-HMap says that a HMap is a subtype of another HMap if they agree
 on \completenessmeta{}, agree on mandatory entries with subtyping
@@ -462,7 +465,7 @@ The object in each T-Get rule is now more complicated than in T-Local---the
 next section discusses this in detail.
 T-Assoc extends a HMap with a mandatory entry.
 
-Figure~\ref{main:figure:hmapsem} contains the semantics for \getliteral{}
+Figure~\ref{main:figure:hmapsyntax} contains the semantics for \getliteral{}
 and \assocliteral{}.
 The B-Get rule evaluates first evaluates the map and the key, asserts
 the key must be present in the map and returns the associated key. If
@@ -470,12 +473,13 @@ the entry is missing, B-GetMissing says we return \nil{}.
 
 \subsection{Paths}
 
+
 Recall the first insight of occurrence typing---not
 only do we want to reason about components of the runtime environment, that
 is, variables, but \emph{subcomponents} of the environment.
-We have already mentioned paths \path{\pathelem{}}{\x{}}
-where \pathelem{} is a sequence of selectors on \x{} called \emph{path elements},
-but we have not yet defined what components of a path can be.
+We briefly mentioned paths, written \path{\pathelem{}}{\x{}}, but we concentrated on
+reasoning only about the variable \x{}---the notation \pathelem{} is a nested sequence of \emph{path elements}
+applied right-to-left to a variable \x{}.
 \citet{TF10} introduce the path elements \carpe{} and \cdrpe{}
 to reason about selector operations on cons cells.
 We instead want to reason about HMap lookups.
@@ -485,43 +489,129 @@ We introduce our first path element
 a key \k{}.
 We directly relate this to our typing rule T-GetHMap
 (figure~\ref{main:figure:hmapsyntax}) by
-demonstrating how the first conditional test is checked in example~\ref{example:decleaf}.
-First we unfold the destructuring syntax.
+checking the then branch of the first conditional test is checked in 
+an equivalent version of example~\ref{example:decleaf}.
 \begin{minted}{clojure}
   (fn [m :- Expr]
-    (let [op (:op m)]
-      (if (= :if (:op m))
-        {:op :if, ...}
-        (if ...))))
+    (if (= (get m :op) :if)
+      {:op :if, ...}
+      (if ...)))
 \end{minted}
 
-The \classconst{} function is a constant which returns
-the argument's class or \nil{}.
+We do not specifically support \equivliteral{} in our calculus, 
+but on keyword arguments it works identically to \clj{isa?} which we model
+in section~\ref{sec:isaformal}.
+Intuitively, if {\judgement{\propenv{}}{\hastype{\e{}}{\t{}}}{\filterset{\thenprop{\prop{}}}{\elseprop{\prop{}}}}{\object{}}}
+then \equivapp{\e{}}{\makekw{if}} has the proposition set 
+$$
+{\replacefor{\filterset{\isprop{\Value{\makekw{if}}}{\x{}}}{\notprop{\Value{\makekw{if}}}{\x{}}}}{\object{}}{\x{}}}
+$$
+where substitution reduces to \topprop{} if \object{} = \emptyobject{}.
 
+By T-Abs, checking the body of the function we have the proposition environment \propenv{} = {\isprop{\Expr{}}{m}}.
+By T-Local we have
+$$
+\judgement{\propenv{}}{\hastype{m}{\Expr{}}}{\filterset{\notprop{\falsy{}}{\x{}}}{\isprop{\falsy{}}{\x{}}}}{m}
+$$
+and since {\Expr{}} is a union of HMaps with the entry \makekw{op}, we use T-GetHMap to derive
+$$
+\judgement{\propenv{}}{\hastype{\getexp{m}{\makekw{op}}}{\Keyword}}{\filterset{\topprop{}}{\topprop{}}}{\object{1}}
+$$
+where \object{1} = {\path{\keype{\makekw{op}}}{m}}. Using our intuitive definition of \equivliteral{} above, we know
+$$
+\judgement{\propenv{}}{\hastype{\equivapp{\getexp{m}{\makekw{op}}}{\makekw{if}}}{\Boolean}}{\filterset{\isprop{\Value{\makekw{if}}}{\object{1}}}{\notprop{\Value{\makekw{if}}}{\object{1}}}}{\emptyobject{}}
+$$
+Now we check the then branch with our new assumption.
+$$
+\judgement{\propenvp{}}{\hastype{\curlymap{{\mapvalentrykwkeynoarrow{op}{\makekw{if}}}, ...}}{\Expr{}}}{...}{...}
+$$
+We are interested in what L-Update can derive in our new environment,
+\propenvp{} = {\isprop{\Expr{}}{m}},{\isprop{\Value{\makekw{if}}}{\path{\keype{\makekw{op}}}{m}}}.
+
+With the premises
+\inpropenv{\propenvp{}}{\isprop{\Expr{}}{m}}
+and
+\inpropenv{\propenvp{}}{\isprop{\Value{\makekw{if}}}{\path{\keype{\makekw{op}}}{m}}}
+we derive
+$$
+\inpropenv{\propenvp{}}{\isprop{\update{\Expr{}}{\Value{\makekw{if}}}{\keype{\makekw{op}}}}{m}}
+$$
+which simplifies to 
+$$
+\inpropenv{\propenvp{}}{\isprop{\HMapp{\mandatoryset{{\mandatoryentrykwnoarrow{op}{\makekw{if}}}, {\mandatoryentrykwnoarrow{test}{\Expr{}}},
+                                       {\mandatoryentrykwnoarrow{then}{\Expr{}}},   {\mandatoryentrykwnoarrow{else}{\Expr{}}}}}
+                                   {\emptyabsent{}}}{m}}
+$$
+
+Our second path element \classpe{} is used in the latent
+object of the constant \classconst{} function. Like Clojure's \clj{class}
+function \classconst{} returns the argument's class or \nil{}
+if passed \nil{}.
 $$
 \begin{array}{lrlr}
   \pesyntax{}   &::=& \ldots \alt {\classpe{}}
                 &\mbox{Path Elements}
 \end{array}
 $$
-
 \begin{mathpar}
 \constanttypefigure{}
 \end{mathpar}
-
-\constantsemfigure{main}
-
-\begin{figure*}
-  $$
-\begin{array}{lllll}
-\updatefigure
-\end{array}
-$$
-\caption{Type Update}
-\label{main:figure:update}
-\end{figure*}
+The full semantics are given in figure~\ref{main:figure:primitivesem}.
+The definition of \updateliteral{} supports various idioms relating to \classpe{}
+which we introduce in section~\label{sec:isaformal}.
 
 \subsection{Java Interoperability and Type Hints}
+
+\begin{figure}[h]
+  \footnotesize
+  $$
+  \begin{altgrammar}
+    \e{} &::=& \ldots \alt \mininonreflectiveexpsyntax{}
+    \\
+
+    \v{} &::=& \ldots \alt {\classvalue{\classhint{}} {\overrightarrow {\classfieldpair{\fld{}} {\v{}}}}}
+    &\mbox{Values} \\
+
+    \tatypesyntax{}\\
+    \typehintenvsyntax{}\\
+    \classtableallsyntax{}
+  \end{altgrammar}
+  $$
+  \begin{mathpar}
+    {\TNewStatic}
+    {\TFieldStatic}
+
+    {\TMethodStatic}
+  \end{mathpar}
+  \begin{mathpar}
+    \BField{}
+
+    \BNew{}
+
+    \BMethod{}
+  \end{mathpar}
+  \begin{mathpar}
+    %\RAbs{}
+%
+%    \RNewElimRefl{}
+%
+%    \RMethodElimRefl{}
+%
+    \RFieldElimRefl{}
+%
+%    \RLet{}
+%
+
+    \RLetHint{}
+  \end{mathpar}
+  \caption{Java Interoperability Syntax, Semantics, Typing Rules and Rewrite Relation}
+  \label{main:figure:javatyping}
+\end{figure}
+
+In section~\ref{sec:overviewjavainterop} we discussed how Clojure programmers use
+type hints to help the compiler eliminate reflective calls.
+In this section we introduce our model of Java, including syntax
+for unresolved Java 
 
 We model
 Java interoperability in a restricted setting without class inheritance,
@@ -542,45 +632,6 @@ in typed code.
 Type hinted expressions such as \localhintsyntax{} 
 to help the compiler eliminate reflection.
 
-\begin{figure*}
-  \footnotesize
-  $$
-  \begin{altgrammar}
-    \e{} &::=& \ldots \alt \mininonreflectiveexpsyntax{}
-    &\mbox{Expressions}\\
-
-    \v{} &::=& \ldots \alt {\classvalue{\classhint{}} {\overrightarrow {\classfieldpair{\fld{}} {\v{}}}}}
-    &\mbox{Values} \\
-
-    \tatypesyntax{}\\
-    \typehintenvsyntax{}\\
-    \classtableallsyntax{}
-  \end{altgrammar}
-  $$
-  \caption{Internal Language Reflection Resolution Extensions}
-  \label{main:figure:nonreflectivesyntax}
-\end{figure*}
-
-\begin{figure}
-  \footnotesize
-  \begin{mathpar}
-    %\RAbs{}
-%
-%    \RNewElimRefl{}
-%
-%    \RMethodElimRefl{}
-%
-    \RFieldElimRefl{}
-%
-%    \RLet{}
-%
-
-    \RLetHint{}
-  \end{mathpar}
-\caption{Reflection Elimination %(select rules, figure~\ref{appendix:figure:rewrite} for full rules)
-}
-\label{main:figure:rewrite}
-\end{figure}
 
 %\begin{figure}
 %  \footnotesize
@@ -599,29 +650,6 @@ to help the compiler eliminate reflection.
 %\label{main:figure:hintinfer}
 %\end{figure}
 
-\begin{figure}
-  \footnotesize
-  \begin{mathpar}
-    \BField{}
-
-    \BNew{}
-
-    \BMethod{}
-  \end{mathpar}
-  \caption{Java Interoperability Semantics}
-\end{figure}
-
-\begin{figure*}
-  \footnotesize
-  \begin{mathpar}
-    {\TNewStatic}
-
-    {\TFieldStatic}
-    {\TMethodStatic}
-  \end{mathpar}
-  \caption{Java Interoperability Typing Rules}
-  \label{main:figure:javatyping}
-\end{figure*}
 
 $$
 \rewrite {\taenv{}} {\e{}} {\ep{}}
@@ -638,8 +666,7 @@ infers the (possibly-unknown) type hint \tatype{} of expression \e{} in environm
 %\TALetHint{}
 %$$
 
-We now have two languages: an internal language that may contain non-reflective Java calls (figure 
-  \ref{main:figure:nonreflectivesyntax}) 
+We now have two languages: an internal language that may contain non-reflective Java calls (figure~\ref{main:figure:javatyping}) 
   and an external language that resembles Clojure, where we must rely on type-hints to resolve
   reflective Java calls (figure~\ref{main:figure:reflectivesyntax}).
 
@@ -663,6 +690,8 @@ we assume methods can return \nil{} and we assume constructors cannot.
 We rewrite to our internal language before type checking and remaining reflective calls are type errors.
 
 \subsection{Multimethod dispatch mechanism: \isaliteral}
+
+\label{sec:isaformal}
 
 Before tackling multimethods we model their core dispatch mechanism
 \isaliteral{}, a subclassing test for classes, otherwise an equality test.
@@ -704,7 +733,7 @@ $$
 \end{array}
 $$
 
-The definition of \isacompareliteral{} (figure~\ref{main:figure:isaprops}) is deliberately conservative.
+The definition of \isacompareliteral{} (figure~\ref{main:figure:mmsyntax}) is deliberately conservative.
 The first line considers the case where the object of the left argument
 is a non-empty path ending in \classpe{} and the type of the right argument is a singleton class.
 The simplest example
@@ -723,21 +752,12 @@ because the then proposition is {\isprop{\Class}{\path{\classpe{}}{\x{}}}}, so
 we know {\isprop{\Object}{\x{}}} by L-Update, and combined with the fact {\isprop{\Union{\Nil{}}{\Number}}{\x{}}}
 we can infer {\isprop{\Number}{\x{}}} by L-Update.
 
-\begin{figure}
-  \footnotesize
-  \begin{mathpar}
-    \isapropsfigure{}
-  \end{mathpar}
-
-  \center{Takes \emph{object} of the left parameter and \emph{type} of the right parameter.}
-  \caption{Proposition Set for \isaliteral{} expressions}
-  \label{main:figure:isaprops}
-\end{figure}
-
 The second \isacompareliteral{} line handles the equality mode of \isaliteral{}
 with a non-class singleton type as the second argument.
 
 
+
+\constantsemfigure{main}
 
 %Substitution is used to ensure well formed propositions.
 
@@ -745,12 +765,13 @@ The final line gives up---we cannot distinguish between equality and subclassing
 
 \subsection{Multimethods}
 
-\begin{figure*}
+\begin{figure}
   \footnotesize
 $$
 \begin{altgrammar}
-  \e{} &::=& \ldots \alt \multimethodexpsyntax{} 
-                &\mbox{Expressions} \\
+  \e{} &::=& \ldots \alt {\createmultiexp {\t{}} {\e{}}} &\mbox{Expressions} \\
+             &\alt& {\extendmultiexp {\e{}} {\e{}} {\e{}}}
+             \alt {\isaapp {\e{}} {\e{}}}\\
   \v{} &::=& \ldots \alt {\multi {\v{}} {\disptable{}}}
                 &\mbox{Values} \\
   \s{}, \t{} &::=& \ldots \alt {\MultiFntype{\t{}}{\t{}}}
@@ -759,41 +780,25 @@ $$
  \disptablesyntax{} \\
 \end{altgrammar}
 $$
-\caption{Multimethod Syntax}
-\label{main:figure:mmsyntax}
-\end{figure*}
-
-\begin{figure}
-  \footnotesize
+  \begin{mathpar}
+    \Multisubtyping{}
+  \end{mathpar}
+  \begin{mathpar}
+    \isapropsfigure{}
+  \end{mathpar}
   \begin{mathpar}
     \TDefMulti{}
 
     \TDefMethod{}
   \end{mathpar}
-  \caption{Multimethod typing rules}
-  \label{main:figure:mmtyping}
-\end{figure}
-
-\begin{figure}
-  \footnotesize
-  \begin{mathpar}
-    \Multisubtyping{}
-  \end{mathpar}
-  \caption{Multimethod subtyping rules}
-  \label{main:figure:mmsubtype}
-\end{figure}
-
-
-\begin{figure}
-  \footnotesize
   \getmethodfigure{}
   \begin{mathpar}
     \BDefMethod{}
     \BDefMulti{}
     \BBetaMulti{}
   \end{mathpar}
-  \caption{Multimethod and method resolution semantics}
-  \label{main:figure:mmsemantics}
+\caption{Multimethod Syntax, Subtyping, Typing Rules and Semantics}
+\label{main:figure:mmsyntax}
 \end{figure}
 
 To ease presentation, we present \emph{immutable}
@@ -806,22 +811,32 @@ without changing the original multimethod. Example~\ref{example:rep} is now writ
   (rep :a)) ;=> "a"
 \end{minted}
 
-Multimethod semantics are in figure~\ref{main:figure:mmsemantics}.
+Multimethod semantics are in figure~\ref{main:figure:mmsyntax}.
 B-DefMulti creates a multimethod with a dispatch function and an empty dispatch table.
 B-DefMethod returns a new multimethod with an extended dispatch table.
 B-BetaMulti invokes the dispatch function with the evaluated argument to get the dispatch value,
 which \getmethodliteral{} uses to choose the method to invoke.
 
-The typing rules (figure~\ref{main:figure:mmtyping}) use the multimethod type {\MultiFntype{\s{}}{\t{}}}, 
+The typing rules (figure~\ref{main:figure:mmsyntax}) use the multimethod type {\MultiFntype{\s{}}{\t{}}}, 
 where \s{} is the interface type for beta reduction, and \t{} is the type for
 the dispatch function. T-DefMulti uses the provided interface type and dispatch function
 to infer the multimethod type. T-DefMethod uses \isacompareliteral{} to infer the proposition
 that must be true if this method is being invoked. The example can be type checked without
 changes since we infer \isprop{\Number}{\x{}} and \isprop{\Keyword}{\x{}} for the respective
 method bodies. T-App handles beta reduction because multimethods are subtypes of functions
-(figure~\ref{main:figure:mmsubtype}).
+(figure~\ref{main:figure:mmsyntax}).
 
 
+
+\begin{figure*}
+  $$
+\begin{array}{lllll}
+\updatefigure
+\end{array}
+$$
+\caption{Type Update}
+\label{main:figure:update}
+\end{figure*}
 
 {\convertjavatypefigure{figure}{\footnotesize}}
 
