@@ -5,7 +5,7 @@
 We now begin a tour of the central features of Typed Clojure,
 beginning with Clojure itself. In our presentation, we will make 
 use of the full Typed Clojure system to illustrate the key type system
-ideas, before studying the key features in detail in
+ideas, before studying the core features in detail in
 section~\ref{sec:formal}. 
 
 \subsection{Clojure}
@@ -31,7 +31,7 @@ address in Typed Clojure.
 
 \citet{TF10}
 presented Typed Racket with occurrence typing,
-an inference technique for conditional control flow.
+a technique for deriving type information from conditional control flow.
 They introduce the concept of occurrence typing 
 with the following example.
 
@@ -49,19 +49,86 @@ Here is same program in Typed Clojure.
 \label{example:conditionalflow}
 \end{exmp}
 
+Typed Clojure can check all the examples in~\citet{TF10}---the 
+rest of this section describes the extensions necessary
+to check Clojure code.
+
+\subsection{Clojure and Typed Clojure Primer}
+
+We introduce Clojure's syntax.
+Parenthesis indicate \emph{applications}, square brackets
+are syntax for literal \emph{vectors} and curly braces delimit literal
+\emph{hash-maps}.
+\clj{nil} is exactly Java's \java{null} and is one of two logically
+false values (the other is \clj{false}).
+\emph{Symbols} begin with an alphabetic character.
+A symbol prefixed with a colon like \clj{:a} is an interned \emph{keyword}.
+The \clj{get} function takes a hash-map and a key returns the value
+associated with the key in the map, or returns \clj{nil} if there is none.
+Keywords are functions that take a map and applies \clj{get} to the map
+and itself.
+\clj{inc} and \clj{dec} increment and decrement numbers respectively.
+\clj{assoc} and \clj{dissoc} associate and dissociate entries
+from immutable maps.
+Everything is an instance of some class
+except for \clj{nil}. Predicates like \clj{number?} are equivalent to
+a Java \java{instanceof} test, in this case on \clj{java.lang.Number}.
+
+Symbols support \emph{metadata}, an arbitrary map of
+data. The syntax \clj{^File x} is a single expression that is the symbol \clj{x} 
+with metadata \clj{{:tag File}}.
+In binding positions like \clj{(fn [^File x] ...)}
+the metadata is preserved in occurrences of \clj{x}.
+
+\emph{Commas} are always whitespace.
+\emph{Destructuring} is binding position syntax for pattern matching.
+A \emph{map destructuring} contains pairs of symbols and keywords that bind the symbols
+to lookups on that keyword with the current argument, optionally terminated by
+\clj{:as} and a symbol, which binds the symbol to the current argument.
+$$
+\clj{(fn [{x :x, y :y, :as m}] ...)}
+$$ 
+binds \clj{m} to the first argument,
+\clj{x} to \clj{(get m :x)} and
+\clj{y} to \clj{(get m :y)} in the function body. Type hints are preserved as expected.
+
 Clojure uses \emph{namespaces}, declared with the
-\clj{ns} form, to manage top-level \emph{vars}.
-This is a regular Clojure file compiled with
+\clj{ns} form, to manage top-level \emph{vars} and
+class imports.
+Example~\ref{example:conditionalflow}
+is a regular Clojure file compiled with
 the Clojure compiler except it declares a runtime dependency on
 \clj{clojure.core.typed}, Typed Clojure's core namespace.
 Programmers import typed versions of certain constructs as needed, like
 a \clj{fn} variant that supports annotations,
 and use the provided \clj{check-ns} function to type check the current namespace
 when convenient.
+We omit \clj{ns} forms for the rest of the examples.
+\footnote{See <this> github repo for full working examples}
 
-Typed Clojure can check all the examples in the occurrence typing
-paper---the rest of this section describes the extensions necessary
-to check Clojure code.
+
+Java methods and fields are called in prefix notation
+like \clj{(.method target args*)} and \clj{(.field target)} respectively,
+with method and field names prefixed with a dot and methods taking some number of arguments.
+Constructors are the class name with a dot suffix and arguments like \clj{(class. args*)}.
+
+The \clj{if} special form is a standard two-armed conditional.
+The \clj{do} special form sequentially evaluates any number of expressions
+left-to-right, returning \nil{} on zero arguments.
+The \clj{when} macro is a one-armed \clj{if} that returns \clj{nil} if the test fails.
+The \clj{throw} special form is exactly Java's \java{throw}, which takes an
+instance of \clj{Throwable} and throws an exception with it.
+The \clj{fn} macro creates a function---it takes a parameter vector of symbols indicating parameter names
+and any number of expressions in an implicit \clj{do} for the body of the function.
+The typed
+variant of \clj{fn} supports an optional keyword \clj{:-} and type following
+each parameter to declare their static types, and similarly after
+the parameter vector to declare the return type.
+
+In a static type, a quoted keyword \clj{':if} is a singleton type containing just the keyword.
+Quoted maps \clj{'{:op ':if}} are HMap types---the keys are not quoted because only keyword keys
+are allowed. The type constructor \clj{U} indicates an untagged union type, which can take
+any number of types.
 
 \subsection{Exceptional control flow}
 
@@ -73,11 +140,6 @@ to assert type-related invariants.
 \inputminted[firstline=13,lastline=15]{clojure}{code/demo/src/demo/do.clj}
 \label{example:doexception}
 \end{exmp}
-
-We combine the sequencing form \clj{do} and a thrown exception with
-\clj{throw} to avoid a null-pointer exception from attempting to increment \clj{nil}.
-(We omit \clj{ns} forms for the rest of the examples)
-\footnote{See <this> github repo for full working examples}.
 
 To check this example, we note that
 occurrence typing already provides
@@ -95,64 +157,13 @@ HMap types model the most common usages of keyword maps.
 
 \begin{Code}
 \begin{exmp}
-\inputminted[firstline=6,lastline=8]{clojure}{code/demo/src/demo/hmap.clj}
-\inputminted[firstline=27,lastline=29]{clojure}{code/demo/src/demo/hmap.clj}
+\inputminted[firstline=6,lastline=13]{clojure}{code/demo/src/demo/hmap.clj}
 \end{exmp}
 \end{Code}
 
 Here we define a type abbreviation with \clj{defalias} called \clj{Expr}
 that describes the structure of a recursively-defined AST as a union of HMaps.
 \clj{an-exp} is a function verified to return an \clj{Expr}.
-
-HMaps support various options to track the presence and absence of entries.
-\clj{:mandatory} declares entries that must be present.
-
-\begin{Code}
-\begin{exmp}
-\inputminted[firstline=58,lastline=64]{clojure}{code/demo/src/demo/hmap.clj}
-\end{exmp}
-\end{Code}
-Looking up \clj{:a} simply returns the associated type \clj{Num}.
-Keys other than \clj{:a} are unaccounted for in \clj{Mand}, so 
-the best we can infer is \clj{Any}, the supertype of all types.
-\clj{'{:a Num}} is shorthand for \clj{(HMap :mandatory {:a Num})}.
-
-\clj{:absent-keys} is a set of keywords that are known to not have entries.
-\begin{Code}
-\begin{exmp}
-\inputminted[firstline=66,lastline=73]{clojure}{code/demo/src/demo/hmap.clj}
-\end{exmp}
-\end{Code}
-We can infer a better type for \clj{(:b m)}---\clj{:b} is absent in \clj{Abs}
-so it looking up \clj{:b} returns \clj{nil}.
-
-\clj{:optional} is a map that declares entries either absent \emph{or}
-present with a specific type. 
-
-\begin{Code}
-\begin{exmp}
-\inputminted[firstline=5,lastline=12]{clojure}{code/demo/src/demo/hmap_path.clj}
-\end{exmp}
-\end{Code}
-
-Concretely \clj{(HMap :optional {:a Num})}
-is the same as
-\begin{minted}{clojure}
-      (U '{:a Num} (HMap :absent-keys #{:a})).
-\end{minted}
-
-
-\clj{:complete?} is \clj{true} if there are no further entries
-than those declared \clj{:mandatory} or \clj{:optional}.
-\begin{Code}
-\begin{exmp}
-\inputminted[firstline=17,lastline=26]{clojure}{code/demo/src/demo/hmap_path.clj}
-\end{exmp}
-\end{Code}
-\clj{:a} is \clj{:mandatory} in \clj{Comp} so lookups return \clj{Num}.
-\clj{:b} is \clj{:optional} so lookups return \clj{(U nil Kw)}.
-\clj{:c} is not mentioned, but since \clj{:complete?} is \clj{true}
-it must be absent so a lookup returns \clj{nil}.
 
 The next example is a real Typed Clojure program written by CircleCI, who maintain a large production
 installation of Clojure (see section~\ref{sec:casestudy} for a case study).
@@ -170,25 +181,21 @@ Since \clj{EncKeyPair} is \clj{:complete?}, Typed Clojure enforces the return ty
 does not contain an entry \clj{:private-key}, and would complain if the \clj{dissoc}
 operation forgot to remove it.
 
-HMaps interact with occurrence typing in interesting ways.
-The next example branches on the result of a lookup, and the types
-inferred for \clj{f} are subtle.
-
 \begin{Code}
 \begin{exmp}
-\inputminted[firstline=14,lastline=15]{clojure}{code/demo/src/demo/hmap_path.clj}
+\inputminted[firstline=10,lastline=23]{clojure}{code/demo/src/demo/key2.clj}
 \end{exmp}
 \end{Code}
 
-Typed Clojure infers \clj{m} as \clj{'{:a Num}} in the then branch
-and \clj{(HMap :optional {:a nil})}
-in the else branch.
-We cannot infer 
-\begin{minted}{clojure}
- (HMap :absent-keys #{:a})
-\end{minted}
-in the else branch because \clj{m} could be the value \clj{{:a nil}}
-by the definiton of \clj{Opt}.
+
+HMaps interact with occurrence typing in interesting ways.
+
+\begin{Code}
+\begin{exmp}
+\inputminted[firstline=15,lastline=27]{clojure}{code/demo/src/demo/hmap.clj}
+\end{exmp}
+\end{Code}
+
 Section~\ref{sec:hmapformal} discusses this in greater detail.
 
 \subsection{Java interoperability}
@@ -208,7 +215,7 @@ and then invoked by \emph{Java reflection}.
 Unfortunately, reflection is slow and Clojure's algorithm for
 choosing methods at runtime is undefined in some cases.
 
-To resolve reflective calls, Clojure supports \emph{type-hints}.
+To resolve reflective calls, Clojure supports \emph{type hints}.
 
 \begin{minted}{clj}
   (fn [^File f] (.getParent f))
@@ -222,7 +229,7 @@ method with the Java signature
   public String getParent()
 \end{minted}
 
-Typed Clojure ignores type-hints, so to check this we must
+Typed Clojure ignores type hints, so to check this we must
 annotate the parameter's static type.
 
 \begin{minted}{clj}
@@ -295,7 +302,7 @@ Methods are installed via {\clj{defmethod}}.
 (defmethod rep Keyword [x] (str (name x)))
 \end{minted}
 We extend \clj{rep}'s dispatch table, mapping
-the \emph{dispatch value} \clj{Number} to the function
+the \emph{dispatch value} \clj{Keyword} to the function
 \clj{(fn [x] (str (name x)))}. The call \clj{(rep arg)}
 uses the value of \clj{(isa? (disp-fn arg) disp-val)}
 on each method entry to pick a winner \clj{mth}, and finally returns \clj{(mth arg)}.
@@ -334,7 +341,7 @@ Keywords are functions that look themselves up in their argument, so \clj{:op}
 is our dispatch function.
 \begin{Code}
 \begin{exmp}
-\inputminted[firstline=5,lastline=23]{clojure}{code/demo/src/demo/eg5.clj}
+\inputminted[firstline=5,lastline=25]{clojure}{code/demo/src/demo/eg5.clj}
 \end{exmp}
 \end{Code}
 The destructuring syntax \clj{(fn [{:keys [val] :as m}] ...)} binds
@@ -379,7 +386,7 @@ and use of HMaps.
 \clj{PayLoad} is either a HMap containing a file
 or a string. We dispatch on \clj{:p} to distinguish the two cases---for example on \clj{:F}
 we know the \clj{:file} is a file.
-The body of the first method uses type-hints to resolve reflection
+The body of the first method uses type hints to resolve reflection
 and conditional control flow to prove null-pointer exceptions are impossible.
 The second method is similar except it uses exceptional control flow.
 

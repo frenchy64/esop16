@@ -1,4 +1,4 @@
-(ns demo.key
+(ns demo.key2
   (:refer-clojure :exclude [defn])
   (:require [clojure.core.typed :refer [defalias HMap Int defn ann]]))
 
@@ -9,14 +9,14 @@
 
 (defalias RawKeyPair
   (HMap :mandatory {:public-key RawKey,
-                    :private-key RawKey},
-        :complete? true))
+                    :private-key RawKey}))
+
 (defalias EncKeyPair
   (HMap :mandatory {:public-key RawKey,
                     :enc-private-key EncKey},
-        :complete? true))
+        :absent-keys #{:private-key}))
 
 (ann enc-keypair [RawKeyPair -> EncKeyPair])
-(defn enc-keypair [kp]
+(defn enc-keypair [{pkey :private-key, :as kp}]
   (assoc (dissoc kp :private-key)
-    :enc-private-key (encrypt (:private-key kp))))
+    :enc-private-key (encrypt pkey)))

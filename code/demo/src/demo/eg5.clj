@@ -4,20 +4,22 @@
 
 (ann inc-leaf [Expr -> Expr])
 (defmulti inc-leaf :op)
-(defmethod inc-leaf :if [{:keys [test then else]}]
-  {:op :if :test (inc-leaf test) 
-   :then (inc-leaf then) :else (inc-leaf else)})
-(defmethod inc-leaf :do [{:keys [left right]}]
-  {:op :do :left (inc-leaf left) 
-   :right (inc-leaf right)})
-(defmethod inc-leaf :val [{:keys [val] :as m}]
-  (assoc m :val (inc val)))
+(defmethod inc-leaf :if [{tt :test, t :then, e :else}]
+  {:op :if,
+   :test (inc-leaf tt),
+   :then (inc-leaf t), 
+   :else (inc-leaf e)})
+(defmethod inc-leaf :do [{l :left, r :right}]
+  {:op :do,
+   :left  (inc-leaf l),
+   :right (inc-leaf r)})
+(defmethod inc-leaf :const [{v :val}]
+  {:op :const,
+   :val (inc v)})
 
-(inc-leaf {:op :if :test {:op :val :val 1}
-           :then {:op :do :left {:op :val :val 2} 
-                  :right {:op :val :val 3}}
-           :else {:op :val :val 4}})
-;=> {:op :if :test {:op :val :val 2}
-;    :then {:op :do :left {:op :val :val 3}
-;           :right {:op :val :val 4}}
-;    :else {:op :val :val 5}}
+(inc-leaf {:op :if,
+           :test {:op :const :val 1}
+           :then {:op :do,
+                  :left  {:op :const, :val 2} 
+                  :right {:op :const, :val 3}}
+           :else {:op :const, :val 4}})
