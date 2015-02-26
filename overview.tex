@@ -27,56 +27,6 @@ interoperability comes at the cost of pervasive \java{null}, which
 leads to the possibility of null pointer exceptions---a drawback we
 address in Typed Clojure.
 
-\subsection{Typed Racket and occurrence typing}
-
-\citet{TF10}
-presented Typed Racket with occurrence typing,
-a technique for deriving type information from conditional control flow.
-They introduce the concept of occurrence typing 
-with the following example.
-
-\inputminted[firstline=1]{racket}{code/tr/example1.rkt}
-
-This function takes a value that is either \emph{\#f} % mintinline really hates #
-or a number, represented by an untagged \emph{union type}.
-The `then' branch has an implicit invariant
-that \rkt{x} is a number, which is automatically inferred with occurrence typing
-and type checked without further annotations.
-
-We chose to build on the ideas and implementation
-of Typed Racket to implement a type system targeting Clojure for several reasons.
-Initially, the similarities between Racket and Clojure drew us to
-investigate the effectiveness of repurposing occurrence typing
-for a Clojure type system---both languages share a Lisp heritage,
-similar standard functions 
-(for instance \clj{map}
-in both languages is variable-arity)
-and idioms.
-While Typed Racket is gradually typed and has sophisticated
-dynamic semantics for cross-language interaction, we 
-chose to first implement
-the static semantics
-with the hope to extend Typed Clojure to be gradually typed at a future date.
-Finally,
-Typed Racket's combination of bidirectional checking
-and occurrence typing presents a successful model for 
-type checking dynamically typed programs without compromising
-soundness, where other approaches like success typing~\cite{todo-dialyzer-paper}
-or soft typing~\cite{successtyping-todo}
-fail to prove strong properties about programs
-and have proved too complicated in practice respectively.
-
-Here is above program in Typed Clojure.
-
-\begin{exmp}
-\inputminted[firstline=1]{clojure}{code/demo/src/demo/eg1.clj}
-\label{example:conditionalflow}
-\end{exmp}
-
-Typed Clojure can check all the examples in~\citet{TF10}---the 
-rest of this section describes the extensions necessary
-to check Clojure code.
-
 \subsection{Clojure and Typed Clojure Primer}
 
 We introduce Clojure's syntax.
@@ -170,6 +120,56 @@ are allowed. The type constructor \clj{U} indicates an untagged union type, whic
 any number of types.
 
 The \clj{defalias} macro defines a type abbreviation which can reference itself recursively.
+
+\subsection{Typed Racket and occurrence typing}
+
+\citet{TF10}
+presented Typed Racket with occurrence typing,
+a technique for deriving type information from conditional control flow.
+They introduce the concept of occurrence typing 
+with the following example.
+
+\inputminted[firstline=1]{racket}{code/tr/example1.rkt}
+
+This function takes a value that is either \emph{\#f} % mintinline really hates #
+or a number, represented by an untagged \emph{union type}.
+The `then' branch has an implicit invariant
+that \rkt{x} is a number, which is automatically inferred with occurrence typing
+and type checked without further annotations.
+
+We chose to build on the ideas and implementation
+of Typed Racket to implement a type system targeting Clojure for several reasons.
+Initially, the similarities between Racket and Clojure drew us to
+investigate the effectiveness of repurposing occurrence typing
+for a Clojure type system---both languages share a Lisp heritage,
+similar standard functions 
+(for instance \clj{map}
+in both languages is variable-arity)
+and idioms.
+While Typed Racket is gradually typed and has sophisticated
+dynamic semantics for cross-language interaction, we 
+chose to first implement
+the static semantics
+with the hope to extend Typed Clojure to be gradually typed at a future date.
+Finally,
+Typed Racket's combination of bidirectional checking
+and occurrence typing presents a successful model for 
+type checking dynamically typed programs without compromising
+soundness, where other approaches like success typing~\cite{todo-dialyzer-paper}
+or soft typing~\cite{successtyping-todo}
+fail to prove strong properties about programs
+and have proved too complicated in practice respectively.
+
+Here is above program in Typed Clojure.
+
+\begin{exmp}
+\inputminted[firstline=1]{clojure}{code/demo/src/demo/eg1.clj}
+\label{example:conditionalflow}
+\end{exmp}
+
+Typed Clojure can check all the examples in~\citet{TF10}---the 
+rest of this section describes the extensions necessary
+to check Clojure code.
 
 \subsection{Exceptional control flow}
 

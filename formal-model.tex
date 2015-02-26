@@ -51,7 +51,7 @@ $$
 For example, with L-Update we can use the knowledge of
 \inpropenv{\propenv{}}{\isprop{\UnionNilNum}{\x{}}}
 and 
-\inpropenv{\propenv{}}{\notprop{\nil{}}{\x{}}}
+\inpropenv{\propenv{}}{\notprop{\Nil{}}{\x{}}}
 to derive \inpropenv{\propenv{}}{\isprop{\Number}{\x{}}}.
 (The metavariable \propisnotmeta{} ranges over \t{} and \nottype{\t{}} (without variables).)
 We cover \updateliteral{} in section~\ref{sec:updateformalsection}.
@@ -349,11 +349,11 @@ makes our insight interesting.
 Now we can check example~\ref{example:doexception}.
 We check the test with T-App:
 $$
-\judgement{\isprop{\Union{\nil{}}{\Number}}{\x{}}}{\hastype{\appexp{\numberhuh}{\x{}}}{\Boolean}}{\filterset{\isprop{\Number}{\x{}}}{\notprop{\Number}{\x{}}}}{\emptyobject{}}
+\judgement{\isprop{\UnionNilNum}{\x{}}}{\hastype{\appexp{\numberhuh}{\x{}}}{\Boolean}}{\filterset{\isprop{\Number}{\x{}}}{\notprop{\Number}{\x{}}}}{\emptyobject{}}
 $$
 By T-Nil and subsumption we derive the same information in both propositions.
 $$
-\judgement{\isprop{\Number}{\x{}}}{\hastype{\nil{}}{\nil{}}}{\filterset{\isprop{\Number}{\x{}}}{\notprop{\Number}{\x{}}}}{\emptyobject{}}
+\judgement{\isprop{\Number}{\x{}}}{\hastype{\nil{}}{\Nil{}}}{\filterset{\isprop{\Number}{\x{}}}{\notprop{\Number}{\x{}}}}{\emptyobject{}}
 $$
 By T-Error we can assume anything about the return of an error.
 $$
@@ -362,7 +362,7 @@ $$
 Using the above as premises to T-If we learn {\orprop{\isprop{\Number}{\x{}}}{\botprop{}}}
 in both propositions.
 $$
-\judgement{\isprop{\Union{\nil{}}{\Number}}{\x{}}}
+\judgement{\isprop{\UnionNilNum}{\x{}}}
           {\hastype{\ifexp{\appexp{\numberhuh{}}{\x{}}}{\nil{}}{\errorvalv{}}}{\Boolean}}
           {\filterset{\orprop{\isprop{\Number}{\x{}}}{\botprop{}}}{\orprop{\notprop{\Number}{\x{}}}{\botprop{}}}}{\emptyobject{}}
 $$
@@ -377,7 +377,7 @@ $$
 $$
 Finally we conclude with T-Do using the conditional and increment expressions as premises.
 $$
-\judgement{\isprop{\Union{\nil{}}{\Number}}{\x{}}}
+\judgement{\isprop{\UnionNilNum}{\x{}}}
           {\hastype{\doexp
                      {\ifexp{\appexp{\numberhuh{}}{\x{}}}
                         {\nil{}}
@@ -610,12 +610,18 @@ which we introduce in section~\label{sec:isaformal}.
 
 In section~\ref{sec:overviewjavainterop} we discussed how Clojure programmers use
 type hints to help the compiler eliminate reflective calls.
-In this section we introduce our model of Java, including syntax
-for unresolved Java 
+In this section, first we introduce our model of Java and provide user-facing
+syntax corresponding to Clojure's Java interoperability forms and type hinted forms.
+Then we model the Clojure compiler's compile-time reflection resolution
+algorithm.
+To achieve this we add notation for
+\emph{non-reflective} Java forms that carry sufficient tag information 
+to unambiguously identify a field, method or constructor.
+Then we define a rewrite relation that uses
+type hints to resolve reflection explicitly.
 
-We model
-Java interoperability in a restricted setting without class inheritance,
-overloading or Java Generics. 
+We model Java interoperability in a restricted setting without class inheritance,
+overloading or Java Generics.
 
   $$
   \begin{altgrammar}
@@ -624,14 +630,37 @@ overloading or Java Generics.
   \end{altgrammar}
   $$
 
-We extend the external language with Java field lookups and calls to
-methods and constructors.
-These come without typing or evaluation rules:
-Typed Clojure requires the Clojure compiler to statically resolve all Java interactions
-in typed code.
-Type hinted expressions such as \localhintsyntax{} 
-to help the compiler eliminate reflection.
+We extend the syntax with Java field lookups and calls to
+methods and constructors. We model the syntax after the `dot' special
+form 
+These come without typing or evaluation rules---Typed Clojure 
+requires the Clojure compiler to statically resolve all Java interactions
+in typed code, so they are implicitly type errors
+(as demonstrated in section~\ref{sec:overviewjavainterop}).
+We add type hinted syntax for local variables and let-bindings.
 
+Now we model the compiler's reflection-resolution algorithm.
+Figure~\ref{main:figure:javatyping} gives the syntax for non-reflective Java calls.
+The method ${\methodstaticexp {\classhint{1}}
+                             {\overrightarrow {\classhint{i}}}
+                             {\classhint{2}}
+                             {\mth{}} {\e{}} {\overrightarrow{\e{i}}}}$
+is a non-reflective call to the \mth{} method on class {\class{1}}, 
+with Java signature 
+$$
+{\classhint{2}}\ \mth{}\ (\overrightarrow {\classhint{i}});
+$$
+The field {\fieldstaticexp {\classhint{1}} {\classhint{2}} {\fld{}} {\e{}}}
+calls the field on class {\classhint{1}} with signature
+$$
+{\classhint{2}}\ \fld{};
+$$
+The constructor {\newstaticexp {\overrightarrow{\classhint{i}}} {\classhint{}} 
+                               {\class{}} {\overrightarrow{\e{i}}}}
+calls the constructor
+$$
+{\classhint{}}\ ({\overrightarrow{\classhint{i}}});
+$$
 
 %\begin{figure}
 %  \footnotesize
@@ -661,14 +690,9 @@ $$
 \tajudgement {\taenv{}} {\hastype {\e{}} {\tatype{}}}
 $$
 infers the (possibly-unknown) type hint \tatype{} of expression \e{} in environment \taenv{}.
-
 %$$
 %\TALetHint{}
 %$$
-
-We now have two languages: an internal language that may contain non-reflective Java calls (figure~\ref{main:figure:javatyping}) 
-  and an external language that resembles Clojure, where we must rely on type-hints to resolve
-  reflective Java calls (figure~\ref{main:figure:reflectivesyntax}).
 
   $$
     \RFieldElimRefl{}
