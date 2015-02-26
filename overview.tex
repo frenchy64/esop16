@@ -70,6 +70,8 @@ and itself.
 \clj{inc} and \clj{dec} increment and decrement numbers respectively.
 \clj{assoc} and \clj{dissoc} associate and dissociate entries
 from immutable maps.
+The \clj{=} function returns true if all its arguments are structurally equal---in this
+paper we treat it as pointer equality.
 Everything is an instance of some class
 except for \clj{nil}. Predicates like \clj{number?} are equivalent to
 a Java \java{instanceof} test, in this case on \clj{java.lang.Number}.
@@ -97,8 +99,9 @@ Clojure uses \emph{namespaces}, declared with the
 class imports.
 Example~\ref{example:conditionalflow}
 is a regular Clojure file compiled with
-the Clojure compiler except it declares a runtime dependency on
-\clj{clojure.core.typed}, Typed Clojure's core namespace.
+the Clojure compiler using \clj{:require} to declare a
+runtime dependency on Typed Clojure's core namespace
+\clj{clojure.core.typed}.
 Programmers import typed versions of certain constructs as needed, like
 a \clj{fn} variant that supports annotations,
 and use the provided \clj{check-ns} function to type check the current namespace
@@ -126,9 +129,13 @@ each parameter to declare their static types, and similarly after
 the parameter vector to declare the return type.
 
 In a static type, a quoted keyword \clj{':if} is a singleton type containing just the keyword.
-Quoted maps \clj{'{:op ':if}} are HMap types---the keys are not quoted because only keyword keys
+Quoted maps like \clj{'{:op ':const, :val Num}} are HMap types representing
+maps with known keyword entries with values of the associated type
+The keys are not quoted because only keyword keys
 are allowed. The type constructor \clj{U} indicates an untagged union type, which can take
 any number of types.
+
+The \clj{defalias} macro defines a type abbreviation which can be recursively defined.
 
 \subsection{Exceptional control flow}
 
