@@ -273,16 +273,16 @@
 \newmeta\ctmethod{m}
 \newmeta\ctfield{f}
 \newmeta\ctctor{c}
-\newcommand\ctmethodsliteral[0]{\metafunctionfont{methods}}
-\newcommand\ctfieldsliteral[0]{\metafunctionfont{fields}}
-\newcommand\ctconstructorsliteral[0]{\metafunctionfont{constructors}}
+\newcommand\ctmethodsliteral[0]{\metafunctionfont{mths}}
+\newcommand\ctfieldsliteral[0]{\metafunctionfont{flds}}
+\newcommand\ctconstructorsliteral[0]{\metafunctionfont{ctors}}
 \newcommand\ctmthentry[3]{\ma{[#1, [#2], #3]}}
 \newcommand\ctfldentry[2]{\ma{[#1, #2]}}
 \newcommand\ctctorentry[1]{\ma{[#1]}}
 \newcommand\set[1]{\ma{\{#1\}}}
 % WARNING specific formatting for figure
 \newcommand\ctlookup[2]{\ma{{#1}[#2]}}
-\newcommand\ctlookuptwo[3]{\ma{\ctlookup{({\ctlookup{#1}{#2}})}{#3}}}
+\newcommand\ctlookuptwo[3]{\ma{\ctlookup{{\ctlookup{#1}{#2}}}{#3}}}
 \newcommand\ctlookupmethods[2]{\ma{\ctlookuptwo{#1}{#2}{\ctmethodsliteral}}}
 \newcommand\ctlookupfields[2]{\ma{\ctlookuptwo{#1}{#2}{\ctfieldsliteral}}}
 \newcommand\ctlookupctors[2]{\ma{\ctlookuptwo{#1}{#2}{\ctconstructorsliteral}}}
@@ -381,21 +381,21 @@
 
 % new special functions
 % Type -> [Type]
-\newcommand\ctorparamsliteral[0]{\metafnfont{Constructor}}
+\newcommand\ctorparamsliteral[0]{\metafnfont{Ctor}}
 \newcommand\ctorparamsnoeq[3]{\ma{\ctorparamsliteral(#1, #2, [#3])}}
 \newcommand\ctorparams[4]{\ma{\ctorparamsnoeq{#1}{#2}{#3} = [#4]}}
 \newcommand\ctorparamsalign[4]{\ma{\ctorparamsnoeq{#1}{#2}{#3} &=& [#4]}}
 
 % field special functions
 % Type Field -> Type
-\newcommand\fieldtypeliteral[0]{\ma{\metafnfont{Field}}}
+\newcommand\fieldtypeliteral[0]{\ma{\metafnfont{Fld}}}
 \newcommand\fieldtypenoeq[3]{\ma{\fieldtypeliteral(#1, #2, #3)}}
 \newcommand\fieldtype[5]{\ma{\fieldtypenoeq{#1}{#2}{#3} = [#4, #5]}}
 \newcommand\fieldtypealign[5]{\ma{\fieldtypenoeq{#1}{#2}{#3} &=& [#4, #5]}}
 
 % method special functions
 % Type [Type] Method -> [Type]
-\newcommand\methodtypeliteral[0]{\metafnfont{Method}}
+\newcommand\methodtypeliteral[0]{\metafnfont{Mth}}
 \newcommand\methodtypenoeq[4]{\ma{\methodtypeliteral(#1, #2, #3, [#4])}}
 \newcommand\methodtype[7]{\ma{\methodtypenoeq{#1}{#2}{#3}{#4} = [#5, [#6], #7]}}
 \newcommand\methodtypealign[7]{\ma{\methodtypenoeq{#1}{#2}{#3}{#4} &=& [#5, [#6], #7]}}
@@ -2025,22 +2025,10 @@ then \judgement{}{\hastype{\v{}}{\t{}}}{\filterset{\thenprop{\propp{}}}{\elsepro
 \end{definition}
 }
 
-% class table lookup
-\newcommand\classtablelookupfigure[0]{
-\begin{figure*}
+\newcommand\classtablelookupsyntax[0]{
 $$
-\begin{altgrammar}
+\begin{array}{lcll}
 
-  \methodtypealign
-  {\ct{}}
-  {\classhint{}}
-  {\mth{}}
-  {\overrightarrow{\classhint{p}}}
-  {\classhint{}}
-  {\overrightarrow{\classhint{p}}}
-  {\classhint{r}}
-  & \text{if}\ \ctmthentry{\mth{}}{\overrightarrow{\classhint{p}}}{\classhint{r}} \in {\ctlookupmethods{\ct{}}{\classhint{}}}
-      \\
   \fieldtypealign 
   {\ct{}}
   {\classhint{}}
@@ -2055,16 +2043,31 @@ $$
       {\overrightarrow{\class{p{}}}}
       {\overrightarrow{\class{p{}}}}
   & \text{if}\ \ctctorentry{\overrightarrow{\class{p{}}}} \in {\ctlookupctors{\ct{}}{\classhint{}}}
-\end{altgrammar}
+  \\
+  \methodtypealign
+  {\ct{}}
+  {\classhint{}}
+  {\mth{}}
+  {\overrightarrow{\classhint{p}}}
+  {\classhint{}}
+  {\overrightarrow{\classhint{p}}}
+  {\classhint{r}}
+  & \text{if}\ \ctmthentry{\mth{}}{\overrightarrow{\classhint{p}}}{\classhint{r}} \in {\ctlookupmethods{\ct{}}{\classhint{}}}
+
+\end{array}
 $$
+}
+
+% class table lookup
+\newcommand\classtablelookupfigure[0]{
+\begin{figure*}
+ \classtablelookupsyntax{}
 \caption{Class table lookup}
 \end{figure*}
 }
 
 % convert Java types
-\newcommand\convertjavatypefigure[2]{
-\begin{#1}
-#2
+\newcommand\convertjavatypegrammar[0]{
 $$
 \begin{altgrammar}
 \javatotcalign {\Void{}} {\Nil}
@@ -2077,6 +2080,12 @@ $$
 
 \end{altgrammar}
 $$
+}
+
+\newcommand\convertjavatypefigure[2]{
+\begin{#1}
+#2
+\convertjavatypegrammar{}
 \caption{Java Type Conversion}
 \end{#1}
 }

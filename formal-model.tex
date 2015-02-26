@@ -558,7 +558,7 @@ $$
 \end{mathpar}
 The full semantics are given in figure~\ref{main:figure:primitivesem}.
 The definition of \updateliteral{} supports various idioms relating to \classpe{}
-which we introduce in section~\label{sec:isaformal}.
+which we introduce in section~\ref{sec:isaformal}.
 
 \subsection{Java Interoperability and Type Hints}
 
@@ -577,6 +577,7 @@ which we introduce in section~\label{sec:isaformal}.
     \classtableallsyntax{}
   \end{altgrammar}
   $$
+ \classtablelookupsyntax{}
   \begin{mathpar}
     {\TNewStatic}
     {\TFieldStatic}
@@ -597,30 +598,33 @@ which we introduce in section~\label{sec:isaformal}.
 %
 %    \RMethodElimRefl{}
 %
-    \RFieldElimRefl{}
+%    \RFieldElimRefl{}
 %
 %    \RLet{}
 %
 
-    \RLetHint{}
+%    \RLetHint{}
   \end{mathpar}
+  \convertjavatypegrammar{}
   \caption{Java Interoperability Syntax, Semantics, Typing Rules and Rewrite Relation}
   \label{main:figure:javatyping}
 \end{figure}
 
-In section~\ref{sec:overviewjavainterop} we discussed how Clojure programmers use
-type hints to help the compiler eliminate reflective calls.
-In this section, first we introduce our model of Java and provide user-facing
+In section~\ref{sec:overviewjavainterop} we discussed the role of type hints
+to help eliminate reflective calls.
+In this section, we introduce our model of Java and provide user-facing
 syntax corresponding to Clojure's Java interoperability forms and type hinted forms.
 Then we model the Clojure compiler's compile-time reflection resolution
 algorithm.
-To achieve this we add notation for
-\emph{non-reflective} Java forms that carry sufficient tag information 
-to unambiguously identify a field, method or constructor.
+To achieve this, first we define notation for
+\emph{non-reflective} Java forms that 
+unambiguously call a field, method or constructor.
 Then we define a rewrite relation that uses
 type hints to resolve reflection explicitly.
+Finally we give typing rules that model how
+Typed Clojure interacts with non-reflective calls.
 
-We model Java interoperability in a restricted setting without class inheritance,
+We present Java interoperability in a restricted setting without class inheritance,
 overloading or Java Generics.
 
   $$
@@ -632,10 +636,12 @@ overloading or Java Generics.
 
 We extend the syntax with Java field lookups and calls to
 methods and constructors. We model the syntax after the `dot' special
-form 
+form to prevent ambiguity---\clj{(.fld e)} is now \fieldexp{\fld{}}{\e{}},
+\clj{(.mth e es*)} is $\methodexp{\mth{}}{\e{}}{\overrightarrow{es}}$
+and \clj{(.class es*)} is $\newexp{\class{}}{\overrightarrow{es}}$.
 These come without typing or evaluation rules---Typed Clojure 
-requires the Clojure compiler to statically resolve all Java interactions
-in typed code, so they are implicitly type errors
+demands statically resolved Java interactions
+in typed code
 (as demonstrated in section~\ref{sec:overviewjavainterop}).
 We add type hinted syntax for local variables and let-bindings.
 
@@ -647,20 +653,14 @@ The method ${\methodstaticexp {\classhint{1}}
                              {\mth{}} {\e{}} {\overrightarrow{\e{i}}}}$
 is a non-reflective call to the \mth{} method on class {\class{1}}, 
 with Java signature 
-$$
-{\classhint{2}}\ \mth{}\ (\overrightarrow {\classhint{i}});
-$$
+${\classhint{2}}\ \mth{}\ (\overrightarrow {\classhint{i}});$.
 The field {\fieldstaticexp {\classhint{1}} {\classhint{2}} {\fld{}} {\e{}}}
-calls the field on class {\classhint{1}} with signature
-$$
-{\classhint{2}}\ \fld{};
-$$
+calls the field on class {\classhint{1}} with Java signature
+${\classhint{2}}\ \fld{};$.
 The constructor {\newstaticexp {\overrightarrow{\classhint{i}}} {\classhint{}} 
                                {\class{}} {\overrightarrow{\e{i}}}}
 calls the constructor
-$$
-{\classhint{}}\ ({\overrightarrow{\classhint{i}}});
-$$
+${\classhint{}}\ ({\overrightarrow{\classhint{i}}});$.
 
 %\begin{figure}
 %  \footnotesize
@@ -680,38 +680,65 @@ $$
 %\end{figure}
 
 
+To obtain non-reflective calls we define our rewrite relation
 $$
 \rewrite {\taenv{}} {\e{}} {\ep{}}
 $$
-rewrites expression \e{} to a possibly-less reflective expression
+which rewrites \e{} to a possibly-less reflective expression
 \ep{} with respect to type hint environment
-\taenv{} and Java class table \ct{} and
+\taenv{} and Java class table \ct{}.
+
+Type hint inference is modelled by
 $$
 \tajudgement {\taenv{}} {\hastype {\e{}} {\tatype{}}}
 $$
-infers the (possibly-unknown) type hint \tatype{} of expression \e{} in environment \taenv{}.
+which infers the (possibly-unknown) type hint \tatype{} of expression \e{} in environment \taenv{}.
 %$$
 %\TALetHint{}
 %$$
 
+To demonstrate we consider the expression 
+$$
+\fieldexp{getParent}{\hinted{\File}{\x{}}}.
+$$
+where 
+$$
+\ct = \{ \File \mapsto \{ \ctfieldsliteral \mapsto \{\ctfldentry{getMethod}{\String}\} \} \}
+$$
+
+R-FieldElimRefl eliminates a reflective field.
   $$
     \RFieldElimRefl{}
   $$
+First the target is rewritten \rewrite {\taenv{}} {\hinted{\File}{\x{}}}{\hinted{\File}{\x{}}}
+then we infer the type hint on the new expression \tajudgement {\taenv{}} {\hastype {\hinted{\File}{\x{}}} {\File}}
+We call \fieldtypeliteral{} (figure~\ref{main:figure:javatyping})
+to determine the exact signature of the field:
+\fieldtype{\ct{}}{\File}{getParent}{\File}{\String}
+and return the non-reflective field 
+$$
+\fieldstaticexp{\File}{\String}{getParent}{\hinted{\File}{\x{}}}.
+$$
 
-For example, R-FieldElimRefl, which rewrites a reflective field call to be non-reflective,
-rewrites the target expression and uses the result to infer a class type hint as the field target.
-\fieldtypeliteral{} uses the inferred type hint to lookup if the inferred class has the appropriate
-field name and returns the actual target and result type hints which we store in the rewritten rule.
+Now we present the typing rules (figure~\ref{main:figure:javatyping}).
+To briefly finish our example, let us assume \propenv{} = {\isprop{\File}{\x{}}},
+then
+T-FieldStatic converts the target Java type to a non-nilable
+type \javatotc {\File} {\File}} and checks the target against it 
+\judgement{\propenv{}}{\hastype{\x{}}{\File}}, and finally converts the return Java type 
+to a nilable type and \javatotc {\String} {\Union{\Nil{}}{\String}}
+to finish with 
+$$
+\judgementtwo{\propenv{}}{\hastype{\fieldstaticexp{\File}{\String}{getParent}{\hinted{\File}{\x{}}}}{\Union{\Nil{}}{\String}}}.
+$$
 
-We then extract these type hints in T-FieldStatic for typing checking 
-(figure~\ref{main:figure:javatyping}), which converts type hints
-with \javatotcliteral{} to obtain a \emph{non-nilable} type to type check the target expression (which prevents
-dereferencing nil) and \javatotcnilliteral{} to get a \emph{nilable} return type (because fields can be nil).
+The other rules T-MethodStatic and T-NewStatic work similarly, and vary
+primarily in the choice of nilability in the conversion function---method returns
+are nilable and constructor returns are non-nilable.
 
-Method and constructor calls are similar, but T-MethodStatic and T-NewStatic disallow passing \nil{} as arguments, 
-we assume methods can return \nil{} and we assume constructors cannot.
-
-We rewrite to our internal language before type checking and remaining reflective calls are type errors.
+The operational semantics B-Field, B-New and B-Method simply evaluate their
+arguments and call the relevant JVM operation---section~\label{sec:metatheory}
+states our exact assumptions about each one.
 
 \subsection{Multimethod dispatch mechanism: \isaliteral}
 
@@ -861,8 +888,6 @@ $$
 \caption{Type Update}
 \label{main:figure:update}
 \end{figure*}
-
-{\convertjavatypefigure{figure}{\footnotesize}}
 
 \begin{figure}
   $$
