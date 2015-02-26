@@ -19,8 +19,8 @@ and relating them to types.
 \emph{Type Propositions} make assertions like ``variable \clj{x} is of type \clj{Number}'' or
 ``variable \clj{x} is not \clj{nil}''---
 in our logical system we write these as
-{\isprop{\Number}{\x{}}}
-and {\notprop{\ValueNil}{\x{}}}. 
+{\isprop{\clj{Number}}{\x{}}}
+and {\notprop{\clj{nil}}{\x{}}}. 
 The other propositions are standard: the implication, conjunction,
 disjunction, trivial (\topprop{}) and impossible (\botprop{}) propositions
 (figure~\ref{main:figure:termsyntax}).
@@ -39,7 +39,7 @@ representation of a
 type environment of a map from variables to types
 with a sequence of propositions, written \propenv{}. 
 Instead of mapping \clj{x} to
-the type \clj{Number}, we instead use the proposition {\isprop{\Number}{\x{}}}.
+the type \clj{Number}, we instead use the proposition {\isprop{\clj{Number}}{\x{}}}.
 
 The third insight is that we
 can use a logic system to learn new information about our programs.
@@ -49,10 +49,10 @@ $$
   {\LUpdate}
 $$
 For example, with L-Update we can use the knowledge of
-\inpropenv{\propenv{}}{\isprop{\Union{\ValueNil{}}{\Number{}}}{\x{}}}
+\inpropenv{\propenv{}}{\isprop{\clj{(U nil Number)}}{\x{}}}
 and 
-\inpropenv{\propenv{}}{\notprop{\ValueNil{}}{\x{}}}
-to derive \inpropenv{\propenv{}}{\isprop{\Number}{\x{}}}.
+\inpropenv{\propenv{}}{\notprop{\clj{nil}}{\x{}}}
+to derive \inpropenv{\propenv{}}{\isprop{\clj{Number}}{\x{}}}.
 (The metavariable \propisnotmeta{} ranges over \t{} and \nottype{\t{}} (without variables).)
 We cover \updateliteral{} in section~\ref{sec:updateformalsection}.
 
@@ -66,11 +66,11 @@ the programmer is convinced it is safe to do so based whether
 \clj{(number? x)}
 is 
 a true or false value. The takeaway is that every expression has
-two relevant pieces of information to the logic system: a `then' proposition
+two extra pieces of information relevant to the logic system: a `then' proposition
 for when it reduces to a true value, and an `else' proposition
 when it reduces to a false value---for \clj{(number? x)}
-they are {\isprop{\Number}{\x{}}} and {\notprop{\Number}{\x{}}}
-respectively.
+the then proposition is {\isprop{\clj{Number}}{\x{}}} and 
+the else proposition is {\notprop{\clj{Number}}{\x{}}}.
 %\ref{main:figure:typingrules}
 
 \begin{figure}
@@ -145,17 +145,37 @@ actual object of the argument in applications before they are used in the propos
 
 Figure~\ref{main:figure:typingrules} contains the standard typing rules.
 We can now demonstrate how to check example~\ref{example:conditionalflow}.
+We abbreviate \clj{Num} as \clj{N},  \clj{Boolean} as \clj{B} and \clj{number?} as \clj{n?}.
+The test is checked with T-App, 
 $$
-\judgement{\isprop{\clj{(U nil Num)}}{\x{}}}{\hastype{\clj{(number? x)}}{\clj{Boolean}}}{\filterset{\isprop{\clj{Num}}{\x{}}}{\notprop{\clj{Num}}{\x{}}}}{\emptyobject{}}
+\judgement{\isprop{\clj{(U nil N)}}{\x{}}}{\hastype{\clj{(n? x)}}{\clj{B}}}{\filterset{\isprop{\clj{N}}{\x{}}}{\notprop{\clj{N}}{\x{}}}}{\emptyobject{}}
+$$
+\clj{n?} has type
+$$
+{\ArrowOne{\x{}}{\clj{Any}}{\clj{B}}
+        {\filterset{\isprop{\clj{N}}{\x{}}}{\notprop{\clj{N}}{\x{}}}}{\emptyobject{}}}
+$$
+By T-Local.
+$$
+\judgement{\isprop{\clj{N}}{\x{}}}{\hastype{\clj{x}}{\clj{N}}}{\filterset{\topprop{}}{\topprop{}}}{\x{}}
+$$
+Now we check both branches.
+$$
+\judgement{\isprop{\clj{N}}{\x{}}}{\hastype{\clj{(inc x)}}{\clj{N}}}{\filterset{\topprop{}}{\topprop{}}}{\emptyobject{}}
 $$
 $$
-\judgement{\isprop{\clj{Num}}{\x{}}}{\hastype{\clj{(inc x)}}{\clj{Num}}}{\filterset{\topprop{}}{\topprop{}}}{\emptyobject{}}
+\judgement{\notprop{\clj{N}}{\x{}}}{\hastype{\clj{0}}{\clj{N}}}{\filterset{\topprop{}}{\topprop{}}}{\emptyobject{}}
 $$
+We can now check the conditional with T-If.
 $$
-\judgement{\isprop{\clj{Num}}{\x{}}}{\hastype{\clj{x}}{\clj{Num}}}{\filterset{\topprop{}}{\topprop{}}}{\x{}}
+\judgement{\isprop{\clj{N}}{\x{}}}{\hastype{\clj{(if (n? x) (inc x) 0)}}{\clj{N}}}{\filterset{\orprop{\isprop{\clj{N}}{\x{}}}{\topprop{}}}{\orprop{\notprop{\clj{N}}{\x{}}}{\topprop{}}}}{\emptyobject{}}
 $$
+Finally the function can be checked with T-Abs.
 $$
-\judgement{\isprop{\clj{Num}}{\x{}}}{\hastype{\clj{0}}{\clj{Num}}}{\filterset{\topprop{}}{\topprop{}}}{\emptyobject{}}
+\judgement{}{\hastype{\clj{(fn ...)}}
+                                             {\ArrowOne{\x{}}{\clj{(U nil N)}}{\clj{N}}
+        {\filterset{\orprop{\isprop{\clj{N}}{\x{}}}{\topprop{}}}{\orprop{\notprop{\clj{N}}{\x{}}}{\topprop{}}}}{\emptyobject{}}}}
+  {\filterset{\topprop{}}{\botprop{}}}{\emptyobject{}}
 $$
 By T-Abs
 
