@@ -10,7 +10,7 @@ gradual type systems aimed at checking existing programs written in
 existing languages.  These include Microsoft's TypeScript for
 JavaScript, Facebook's Hack for PHP and Flow for JavaScript, and MyPy
 for Python among the optional systems, and Typed Racket, Reticulated
-Python, and GradualTalk among gradually-typed system.\footnote{We
+Python, and GradualTalk among gradually-typed systems.\footnote{We
   reserve the term ``gradual typing'' for systems such as Typed Racket which soundly
   interoperate between typed and untyped code; systems like Typed Clojure or TypeScript which do not
   enforce type invariants we describe as ``optionally typed''.}
@@ -30,8 +30,8 @@ type checking approach of Typed Racket, an existing gradual type
 system for Racket. However, Typed Clojure extends this basic framework
 in multiple ways to accommodate the unique idioms and features of
 Clojure, producing an expressive synthesis of ideas and demonstrating
-a surprising coincidence between the multiple dispatch approach of
-Clojure and the occurrence typing framework of Typed Racket. 
+a surprising coincidence between multiple dispatch in
+Clojure and Typed Racket's  occurrence typing framework. 
 
 The essence of Typed Clojure, of course, is Clojure, a dynamically
 typed language in the Lisp family built to run on the Java Virtual
@@ -46,8 +46,8 @@ Since its initial release in 2007, Clojure has been widely adopted for
 ``backend'' development in places where its support for paralleism,
 functional programming, and Lisp-influenced abstraction is desired on
 the JVM. As a result, it now has an extensive base of existing untyped
-programs, many of whose developers can benefit from Typed Clojure. As
-a result, Typed Clojure is now used in industry, experience we discuss
+programs, whose developers can now benefit from Typed Clojure. As
+a result, Typed Clojure is used in industry, experience we discuss
 in this paper.
 
 \begin{figure}
@@ -75,7 +75,7 @@ then obtains the parent by making a Java method call.
 The annotation \clj{^File f} is a type hint on \clj{f}, which instructs the Clojure
 compiler (running prior to Typed Clojure typechecking) to statically
 resolve the \clj{getParent} 
-call to \clj{File}'s \clj{getParent} method with signature \java{String getParent();}, rather than using reflective method calls at runtime.
+call to \clj{File}'s \clj{getParent} method with signature \java{String getParent();}, rather than using reflection at runtime.
 
 In the remainder of this paper, we describe how Typed Clojure's
 central innovations, including Java interoperability, multimethods,
