@@ -250,9 +250,11 @@ Subtyping for untagged unions is standard.
     %{\TClass}
     {\TIf}
     {\TLet}
-    {\TConst}
-
-    %{\TKw}
+    \begin{array}{c}
+      {\TConst}\\\\
+      {\TKw}\\\\
+      {\TClass}
+    \end{array}
 
     {\TApp}
 
@@ -739,19 +741,24 @@ states our exact assumptions about each one.
 
 \label{sec:isaformal}
 
-Before tackling multimethods we model their core dispatch mechanism
-\isaliteral{}, a subclassing test for classes, otherwise an equality test.
+We now consider the core dispatch mechanism for multimethods. 
+Recalling the examples in section~\ref{sec:multioverview},
+\isaliteral{} is
+a subclassing test for classes, otherwise an equality test---we do not model
+the semantics for vectors.
 
-\begin{minted}{clojure}
-(isa? Keyword Object) ;=> true
-(isa? Object Keyword) ;=> false
-(isa? :a :a) ;=> true
-(isa? :a :b) ;=> false
-(isa? :a Keyword) ;=> false
-(isa? (class :a) Keyword) ;=> true
-\end{minted}
+The main interest for the typing rule is \isacompareliteral{} 
+(figure~\ref{main:figure:mmsyntax}).
 
-B-IsA with the metafunction \isaopsemliteral{} reflect these semantics.
+\begin{mathpar}
+  \TIsA{}
+\end{mathpar}
+
+To demonstrate,
+\mintinline{clojure}{(isa? (class x) Keyword)}
+has the proposition set \isacompare{\s{}}{\path{\classpe{}}{\x{}}}{\Value{\Keyword}}{\filterset{\isprop{\Keyword}{\x{}}}{\notprop{\Keyword}{\x{}}}}.
+
+B-IsA models the semantics. \isaopsemliteral{} explicitly handles classes in the second case.
 
 $$
 \begin{array}{ll}
@@ -761,53 +768,11 @@ $$
 \end{array}
 $$
 
-For the typing rules, we add T-Kw and T-Class for type checking keyword and class literals
-as singleton types, and T-IsA for \isaliteral{} expressions, which 
-uses the \emph{object} of the left argument and the \emph{type} of the right argument
-to infer the final proposition set.
-
-$$
-\begin{array}{ll}
-\vcenter{\hbox{
-    \TIsA{}}} &
-
-  \vcenter{\hbox{$
-    \begin{array}{l}
-      {\TKw}\\\\
-      {\TClass}
-    \end{array}$}}
-\end{array}
-$$
-
-The definition of \isacompareliteral{} (figure~\ref{main:figure:mmsyntax}) is deliberately conservative.
-The first line considers the case where the object of the left argument
-is a non-empty path ending in \classpe{} and the type of the right argument is a singleton class.
-The simplest example
-
-\begin{minted}{clojure}
-  (isa? (class x) Keyword)
-\end{minted}
-
-has the proposition set \isacompare{\s{}}{\path{\classpe{}}{\x{}}}{\Value{\Keyword}}{\filterset{\isprop{\Keyword}{\x{}}}{\notprop{\Keyword}{\x{}}}},
-that is if the expression is true then \clj{x} is a keyword, otherwise \clj{x} is not a keyword.
-
-We can rewrite example~\ref{example:conditionalflow} as
-\inputminted[firstline=5]{clojure}{code/demo/src/demo/isa_nil.clj}
-
-because the then proposition is {\isprop{\Class}{\path{\classpe{}}{\x{}}}}, so
-we know {\isprop{\Object}{\x{}}} by L-Update, and combined with the fact {\isprop{\Union{\Nil{}}{\Number}}{\x{}}}
-we can infer {\isprop{\Number}{\x{}}} by L-Update.
-
-The second \isacompareliteral{} line handles the equality mode of \isaliteral{}
-with a non-class singleton type as the second argument.
-
-
+%The definition of \isacompareliteral{} (figure~\ref{main:figure:mmsyntax}) is deliberately conservative.
+%The first line considers the case where the object of the left argument
+%is a non-empty path ending in \classpe{} and the type of the right argument is a singleton class.
 
 \constantsemfigure{main}
-
-%Substitution is used to ensure well formed propositions.
-
-The final line gives up---we cannot distinguish between equality and subclassing mode.
 
 \subsection{Multimethods}
 

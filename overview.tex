@@ -58,6 +58,7 @@ and itself.
 \clj{inc} and \clj{dec} increment and decrement numbers;
 \clj{assoc} and \clj{dissoc} associate and dissociate entries
 from immutable maps.
+\clj{class} returns the argument's class, or \clj{nil} if passed \clj{nil}.
 The \clj{=} function returns true if both arguments are equal.
 \clj{number?} is
 a Java \java{instanceof} test of \clj{java.lang.Number}.
@@ -99,15 +100,20 @@ any number of types.
 
 \paragraph{Typed Clojure Macros}
 The \clj{defalias} macro defines a type abbreviation which can reference itself recursively.
-The typed \clj{fn} has optional annotations by following a parameter
-or binding vector by \clj{:-} and a type.
+The typed \clj{fn} supports optional annotations by 
+adding
+\clj{:-} and a type after a parameter
+position
+or binding vector 
+to annotate parameter types
+and return types respectively.
 
 \subsection{Typed Racket and occurrence typing}
 
 \citet{TF10}
 presented Typed Racket with occurrence typing,
 a technique for deriving type information from conditional control flow.
-They introduce the concept of occurrence typing 
+They introduced the concept of occurrence typing 
 with the following example.
 
 \inputminted[firstline=1]{racket}{code/tr/example1.rkt}
@@ -136,10 +142,10 @@ Finally,
 Typed Racket's combination of bidirectional checking
 and occurrence typing presents a successful model for 
 type checking dynamically typed programs without compromising
-soundness, where other approaches like success typing~\cite{todo-dialyzer-paper}
-or soft typing~\cite{successtyping-todo}
-fail to prove strong properties about programs
-and have proved too complicated in practice respectively.
+soundness, which is appealing over success typing~\cite{todo-dialyzer-paper}
+which cannot prove strong properties about programs
+and soft typing~\cite{successtyping-todo}
+which has proved too complicated in practice.
 
 Here is above program in Typed Clojure.
 
@@ -165,13 +171,16 @@ to check Clojure code.
 
 Along with conditional control flow,
 Clojure programmers rely on \emph{exceptions}
-to assert type-related invariants, such as preventing
-null-pointer exceptions.
+to assert type-related invariants.
 
 \begin{exmp}
 \inputminted[firstline=13,lastline=15]{clojure}{code/demo/src/demo/do.clj}
 \label{example:doexception}
 \end{exmp}
+
+In this example a \clj{throw} expression guards \clj{(inc x)}
+from being evaluated if \clj{x} is \clj{nil}, preventing
+a possible null-pointer exception.
 
 To check this example,
 occurrence typing 
@@ -179,7 +188,8 @@ automatically
 assumes
 \clj{x} is a number when checking the second \clj{do} subexpression
 based on the first subexpression.
-\footnote{We omit \clj{ns} forms for the rest of the examples, see <this> github repo for full working examples}
+\footnote{See \url{https://github.com/typedclojure/examples}
+  for full examples. From here we omit \clj{ns} forms.}
 We model this formally (section~\ref{sec:doformal}) and prove
 null-pointer exceptions are impossible in typed code (section~\ref{sec:metatheory}).
 
@@ -197,7 +207,7 @@ Here \clj{defalias} defines a type abbreviation called \clj{Expr}
 that describes the structure of a recursively-defined AST as a union of HMaps.
 \clj{an-exp} is a function verified to return an \clj{Expr}.
 
-The next example is extracted from a Typed Clojure production system at CircleCI
+The next example is extracted from a production system at CircleCI
 (section~\ref{sec:casestudy} presents a case study).
 
 \begin{exmp}
@@ -210,6 +220,11 @@ as \clj{:enc-private-key}.
 Since \clj{EncKeyPair} is \clj{:complete?}, Typed Clojure enforces the return type
 does not contain an entry \clj{:private-key}, and would complain if the \clj{dissoc}
 operation forgot to remove it.
+
+The next example is the same except we use the \clj{:absent-keys}
+HMap option
+and
+utilize destructuring.
 
 \begin{exmp}
 \inputminted[firstline=10,lastline=21]{clojure}{code/demo/src/demo/key2.clj}
@@ -301,11 +316,13 @@ but can be configured globally for particular positions if needed.
 
 \subsection{Multimethods}
 
-A multimethod in Clojure is a function that contains a dispatch
-function and methods. Multimethods are created with {\clj{defmulti}}.
+\label{sec:multioverview}
+
+A multimethod in Clojure is a function with a \emph{dispatch
+function} and a \emph{dispath table} of methods. Multimethods are created with {\clj{defmulti}}.
 \inputminted[firstline=5,lastline=7]{clojure}{code/demo/src/demo/rep.clj}
-The multimethod \clj{path} has type \clj{[Any -> String]}, an initially empty \emph{dispatch table}
-and \emph{dispatch function} \clj{class}, a function that returns the argument's class or \clj{nil} if none.
+The multimethod \clj{path} has type \clj{[Any -> (U nil String)]}, an initially empty \emph{dispatch table}
+and \emph{dispatch function} \clj{class}.
 There are currently no methods so \clj{path} will fail at runtime.
 \begin{minted}{clojure}
   (path (File. "dir/a"));=> IllegalArgumentException
