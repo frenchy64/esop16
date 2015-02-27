@@ -575,12 +575,21 @@ which we introduce in section~\ref{sec:isaformal}.
   \end{altgrammar}
   $$
  \classtablelookupsyntax{}
-  \convertjavatypegrammar{}
+ \begin{mathpar}
+  \begin{altgrammar}
+    \convertjavatypenil{}
+  \end{altgrammar}
+  \begin{altgrammar}
+    \convertjavatypenonnil{}
+  \end{altgrammar}
+\end{mathpar}
   \begin{mathpar}
     {\TNewStatic}
     {\TFieldStatic}
 
     {\TMethodStatic}
+
+    %{\TInstance}
   \end{mathpar}
   \begin{mathpar}
     \BField{}

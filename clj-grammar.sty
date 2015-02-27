@@ -965,6 +965,12 @@
                 &\mbox{Class literals}
               }
 
+\newcommand\TInstance[0]{
+\infer [T-Instance]
+{}
+{ \judgement {\propenv{}} {\hastype{\classvalue{\classhint{}} {\overrightarrow {\classfieldpair{\fld{}} {\v{}}}}}{\class{}}}{\filterset{\topprop{}}{\botprop{}}}{\emptyobject{}}}
+}
+
 \newcommand\singletonallsyntax[0]{
   \singletonmeta{}     &::=& \k{} 
                              \alt {\trdiff{\class{}}}
@@ -2070,18 +2076,24 @@ $$
 \end{figure*}
 }
 
+\newcommand\convertjavatypenonnil[0]{
+\javatotcalign {\Void{}} {\Nil}
+\\
+\javatotcalign {\class{}} \class{}
+}
+
+\newcommand\convertjavatypenil[0]{
+\javatotcalignnil {\Void{}} {\Nil}
+\\
+\javatotcalignnil {\class{}} {\Union {\Nil} {\class{}}}
+}
+
 % convert Java types
 \newcommand\convertjavatypegrammar[0]{
 $$
 \begin{altgrammar}
-\javatotcalign {\Void{}} {\Nil}
-\\
-\javatotcalignnil {\Void{}} {\Nil}
-\\
-\javatotcalign {\class{}} \class{}
-\\
-\javatotcalignnil {\class{}} {\Union {\Nil} {\class{}}}
-
+  \convertjavatypenonnil{}\\
+  \convertjavatypenil{}
 \end{altgrammar}
 $$
 }
