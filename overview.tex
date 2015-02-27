@@ -207,7 +207,7 @@ Here \clj{defalias} defines a type abbreviation called \clj{Expr}
 that describes the structure of a recursively-defined AST as a union of HMaps.
 \clj{an-exp} is a function verified to return an \clj{Expr}.
 
-The next example is extracted from a production system at CircleCI
+\paragraph{HMaps in Practice} The next example is extracted from a production system at CircleCI
 (section~\ref{sec:casestudy} presents a case study).
 
 \begin{exmp}
@@ -230,14 +230,33 @@ utilize destructuring.
 \inputminted[firstline=10,lastline=21]{clojure}{code/demo/src/demo/key2.clj}
 \end{exmp}
 
-Next, 
-HMaps interact with occurrence typing in interesting ways.
+We would still catch the bug if \clj{dissoc} forgot to remove \clj{:private-key},
+but now stashing the raw private key as \clj{:secret-key} is allowed.
+
+\paragraph{Branching on HMaps} Finally, testing on HMap properties
+allows us to refine its type down branches. \clj{dec-map} takes an
+\clj{Expr}, traverses to its nodes and decrements their values, then
+builds the \clj{Expr} back up with the decremented nodes.
 
 \begin{exmp}
-\inputminted[firstline=15,lastline=27]{clojure}{code/demo/src/demo/hmap.clj}
+\inputminted[linenos,firstnumber=1,firstline=15,lastline=27]{clojure}{code/demo/src/demo/hmap.clj}
+\label{example:decmap}
 \end{exmp}
 
-Section~\ref{sec:hmapformal} discusses this in greater detail.
+If we go down the then branch (line 4), since \clj{(= (:op m) :if)} is true
+we remove
+the \clj{:do} and \clj{:const}
+Expr's from the type of \clj{m} (because their respective \clj{:op} entries disagrees with \clj{(= (:op m) :if)})
+and we are left with an \clj{:if} Expr.
+On line 8,
+we instead strike out the \clj{:if} Expr since it contradicts \clj{(= (:op m) :if)} being false. 
+Line 9 we know \clj{m}
+we remove \clj{:const} because it contradicts \clj{(= (:op m) :do)} being true,
+and we know \clj{m} is a \clj{:do} Expr.
+Line 12 we strike out \clj{:do} because \clj{(= (:op m) :do)} is false,
+so we are left with \clj{m} being a \clj{:const} Expr.
+
+Section~\ref{sec:formalpaths} discusses how this automatic reasoning is achieved.
 
 \subsection{Java interoperability}
 \label{sec:overviewjavainterop}
@@ -369,24 +388,35 @@ Typed Clojure does not predict if a runtime dispatch will be successful---\clj{(
 type checks because \clj{:a} agrees with the parameter type \clj{Any},
 but throws an error at runtime.
 
-The flexibility of \clj{isa?} is key to the generality of multimethods. 
+\paragraph{HMap dispatch} The flexibility of \clj{isa?} is key to the generality of multimethods. 
 We can dispatch on the \clj{:op} key 
 of our HMap AST \clj{Expr}.
 Since keywords are functions that look themselves up in their argument, we simply
 use \clj{:op} as the dispatch function.
 
 \begin{exmp}
-\inputminted[firstline=5,lastline=31]{clojure}{code/demo/src/demo/eg5.clj}
+\inputminted[firstline=5,lastline=18]{clojure}{code/demo/src/demo/eg5.clj}
+\label{example:incmap}
 \end{exmp}
 
-\clj{isa?} is special with vectors---vectors of the
+\clj{inc-map} is like example~\ref{example:decmap} except the nodes are incremented.
+The reasoning is similar, except we only use positive
+information since we only consider the \emph{dispatch value} and how it relates
+to the \emph{dispatch function}.
+In the \clj{:do} method we learn the \clj{:op} key is a \clj{:do}, which
+narrows our argument type to the \clj{:do} Expr, and similarly for the \clj{:if}
+and \clj{:const} methods.
+
+\paragraph{Multiple dispatch} \clj{isa?} is special with vectors---vectors of the
 same length recursively call \clj{isa?} on the elements pairwise.
 \begin{minted}{clojure}
   (isa? [Keyword Keyword] [Object Object]) ;=> true
 \end{minted}
 
 Now we can simulate multiple dispatch by dispatching on
-a vector containing the class of both arguments.
+a vector containing the class of both arguments. \clj{open}
+takes two arguments which can be strings or files and returns
+a new file that concatenates their paths.
 
 \begin{exmp}
 \inputminted[firstline=6,lastline=22]{clojure}{code/demo/src/demo/eg7.clj}
@@ -394,8 +424,8 @@ a vector containing the class of both arguments.
 
 We call three different \clj{File} constructors, each known at compile-time
 via type hints.
-No extra annotations are needed to follow type-directed control flow
-in multimethod dispatch.
+Multiple dispatch follows the same kind of reasoning as example~\ref{example:incmap},
+except we update multiple bindings simultaneously.
 
 \subsection{Final example}
 
