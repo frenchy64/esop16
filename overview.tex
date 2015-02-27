@@ -389,15 +389,18 @@ type checks because \clj{:a} agrees with the parameter type \clj{Any},
 but throws an error at runtime.
 
 \paragraph{HMap dispatch} The flexibility of \clj{isa?} is key to the generality of multimethods. 
-We can dispatch on the \clj{:op} key 
+In example~\ref{example:incmap} we
+dispatch on the \clj{:op} key 
 of our HMap AST \clj{Expr}.
 Since keywords are functions that look themselves up in their argument, we simply
 use \clj{:op} as the dispatch function.
 
+\begin{figure}
 \begin{exmp}
 \inputminted[firstline=5,lastline=18]{clojure}{code/demo/src/demo/eg5.clj}
 \label{example:incmap}
 \end{exmp}
+\end{figure}
 
 \clj{inc-map} is like example~\ref{example:decmap} except the nodes are incremented.
 The reasoning is similar, except we only consider one branch (the current method) by
@@ -414,14 +417,18 @@ same length recursively call \clj{isa?} on the elements pairwise.
   (isa? [Keyword Keyword] [Object Object]) ;=> true
 \end{minted}
 
-Now we can simulate multiple dispatch by dispatching on
+Example~\ref{example:multidispatch}
+simulates multiple dispatch by dispatching on
 a vector containing the class of both arguments. \clj{open}
 takes two arguments which can be strings or files and returns
 a new file that concatenates their paths.
 
+\begin{figure}
 \begin{exmp}
 \inputminted[firstline=6,lastline=22]{clojure}{code/demo/src/demo/eg7.clj}
+\label{example:multidispatch}
 \end{exmp}
+\end{figure}
 
 We call three different \clj{File} constructors, each known at compile-time
 via type hints.
@@ -430,14 +437,18 @@ except we update multiple bindings simultaneously.
 
 \subsection{Final example}
 
-The final example combines everything we will cover for the rest of the paper:
+Example~\ref{example:final}
+combines everything we will cover for the rest of the paper:
 multimethod dispatch, reflection resolution via type hints, Java method
 and constructor calls, conditional and exceptional flow reasoning,
 and HMaps. 
 
+\begin{figure}
 \begin{exmp}
 \inputminted[firstline=6,lastline=20]{clojure}{code/demo/src/demo/eg8.clj}
+\label{example:final}
 \end{exmp}
+\end{figure}
 
 We dispatch on \clj{:p} to distinguish the two cases of \clj{FSM}---for example on \clj{:F}
 we know the \clj{:file} is a file.
