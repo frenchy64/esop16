@@ -24,7 +24,7 @@ via propositional logic.
 and {\notprop{\Nil{}}{\x{}}}. 
 The other propositions are standard logical connectives: implications, conjunctions,
 disjunctions, and the trivial (\topprop{}) and impossible (\botprop{}) propositions
-(figure~\ref{main:figure:termsyntax}).
+(\figref{main:figure:termsyntax}).
 
 
 The particular part of the environment we reference in a
@@ -60,14 +60,14 @@ and
 \inpropenv{\propenv{}}{\notprop{\Nil{}}{\x{}}}
 to derive \inpropenv{\propenv{}}{\isprop{\Number}{\x{}}}.
 (The metavariable \propisnotmeta{} ranges over \t{} and \nottype{\t{}} (without variables).)
-We cover L-Update in more detail in section~\ref{sec:formalpaths}.
+We cover L-Update in more detail in \secref{sec:formalpaths}.
 
 Finally, this approach allows the type system to track
 programming idioms from 
 dynamic languages
 using implicit type-based reasoning based on the result of
 conditional tests.
-For instance, example~\ref{example:conditionalflow}
+For instance, \egref{example:conditionalflow}
 only utilises \clj{x} once
 the programmer is convinced it is safe to do so based whether
 \clj{(number? x)}
@@ -139,7 +139,7 @@ proposition environment $\propenv{}$, with
 and object \object{}. We write 
 {\judgementtwo{\propenv}{\hastype {\e{}} {\t{}}} if we are only interested in the type.
 
-Syntax is given in figure~\ref{main:figure:termsyntax}. Expressions include variables, values,
+Syntax is given in \figref{main:figure:termsyntax}. Expressions include variables, values,
 application, abstractions, conditionals and let expressions.
 All binding forms introduce fresh variables.
 Values include booleans, \nil{}, class literals, keywords, 
@@ -160,7 +160,7 @@ may refer to the function argument.
 They are latent because they are instantiated with the
 actual object of the argument in applications before they are used in the proposition environment.
 
-Figure~\ref{main:figure:typingrules} contains the core typing rules.
+\figref{main:figure:typingrules} contains the core typing rules.
 The key rule for reasoning about conditional control flow is
 T-If. 
 
@@ -176,12 +176,13 @@ which implies \thenprop{\prop{3}} is true.
 The else proposition is \orprop{\elseprop{\prop{2}}}{\elseprop{\prop{3}}} 
 similarly.
 The T-Local rule connects the type system to the proof system over type propositions
+via \inpropenv {\propenv{}} {\isprop {\t{}} {\x{}}}
 to derive a type for a variable.
 Using this rule, the type system can then appeal to L-Update to refine the type
 assigned to \x{}.
 
 We are now equipped to type check 
-example~\ref{example:conditionalflow}:
+\egref{example:conditionalflow}:
 $$
 \clj{(if (number? x) (inc x) 0)}
 $$
@@ -235,7 +236,7 @@ semantics of \ifliteral{}:
     \BIfFalse{}
 \end{mathpar}
 
-Subtyping (figure~\ref{main:figure:subtyping}) 
+Subtyping (\figref{main:figure:subtyping}) 
 is a reflexive and transitive relation with top type \Top. 
 Singleton types are instances of their respective classes---boolean singleton types
 are of type \Boolean{}, class literals are instances of \Class{} and keywords are
@@ -363,7 +364,7 @@ makes our insight interesting.
     {\TError}
 \end{mathpar}
 
-Recall example~\ref{example:doexception}.
+Recall \egref{example:doexception}.
 \begin{minted}{clojure}
 ...  (do (if (number? x) nil (throw (Exception.)))
          (inc x)) ...
@@ -432,12 +433,12 @@ We can now use \isprop{\Number}{\x{}} in the environment to check the second sub
 
 
 We now present \HMapliteral{} types in detail.
-Figure~\ref{main:figure:hmapsyntax} extends the syntax for terms and types.
+\figref{main:figure:hmapsyntax} extends the syntax for terms and types.
 The syntax 
 $$
 \clj{(HMap :mandatory p :absent-keys a :complete? b)}
 $$
-we introduced in section~\ref{sec:overview}
+we introduced in \secref{sec:overview}
 is now written \HMapgeneric{\mandatory{}}{\absent{}},
 where \completenessmeta{} is {\complete{}} if \clj{b} is \clj{true} and is {\partial{}} otherwise. 
 The \mandatory{} entry specifies a set of known present keyword entries and \absent{} tracks known absent keys.
@@ -453,7 +454,7 @@ restrict lookup and extension to keyword keys. The metavariable \mapval{}
 ranges over the runtime value of maps {\curlymapvaloverright{\k{}}{\v{}}},
 usually written {\curlymapvaloverrightnoarrow{\k{}}{\v{}}}.
 
-Subtyping for HMaps (figure~\ref{main:figure:hmapsyntax})
+Subtyping for HMaps (\figref{main:figure:hmapsyntax})
 designate \MapLiteral{} as a common supertype for all HMaps.
 S-HMap says that a HMap is a subtype of another HMap if they agree
 on \completenessmeta{}, agree on mandatory entries with subtyping
@@ -461,17 +462,17 @@ and at least cover the absent keys of the supertype.
 Complete maps are subtypes of partial maps
 as long as they agree on the mandatory entries of the partial map via subtyping (S-HMapP).
 
-Figure~\ref{main:figure:hmapsyntax} contains the typing rules. T-GetHMap models a lookup
+\figref{main:figure:hmapsyntax} contains the typing rules. T-GetHMap models a lookup
 that will certainly succeed, T-GetHMapAbsent a lookup that will certainly fail
 and T-GetHMapPartialDefault a lookup with unknown results.
 We only handle unions of HMaps in T-GetHMap, where every element in the union
 contains the key we are looking up, in particular to support operations like
-looking up \clj{:op} on a map of type \clj{Expr} (example~\ref{example:decleaf}).
+looking up \clj{:op} on a map of type \clj{Expr} (\egref{example:decleaf}).
 The object in each T-Get rule is now more complicated than in T-Local---the 
 next section discusses this in detail.
 T-Assoc extends a HMap with a mandatory entry.
 
-Figure~\ref{main:figure:hmapsyntax} contains the semantics for \getliteral{}
+\figref{main:figure:hmapsyntax} contains the semantics for \getliteral{}
 and \assocliteral{}.
 The B-Get rule evaluates first evaluates the map and the key, asserts
 the key must be present in the map and returns the associated key. If
@@ -494,9 +495,9 @@ We instead want to reason about HMap lookups.
 {\keype{\k{}}}, which represents the operation of looking up
 a key \k{}.
 We directly relate this to our typing rule T-GetHMap
-(figure~\ref{main:figure:hmapsyntax}) by
+(\figref{main:figure:hmapsyntax}) by
 checking the then branch of the first conditional test is checked in 
-an equivalent version of example~\ref{example:decleaf}.
+an equivalent version of \egref{example:decleaf}.
 \begin{minted}{clojure}
   (fn [m :- Expr]
     (if (= (get m :op) :if)
@@ -506,7 +507,7 @@ an equivalent version of example~\ref{example:decleaf}.
 
 We do not specifically support \equivliteral{} in our calculus, 
 but on keyword arguments it works identically to \clj{isa?} which we model
-in section~\ref{sec:isaformal}.
+in \secref{sec:isaformal}.
 Intuitively, if {\judgement{\propenv{}}{\hastype{\e{}}{\t{}}}{\filterset{\thenprop{\prop{}}}{\elseprop{\prop{}}}}{\object{}}}
 then \equivapp{\e{}}{\makekw{if}} has the proposition set 
 $$
@@ -547,9 +548,9 @@ $$
 \begin{mathpar}
 \constanttypefigure{}
 \end{mathpar}
-The full semantics are given in figure~\ref{main:figure:primitivesem}.
+The full semantics are given in \figref{main:figure:primitivesem}.
 The definition of \updateliteral{} supports various idioms relating to \classpe{}
-which we introduce in section~\ref{sec:isaformal}.
+which we introduce in \secref{sec:isaformal}.
 
 \subsection{Java Interoperability and Type Hints}
 
@@ -609,7 +610,7 @@ which we introduce in section~\ref{sec:isaformal}.
   \label{main:figure:javatyping}
 \end{figure}
 
-In section~\ref{sec:overviewjavainterop} we discussed the role of type hints
+In \secref{sec:overviewjavainterop} we discussed the role of type hints
 to help eliminate reflective calls.
 In this section, we introduce our model of Java and provide user-facing
 syntax corresponding to Clojure's Java interoperability forms and type hinted forms.
@@ -640,10 +641,10 @@ form to prevent ambiguity---\clj{(.fld e)} is now \fieldexp{\fld{}}{\e{}},
 and \clj{(.class es*)} is $\newexp{\class{}}{\overrightarrow{es}}$.
 The Java expressions come without typing rules because Typed Clojure
 only reasons about resolved reflection
-(as demonstrated in section~\ref{sec:overviewjavainterop}).
+(as demonstrated in \secref{sec:overviewjavainterop}).
 
 Now we model the compiler's reflection-resolution algorithm.
-Figure~\ref{main:figure:javatyping} gives the syntax for non-reflective Java calls.
+\figref{main:figure:javatyping} gives the syntax for non-reflective Java calls.
 The method ${\methodstaticexp {\classhint{1}}
                              {\overrightarrow {\classhint{i}}}
                              {\classhint{2}}
@@ -705,7 +706,7 @@ In rewriting
 the expression \fieldexp{\getx}{\x{}},
 {\Point{}} is inferred as the type hint of \x{}
 and \Number{} is the field type
-by \fieldtypeliteral{} (figure~\ref{main:figure:javatyping}).
+by \fieldtypeliteral{} (\figref{main:figure:javatyping}).
 Now we just plug in the new information into our new expression
 $$
 \fieldstaticexp{\Point}{\Number}{\getx}{\x{}}.
@@ -723,12 +724,12 @@ To continue our example, let us assume \propenv{} = {\isprop{\Point}{\x{}}}.
 T-FieldStatic checks \x{} under the non-nilable type {\Point}
 and returns the nilable type {\Union{\Nil}{\Number}}.
 
-The other rules T-MethodStatic and T-NewStatic work similarly (figure~\ref{main:figure:javatyping}), varying
+The other rules T-MethodStatic and T-NewStatic work similarly (\figref{main:figure:javatyping}), varying
 in the choice of nilability in the conversion function---method returns
 are nilable and constructor returns are non-nilable.
 
-The operational semantics B-Field, B-New and B-Method (figure~\ref{main:figure:javatyping}) simply evaluate their
-arguments and call the relevant JVM operation---section~\label{sec:metatheory}
+The operational semantics B-Field, B-New and B-Method (\figref{main:figure:javatyping}) simply evaluate their
+arguments and call the relevant JVM operation---\secref{sec:metatheory}
 states our exact assumptions about each.
 
 \subsection{Multimethod dispatch mechanism: \isaliteral}
@@ -736,20 +737,20 @@ states our exact assumptions about each.
 \label{sec:isaformal}
 
 We now consider the core dispatch mechanism for multimethods. 
-Recalling the examples in section~\ref{sec:multioverview},
+Recalling the examples in \secref{sec:multioverview},
 \isaliteral{} is
 a subclassing test for classes, otherwise an equality test---we do not model
 the semantics for vectors.
 
 The main interest for the typing rule is \isacompareliteral{} 
-(figure~\ref{main:figure:mmsyntax}).
+(\figref{main:figure:mmsyntax}).
 
 \begin{mathpar}
   \TIsA{}
 \end{mathpar}
 
 To demonstrate,
-\mintinline{clojure}{(isa? (class x) Keyword)}
+\isaapp{\appexp{\classconst{}}{\x{}}}{\Keyword}
 has the proposition set \isacompare{\s{}}{\path{\classpe{}}{\x{}}}{\Value{\Keyword}}{\filterset{\isprop{\Keyword}{\x{}}}{\notprop{\Keyword}{\x{}}}}.
 
 B-IsA models the semantics. \isaopsemliteral{} explicitly handles classes in the second case.
@@ -807,8 +808,8 @@ $$
 \end{figure}
 
 To ease presentation, we present \emph{immutable}
-multimethods (figure~\ref{main:figure:mmsyntax}). \defmethodliteral{} returns a new extended multimethod
-without changing the original multimethod. Example~\ref{example:rep} is now written
+multimethods (\figref{main:figure:mmsyntax}). \defmethodliteral{} returns a new extended multimethod
+without changing the original multimethod. \egref{example:rep} is now written
 \begin{minted}{clojure}
 (let [rep (defmulti [Any -> String] class)
       rep (defmethod rep Keyword [x] (str (name x)))
@@ -816,20 +817,20 @@ without changing the original multimethod. Example~\ref{example:rep} is now writ
   (rep :a)) ;=> "a"
 \end{minted}
 
-Multimethod semantics are in figure~\ref{main:figure:mmsyntax}.
+Multimethod semantics are in \figref{main:figure:mmsyntax}.
 B-DefMulti creates a multimethod with a dispatch function and an empty dispatch table.
 B-DefMethod returns a new multimethod with an extended dispatch table.
 B-BetaMulti invokes the dispatch function with the evaluated argument to get the dispatch value,
 which \getmethodliteral{} uses to choose the method to invoke.
 
-The typing rules (figure~\ref{main:figure:mmsyntax}) use the multimethod type {\MultiFntype{\s{}}{\t{}}}, 
+The typing rules (\figref{main:figure:mmsyntax}) use the multimethod type {\MultiFntype{\s{}}{\t{}}}, 
 where \s{} is the interface type for beta reduction, and \t{} is the type for
 the dispatch function. T-DefMulti uses the provided interface type and dispatch function
 to infer the multimethod type. T-DefMethod uses \isacompareliteral{} to infer the proposition
 that must be true if this method is being invoked. The example can be type checked without
 changes since we infer \isprop{\Number}{\x{}} and \isprop{\Keyword}{\x{}} for the respective
 method bodies. T-App handles beta reduction because multimethods are subtypes of functions
-(figure~\ref{main:figure:mmsyntax}).
+(\figref{main:figure:mmsyntax}).
 
 
 

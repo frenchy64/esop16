@@ -2,7 +2,7 @@
 
 % current situation 
 
-The popularity of dynamically-typed languages languages in software
+The popularity of dynamically-typed languages in software
 development, combined with a recognition that types often improve
 programmer productivity, software reliability, and performance, has
 led to the recent development of a wide variety of optional and
@@ -43,7 +43,7 @@ interoperability with existing Java code, allowing programmers to use
 existing Java libraries without leaving Clojure.
 %
 Since its initial release in 2007, Clojure has been widely adopted for
-``backend'' development in places where its support for paralleism,
+``backend'' development in places where its support for parallelism,
 functional programming, and Lisp-influenced abstraction is desired on
 the JVM. As a result, it now has an extensive base of existing untyped
 programs, whose developers can now benefit from Typed Clojure. As
@@ -81,13 +81,13 @@ In the remainder of this paper, we describe how Typed Clojure's
 central innovations, including Java interoperability, multimethods,
 and heterogeneously-typed immutable maps, enable this example and many
 others. We begin with an example-driven presentation of the main type
-system features in Section~\ref{sec:overview}. We then incrementatlly
+system features in \secref{sec:overview}. We then incrementally
 present a core calculus for Typed Clojure covering all of these
-features together in Section~\ref{sec:formal} and prove type
-soundness(section \ref{sec:sound}). We then discuss the full
+features together in \secref{sec:formal} and prove type
+soundness (\secref{sec:metatheory}). We then discuss the full
 implementation of Typed Clojure, dubbed \coretyped{}, which extends
 the formal model in many ways, and the experience gained from its use
-in Section~\ref{sec:exp}. Finally, we discuss related work and
+in \secref{sec:experience}. Finally, we discuss related work and
 conclude.
 
 %$$

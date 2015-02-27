@@ -146,6 +146,9 @@
 \newcommand\Instance[1]{(\ma{\Instanceliteral\ #1})}
 \newcommand\HVec[1]{[{#1}]}
 \newcommand\makekw[1]{\ma{\metafunctionfont{\mathbin{:}#1}}}
+\newcommand\secref[1]{Section~\ref{#1}}
+\newcommand\figref[1]{Figure~\ref{#1}}
+\newcommand\egref[1]{Example~\ref{#1}}
 
 % terms
 \newmeta\x{x}                   % not sure if \x is reserved...
@@ -198,6 +201,7 @@
 \newcommand\doexp[2]{\ma{(\doliteral{}\ #1\ #2)}}
 \newcommand\letexp[3]{\ma{(\letliteral{}\ [\ma{#1\ #2}]\ #3)}}
 \newcommand\appexp[2]{\ma{(#1\ #2)}}
+\newcommand\apptwoexp[3]{\ma{(#1\ #2\ #3)}}
 \newcommand\throwexp[1]{\ma{(\throwliteral{}\ #1)}}
 \newcommand\newexp[2]{\ma{(\newliteral{}\ #1\ #2)}}
 % deleted 2nd argument which is just the same as #3
