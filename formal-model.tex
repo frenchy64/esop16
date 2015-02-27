@@ -9,20 +9,22 @@ Our presentation will start with a review of
 occurrence typing~\cite{TF10}.
 Then for the rest of the section we incrementally add each
 novel feature of Typed Clojure to the formalism,
-interleaving presentation of typing rules, operational semantics
+interleaving presentation of syntax, typing rules, operational semantics
 and subtyping.
 
+%TODO EXPLAIN what is a proposition?
 The first insight about occurrence typing is that
-propositions can be used to capture type information about our programs,
-in particular by referencing components or subcomponents of the runtime environment
-and relating them to types.
+logical formulas
+can be used to represent type information about our programs
+by relating parts of the runtime environment to types.
+Occurrence typing uses propositional logic 
 \emph{Type Propositions} \prop{} make assertions like ``variable \clj{x} is of type \clj{Number}'' or
 ``variable \clj{x} is not \clj{nil}''---
 in our logical system we write these as
 {\isprop{\NumberFull}{\x{}}}
 and {\notprop{\Nil{}}{\x{}}}. 
-The other propositions are standard: the implication, conjunction,
-disjunction, trivial (\topprop{}) and impossible (\botprop{}) propositions
+The other propositions are standard logical connectives: implications, conjunctions,
+disjunctions, and the trivial (\topprop{}) and impossible (\botprop{}) propositions
 (figure~\ref{main:figure:termsyntax}).
 
 
