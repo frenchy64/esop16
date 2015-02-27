@@ -349,24 +349,27 @@ but can be configured globally for particular positions if needed.
 
 A multimethod in Clojure is a function with a \emph{dispatch
 function} and a \emph{dispatch table} of methods. Multimethods are created with {\clj{defmulti}}.
-\inputminted[firstline=5,lastline=7]{clojure}{code/demo/src/demo/rep.clj}
+\inputminted[firstline=5,lastline=6]{clojure}{code/demo/src/demo/rep.clj}
 The multimethod \clj{path} has type \clj{[Any -> (U nil String)]}, an initially empty \emph{dispatch table}
 and \emph{dispatch function} \clj{class}.
-There are currently no methods so \clj{path} will fail at runtime.
-\begin{minted}{clojure}
-  (path (File. "dir/a"));=> IllegalArgumentException
-\end{minted}
 
-We can use {\clj{defmethod}} to add a method to \clj{path}.
-\inputminted[firstline=8,lastline=8]{clojure}{code/demo/src/demo/rep.clj}
+We can use {\clj{defmethod}} to install a method to \clj{path}.
+\inputminted[firstline=7,lastline=7]{clojure}{code/demo/src/demo/rep.clj}
 Now the dispatch table maps
-the \emph{dispatch value} \clj{File} to the function
-\clj{(fn [^File x] (.getPath x))}. 
-The call 
+the \emph{dispatch value} \clj{String} to the function
+\clj{(fn [x] x)}. 
+We add another method
+which maps
+\clj{File} to the function
+\clj{(fn [^File x] (.getPath x))}
+in the dispatch table.
+\inputminted[firstline=8,lastline=8]{clojure}{code/demo/src/demo/rep.clj}
+
+After installing both methods, the call 
 $$
 \clj{(path (File. "dir/a"))}
 $$
-now dispatches to the \clj{File} method because
+dispatches to the second method we installed because
 $$
 \clj{(isa? (class "dir/a") String)}
 $$
@@ -384,12 +387,11 @@ check is returned.
   (isa? Keyword Object) ;=> true
 \end{minted}
 
-In the full definition for \clj{path} we add a method for \clj{nil}
-which uses the equality check provied by \clj{isa?}.
+We include the above sequence of definitions as example~\ref{example:rep}.
 
 \begin{Code}
 \begin{exmp}
-\inputminted[firstline=5,lastline=11]{clojure}{code/demo/src/demo/rep.clj}
+\inputminted[firstline=5,lastline=10]{clojure}{code/demo/src/demo/rep.clj}
 \label{example:rep}
 \end{exmp}
 \end{Code}

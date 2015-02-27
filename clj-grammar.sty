@@ -83,6 +83,8 @@
 % minus filters and object, implicitly tt | tt; empty
 \newcommand\ArrowTwo[3]{\ma{{\hastypesmall {#1} {#2}} \xrightarrow\ {#3}}}
 
+\newcommand\getparent{getParent}
+\newcommand\getx{getX}
 \newcommand\coretyped{\texttt{core.typed}\xspace}
 \newcommand\All[2]{(\ma{\Allliteral\ [#1]\ #2})}
 \newcommand\TFn[2]{(\ma{\TFnliteral\ [#1]\ #2})}
@@ -230,6 +232,7 @@
 \newmeta\pvoid{void}
 \newbfop\Void{Void}
 \newbfop\File{File}
+\newbfop\Point{Point}
 \newbfop\String{String}
 \newmeta\mth{mth}
 \newmeta\fld{fld}
@@ -707,9 +710,9 @@
 \newcommand\TFieldStatic[0]{
 \infer [T-FieldStatic]
 { \javatotc {\classhint{1}} {\s{}}
-             \\\\
+             \\
   \javatotcnil {\classhint{2}} {\t{}}
-  \\\\
+  \\
   \judgementtwo {\propenv{}} {\hastype {\e{}} {\s{}}}
            }
 { \judgement {\propenv{}} {\hastype {\fieldstaticexp {\classhint{1}} {\classhint{2}} {\fld{}} {\e{}}} {\t{}}}

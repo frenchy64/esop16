@@ -60,7 +60,7 @@ and
 \inpropenv{\propenv{}}{\notprop{\Nil{}}{\x{}}}
 to derive \inpropenv{\propenv{}}{\isprop{\Number}{\x{}}}.
 (The metavariable \propisnotmeta{} ranges over \t{} and \nottype{\t{}} (without variables).)
-We cover \updateliteral{} in section~\ref{sec:updateformalsection}.
+We cover L-Update in more detail in section~\ref{sec:formalpaths}.
 
 Finally, this approach allows the type system to track
 programming idioms from 
@@ -165,7 +165,7 @@ The key rule for reasoning about conditional control flow is
 T-If. 
 
 \begin{mathpar}
-\TIf{}
+  {\TIf}
 \end{mathpar}
 
 The propositions of the test \thenprop{\prop{1}} and \elseprop{\prop{1}}
@@ -486,7 +486,7 @@ applied right-to-left to a variable \x{}.
 to reason about selector operations on cons cells.
 We instead want to reason about HMap lookups.
 
-We introduce our first path element
+\paragraph{Key path element} We introduce our first path element
 {\keype{\k{}}}, which represents the operation of looking up
 a key \k{}.
 We directly relate this to our typing rule T-GetHMap
@@ -510,42 +510,27 @@ $$
 $$
 where substitution reduces to \topprop{} if \object{} = \emptyobject{}.
 
-By T-Abs, checking the body of the function we have the proposition environment \propenv{} = {\isprop{\Expr{}}{m}}.
-By T-Local we have
+We start with proposition environment \propenv{} = {\isprop{\Expr{}}{m}}.
+Since {\Expr{}} is a union of HMaps, each with the entry \makekw{op}, we can use T-GetHMap.
 $$
-\judgement{\propenv{}}{\hastype{m}{\Expr{}}}{\filterset{\notprop{\falsy{}}{\x{}}}{\isprop{\falsy{}}{\x{}}}}{m}
+\judgement{\propenv{}}{\hastype{\getexp{m}{\makekw{op}}}{\Keyword}}{\filterset{\topprop{}}{\topprop{}}}{\path{\keype{\makekw{op}}}{m}}
 $$
-and since {\Expr{}} is a union of HMaps with the entry \makekw{op}, we use T-GetHMap to derive
+Using our intuitive definition of \equivliteral{} above, we know
 $$
-\judgement{\propenv{}}{\hastype{\getexp{m}{\makekw{op}}}{\Keyword}}{\filterset{\topprop{}}{\topprop{}}}{\object{1}}
+\judgement{\propenv{}}{\hastype{\equivapp{\getexp{m}{\makekw{op}}}{\makekw{if}}}{\Boolean}}{\filterset{\isprop{\Value{\makekw{if}}}{\path{\keype{\makekw{op}}}{m}}}{\notprop{\Value{\makekw{if}}}{\path{\keype{\makekw{op}}}{m}}}}{\emptyobject{}}
 $$
-where \object{1} = {\path{\keype{\makekw{op}}}{m}}. Using our intuitive definition of \equivliteral{} above, we know
-$$
-\judgement{\propenv{}}{\hastype{\equivapp{\getexp{m}{\makekw{op}}}{\makekw{if}}}{\Boolean}}{\filterset{\isprop{\Value{\makekw{if}}}{\object{1}}}{\notprop{\Value{\makekw{if}}}{\object{1}}}}{\emptyobject{}}
-$$
-Now we check the then branch with our new assumption.
-$$
-\judgement{\propenvp{}}{\hastype{\curlymap{{\mapvalentrykwkeynoarrow{op}{\makekw{if}}}, ...}}{\Expr{}}}{...}{...}
-$$
-We are interested in what L-Update can derive in our new environment,
+Going down the then branch gives us the extended environment
 \propenvp{} = {\isprop{\Expr{}}{m}},{\isprop{\Value{\makekw{if}}}{\path{\keype{\makekw{op}}}{m}}}.
-
-With the premises
-\inpropenv{\propenvp{}}{\isprop{\Expr{}}{m}}
-and
-\inpropenv{\propenvp{}}{\isprop{\Value{\makekw{if}}}{\path{\keype{\makekw{op}}}{m}}}
-we derive
-$$
-\inpropenv{\propenvp{}}{\isprop{\update{\Expr{}}{\Value{\makekw{if}}}{\keype{\makekw{op}}}}{m}}
-$$
-which simplifies to 
+Using L-Update we can combine what we know about object $m$ and object
+{\path{\keype{\makekw{op}}}{m}}
+to derive
 $$
 \inpropenv{\propenvp{}}{\isprop{\HMapp{\mandatoryset{{\mandatoryentrykwnoarrow{op}{\makekw{if}}}, {\mandatoryentrykwnoarrow{test}{\Expr{}}},
                                        {\mandatoryentrykwnoarrow{then}{\Expr{}}},   {\mandatoryentrykwnoarrow{else}{\Expr{}}}}}
                                    {\emptyabsent{}}}{m}}
 $$
 
-Our second path element \classpe{} is used in the latent
+\paragraph{Class path element} Our second path element \classpe{} is used in the latent
 object of the constant \classconst{} function. Like Clojure's \clj{class}
 function \classconst{} returns the argument's class or \nil{}
 if passed \nil{}.
@@ -590,7 +575,6 @@ which we introduce in section~\ref{sec:isaformal}.
 \end{mathpar}
   \begin{mathpar}
     {\TNewStatic}
-    {\TFieldStatic}
 
     {\TMethodStatic}
 
@@ -645,16 +629,14 @@ overloading or Java Generics.
   \end{altgrammar}
   $$
 
-We extend the syntax with Java field lookups and calls to
+We extend the syntax with type hinted expressions, Java field lookups and calls to
 methods and constructors. We model the syntax after the `dot' special
 form to prevent ambiguity---\clj{(.fld e)} is now \fieldexp{\fld{}}{\e{}},
 \clj{(.mth e es*)} is $\methodexp{\mth{}}{\e{}}{\overrightarrow{es}}$
 and \clj{(.class es*)} is $\newexp{\class{}}{\overrightarrow{es}}$.
-These come without typing or evaluation rules---Typed Clojure 
-demands statically resolved Java interactions
-in typed code
+The Java expressions come without typing rules because Typed Clojure
+only reasons about resolved reflection
 (as demonstrated in section~\ref{sec:overviewjavainterop}).
-We add type hinted syntax for local variables and let-bindings.
 
 Now we model the compiler's reflection-resolution algorithm.
 Figure~\ref{main:figure:javatyping} gives the syntax for non-reflective Java calls.
@@ -670,7 +652,7 @@ calls the field on class {\classhint{1}} with Java signature
 ${\classhint{2}}\ \fld{};$.
 The constructor {\newstaticexp {\overrightarrow{\classhint{i}}} {\classhint{}} 
                                {\class{}} {\overrightarrow{\e{i}}}}
-calls the constructor
+calls the constructor with Java signature
 ${\classhint{}}\ ({\overrightarrow{\classhint{i}}});$.
 
 %\begin{figure}
@@ -692,64 +674,58 @@ ${\classhint{}}\ ({\overrightarrow{\classhint{i}}});$.
 
 
 To obtain non-reflective calls we define our rewrite relation
-$$
 \rewrite {\taenv{}} {\e{}} {\ep{}}
-$$
 which rewrites \e{} to a possibly-less reflective expression
 \ep{} with respect to type hint environment
 \taenv{} and Java class table \ct{}.
 
+For example,
+R-FieldElimRefl emits a non-reflective field if it can
+find a field matching the type hint inferred on \ep{}.
+  $$
+    \RFieldElimRefl{}
+  $$
+
 Type hint inference is modelled by
-$$
 \tajudgement {\taenv{}} {\hastype {\e{}} {\tatype{}}}
-$$
 which infers the (possibly-unknown) type hint \tatype{} of expression \e{} in environment \taenv{}.
 %$$
 %\TALetHint{}
 %$$
 
-To demonstrate we consider the expression 
+For demonstration purposes let us rewrite
+a simple field expression, with the assumptions that
+that we have a class \Point{} with a field \getx{} of Java type \Number
+and \intaenv {\taenv{}} {\x{}} {\Point{}}.
+In rewriting
+the expression \fieldexp{\getx}{\x{}},
+{\Point{}} is inferred as the type hint of \x{}
+and \Number{} is the field type
+by \fieldtypeliteral{} (figure~\ref{main:figure:javatyping}).
+Now we just plug in the new information into our new expression
 $$
-\fieldexp{getParent}{\hinted{\File}{\x{}}}.
-$$
-where 
-$$
-\ct = \{ \File \mapsto \{ \ctfieldsliteral \mapsto \{\ctfldentry{getMethod}{\String}\} \} \}
-$$
-
-R-FieldElimRefl eliminates a reflective field.
-  $$
-    \RFieldElimRefl{}
-  $$
-First the target is rewritten \rewrite {\taenv{}} {\hinted{\File}{\x{}}}{\hinted{\File}{\x{}}}
-then we infer the type hint on the new expression \tajudgement {\taenv{}} {\hastype {\hinted{\File}{\x{}}} {\File}}
-We call \fieldtypeliteral{} (figure~\ref{main:figure:javatyping})
-to determine the exact signature of the field:
-\fieldtype{\ct{}}{\File}{getParent}{\File}{\String}
-and return the non-reflective field 
-$$
-\fieldstaticexp{\File}{\String}{getParent}{\hinted{\File}{\x{}}}.
+\fieldstaticexp{\Point}{\Number}{\getx}{\x{}}.
 $$
 
-Now we present the typing rules (figure~\ref{main:figure:javatyping}).
-To briefly finish our example, let us assume \propenv{} = {\isprop{\File}{\x{}}},
-then
-T-FieldStatic converts the target Java type to a non-nilable
-type \javatotc {\File} {\File}} and checks the target against it 
-\judgement{\propenv{}}{\hastype{\x{}}{\File}}, and finally converts the return Java type 
-to a nilable type and \javatotc {\String} {\Union{\Nil{}}{\String}}
-to finish with 
-$$
-\judgementtwo{\propenv{}}{\hastype{\fieldstaticexp{\File}{\String}{getParent}{\hinted{\File}{\x{}}}}{\Union{\Nil{}}{\String}}}.
-$$
+Now we present the typing rules for resolved Java interoperability.
+T-FieldStatic checks a resolved field expression by ensuring the target has
+the correct static type, then returns a nilable type corresponding the Java type.
 
-The other rules T-MethodStatic and T-NewStatic work similarly, and vary
-primarily in the choice of nilability in the conversion function---method returns
+\begin{mathpar}
+    {\TFieldStatic}
+\end{mathpar}
+
+To continue our example, let us assume \propenv{} = {\isprop{\Point}{\x{}}}.
+T-FieldStatic checks \x{} under the non-nilable type {\Point}
+and returns the nilable type {\Union{\Nil}{\Number}}.
+
+The other rules T-MethodStatic and T-NewStatic work similarly (figure~\ref{main:figure:javatyping}), varying
+in the choice of nilability in the conversion function---method returns
 are nilable and constructor returns are non-nilable.
 
-The operational semantics B-Field, B-New and B-Method simply evaluate their
+The operational semantics B-Field, B-New and B-Method (figure~\ref{main:figure:javatyping}) simply evaluate their
 arguments and call the relevant JVM operation---section~\label{sec:metatheory}
-states our exact assumptions about each one.
+states our exact assumptions about each.
 
 \subsection{Multimethod dispatch mechanism: \isaliteral}
 

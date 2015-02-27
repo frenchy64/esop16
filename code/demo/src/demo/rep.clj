@@ -6,6 +6,5 @@
 (defmulti path class)
 (defmethod path String [x] x)
 (defmethod path File [^File x] (.getPath x))
-(defmethod path nil [x] nil)
 
 (path "dir/a") ;=> "a"
