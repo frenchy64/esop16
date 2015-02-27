@@ -26,7 +26,7 @@ disjunction, trivial (\topprop{}) and impossible (\botprop{}) propositions
 (figure~\ref{main:figure:termsyntax}).
 
 
-The particular part of the environment we reference in a positive or negative
+The particular part of the environment we reference in a
 type proposition is called the \emph{object}.
 Every expression has an object that is either \emph{empty}, written \emptyobject{}, 
 which says 
@@ -354,8 +354,8 @@ makes our insight interesting.
 
 Recall example~\ref{example:doexception}.
 \begin{minted}{clojure}
-      (do (if (number? x) nil (throw (Exception.)))
-          (inc x))
+...  (do (if (number? x) nil (throw (Exception.)))
+         (inc x)) ...
 \end{minted}
 
 As before, checking \appexp{\numberhuh{}}{\x{}} allows us to use the proposition \isprop{\Number}{\x{}}

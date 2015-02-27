@@ -6,8 +6,8 @@
 (ann parent [(U nil File) -> (U nil Str)])
 (defn parent [^File f]
   (if f (.getParent f) nil))
-;; indented
-  (fn [^File f :- File] (.getParent f))
+
+(fn [^File f :- File] (.getParent f))
 
 (fn [^File f :- File] :- (U nil Str)
   (.getParent f))

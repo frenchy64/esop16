@@ -23,3 +23,9 @@
                   :left  {:op :const, :val 2} 
                   :right {:op :const, :val 3}}
            :else {:op :const, :val 4}})
+;=> {:op :if, 
+;    :test {:op :const, :val 2}, 
+;    :then {:op :do, 
+;           :left {:op :const, :val 3}, 
+;           :right {:op :const, :val 4}}, 
+;    :else {:op :const, :val 5}}

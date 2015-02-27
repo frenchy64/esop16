@@ -9,9 +9,9 @@
 
 (ann maybe-parent [FSM -> (U nil Str)])
 (defmulti maybe-parent :p)
-(defmethod maybe-parent :F [{:keys [^File file]}]
-  (if file (.getParent file) nil))
-(defmethod maybe-parent :S [{:keys [^String str]}]
+(defmethod maybe-parent :F [{file :file :as m}]
+  (if (:file m) (.getParent ^File file) nil))
+(defmethod maybe-parent :S [{^String str :str}]
   (do (if str nil (throw (Exception.)))
       (.getParent (File. str))))
 

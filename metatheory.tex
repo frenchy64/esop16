@@ -1,8 +1,9 @@
 \section{Metatheory}
 \label{sec:metatheory}
 
-Our proof for type soundness is similar to~\cite{TF10}. We add
-errors and prove well-typed programs can never go wrong.
+Our proof for type soundness is similar to~\citet{TF10}. We add
+errors and \wrong{} value and prove well-typed programs
+rule out wrong programs.
 
 We make our assumptions about Java explicit. We concede that
 method and constructor calls may diverge or error, but we assume they can
@@ -16,7 +17,7 @@ never go wrong.
 
 We use an extra lemma to support our main soundness lemma. Consistency
 ensures that occurrence typing does not claim the outer 
-\mintinline{clojure}{x} is a keyword. 
+\x{} is a keyword. 
 
 \begin{minted}{clojure}
 (let [x 1]
@@ -35,7 +36,7 @@ The metavariable \definedreduction{} ranges over \v{}, \errorvalv{} and \wrong{}
   {\soundnesslemmahypothesis}
   \begin{proof}
     By induction on the derivation of the typing judgement. 
-    (Full proof given as theorem~\ref{appendix:lemma:soundness}).
+    (Full proof given as lemma~\ref{appendix:lemma:soundness}).
   \end{proof}
 \end{lemma}
 
