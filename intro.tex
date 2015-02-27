@@ -72,10 +72,10 @@ which means that it takes a hash table whose \clj{:file} key maps to either
 as an accessor to get the file, checks that it isn't \clj{nil}, and
 then obtains the parent by making a Java method call.
 %
-The annotation \clj{^File} is a type hint, which instructs the Clojure
+The annotation \clj{^File f} is a type hint on \clj{f}, which instructs the Clojure
 compiler (running prior to Typed Clojure typechecking) to statically
-resolve method calls to the relevant object using the Java \clj{File}
-class, rather than using reflective method calls at runtime.
+resolve the \clj{getParent} 
+call to \clj{File}'s \clj{getParent} method with signature \java{String getParent();}, rather than using reflective method calls at runtime.
 
 In the remainder of this paper, we describe how Typed Clojure's
 central innovations, including Java interoperability, multimethods,

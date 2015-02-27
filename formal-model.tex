@@ -16,11 +16,10 @@ and subtyping.
 The first insight about occurrence typing is that
 logical formulas
 can be used to represent type information about our programs
-by relating parts of the runtime environment to types.
-Occurrence typing uses propositional logic 
+by relating parts of the runtime environment to types
+via propositional logic.
 \emph{Type Propositions} \prop{} make assertions like ``variable \clj{x} is of type \clj{Number}'' or
-``variable \clj{x} is not \clj{nil}''---
-in our logical system we write these as
+``variable \clj{x} is not \clj{nil}''---in our logical system we write these as
 {\isprop{\NumberFull}{\x{}}}
 and {\notprop{\Nil{}}{\x{}}}. 
 The other propositions are standard logical connectives: implications, conjunctions,
@@ -42,7 +41,7 @@ Type propositions can only reference non-empty objects.
 The second insight is that we can replace the traditional 
 representation of a
 type environment of a map from variables to types
-with a sequence of propositions, written \propenv{}. 
+with a set of propositions, written \propenv{}. 
 Instead of mapping \clj{x} to
 the type \clj{Number}, we use the proposition {\isprop{\NumberFull}{\x{}}}.
 
@@ -50,7 +49,8 @@ Given a set of propositions, we can use logical reasoning to derive
 new information about our programs
 with the judgement \inpropenv{\propenv{}}{\prop{}}.
 In addition to the standard rules for the logical connectives, the key
-rule is L-Update, which combines multiple propositions about the same variable.
+rule is L-Update, which combines multiple propositions about the same variable,
+allowing us to refine its type.
 $$
   {\LUpdate}
 $$
@@ -162,7 +162,13 @@ actual object of the argument in applications before they are used in the propos
 
 Figure~\ref{main:figure:typingrules} contains the core typing rules.
 The key rule for reasoning about conditional control flow is
-T-If. The propositions of the test \thenprop{\prop{1}} and \elseprop{\prop{1}}
+T-If. 
+
+\begin{mathpar}
+\TIf{}
+\end{mathpar}
+
+The propositions of the test \thenprop{\prop{1}} and \elseprop{\prop{1}}
 are used as assumptions in the then and else branch respectively.
 If the result of the \ifliteral{} is true, then the value either
 came from \e{2}, in which case \thenprop{\prop{2}} is true, or from \e{3},
@@ -240,31 +246,28 @@ Subtyping for untagged unions is standard.
 \begin{figure*}
   \footnotesize
   \begin{mathpar}
-    {\TLocal}
-
-    {\TTrue}
-
-    {\TFalse}
-
-    {\TNil}
-
     %{\TDo}
     %{\TClass}
-    {\TIf}
-    {\TLet}
+    %{\TIf}
+    {\TAbs}
+    {\TSubsume}
     \begin{array}{c}
       {\TConst}\\\\
       {\TKw}\\\\
       {\TClass}
     \end{array}
+    \begin{array}{c}
+      {\TTrue}\\\\
+      {\TFalse}\\\\
+      {\TNil}
+    \end{array}
+
+    {\TLet}
+    {\TLocal}
 
     {\TApp}
-
-    {\TAbs}
-
     %{\TError}
 
-    {\TSubsume}
   \end{mathpar}
   \caption{Typing rules}
   \label{main:figure:typingrules}

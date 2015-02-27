@@ -35,51 +35,51 @@
 
   \begin{proof}
     By structural induction on \inpropenv{\propenv{}}{\prop{}}.
-    \begin{itemize}
-      \item[]
-        \begin{case}[L-True]
-
-          Holds by M-Top.
-        \end{case}
-      \item[]
-        \begin{case}[L-False]
-          {\inpropenv{\propenv{}}{\botprop{}}}
-
-          ??? TODO
-        \end{case}
-      \item[]
-        \begin{case}[L-AndI]
-          \inpropenv{\propenv{}}{\andprop{\prop{1}}{\prop{2}}}, \satisfies{\openv{}}{\propenv{}}
-
-          By inversion on the proof system we know \inpropenv{\propenv{}}{\prop{1}}
-          and
-          \inpropenv{\propenv{}}{\prop{2}}.
-
-          By the induction hypothesis we know \satisfies{\openv{}}{\prop{1}}
-          and
-          \satisfies{\openv{}}{\prop{2}}.
-
-          By M-And we know \satisfies{\openv{}}{\andprop{\prop{1}}{\prop{2}}}
-          and we are done.
-        \end{case}
-      \item[]
-        \begin{case}[L-AndE]
-          \inpropenv{\propenv{},{\andprop{\prop{1}}{\prop{2}}}}{\prop{}}, \satisfies{\openv{}}{\propenv{},{\andprop{\prop{1}}{\prop{2}}}}
-
-
-          By inversion on the proof system we know  either
-          \inpropenv{\propenv{},{\prop{1}}}{\prop{}}
-          or
-          \inpropenv{\propenv{},{\prop{2}}}{\prop{}}.
-
-          %TODO
-         % By the induction hypothesis we know 
-         % either
-         % \satisfies{\openv{}}{\prop{1}}
-         % and
-         % \satisfies{\openv{}}{\prop{2}}.
-        \end{case}
-    \end{itemize}
+%    \begin{itemize}
+%      \item[]
+%        \begin{case}[L-True]
+%
+%          Holds by M-Top.
+%        \end{case}
+%      \item[]
+%        \begin{case}[L-False]
+%          {\inpropenv{\propenv{}}{\botprop{}}}
+%
+%          ??? TODO
+%        \end{case}
+%      \item[]
+%        \begin{case}[L-AndI]
+%          \inpropenv{\propenv{}}{\andprop{\prop{1}}{\prop{2}}}, \satisfies{\openv{}}{\propenv{}}
+%
+%          By inversion on the proof system we know \inpropenv{\propenv{}}{\prop{1}}
+%          and
+%          \inpropenv{\propenv{}}{\prop{2}}.
+%
+%          By the induction hypothesis we know \satisfies{\openv{}}{\prop{1}}
+%          and
+%          \satisfies{\openv{}}{\prop{2}}.
+%
+%          By M-And we know \satisfies{\openv{}}{\andprop{\prop{1}}{\prop{2}}}
+%          and we are done.
+%        \end{case}
+%      \item[]
+%        \begin{case}[L-AndE]
+%          \inpropenv{\propenv{},{\andprop{\prop{1}}{\prop{2}}}}{\prop{}}, \satisfies{\openv{}}{\propenv{},{\andprop{\prop{1}}{\prop{2}}}}
+%
+%
+%          By inversion on the proof system we know  either
+%          \inpropenv{\propenv{},{\prop{1}}}{\prop{}}
+%          or
+%          \inpropenv{\propenv{},{\prop{2}}}{\prop{}}.
+%
+%          %TODO
+%         % By the induction hypothesis we know 
+%         % either
+%         % \satisfies{\openv{}}{\prop{1}}
+%         % and
+%         % \satisfies{\openv{}}{\prop{2}}.
+%        \end{case}
+%    \end{itemize}
   \end{proof}
 \end{lemma}
 

@@ -205,6 +205,7 @@ HMap types model the most common usages of keyword maps.
 
 Here \clj{defalias} defines a type abbreviation called \clj{Expr}
 that describes the structure of a recursively-defined AST as a union of HMaps.
+A quoted keyword in a type such as \clj{':if} is a singleton type that contains just the keyword.
 \clj{an-exp} is a function verified to return an \clj{Expr}.
 
 \paragraph{HMaps in Practice} The next example is extracted from a production system at CircleCI
@@ -212,6 +213,7 @@ that describes the structure of a recursively-defined AST as a union of HMaps.
 
 \begin{exmp}
 \inputminted[firstline=10,lastline=22]{clojure}{code/demo/src/demo/key.clj}
+\label{example:circleci}
 \end{exmp}
 
 \clj{enc-keypair} takes an unencrypted keypair and returns an encrypted keypair by
@@ -250,8 +252,8 @@ Expr's from the type of \clj{m} (because their respective \clj{:op} entries disa
 and we are left with an \clj{:if} Expr.
 On line 8,
 we instead strike out the \clj{:if} Expr since it contradicts \clj{(= (:op m) :if)} being false. 
-Line 9 we know \clj{m}
-we remove \clj{:const} because it contradicts \clj{(= (:op m) :do)} being true,
+Line 9 know we can
+remove the \clj{:const} Expr from the type of \clj{m} because it contradicts \clj{(= (:op m) :do)} being true,
 and we know \clj{m} is a \clj{:do} Expr.
 Line 12 we strike out \clj{:do} because \clj{(= (:op m) :do)} is false,
 so we are left with \clj{m} being a \clj{:const} Expr.
@@ -283,10 +285,12 @@ to statically resolve
 the method call to the
 \mintinline{java}{public String getParent()}
 method of \clj{java.io.File}.
-The method is unambiguous but type checking fails---Typed Clojure
+The call to \clj{getParent} is unambiguous at runtime but type 
+checking fails---Typed Clojure
 considers \clj{f} to be of type \clj{Any}, which is unsafe 
 to use as the target of even a resolved method.
-We annotate the function parameter with type \clj{File}.
+If instead we annotate the function parameter with type \clj{File},
+we get a static type error.
 
 \begin{minted}{clj}
   (fn [f :- File] (.getParent f)) ;; type error
@@ -300,11 +304,16 @@ expression.
 \inputminted[firstline=10,lastline=10]{clojure}{code/demo/src/demo/parent3.clj}
 \end{exmp}
 
+% type hints give no guarantees
+% TODO
+
 The type hinting system and Typed Clojure's static type checking
 are separate, the latter predating the former by several years.
-The interaction between them is often not as obvious, for example type hints
-do not need to take \clj{nil} into account, while Typed Clojure guarantees
+The interaction between them is often not as obvious, for example Typed Clojure
+has an explicit type for \clj{null}
 null-pointer exceptions are impossible.
+
+do not need to take \clj{nil} into account, 
 
 \begin{exmp}
 \inputminted[firstline=18,lastline=19]{clojure}{code/demo/src/demo/parent3.clj}
@@ -316,14 +325,15 @@ called \clj{nil}. In Java \java{null} is implicitly a member of any reference ty
 This means the Java static type \java{String} is equivalent to
 \clj{(U nil String)} in Typed Clojure.
 
-To guarantee \java{null} is never accidentally leaked into a Typed Clojure program,
-we must assume methods are nullable.
+Reference types in Java are nullable, so to guarantee a method call does not
+leak \java{null} into a Typed Clojure program we
+must assume methods can return \clj{nil}.
 
 \begin{exmp}
 \inputminted[firstline=6,lastline=8]{clojure}{code/demo/src/demo/parent3.clj}
 \end{exmp}
 
-In contrast, JVM invariants guarantee that  constructor cannot return \java{null},
+In contrast, JVM invariants guarantee that  constructors cannot return \java{null},
 so we are safe to assume constructors are non-nullable.
 
 \begin{exmp}
@@ -338,7 +348,7 @@ but can be configured globally for particular positions if needed.
 \label{sec:multioverview}
 
 A multimethod in Clojure is a function with a \emph{dispatch
-function} and a \emph{dispath table} of methods. Multimethods are created with {\clj{defmulti}}.
+function} and a \emph{dispatch table} of methods. Multimethods are created with {\clj{defmulti}}.
 \inputminted[firstline=5,lastline=7]{clojure}{code/demo/src/demo/rep.clj}
 The multimethod \clj{path} has type \clj{[Any -> (U nil String)]}, an initially empty \emph{dispatch table}
 and \emph{dispatch function} \clj{class}.
@@ -395,12 +405,10 @@ of our HMap AST \clj{Expr}.
 Since keywords are functions that look themselves up in their argument, we simply
 use \clj{:op} as the dispatch function.
 
-\begin{figure}
 \begin{exmp}
 \inputminted[firstline=5,lastline=18]{clojure}{code/demo/src/demo/eg5.clj}
 \label{example:incmap}
 \end{exmp}
-\end{figure}
 
 \clj{inc-map} is like example~\ref{example:decmap} except the nodes are incremented.
 The reasoning is similar, except we only consider one branch (the current method) by
