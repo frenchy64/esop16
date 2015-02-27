@@ -38,6 +38,7 @@
     (is (check-ns 'demo.hmap)))
   (is (check-ns 'demo.hmap-path))
   (is (check-ns 'demo.key))
+  (is (check-ns 'demo.key2))
   (is (check-ns 'demo.atom))
   (is (check-ns 'demo.rep))
   )

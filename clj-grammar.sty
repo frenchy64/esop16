@@ -36,6 +36,8 @@
 \newmeta\HintedExp{H}
 \newmeta\HashMapExp{G}
 
+\newcommand\lambdatc{\ma{\lambda_{TC}}}
+
 % we write a macro for every bit of abstract syntax.  That way they
 % will all look the same!
 
@@ -1307,9 +1309,7 @@ $$
 }
 
 
-% subtyping syntax
-\newcommand\standardsubtyping[0]{
-
+\newcommand\objectsub[0]{
   \begin{array}{l}
 \infer [SO-Refl]
 {}
@@ -1319,6 +1319,10 @@ $$
 {}
 { \issubobjin {} {\object{}} {\emptyobject{}}}
   \end{array}
+}
+
+% subtyping syntax
+\newcommand\standardsubtyping[0]{
 
   \begin{array}{l}
 \infer [S-Refl]
@@ -2092,7 +2096,7 @@ $$
 
 % constants syntax
 \newcommand\constantssyntax[0]{
-  {\const{}}           &::=& \classconst %\alt \throwconst
+  {\const{}}           &::=& \classconst \alt \inc \alt \numberhuh
 
                 &\mbox{Constants}
               }

@@ -10,7 +10,6 @@
 (defalias RawKeyPair
   (HMap :mandatory {:public-key RawKey,
                     :private-key RawKey}))
-
 (defalias EncKeyPair
   (HMap :mandatory {:public-key RawKey,
                     :enc-private-key EncKey},

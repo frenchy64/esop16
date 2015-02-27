@@ -1,11 +1,11 @@
 (ns demo.rep
-  (:import (clojure.lang Keyword))
-  (:require [clojure.core.typed :refer [ann Str Any]]))
+  (:import (java.io File))
+  (:require [clojure.core.typed :refer [ann Any U]]))
 
-(ann rep [Any -> Str])
-(defmulti rep class)
-(defmethod rep Keyword [x] (str (name x)))
-(defmethod rep Number [x] (str (inc x)))
+(ann path [Any -> (U nil String)])
+(defmulti path class)
+(defmethod path String [x] x)
+(defmethod path File [^File x] (.getPath x))
+(defmethod path nil [x] "")
 
-(rep :a) ;=> "a"
-(rep 1)  ;=> "2"
+(path "dir/a") ;=> "a"

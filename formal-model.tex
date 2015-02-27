@@ -1,22 +1,22 @@
-\section{A Formal Model of Typed Clojure}
+\section{A Formal Model of \lambdatc{}}
 
 \label{sec:formal}
 
 Now that we have demonstrated the core features Typed Clojure
-provides, we present a model that links them all together.
+provides, we link them together in a formal model called
+\lambdatc{}.
 Our presentation will start with a review of
 occurrence typing~\cite{TF10}.
 Then for the rest of the section we incrementally add each
 novel feature of Typed Clojure to the formalism,
 interleaving presentation of typing rules, operational semantics
-and
-subtyping.
+and subtyping.
 
 The first insight about occurrence typing is that
 propositions can be used to capture type information about our programs,
 in particular by referencing components or subcomponents of the runtime environment
 and relating them to types.
-\emph{Type Propositions} make assertions like ``variable \clj{x} is of type \clj{Number}'' or
+\emph{Type Propositions} \prop{} make assertions like ``variable \clj{x} is of type \clj{Number}'' or
 ``variable \clj{x} is not \clj{nil}''---
 in our logical system we write these as
 {\isprop{\NumberFull}{\x{}}}
@@ -25,10 +25,13 @@ The other propositions are standard: the implication, conjunction,
 disjunction, trivial (\topprop{}) and impossible (\botprop{}) propositions
 (figure~\ref{main:figure:termsyntax}).
 
+
 The particular part of the environment we reference in a positive or negative
 type proposition is called the \emph{object}.
-Every expression has an object that is either \emph{empty}, written \emptyobject{}, which says there is no
-known way to relate this expression to the current environment, or a 
+Every expression has an object that is either \emph{empty}, written \emptyobject{}, 
+which says 
+this expression is not known to evaluate to a particular component
+  of the current environment, or a 
 variable with some \emph{path}, written \path{\pathelem{}}{\x{}},
 that exactly indicates how the value of this
 expression can be derived from the current environment.
@@ -41,10 +44,11 @@ with a sequence of propositions, written \propenv{}.
 Instead of mapping \clj{x} to
 the type \clj{Number}, we use the proposition {\isprop{\NumberFull}{\x{}}}.
 
-The third insight is that we
-can use a logic system to learn new information about our programs.
-The key component of the logic system L-Update uses type propositions
-to derive new propositions.
+Given a set of propositions, we can use logical reasoning to derive
+new information about our programs
+with the judgement \inpropenv{\propenv{}}{\prop{}}.
+In addition to the standard rules for the logical connectives, the key
+rule is L-Update, which combines multiple propositions about the same variable.
 $$
   {\LUpdate}
 $$
@@ -56,8 +60,9 @@ to derive \inpropenv{\propenv{}}{\isprop{\Number}{\x{}}}.
 (The metavariable \propisnotmeta{} ranges over \t{} and \nottype{\t{}} (without variables).)
 We cover \updateliteral{} in section~\ref{sec:updateformalsection}.
 
-The fourth insight is a consequence of
-programmers in dynamic languages
+Finally, this approach allows the type system to track
+programming idioms from 
+dynamic languages
 using implicit type-based reasoning based on the result of
 conditional tests.
 For instance, example~\ref{example:conditionalflow}
@@ -65,8 +70,9 @@ only utilises \clj{x} once
 the programmer is convinced it is safe to do so based whether
 \clj{(number? x)}
 is 
-a true or false value. The takeaway is that every expression has
-two extra pieces of information relevant to the logic system: a `then' proposition
+true or false. 
+To express this in the type system, every expression 
+is described by two propositions: a `then' proposition
 for when it reduces to a true value, and an `else' proposition
 when it reduces to a false value---for \clj{(number? x)}
 the then proposition is {\isprop{\NumberFull}{\x{}}} and 
@@ -86,6 +92,7 @@ $$
                       \alt {\letexp {\x{}} {\e{}} {\e{}}}\\
                       %\alt {\errorvalv{}}
   \v{} &::=&          \singletonmeta{}
+                      \alt {\num{}}
                       \alt {\const{}}
                       \alt {\closure {\openv{}} {\abs {\x{}} {\t{}} {\e{}}}}
                 &\mbox{Values} \\
@@ -127,85 +134,88 @@ $$
 says expression \e{} is of type \t{} in the 
 proposition environment $\propenv{}$, with 
 `then' proposition {\thenprop {\prop{}}}, `else' proposition {\elseprop {\prop{}}}
-and object \object{}. We sometimes write 
+and object \object{}. We write 
 {\judgementtwo{\propenv}{\hastype {\e{}} {\t{}}} if we are only interested in the type.
 
 Syntax is given in figure~\ref{main:figure:termsyntax}. Expressions include variables, values,
 application, abstractions, conditionals and let expressions.
 All binding forms introduce fresh variables.
 Values include booleans, \nil{}, class literals, keywords, 
+numbers,
 constants and closures. 
 Value environments map local bindings to values.
-Closures contain the value environment \openv{} when the function was created,
-which is used during beta reduction to ensure the abstraction respects lexical scoping.
-\false{} and \nil{} are logically false, otherwise values are true.
 
 Types include the top type, \emph{untagged} unions, functions, singleton types
 and class instances. 
-We write the class literal \Booleanlong{} as \Boolean{} and \Keywordlong{} as \Keyword{}.
+We abbreviate \Booleanlong{} as \Boolean{}, \Keywordlong{} as \Keyword{}
+and \NumberFull{} and \Number{}.
 The type \Value{\Keyword} is inhabited by the class literal \Keyword{} and \clj{:a} is of type \Keyword{}.
 We abbreviate \EmptyUnion{} as \Bot{}, {\ValueNil} as \Nil{}, 
 {\ValueTrue} as \True and {\ValueFalse} as {\False}.
 Function types contain \emph{latent}(terminology from~\cite{Lucassen88polymorphiceffect}) propositions and object, which, along with the return type,
-may refer to the parameter identifier. They are latent because they are instantiated with the
+may refer to the function argument.
+%Latent means they are relevant when the function is applied rather than evaluated.
+They are latent because they are instantiated with the
 actual object of the argument in applications before they are used in the proposition environment.
 
-Figure~\ref{main:figure:typingrules} contains the standard typing rules.
-The first interesting rule is T-If. The propositions of the test \thenprop{\prop{1}} and \elseprop{\prop{1}}
+Figure~\ref{main:figure:typingrules} contains the core typing rules.
+The key rule for reasoning about conditional control flow is
+T-If. The propositions of the test \thenprop{\prop{1}} and \elseprop{\prop{1}}
 are used as assumptions in the then and else branch respectively.
 If the result of the \ifliteral{} is true, then the value either
 came from \e{2}, in which case \thenprop{\prop{2}} is true, or from \e{3},
 which implies \thenprop{\prop{3}} is true. 
-The else proposition is \orprop{\elseprop{\prop{2}}}{\elseprop{\prop{3}}} for
-similar reasons, but instead for when each branch is a false value.
-The second interesting rule is T-Local, where we actually utilise the logic system
-to extract a type for a local binding. This rule is why L-Update is crucial---T-Local
-looks for positive type propositions in \propenv{} with the same object as the binding.
-By subsumption we can choose the most specific positive proposition and thus
-T-Local can return the most specific type inferred by the logic system.
+The else proposition is \orprop{\elseprop{\prop{2}}}{\elseprop{\prop{3}}} 
+similarly.
+The T-Local rule connects the type system to the proof system over type propositions
+to derive a type for a variable.
+Using this rule, the type system can then appeal to L-Update to refine the type
+assigned to \x{}.
 
-We can now demonstrate how to check example~\ref{example:conditionalflow}.
-We abbreviate \NumberFull{} as \Number{} and \Booleanlong{} as \Boolean{}.
-The test is checked with T-App, 
+We are now equipped to type check 
+example~\ref{example:conditionalflow}.
+The test expression uses T-App, 
 $$
 \judgement{\isprop{\UnionNilNum{}}{\x{}}}{\hastype{\appexp{\numberhuh{}}{\x{}}}{\Boolean}}{\filterset{\isprop{\Number}{\x{}}}{\notprop{\Number}{\x{}}}}{\emptyobject{}}
 $$
-\numberhuh{} has type
-$$
+since \numberhuh{} has type
 {\ArrowOne{\x{}}{\Top}{\Boolean}
         {\filterset{\isprop{\Number}{\x{}}}{\notprop{\Number}{\x{}}}}{\emptyobject{}}}
-$$
-By T-Local.
-$$
-\judgement{\isprop{\Number}{\x{}}}{\hastype{\x{}}{\Number{}}}{\filterset{\notprop{\falsy{}}{\x{}}}{\isprop{\falsy{}}{\x{}}}}{\x{}}
-$$
-Now we check both branches.
-$$
-\judgement{\isprop{\Number}{\x{}}}{\hastype{\appexp{\inc{}}{\x{}}}{\Number{}}}{\filterset{\topprop{}}{\topprop{}}}{\emptyobject{}}
-$$
-$$
-\judgement{\notprop{\Number}{\x{}}}{\hastype{\zeroliteral{}}{\Number}}{\filterset{\topprop{}}{\topprop{}}}{\emptyobject{}}
-$$
-\inc{} has type
-$$
-{\ArrowOne{\x{}}{\Number}{\Number}
-        {\filterset{\topprop{}}{\topprop{}}}{\emptyobject{}}}
-$$
-We can now check the conditional with T-If.
-$$
-\judgement{\isprop{\Number}{\x{}}}{\hastype{\ifexp{\appexp{\numberhuh{}}{\x{}}}{\appexp{\inc{}}{\x{}}}{\zeroliteral{}}}{\Number}}{\filterset{\orprop{\isprop{\Number}{\x{}}}{\topprop{}}}{\orprop{\notprop{\Number}{\x{}}}{\topprop{}}}}{\emptyobject{}}
-$$
-Finally the function can be checked with T-Abs
-$$
-\judgement{}{\hastype{\abs{\x{}}{\UnionNilNum}{\ ...}}
-                                             {\ArrowOne{\x{}}{\UnionNilNum}{\Number}
-        {\filterset{\orprop{\isprop{\Number}{\x{}}}{\topprop{}}}{\orprop{\notprop{\Number}{\x{}}}{\topprop{}}}}{\emptyobject{}}}}
-  {\filterset{\topprop{}}{\botprop{}}}{\emptyobject{}}
-$$
+      and \x{} has object \x{}.
 
-The operational semantics for our language standard defined in big-step style, 
-The notable different is \nil{} is a false value, which require changes 
-to the semantics of \ifliteral{}:
+Now we check both branches using the extended proposition environment as specified by T-If.
+$$
+\judgement{{\isprop{\UnionNilNum}{\x{}}},\isprop{\Number}{\x{}}}{\hastype{\appexp{\inc{}}{\x{}}}{\Number{}}}{\filterset{\topprop{}}{\topprop{}}}{\emptyobject{}}
+$$
+$$
+\judgement{{\isprop{\UnionNilNum}{\x{}}},\notprop{\Number}{\x{}}}{\hastype{\zeroliteral{}}{\Number}}{\filterset{\topprop{}}{\topprop{}}}{\emptyobject{}}
+$$
+%\inc{} has type
+%$$
+%{\ArrowOne{\x{}}{\Number}{\Number}
+%        {\filterset{\topprop{}}{\topprop{}}}{\emptyobject{}}}
+%$$
+%We can now check the conditional with T-If.
+%$$
+%\judgement{\isprop{\Number}{\x{}}}{\hastype{\ifexp{\appexp{\numberhuh{}}{\x{}}}{\appexp{\inc{}}{\x{}}}{\zeroliteral{}}}{\Number}}{\filterset{\orprop{\isprop{\Number}{\x{}}}{\topprop{}}}{\orprop{\notprop{\Number}{\x{}}}{\topprop{}}}}{\emptyobject{}}
+%$$
+%Finally the function can be checked with T-Abs
+%$$
+%\judgement{}{\hastype{\abs{\x{}}{\UnionNilNum}{\ ...}}
+%                                             {\ArrowOne{\x{}}{\UnionNilNum}{\Number}
+%        {\filterset{\orprop{\isprop{\Number}{\x{}}}{\topprop{}}}{\orprop{\notprop{\Number}{\x{}}}{\topprop{}}}}{\emptyobject{}}}}
+%  {\filterset{\topprop{}}{\botprop{}}}{\emptyobject{}}
+%$$
+
+\paragraph{Operational semantics} We define the dynamic semantics for \lambdatc{}
+in a big-step style using an environment, following~\citet{TF10}.
+We include both errors and a \wrong{} value, which is provably ruled out by the
+type system.
+The main judgement is \opsem{\openv{}}{\e{}}{\definedreduction{}}
+which states that \e{} evaluates to answer \definedreduction{} in environment
+\openv{}.
+A notable difference is \nil{} is a false value, which affects the
+semantics of \ifliteral{}:
 
 \begin{mathpar}
     \BIfTrue{}
@@ -213,14 +223,8 @@ to the semantics of \ifliteral{}:
     \BIfFalse{}
 \end{mathpar}
 
-For example,
-B-IfTrue evaluates \e{1} in the environment \openv{} with the result \v{1}.
-If \v{1} is not \nil{} or \false{} then the conditional returns the result of evaluating the then branch \e{2}
-in \openv{}.
-
 Subtyping (figure~\ref{main:figure:subtyping}) 
-is a reflexive and transitive relation with top type \Top. All objects are subtypes
-of \emptyobject{}.
+is a reflexive and transitive relation with top type \Top. 
 Singleton types are instances of their respective classes---boolean singleton types
 are of type \Boolean{}, class literals are instances of \Class{} and keywords are
 instances of \Keyword{}.
@@ -331,59 +335,50 @@ $
 %\end{mathpar}
 
 Our main insight is as follows: 
-if the left argument reduces to a value, then it is either logically true or false.
-If we learn the same information in both cases then we can use it as an assumption to check the right argument.
+if the first subexpression in a sequence reduces to a value, then it is either true or false.
+If we learn some proposition in both cases then we can use that proposition as an assumption to check the second subexpression.
 T-Do formalises this intuition.
 
 \begin{mathpar}
     {\TDo}  
 \end{mathpar}
 
-The introduction of errors, specifically as an expression that is neither true nor false, 
+The introduction of errors, 
+which do not evaluate to either
+a true or false value,
 makes our insight interesting.
 
 \begin{mathpar}
     {\TError}
 \end{mathpar}
 
-Now we can check example~\ref{example:doexception}.
-We check the test with T-App:
+Recall example~\ref{example:doexception}.
+\begin{minted}{clojure}
+      (do (if (number? x) nil (throw (Exception.)))
+          (inc x))
+\end{minted}
+
+As before, checking \appexp{\numberhuh{}}{\x{}} allows us to use the proposition \isprop{\Number}{\x{}}
+when checking the then branch.
+
+By T-Nil and subsumption we can propagate this  information to both propositions.
 $$
-\judgement{\isprop{\UnionNilNum}{\x{}}}{\hastype{\appexp{\numberhuh}{\x{}}}{\Boolean}}{\filterset{\isprop{\Number}{\x{}}}{\notprop{\Number}{\x{}}}}{\emptyobject{}}
+\judgement{\isprop{\Number}{\x{}}}{\hastype{\nil{}}{\Nil{}}}{\filterset{\isprop{\Number}{\x{}}}{\isprop{\Number}{\x{}}}}{\emptyobject{}}
 $$
-By T-Nil and subsumption we derive the same information in both propositions.
+Furthermore, using T-Error
+and subsumption we can conclude anything in the else branch.
 $$
-\judgement{\isprop{\Number}{\x{}}}{\hastype{\nil{}}{\Nil{}}}{\filterset{\isprop{\Number}{\x{}}}{\notprop{\Number}{\x{}}}}{\emptyobject{}}
+\judgement{\notprop{\Number}{\x{}}}{\hastype{\errorvalv{}}{\Bot}}{\filterset{\isprop{\Number}{\x{}}}{\isprop{\Number}{\x{}}}}{\emptyobject{}}
 $$
-By T-Error we can assume anything about the return of an error.
-$$
-\judgement{\notprop{\Number}{\x{}}}{\hastype{\errorvalv{}}{\Bot}}{\filterset{\botprop{}}{\botprop{}}}{\emptyobject{}}
-$$
-Using the above as premises to T-If we learn {\orprop{\isprop{\Number}{\x{}}}{\botprop{}}}
-in both propositions.
+Using the above as premises to T-If we conclude that if the first
+expression in the \doliteral{} evaluates successfully, \isprop{\Number}{\x{}} must be true.
 $$
 \judgement{\isprop{\UnionNilNum}{\x{}}}
           {\hastype{\ifexp{\appexp{\numberhuh{}}{\x{}}}{\nil{}}{\errorvalv{}}}{\Boolean}}
-          {\filterset{\orprop{\isprop{\Number}{\x{}}}{\botprop{}}}{\orprop{\notprop{\Number}{\x{}}}{\botprop{}}}}{\emptyobject{}}
+          {\filterset{\isprop{\Number}{\x{}}}{\isprop{\Number}{\x{}}}}{\emptyobject{}}
 $$
-By T-Local we know \x{} is a \Number{}.
-$$
-\judgement{\orprop{\isprop{\Number}{\x{}}}{\botprop{}}}{\hastype{\x{}}{\Number}}{\filterset{\notprop{\falsy{}}{\x{}}}{\isprop{\falsy{}}{\x{}}}}{\x{}}
-$$
-By T-App,
-\inc{} requires a \Number{} argument which we just proved.
-$$
-\judgement{\orprop{\isprop{\Number}{\x{}}}{\botprop{}}}{\hastype{\appexp{\inc{}}{\x{}}}{\Number}}{\filterset{\topprop{}}{\topprop{}}}{\emptyobject{}}
-$$
-Finally we conclude with T-Do using the conditional and increment expressions as premises.
-$$
-\judgement{\isprop{\UnionNilNum}{\x{}}}
-          {\hastype{\doexp
-                     {\ifexp{\appexp{\numberhuh{}}{\x{}}}
-                        {\nil{}}
-                        {\errorvalv{}}}
-                     {\appexp{\inc{}}{\x{}}}}{\Number}}{\filterset{\topprop{}}{\topprop{}}}{\emptyobject{}}
-$$
+We can now use \isprop{\Number}{\x{}} in the environment to check the second subexpression
+{\appexp{\inc{}}{\x{}}}, completing the example.
 
 \subsection{Heterogeneous maps}
 \label{sec:hmapformal}
@@ -578,6 +573,7 @@ which we introduce in section~\ref{sec:isaformal}.
   \end{altgrammar}
   $$
  \classtablelookupsyntax{}
+  \convertjavatypegrammar{}
   \begin{mathpar}
     {\TNewStatic}
     {\TFieldStatic}
@@ -605,7 +601,6 @@ which we introduce in section~\ref{sec:isaformal}.
 
 %    \RLetHint{}
   \end{mathpar}
-  \convertjavatypegrammar{}
   \caption{Java Interoperability Syntax, Semantics, Typing Rules and Rewrite Relation}
   \label{main:figure:javatyping}
 \end{figure}
