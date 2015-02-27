@@ -7,22 +7,41 @@ dispatch on the type of its arguments. They tackle a key challenge for staticall
 multimethods: ``it is possible for two modules containing arbitrary multimethods to typecheck
 successfully in isolation but generate type errors when linked together.''~\cite{MS02}
 
-\paragraph{Occurrence Typing} 
-Occurrence typing~\cite{TF08,TF10} extends the type 
-system with a \emph{proposition environment} that represents 
-the information on the types of bindings down conditional branches.
-These propositions are then used to update the types associated
-with bindings in the \emph{type environment} down branches
-so binding occurrences are given different types 
-depending on the branches they appear in, and the conditionals
-that lead to that branch.
+% one sentence
+% TC based on TR, already covered
 
+%\paragraph{Occurrence Typing} 
+%Occurrence typing~\cite{TF08,TF10} extends the type 
+%system with a \emph{proposition environment} that represents 
+%the information on the types of bindings down conditional branches.
+%These propositions are then used to update the types associated
+%with bindings in the \emph{type environment} down branches
+%so binding occurrences are given different types 
+%depending on the branches they appear in, and the conditionals
+%that lead to that branch.
+
+% What's diff about TC from the related work
+% small summary for deisel....
+% - diesel supports x
+%- - calculus supports some subset of x
+% we support y, which covers most of x but also foo
+
+% eg. multiple dispatch
+%     nominal vs structural
+
+% eg. run abritrary metaprogramming over dispatch in CLOS
+%  more expressive
+
+% type systems for mm or rows
+% rows vs HMap
+% - no poly in HMap
+% - based on subtyping
+% - rows based on polymorphism
 
 \paragraph{Record Types} 
 O'Caml-style extensible record types have been the subject of extensive research 
 (eg. Wand~\cite{Wan89}, Cardelli and Mitchell~\cite{CM91}, Harper and Pierce~\cite{HP91})
 most inference
-
 
 Dependent JavaScript~\cite{Chugh:2012:DTJ} can track similar invariants as HMaps with types
 for JS objects. They must deal with mutable objects, they feature refinement types and strong updates to the heap

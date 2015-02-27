@@ -181,7 +181,11 @@ Using this rule, the type system can then appeal to L-Update to refine the type
 assigned to \x{}.
 
 We are now equipped to type check 
-example~\ref{example:conditionalflow}.
+example~\ref{example:conditionalflow}:
+$$
+\clj{(if (number? x) (inc x) 0)}
+$$
+
 The test expression uses T-App, 
 $$
 \judgement{\isprop{\UnionNilNum{}}{\x{}}}{\hastype{\appexp{\numberhuh{}}{\x{}}}{\Boolean}}{\filterset{\isprop{\Number}{\x{}}}{\notprop{\Number}{\x{}}}}{\emptyobject{}}

@@ -114,7 +114,7 @@
 \newcommand\Map[2]{(\ma{\MapLiteral #1\ #2})}
 \newcommand\HMapInstance[0]{\ma{\IPersistentMapLiteral}}
 \newbfop\HMapliteral{HMap}
-\newmeta\completenessmeta{\mathcal{A}}
+\newmeta\completenessmeta{\mathcal{E}}
 \newmeta\complete{\mathcal{C}}
 \newmeta\partial{\mathcal{P}}
 \newcommand\HMapcliteral[0]{\HMapliteral^{\complete{}}}
@@ -132,14 +132,14 @@
 \newcommand\notinmandatory[3]{\ma{#1} \not\in dom({#3})}
 \newcommand\inmandatory[3]{\ma{{#3}[{#1}] = {#2}}}
 \newcommand\extendmandatoryset[3]{#1[\mandatoryentry{#2}{#3}]}
-\newmeta\mandatory{p}
-\newmeta\absent{a}
-\newmeta\absentp{a'}
+\newmeta\mandatory{\ma{\mathcal{M}}}
+\newmeta\absent{\ma{\mathcal{A}}}
+\newmeta\absentp{\ma{{\mathcal{A}}'}}
 \newcommand\absentoverright[1]{\ma{\{{\overrightarrow{#1}}\}}}
 \newcommand\emptyabsent[0]{\ma{\{\}}}
 \newcommand\inabsent[2]{\ma{#1 \in #2}}
 \newcommand\notinabsent[2]{\ma{#1 \not\in #2}}
-\newcommand\extendabsentset[2]{(#1, #2)}
+\newcommand\extendabsentset[2]{\ma{({#1} \cup \{#2\})}}
 \newbfop\Satisfiesliteral{Satisfies}
 \newcommand\Satisfies[1]{(\ma{\Satisfiesliteral\ #1})}
 \newbfop\Instanceliteral{InstanceOf}
@@ -691,10 +691,10 @@
 \javatotc {\classhint{i}}
           {\t{i}}
           }
-  \\\\
+  \\
   \javatotc {\classhint{}}
             {\t{}}
-  \\\\
+  \\
   \overrightarrow{
   \judgementtwo {\propenv{}}
                     {\hastype {\e{i}} {\t{i}}}
@@ -2117,53 +2117,54 @@ $$
               }
 
 \newcommand\updatefigure[0]{
-\update{\HMapgeneric {\mandatory} {\absent}}{\propisnotmeta{}}{\destructpath {\pathelem{}} {\keype{\k{}}}}
+\update{\HMapgeneric {\mandatory{}} {\absent{}}}{\propisnotmeta{}}{\destructpath {\pathelem{}} {\keype{\k{}}}}
 &=&
-{\HMapgeneric {\extendmandatoryset{\mandatory}{\k{}}{\update{\t{}}{\propisnotmeta{}}{\pathelem{}}}}{\absent}}
-& {\inmandatory{\k{}}{\t{}}{\mandatory{}}}
+{\HMapgeneric {\extendmandatoryset{\mandatory{}}{\k{}}{\update{\t{}}{\propisnotmeta{}}{\pathelem{}}}}{\absent{}}}
+& \text{if}\ {\inmandatory{\k{}}{\t{}}{\mandatory{}}}
 %& Present Key
 \\
-\update{\HMapgeneric {\mandatory} {\absent}}{\t{}}{\destructpath {\pathelem{}} {\keype{\k{}}}}
+\update{\HMapgeneric {\mandatory{}} {\absent{}}}{\t{}}{\destructpath {\pathelem{}} {\keype{\k{}}}}
 &=&
 {\Bottom{}}
-& {\notsubtypein {} {\Nil{}} {\t{}}}\ \text{and}\ {\inabsent{\k{}}{\absent{}}}
+& \text{if}\ {\notsubtypein {} {\Nil{}} {\t{}}}\ \text{and}\ {\inabsent{\k{}}{\absent{}}}
 %& Bad absent +
 \\
-\update{\HMapgeneric {\mandatory} {\absent}}{\nottype{\t{}}}{\destructpath {\pathelem{}} {\keype{\k{}}}}
+\update{\HMapgeneric {\mandatory{}} {\absent{}}}{\nottype{\t{}}}{\destructpath {\pathelem{}} {\keype{\k{}}}}
 &=&
 {\Bottom{}}
-& {\issubtypein {} {\Nil{}} {\t{}}}\ \text{and}\ {\inabsent{\k{}}{\absent{}}}
+& \text{if}\ {\issubtypein {} {\Nil{}} {\t{}}}\ \text{and}\ {\inabsent{\k{}}{\absent{}}}
 %& Bad absent -
 \\
-\update{\HMapgeneric {\mandatory} {\absent}}{\propisnotmeta{}}{\destructpath {\pathelem{}} {\keype{\k{}}}}
+\update{\HMapgeneric {\mandatory{}} {\absent{}}}{\propisnotmeta{}}{\destructpath {\pathelem{}} {\keype{\k{}}}}
 &=&
-{\HMapgeneric {\mandatory} {\absent}}
-& {\inabsent{\k{}}{\absent{}}}
+{\HMapgeneric {\mandatory{}} {\absent{}}}
+& \text{if}\ {\inabsent{\k{}}{\absent{}}}
 %& Consistent absent
 \\
-\update{\HMapp {\mandatory} {\absent}}{\t{}}{\destructpath {\pathelem{}} {\keype{\k{}}}}
+\update{\HMapp {\mandatory{}} {\absent{}}}{\t{}}{\destructpath {\pathelem{}} {\keype{\k{}}}}
 &=&
-{\Union {\HMapp {\extendmandatoryset {\mandatory} {\k{}}
+(\cup\ {\HMapp {\extendmandatoryset {\mandatory{}} {\k{}}
                                      {\t{}}}
-                {\absent}}
-        {\HMapp {\mandatory} {\extendabsentset{\absent}{\k{}}}}}
-& {\issubtypein {} {\Nil{}} {\t{}}},\ 
-{\notinmandatory{\k{}}{\s{}}{\mandatory{}}}\ \text{and}\ {\notinabsent{\k{}}{\absent{}}}
+                {\absent{}}}
+& \text{if}\ {\issubtypein {} {\Nil{}} {\t{}}},\ 
+          \\&&\ \ \ \ \ \ 
+        {\HMapp {\mandatory{}} {\extendabsentset{\absent{}}{\k{}}}})
+&{\notinmandatory{\k{}}{\s{}}{\mandatory{}}}\ \text{and}\ {\notinabsent{\k{}}{\absent{}}}
 \\
-\update{\HMapp {\mandatory} {\absent}}{\propisnotmeta{}}{\destructpath {\pathelem{}} {\keype{\k{}}}}
+\update{\HMapp {\mandatory{}} {\absent{}}}{\propisnotmeta{}}{\destructpath {\pathelem{}} {\keype{\k{}}}}
 &=&
-{\HMapp {\extendmandatoryset {\mandatory} {\k{}}{\update{\Top}{\propisnotmeta{}}{\pathelem{}}}} {\absent}}
+{\HMapp {\extendmandatoryset {\mandatory{}} {\k{}}{\update{\Top}{\propisnotmeta{}}{\pathelem{}}}} {\absent{}}}
 & 
-{\notinmandatory{\k{}}{\s{}}{\mandatory{}}}\ \text{and}\ {\notinabsent{\k{}}{\absent{}}}
+\text{if}\ {\notinmandatory{\k{}}{\s{}}{\mandatory{}}}\ \text{and}\ {\notinabsent{\k{}}{\absent{}}}
 
 \\
-\update{\HMapp {\mandatory} {\absent}}{\propisnotmeta{}}{\destructpath {\pathelem{}} {\keype{\k{}}}}
+\update{\HMapp {\mandatory{}} {\absent{}}}{\propisnotmeta{}}{\destructpath {\pathelem{}} {\keype{\k{}}}}
 &=&
-{\HMapp {\extendmandatoryset {\mandatory} {\k{}}{\update{\Top}{\propisnotmeta{}}{\pathelem{}}}} {\absent}}
+{\HMapp {\extendmandatoryset {\mandatory{}} {\k{}}{\update{\Top}{\propisnotmeta{}}{\pathelem{}}}} {\absent{}}}
 \\
-\update{\Unionsplice{{\overrightarrow{\HMapgeneric {\mandatory} {\absent}}}^i}}{\propisnotmeta{}}{\destructpath {\pathelem{}} {\keype{\k{}}}}
+\update{\Unionsplice{{\overrightarrow{\HMapgeneric {\mandatory{}} {\absent{}}}}^i}}{\propisnotmeta{}}{\destructpath {\pathelem{}} {\keype{\k{}}}}
 &=&
-\Unionsplice{{\overrightarrow{\update{\HMapgeneric {\mandatory} {\absent}}{\propisnotmeta{}}{\destructpath {\pathelem{}} {\keype{\k{}}}}}}^i}
+\Unionsplice{{\overrightarrow{\update{\HMapgeneric {\mandatory{}} {\absent{}}}{\propisnotmeta{}}{\destructpath {\pathelem{}} {\keype{\k{}}}}}}^i}
 
 
 % ClassPE
