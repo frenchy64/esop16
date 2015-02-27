@@ -400,10 +400,11 @@ use \clj{:op} as the dispatch function.
 \end{exmp}
 
 \clj{inc-map} is like example~\ref{example:decmap} except the nodes are incremented.
-The reasoning is similar, except we only use positive
-information since we only consider the \emph{dispatch value} and how it relates
+The reasoning is similar, except we only consider one branch (the current method) by
+locally considering the current \emph{dispatch value} and reasoning about how it relates
 to the \emph{dispatch function}.
-In the \clj{:do} method we learn the \clj{:op} key is a \clj{:do}, which
+For example, 
+in the \clj{:do} method we learn the \clj{:op} key is a \clj{:do}, which
 narrows our argument type to the \clj{:do} Expr, and similarly for the \clj{:if}
 and \clj{:const} methods.
 
