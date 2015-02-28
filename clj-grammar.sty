@@ -521,6 +521,16 @@
                    }
                  }
 
+\newcommand\TNum[0]{
+\infer [T-Num]
+{}
+{ \judgementfillcol {\propenv{}}
+      {{\hastype {\num{}} {\Number{}}}}
+      {{\filterset {\topprop{}} {\botprop{}}}}
+      {\emptyobject{}}
+    }
+  }
+
 \newcommand\TTrue[0]{
 \infer [T-True]
 {}
