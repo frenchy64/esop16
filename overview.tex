@@ -430,13 +430,6 @@ a vector containing the class of both arguments. \clj{open}
 takes two arguments which can be strings or files and returns
 a new file that concatenates their paths.
 
-\begin{figure}
-\begin{exmp}
-\inputminted[firstline=6,lastline=22]{clojure}{code/demo/src/demo/eg7.clj}
-\label{example:multidispatch}
-\end{exmp}
-\end{figure}
-
 We call three different \clj{File} constructors, each known at compile-time
 via type hints.
 Multiple dispatch follows the same kind of reasoning as example~\ref{example:incmap},
@@ -450,11 +443,17 @@ multimethod dispatch, reflection resolution via type hints, Java method
 and constructor calls, conditional and exceptional flow reasoning,
 and HMaps. 
 
+
 \begin{figure}
+\begin{exmp}
+\inputminted[firstline=6,lastline=22]{clojure}{code/demo/src/demo/eg7.clj}
+\label{example:multidispatch}
+\end{exmp}
 \begin{exmp}
 \inputminted[firstline=6,lastline=20]{clojure}{code/demo/src/demo/eg8.clj}
 \label{example:final}
 \end{exmp}
+\caption{Multimethod Examples}
 \end{figure}
 
 We dispatch on \clj{:p} to distinguish the two cases of \clj{FSM}---for example on \clj{:F}

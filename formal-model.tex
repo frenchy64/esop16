@@ -432,14 +432,14 @@ We can now use \isprop{\Number}{\x{}} in the environment to check the second sub
     {\TAssoc}
   \end{mathpar}
   \begin{mathpar}
+    \HMapsubtyping{}
+  \end{mathpar}
+  \begin{mathpar}
     {\BAssoc}
     {\BGet}
     {\BGetMissing}
   \end{mathpar}
-  \begin{mathpar}
-    \HMapsubtyping{}
-  \end{mathpar}
-  \caption{HMap Terms, Types, Semantics, Subtyping and Typing Rules}
+  \caption{HMap Syntax, Typing and Operational Semantics}
   \label{main:figure:hmapsyntax}
 \end{figure}
 
@@ -574,9 +574,16 @@ which we introduce in \secref{sec:isaformal}.
 
 \begin{figure}[h]
   \footnotesize
+
   $$
   \begin{altgrammar}
-    \e{} &::=& \ldots \alt \mininonreflectiveexpsyntax{}
+  \end{altgrammar}
+  $$
+  $$
+  \begin{altgrammar}
+    \e{} &::=& \ldots   \localhintsyntax{} \alt \lethintsyntax{} &\mbox{Expressions}\\
+            &\alt& \reflectiveexpsyntax{} \\
+     &\alt& \mininonreflectiveexpsyntax{}
     \\
 
     \v{} &::=& \ldots \alt {\classvalue{\classhint{}} {\overrightarrow {\classfieldpair{\fld{}} {\v{}}}}}
@@ -587,6 +594,13 @@ which we introduce in \secref{sec:isaformal}.
     \classtableallsyntax{}
   \end{altgrammar}
   $$
+  \begin{mathpar}
+    {\TNewStatic}
+
+    {\TMethodStatic}
+
+    %{\TInstance}
+  \end{mathpar}
  \classtablelookupsyntax{}
  \begin{mathpar}
   \begin{altgrammar}
@@ -596,13 +610,6 @@ which we introduce in \secref{sec:isaformal}.
     \convertjavatypenonnil{}
   \end{altgrammar}
 \end{mathpar}
-  \begin{mathpar}
-    {\TNewStatic}
-
-    {\TMethodStatic}
-
-    %{\TInstance}
-  \end{mathpar}
   \begin{mathpar}
     \BField{}
 
@@ -624,7 +631,7 @@ which we introduce in \secref{sec:isaformal}.
 
 %    \RLetHint{}
   \end{mathpar}
-  \caption{Java Interoperability Syntax, Semantics, Typing Rules and Rewrite Relation}
+  \caption{Java Interoperability Syntax, Typing and Operational Semantics}
   \label{main:figure:javatyping}
 \end{figure}
 
@@ -645,35 +652,28 @@ Typed Clojure interacts with non-reflective calls.
 We present Java interoperability in a restricted setting without class inheritance,
 overloading or Java Generics.
 
-  $$
-  \begin{altgrammar}
-    \e{} &::=& \ldots   \localhintsyntax{} \alt \lethintsyntax{} &\mbox{Expressions}\\
-            &\alt& \reflectiveexpsyntax{} 
-  \end{altgrammar}
-  $$
-
-We extend the syntax with type hinted expressions, Java field lookups and calls to
-methods and constructors. We model the syntax after the `dot' special
+We extend the syntax in \figref{main:figure:javatyping} with
+type hinted expressions, reflective and non-reflective Java field lookups and calls to
+methods and constructors. 
+We model the syntax after the `dot' special
 form to prevent ambiguity---\clj{(.fld e)} is now \fieldexp{\fld{}}{\e{}},
 \clj{(.mth e es*)} is $\methodexp{\mth{}}{\e{}}{\overrightarrow{es}}$
 and \clj{(.class es*)} is $\newexp{\class{}}{\overrightarrow{es}}$.
-The Java expressions come without typing rules because Typed Clojure
+The reflective expressions come without typing rules because Typed Clojure
 only reasons about resolved reflection
 (as demonstrated in \secref{sec:overviewjavainterop}).
-
-Now we model the compiler's reflection-resolution algorithm.
-\figref{main:figure:javatyping} gives the syntax for non-reflective Java calls.
-The method ${\methodstaticexp {\classhint{1}}
+%
+The method call ${\methodstaticexp {\classhint{1}}
                              {\overrightarrow {\classhint{i}}}
                              {\classhint{2}}
                              {\mth{}} {\e{}} {\overrightarrow{\e{i}}}}$
 is a non-reflective call to the \mth{} method on class {\class{1}}, 
 with Java signature 
 ${\classhint{2}}\ \mth{}\ (\overrightarrow {\classhint{i}});$.
-The field {\fieldstaticexp {\classhint{1}} {\classhint{2}} {\fld{}} {\e{}}}
+The field access {\fieldstaticexp {\classhint{1}} {\classhint{2}} {\fld{}} {\e{}}}
 calls the field on class {\classhint{1}} with Java signature
 ${\classhint{2}}\ \fld{};$.
-The constructor {\newstaticexp {\overrightarrow{\classhint{i}}} {\classhint{}} 
+The constructor invocation {\newstaticexp {\overrightarrow{\classhint{i}}} {\classhint{}} 
                                {\class{}} {\overrightarrow{\e{i}}}}
 calls the constructor with Java signature
 ${\classhint{}}\ ({\overrightarrow{\classhint{i}}});$.
@@ -696,12 +696,13 @@ ${\classhint{}}\ ({\overrightarrow{\classhint{i}}});$.
 %\end{figure}
 
 
-To obtain non-reflective calls we define our rewrite relation
+We model Clojure's reflection resolution algorithm as a 
+rewrite relation
 \rewrite {\taenv{}} {\e{}} {\ep{}}
 which rewrites \e{} to a possibly-less reflective expression
 \ep{} with respect to type hint environment
 \taenv{} and Java class table \ct{}.
-
+%
 For example,
 R-FieldElimRefl emits a non-reflective field if it can
 find a field matching the type hint inferred on \ep{}.
@@ -709,25 +710,27 @@ find a field matching the type hint inferred on \ep{}.
     \RFieldElimRefl{}
   $$
 
-Type hint inference is modelled by
+Type hint inference is given by the judgement
 \tajudgement {\taenv{}} {\hastype {\e{}} {\tatype{}}}
-which infers the (possibly-unknown) type hint \tatype{} of expression \e{} in environment \taenv{}.
+which infers the (possibly-unknown) type hint \tatype{} of expression \e{} in type hint environment \taenv{}.
+We defer the remainder of the rules for rewriting and the definition of type hint inference
+to the supplemental material.
 %$$
 %\TALetHint{}
 %$$
 
-For demonstration purposes let us rewrite
-a simple field expression, with the assumptions that
-that we have a class \Point{} with a field \getx{} of Java type \Number
-and \intaenv {\taenv{}} {\x{}} {\Point{}}.
+As an example, we rewrite
+a simple field reference, with the assumptions that
+that the class \Point{} has a field $x$ of Java type \Number
+and \intaenv {\taenv{}} {p} {\Point{}}.
 In rewriting
-the expression \fieldexp{\getx}{\x{}},
-{\Point{}} is inferred as the type hint of \x{}
+the expression \fieldexp{x}{p},
+{\Point{}} is inferred as the type hint of $p$
 and \Number{} is the field type
 by \fieldtypeliteral{} (\figref{main:figure:javatyping}).
 Now we just plug in the new information into our new expression
 $$
-\fieldstaticexp{\Point}{\Number}{\getx}{\x{}}.
+\fieldstaticexp{\Point}{\Number}{x}{p}.
 $$
 
 Now we present the typing rules for resolved Java interoperability.
@@ -738,16 +741,17 @@ the correct static type, then returns a nilable type corresponding the Java type
     {\TFieldStatic}
 \end{mathpar}
 
-To continue our example, let us assume \propenv{} = {\isprop{\Point}{\x{}}}.
-T-FieldStatic checks \x{} under the non-nilable type {\Point}
-and returns the nilable type {\Union{\Nil}{\Number}}.
+To continue our example, assume \propenv{} = {\isprop{\Point}{p}}.
+T-FieldStatic therefore produces the type
+{\Union{\Nil}{\Number}}
+for the entire expression.
 
-The other rules T-MethodStatic and T-NewStatic work similarly (\figref{main:figure:javatyping}), varying
-in the choice of nilability in the conversion function---method returns
-are nilable and constructor returns are non-nilable.
+The rules T-MethodStatic and T-NewStatic work similarly (\figref{main:figure:javatyping}), varying
+in the choice of nilability in the conversion function---methods
+can return nil but constructors cannot.
 
-The operational semantics B-Field, B-New and B-Method (\figref{main:figure:javatyping}) simply evaluate their
-arguments and call the relevant JVM operation---\secref{sec:metatheory}
+The evaluation rules B-Field, B-New and B-Method (\figref{main:figure:javatyping}) simply evaluate their
+arguments and call the relevant JVM operation, which do not model---\secref{sec:metatheory}
 states our exact assumptions about each.
 
 \subsection{Multimethod dispatch mechanism: \isaliteral}
@@ -807,23 +811,23 @@ $$
 \end{altgrammar}
 $$
   \begin{mathpar}
-    \Multisubtyping{}
+    \TDefMulti{}
+
+    \TDefMethod{}
   \end{mathpar}
   \begin{mathpar}
     \isapropsfigure{}
   \end{mathpar}
   \begin{mathpar}
-    \TDefMulti{}
-
-    \TDefMethod{}
+    \Multisubtyping{}
   \end{mathpar}
-  \getmethodfigure{}
   \begin{mathpar}
     \BDefMethod{}
     \BDefMulti{}
     \BBetaMulti{}
   \end{mathpar}
-\caption{Multimethod Syntax, Subtyping, Typing Rules and Semantics}
+  \getmethodfigure{}
+\caption{Multimethod Syntax, Typing and Operational Semantics}
 \label{main:figure:mmsyntax}
 \end{figure}
 
@@ -837,7 +841,6 @@ without changing the original multimethod. \egref{example:rep} is now written
                  (.getPath x))]
       (path "dir/a")))) ;=> "a"
 \end{minted}
-where subsequent bindings in the binder is sugar for nested let expressions.
 
 The syntax for multimethods is given in \figref{main:figure:mmsyntax}.
 {\MultiFntype {\s{}} {\sp{}}} is the type of multimethods with \emph{interface type}

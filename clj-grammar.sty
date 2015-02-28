@@ -1589,7 +1589,7 @@ $$
 % small figure for nonreflective Java interop syntax
 \newcommand\mininonreflectiveexpsyntax[0]{
   \methodexpsyntax{} 
-  &\mbox{Expressions}\\
+  &\mbox{Non-reflective Expressions}\\
   &\alt& 
   \fieldexpsyntax{} 
   \alt 
@@ -2004,10 +2004,10 @@ then \judgement{}{\hastype{\v{}}{\t{}}}{\filterset{\thenprop{\propp{}}}{\elsepro
 }
 
 \newcommand\nilinvoketheoremnoproof[1]{
-\begin{theorem}[\nil{} invocation is disallowed in typed code] \label{#1:theorem:nilinvokenoproof}
+\begin{corollary}[\nil{} invocation is disallowed in typed code] \label{#1:theorem:nilinvokenoproof}
   \nilinvoketheorembody{#1}
 
-\end{theorem}
+\end{corollary}
 }
 
 \newcommand\nilinvoketheorem[1]{

@@ -2,8 +2,8 @@
 \label{sec:metatheory}
 
 Our proof for type soundness is similar to~\citet{TF10}. We add
-errors and \wrong{} value and prove well-typed programs
-rule out wrong programs.
+errors and \wrong{} value and prove
+well-typed programs do not go wrong.
 
 We make our assumptions about Java explicit. We concede that
 method and constructor calls may diverge or error, but we assume they can
@@ -16,14 +16,8 @@ never go wrong.
 %{\istruefalsedefinitions{main}}
 
 We use an extra lemma to support our main soundness lemma. Consistency
-ensures that occurrence typing does not claim the outer 
-\x{} is a keyword. 
-
-\begin{minted}{clojure}
-(let [x 1]
-  ((let [x :a]
-     (fn [] x))))
-\end{minted}
+ensures that occurrence typing does not refer to variables
+hidden inside a closure.
 
 {\consistentwithonlydef{main}}
 
