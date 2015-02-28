@@ -69,16 +69,26 @@ Programmers must manually check for
 \java{null} as in Java to avoid null-pointer exceptions. 
 
 
-\paragraph{Optional type systems}
-Reticulated Python~\cite{Vitousek14} is a gradually typed
-system for Python, implemented as a source-to-source
-translation that inserts dynamic checks at language boundaries
-and supporting Python's first-class object system.
-Typed Clojure is implemented as a syntactic check on Clojure
-code with no option to insert dynamic checks automatically.
-Typed Clojure does not support a first-class object system
-because Java has nominal classes, however HMaps offer a subset 
-of the structural features offered by Reticulated.
+\paragraph{Other optional and gradual type systems}
+In addition to Typed Racket, several other gradual type
+systems have been developed recently, targeting existing
+dynamically-typed languages.  Reticulated Python~\cite{Vitousek14} is
+an experimental gradually typed system for Python, implemented as a
+source-to-source translation that inserts dynamic checks at language
+boundaries and supporting Python's first-class object system.  Typed
+Clojure does not support a first-class object system because Java (and
+Clojure) have nominal classes, however HMaps offer an alternative to
+the structural objects offered by Reticulated. Similarly,
+GradualTalk~\cite{gradualtalk} offers gradual typing for SmallTalk,
+with nominal classes.
+
+Optional types, requiring less implementation effort and avoiding any
+runtime cost, have been widely adopted in industry, including Hack, an
+extension to PHP~\cite{hack}, and Flow~\cite{flow} and
+TypeScript~\cite{typescript}, two extensions of JavaScript. These
+systems all support some form of occurrence typing, but not in the
+generality presented here, nor do they include the other features we
+have presented.
 
 %  \item GradualTalk
 %  \item Flow
