@@ -1143,21 +1143,19 @@ $$
              {\v{e}}
              {\v{v}}
              {\v{f}}
-             \\
-             \ \ \ \ 
-             \text{let } {\overrightarrow{\v{fs}}} = 
-                \{ (\v{v}, \v{f}) | 
+             \ \ \ 
+             \text{ if } {\overrightarrow{\v{fs}}} = \{{\v{f}}\}
+                \\
+             \ \ \ \ \ \ \ \ 
+             \text{where } {\overrightarrow{\v{fs}}} = 
+                \{ \v{f} | 
                     {\roundpair{\v{v}}{\v{f}}} \in \disptable{} 
                   \text{ and } 
-                \isaopsem{\v{v}}{\v{e}} = {\true{}} \},
-                \\
-             \ \ \ \ 
-             \text{ if } {\overrightarrow{\v{fs}}} = \{{\roundpair{\v{v}}{\v{f}}}\}
-
+                \isaopsem{\v{v}}{\v{e}} = {\true{}} \}
              \\
   \getmethoderr {\disptable{}}
              {\v{e}}
-             {\mmerror{}} & \text{otherwise}
+             {\mmerror{}} \ \ \ \ \text{otherwise}
 
 \end{array}
 $$
@@ -1344,28 +1342,32 @@ $$
   \end{array}
 }
 
-% subtyping syntax
-\newcommand\standardsubtyping[0]{
-
-  \begin{array}{l}
+\newcommand\SRefl[0]{
 \infer [S-Refl]
 {}
-{ \issubtypein {} {\t{}} {\t{}}}\\\\
+{ \issubtypein {} {\t{}} {\t{}}}
+}
 
+\newcommand\STop[0]{
 \infer [S-Top]
 {}
 { \issubtypein {} {\t{}} {\Top{}}}
-  \end{array}
+}
 
+% FIXME fix overrightarrow caption
+\newcommand\SUnionSuper[0]{
 \infer [S-UnionSuper]
 { \exists i.\ {\issubtypein {} {\t{}} {\s{i}}}}
 { \issubtypein {} {\t{}} {\Unionsplice{{\overrightarrow{\s{}}}^{i}}}}
+}
 
-% FIXME fix overrightarrow caption
+\newcommand\SUnionSub[0]{
 \infer [S-UnionSub]
 { {\overrightarrow {\issubtypein {} {\t{i}} {\s{}}}}^{i}}
 { \issubtypein {} {\Unionsplice{\overrightarrow{\t{}}^{i}}} {\s{}}}
+}
 
+\newcommand\SFunMono[0]{
 \infer [S-FunMono]
 {}
 {\issubtypein {}
@@ -1375,13 +1377,32 @@ $$
                          {\elseprop{\prop{}}}}
              {\object{}}}
   {\IFn{}}}
+}
 
-\begin{array}{l}
+\newcommand\SObject[0]{
 \infer [S-Object]
 {}
 {\issubtypein {}
   {\class{}}
-  {\Object{}}}\\\\
+  {\Object{}}}
+}
+
+%\newcommand\SClass[0]{
+
+% subtyping syntax
+\newcommand\standardsubtyping[0]{
+
+  \begin{array}{l}
+    \SRefl{}\\\\
+    \STop
+
+  \end{array}
+
+\SUnionSuper{}
+\SUnionSub{}
+\SFunMono
+\begin{array}{l}
+\SObject\\\\
 
 \infer [S-SClass]
 {}
@@ -1528,6 +1549,7 @@ $$
   \isacomparealign{\s{}}{\object{}}{\t{}}
                   {\filterset{\topprop{}}
                              {\topprop{}}}
+                           \ \ \ \ \ \ \ \ \ \text{otherwise}
 \end{array}
   }
 }
@@ -1552,7 +1574,7 @@ $$
   \absent{} &::=& \absentoverright{\k{}}
                 &\mbox{HMap absent entries} \\
   \completenessmeta{} &::=& {\complete{}} \alt {\partial{}}
-                &\mbox{HMap completeness}
+                &\mbox{HMap completeness tags}
               }
 
 \newcommand\hmapexpressionsyntax[0]{

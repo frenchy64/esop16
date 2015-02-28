@@ -320,7 +320,7 @@ Subtyping for untagged unions is standard.
   \begin{mathpar}
     \standardsubtyping{}
   \end{mathpar}
-  \caption{Subtyping rules}
+  \caption{Core Subtyping rules}
   \label{main:figure:subtyping}
 \end{figure*}
 
@@ -404,7 +404,7 @@ $$
 We can now use \isprop{\Number}{\x{}} in the environment to check the second subexpression
 {\appexp{\inc{}}{\x{}}}, completing the example.
 
-\subsection{Heterogeneous maps}
+\subsection{Precise Types for Heterogeneous maps}
 \label{sec:hmapformal}
 
 \begin{figure}
@@ -444,17 +444,17 @@ We can now use \isprop{\Number}{\x{}} in the environment to check the second sub
 \end{figure}
 
 
-We now present \HMapliteral{} types in detail.
-\figref{main:figure:hmapsyntax} extends the syntax for terms and types.
-
-We write \HMapgeneric{\mandatory{}}{\absent{}}
-where {\mandatory{}} is a map of \emph{present} entries (mapping keywords to types),
-\absent{} is a set of keyword keys that are known to be \emph{absent}
+\figref{main:figure:hmapsyntax} presents syntax, typing rules
+and dynamic semantics in detail.
+%
+The type \HMapgeneric{\mandatory{}}{\absent{}}
+includes {\mandatory{}}, a map of \emph{present} entries (mapping keywords to types),
+\absent{}, a set of keyword keys that are known to be \emph{absent}
 and
-\completenessmeta{} is {\complete{}} (``complete'') if the map is fully specified by \mandatory{},
+tag \completenessmeta{} which is either {\complete{}} (``complete'') if the map is fully specified by \mandatory{},
 and {\partial{}} (``partial'') if there are \emph{unknown} entries.
 To ease presentation, 
-if a HMap is declared as \complete{} then \absent{} implicitly contains all keywords not in the domain of \mandatory{}.
+if an HMap has completeness tag \complete{} then \absent{} implicitly contains all keywords not in the domain of \mandatory{}.
 %\HMapcwithabsent{\mandatory{}}{\absent{}} is abbreviated to \HMapc{\mandatory{}}. 
 Keys cannot be both present and absent.
 
@@ -465,15 +465,15 @@ restrict lookup and extension to keyword keys. The metavariable \mapval{}
 ranges over the runtime value of maps {\curlymapvaloverright{\k{}}{\v{}}},
 usually written {\curlymapvaloverrightnoarrow{\k{}}{\v{}}}.
 
-Subtyping for HMaps (\figref{main:figure:hmapsyntax})
+Subtyping for HMaps
 designate \MapLiteral{} as a common supertype for all HMaps.
-S-HMap says that a HMap is a subtype of another HMap if they agree
+S-HMap says that an HMap is a subtype of another HMap if they agree
 on \completenessmeta{}, agree on mandatory entries with subtyping
 and at least cover the absent keys of the supertype.
 Complete maps are subtypes of partial maps
 as long as they agree on the mandatory entries of the partial map via subtyping (S-HMapP).
 
-\figref{main:figure:hmapsyntax} contains the typing rules. T-GetHMap models a lookup
+The typing rules for \getliteral{} consider three possible cases. T-GetHMap models a lookup
 that will certainly succeed, T-GetHMapAbsent a lookup that will certainly fail
 and T-GetHMapPartialDefault a lookup with unknown results.
 Lookups on unions of HMaps are only supported in T-GetHMap, 
@@ -483,15 +483,12 @@ where every element in the union
 contains the key we are looking up.
 The objects in the T-Get rules are more complicated than those in T-Local---the 
 next section discusses this in detail.
-Finally T-AssocHMap extends a HMap with a mandatory entry while preserving completeness
+Finally T-AssocHMap extends an HMap with a mandatory entry while preserving completeness
 and absent entries, and enforcing ${\k{}} \not\in {\absent{}}$ to prevent badly
 formed types.
 
-\figref{main:figure:hmapsyntax} contains the semantics for \getliteral{}
-and \assocliteral{}.
-The B-Get rule evaluates first evaluates the map and the key, asserts
-the key must be present in the map and returns the associated key. If
-the entry is missing, B-GetMissing says we return \nil{}.
+The semantics for \getliteral{} and \assocliteral{} are straightforward.
+If the entry is missing, B-GetMissing produces \nil{}.
 
 \subsection{Paths}
 \label{sec:formalpaths}
@@ -527,7 +524,7 @@ We do not specifically support \equivliteral{} in our calculus,
 but on keyword arguments it works identically to \clj{isa?} which we model
 in \secref{sec:isaformal}.
 Intuitively, if {\judgement{\propenv{}}{\hastype{\e{}}{\t{}}}{\filterset{\thenprop{\prop{}}}{\elseprop{\prop{}}}}{\object{}}}
-then \equivapp{\e{}}{\makekw{if}} has the proposition set 
+then \equivapp{\e{}}{\makekw{if}} has the true and false propositions
 $$
 {\replacefor{\filterset{\isprop{\Value{\makekw{if}}}{\x{}}}{\notprop{\Value{\makekw{if}}}{\x{}}}}{\object{}}{\x{}}}
 $$
@@ -754,38 +751,32 @@ The evaluation rules B-Field, B-New and B-Method (\figref{main:figure:javatyping
 arguments and call the relevant JVM operation, which do not model---\secref{sec:metatheory}
 states our exact assumptions about each.
 
-\subsection{Multimethod dispatch mechanism: \isaliteral}
+\subsection{Multimethod preliminaries: \isaliteral}
 
 \label{sec:isaformal}
 
-We now consider the core dispatch mechanism for multimethods. 
+We now consider the \isaliteral{} operation, a core part of the dispatch mechanism for multimethods. 
 Recalling the examples in \secref{sec:multioverview},
 \isaliteral{} is
 a subclassing test for classes, otherwise an equality test---we do not model
 the semantics for vectors.
 
-The main interest for the T-IsA typing rule is the \isacompareliteral{} 
+The key component of the T-IsA rule is the \isacompareliteral{} 
 metafunction
 (\figref{main:figure:mmsyntax}), used to calculate the propositions for
-\isaliteral{} expressions.
+\isaliteral{} tests.
 
 \begin{mathpar}
   \TIsA{}
 \end{mathpar}
 
-To demonstrate,
+As an example,
 \isaapp{\appexp{\classconst{}}{\x{}}}{\Keyword}
-has the proposition set \isacompare{\s{}}{\path{\classpe{}}{\x{}}}{\Value{\Keyword}}{\filterset{\isprop{\Keyword}{\x{}}}{\notprop{\Keyword}{\x{}}}}.
+has the true and false propositions 
+\isacompare{\s{}}{\path{\classpe{}}{\x{}}}{\Value{\Keyword}}{\filterset{\isprop{\Keyword}{\x{}}}{\notprop{\Keyword}{\x{}}}},
+meaning that if this expression produces true, \x{} is a keyword, otherwise it is not.
 
-B-IsA models the semantics. \isaopsemliteral{} explicitly handles classes in the second case.
-
-$$
-\begin{array}{ll}
-  \vcenter{\hbox{\BIsA{}}}
-  &
-  \vcenter{\hbox{\isaopsemfigure{}}}
-\end{array}
-$$
+The operational behavior of \isaliteral{} is given by B-IsA (\figref{main:figure:mmsyntax}). \isaopsemliteral{} explicitly handles classes in the second case.
 
 %The definition of \isacompareliteral{} (figure~\ref{main:figure:mmsyntax}) is deliberately conservative.
 %The first line considers the case where the object of the left argument
@@ -827,6 +818,13 @@ $$
     \BBetaMulti{}
   \end{mathpar}
   \getmethodfigure{}
+$$
+\begin{array}{ll}
+  \vcenter{\hbox{\BIsA{}}}
+  &
+  \vcenter{\hbox{\isaopsemfigure{}}}
+\end{array}
+$$
 \caption{Multimethod Syntax, Typing and Operational Semantics}
 \label{main:figure:mmsyntax}
 \end{figure}
