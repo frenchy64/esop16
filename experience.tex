@@ -1,23 +1,23 @@
 \section{Experience}
 \label{sec:experience}
 
-Typed Clojure is implemented as a Clojure library in the form of \coretyped{}.
+Typed Clojure is implemented as a Clojure library named \coretyped{}.
 In contrast to Racket, Clojure does not provide extension
 points to the macroexpander. To satisfy our goals of providing
 Typed Clojure as a library that works with the latest version of the Clojure
 compiler, \coretyped{} is implemented as an external static analysis pass
-that is explicitly invoked by the programmer.
-In this way \coretyped{} is effectively a linter.
+that must be explicitly invoked by the programmer.
+Therefore, \coretyped{} is in a sense a linter.
 
 This means that type checking is truly optional. 
-On the positive side, using \coretyped{} is flexible to the needs of a dynamically
-typed programmer, encouraging experimentation with programs that do not necessarily
+On the positive side, \coretyped{} is flexible to the needs of a dynamically
+typed programmer, encouraging experimentation with programs that may not
 type check.
 On the negative side, programmers must remember to type check their namespaces,
-but since type checking is a function call away, it is easily integrated as editor
+though since type checking is a function call away, it is easily integrated as editor
 shortcuts or continuous integration.
-Also programs cannot depend on the static semantics provided by Typed Clojure, including
-type-based optimisation. If this were not the case, we could dispose of type-hints
+Also, programs cannot depend on the static semantics of Typed Clojure, meaning that
+type-based optimisation is impossible. If this were not the case, we could dispose of type-hints
 altogether, and simply use static types to resolve reflection.
 
 %\subsection{Let-aliasing}

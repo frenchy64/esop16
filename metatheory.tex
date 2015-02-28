@@ -1,21 +1,27 @@
 \section{Metatheory}
 \label{sec:metatheory}
 
-Our proof for type soundness is similar to~\citet{TF10}. We add
-errors and \wrong{} value and prove
+We prove type soundness follow using the same technique as~\citet{TF10}. 
+We also include errors and a \wrong{} value and prove
 well-typed programs do not go wrong.
 
-We make our assumptions about Java explicit. We concede that
+Rather than modelling Java's dynamic semantics, we instead
+make our assumptions about Java explicit. We concede that
 method and constructor calls may diverge or error, but we assume they can
-never go wrong.
+never go wrong. (Assumptions for other operations are given in the supplemental
+material).
 
 {\javanewassumption{main}}
+
+
 
 %For readability we define logical truth in Clojure.
 
 %{\istruefalsedefinitions{main}}
 
-We use an extra lemma to support our main soundness lemma. Consistency
+For the purposes of our soundness proof, we require that all values
+are \emph{consistent}.
+Consistency
 ensures that occurrence typing does not refer to variables
 hidden inside a closure.
 
@@ -40,7 +46,5 @@ We can now state our soundness theorem.
 {\soundnesstheoremnoproof{main}}
 
 {\wrongtheoremnoproof{main}}
-\noindent
-As a corollary, null-pointer exceptions are ruled-out in typed code.
 %
 %{\nilinvoketheoremnoproof{main}}

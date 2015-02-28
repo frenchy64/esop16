@@ -569,6 +569,12 @@ $$
                                    {\emptyabsent{}}}{m}}
 $$
 
+The full definition of \updateliteral{} is given in \figref{main:figure:update}
+which considers both keys a path elements as well as the \classconst{}
+path element described below.
+In the absence of paths, update simply performs set-theoretic operations
+on types; see \figref{main:figure:restrictremove} for details.
+
 \paragraph{Class path element} Our second path element \classpe{} is used in the latent
 object of the constant \classconst{} function. Like Clojure's \clj{class}
 function \classconst{} returns the argument's class or \nil{}
@@ -582,7 +588,7 @@ $$
 \begin{mathpar}
 \constanttypefigure{}
 \end{mathpar}
-The full semantics are given in \figref{main:figure:primitivesem}.
+The dynamic semantics are given in \figref{main:figure:primitivesem}.
 The definition of \updateliteral{} supports various idioms relating to \classpe{}
 which we introduce in \secref{sec:isaformal}.
 
