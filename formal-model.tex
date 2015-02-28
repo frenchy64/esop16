@@ -235,8 +235,8 @@ We include both errors and a \wrong{} value, which is provably ruled out by the
 type system.
 The main judgement is \opsem{\openv{}}{\e{}}{\definedreduction{}}
 which states that \e{} evaluates to answer \definedreduction{} in environment
-\openv{}.
-A notable difference is \nil{} is a false value, which affects the
+\openv{}. We chose to omit the core rules (see \figref{appendix:figure:opsem})
+however a notable difference is \nil{} is a false value, which affects the
 semantics of \ifliteral{}:
 
 \begin{mathpar}
@@ -443,16 +443,15 @@ We can now use \isprop{\Number}{\x{}} in the environment to check the second sub
 
 We now present \HMapliteral{} types in detail.
 \figref{main:figure:hmapsyntax} extends the syntax for terms and types.
-The syntax 
-$$
-\clj{(HMap :mandatory p :absent-keys a :complete? b)}
-$$
-we introduced in \secref{sec:overview}
-is now written \HMapgeneric{\mandatory{}}{\absent{}},
-where \completenessmeta{} is {\complete{}} if \clj{b} is \clj{true} and is {\partial{}} otherwise. 
-The \mandatory{} entry specifies a set of known present keyword entries and \absent{} tracks known absent keys.
+
+We write \HMapgeneric{\mandatory{}}{\absent{}}
+where {\mandatory{}} is a map of \emph{present} entries (mapping keywords to types),
+\absent{} is a set of keyword keys that are known to be \emph{absent}
+and
+\completenessmeta{} is {\complete{}} (``complete'') if the map is fully specified by \mandatory{},
+and {\partial{}} (``partial'') if there are \emph{unknown} entries.
 To ease presentation, 
-if a HMap is declared as \complete{} then \absent{} implicitly contains all other keywords not specified in \mandatory{}.
+if a HMap is declared as \complete{} then \absent{} implicitly contains all keywords not in the domain of \mandatory{}.
 %\HMapcwithabsent{\mandatory{}}{\absent{}} is abbreviated to \HMapc{\mandatory{}}. 
 Keys cannot be both present and absent.
 
@@ -474,12 +473,16 @@ as long as they agree on the mandatory entries of the partial map via subtyping 
 \figref{main:figure:hmapsyntax} contains the typing rules. T-GetHMap models a lookup
 that will certainly succeed, T-GetHMapAbsent a lookup that will certainly fail
 and T-GetHMapPartialDefault a lookup with unknown results.
-We only handle unions of HMaps in T-GetHMap, where every element in the union
-contains the key we are looking up, in particular to support operations like
-looking up \clj{:op} on a map of type \clj{Expr} (\egref{example:decleaf}).
-The object in each T-Get rule is now more complicated than in T-Local---the 
+Lookups on unions of HMaps are only supported in T-GetHMap, 
+in particular to support
+looking up \clj{:op} on a map of type \clj{Expr} (\egref{example:decleaf})
+where every element in the union
+contains the key we are looking up.
+The objects in the T-Get rules are more complicated than those in T-Local---the 
 next section discusses this in detail.
-T-Assoc extends a HMap with a mandatory entry.
+Finally T-AssocHMap extends a HMap with a mandatory entry while preserving completeness
+and absent entries, and enforcing ${\k{}} \not\in {\absent{}}$ to prevent badly
+formed types.
 
 \figref{main:figure:hmapsyntax} contains the semantics for \getliteral{}
 and \assocliteral{}.
@@ -490,15 +493,18 @@ the entry is missing, B-GetMissing says we return \nil{}.
 \subsection{Paths}
 \label{sec:formalpaths}
 
-Recall the first insight of occurrence typing---not
-only do we want to reason about components of the runtime environment, that
-is, variables, but \emph{subcomponents} of the environment.
-We briefly mentioned paths, written \path{\pathelem{}}{\x{}}, but we concentrated on
-reasoning only about the variable \x{}---the notation \pathelem{} is a nested sequence of \emph{path elements}
-applied right-to-left to a variable \x{}.
+Recall the first insight of occurrence typing---we can reason
+about specific \emph{parts} of the runtime environment
+using propositions.
+The way to refer to \emph{parts} of the runtime environment with
+occurrencing is via \emph{path elements}.
+A \emph{path} consists of a series of path elements
+applied right-to-left to a variable
+written
+\path{\pathelem{}}{\x{}}.
 \citet{TF10} introduce the path elements \carpe{} and \cdrpe{}
 to reason about selector operations on cons cells.
-We instead want to reason about HMap lookups.
+We instead want to reason about HMap lookups and calls to \classconst{}.
 
 \paragraph{Key path element} We introduce our first path element
 {\keype{\k{}}}, which represents the operation of looking up
