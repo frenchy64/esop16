@@ -12,14 +12,13 @@ novel feature of Typed Clojure to the formalism,
 interleaving presentation of syntax, typing rules, operational semantics
 and subtyping.
 
-%TODO EXPLAIN what is a proposition?
 The first insight about occurrence typing is that
 logical formulas
 can be used to represent type information about our programs
 by relating parts of the runtime environment to types
 via propositional logic.
-\emph{Type Propositions} \prop{} make assertions like ``variable \clj{x} is of type \clj{Number}'' or
-``variable \clj{x} is not \clj{nil}''---in our logical system we write these as
+\emph{Type Propositions} \prop{} make assertions like ``variable \x{} is of type \NumberFull{}'' or
+``variable \x{} is not \nil{}''---in our logical system we write these as
 {\isprop{\NumberFull}{\x{}}}
 and {\notprop{\Nil{}}{\x{}}}. 
 The other propositions are standard logical connectives: implications, conjunctions,
@@ -27,23 +26,24 @@ disjunctions, and the trivial (\topprop{}) and impossible (\botprop{}) propositi
 (\figref{main:figure:termsyntax}).
 
 
-The particular part of the environment we reference in a
+The particular part of the runtime environment we reference in a
 type proposition is called the \emph{object}.
-Every expression has an object that is either \emph{empty}, written \emptyobject{}, 
+The typing judgement relates an object to every expression in the language.
+An object is either \emph{empty}, written \emptyobject{}, 
 which says 
-this expression is not known to evaluate to a particular component
-  of the current environment, or a 
+this expression is not known to evaluate to a particular part
+  of the current runtime environment, or a 
 variable with some \emph{path}, written \path{\pathelem{}}{\x{}},
 that exactly indicates how the value of this
-expression can be derived from the current environment.
+expression can be derived from the current runtime environment.
 Type propositions can only reference non-empty objects.
 
 The second insight is that we can replace the traditional 
 representation of a
-type environment of a map from variables to types
+type environment (eg., a map from variables to types)
 with a set of propositions, written \propenv{}. 
-Instead of mapping \clj{x} to
-the type \clj{Number}, we use the proposition {\isprop{\NumberFull}{\x{}}}.
+Instead of mapping \x{} to
+the type \NumberFull{}, we use the proposition {\isprop{\NumberFull}{\x{}}}.
 
 Given a set of propositions, we can use logical reasoning to derive
 new information about our programs
@@ -154,7 +154,7 @@ and \NumberFull{} and \Number{}.
 The type \Value{\Keyword} is inhabited by the class literal \Keyword{} and \clj{:a} is of type \Keyword{}.
 We abbreviate \EmptyUnion{} as \Bot{}, {\ValueNil} as \Nil{}, 
 {\ValueTrue} as \True and {\ValueFalse} as {\False}.
-Function types contain \emph{latent}(terminology from~\cite{Lucassen88polymorphiceffect}) propositions and object, which, along with the return type,
+Function types contain \emph{latent} (terminology from~\cite{Lucassen88polymorphiceffect}) propositions and object, which, along with the return type,
 may refer to the function argument.
 %Latent means they are relevant when the function is applied rather than evaluated.
 They are latent because they are instantiated with the
@@ -168,9 +168,9 @@ T-If.
   {\TIf}
 \end{mathpar}
 
-The propositions of the test \thenprop{\prop{1}} and \elseprop{\prop{1}}
-are used as assumptions in the then and else branch respectively.
-If the result of the \ifliteral{} is true, then the value either
+The propositions of the test expression \e{1}, \thenprop{\prop{1}} and \elseprop{\prop{1}}, are 
+used as assumptions in the then and else branch respectively.
+If the result of the \ifliteral{} is a true value, then it either
 came from \e{2}, in which case \thenprop{\prop{2}} is true, or from \e{3},
 which implies \thenprop{\prop{3}} is true. 
 The else proposition is \orprop{\elseprop{\prop{2}}}{\elseprop{\prop{3}}} 
@@ -181,28 +181,37 @@ to derive a type for a variable.
 Using this rule, the type system can then appeal to L-Update to refine the type
 assigned to \x{}.
 
-We are now equipped to type check 
-\egref{example:conditionalflow}:
+We are now equipped to type check
+\egref{example:conditionalflow}, starting at body:
 $$
-\clj{(if (number? x) (inc x) 0)}
+\clj{... (if (number? x) (inc x) 0) ...}
 $$
 
+We know {\propenv{}} = {\isprop{\UnionNilNum{}}{\x{}}}.
 The test expression uses T-App, 
 $$
-\judgement{\isprop{\UnionNilNum{}}{\x{}}}{\hastype{\appexp{\numberhuh{}}{\x{}}}{\Boolean}}{\filterset{\isprop{\Number}{\x{}}}{\notprop{\Number}{\x{}}}}{\emptyobject{}}
+\judgement{\propenv{}}{\hastype{\appexp{\numberhuh{}}{\x{}}}{\Boolean}}{\filterset{\isprop{\Number}{\x{}}}{\notprop{\Number}{\x{}}}}{\emptyobject{}}
 $$
 since \numberhuh{} has type
 {\ArrowOne{\x{}}{\Top}{\Boolean}
         {\filterset{\isprop{\Number}{\x{}}}{\notprop{\Number}{\x{}}}}{\emptyobject{}}}
       and \x{} has object \x{}.
 
-Now we check both branches using the extended proposition environment as specified by T-If.
+Finally we check both branches using the extended proposition environment as specified by T-If.
+Going down the then branch, our new assumption {\isprop{\Number}{\x{}}} is crucial to check
 $$
-\judgement{{\isprop{\UnionNilNum}{\x{}}},\isprop{\Number}{\x{}}}{\hastype{\appexp{\inc{}}{\x{}}}{\Number{}}}{\filterset{\topprop{}}{\topprop{}}}{\emptyobject{}}
+\judgement{{\propenv{}},{\isprop{\Number}{\x{}}}}{\hastype{\x{}}{\Number{}}}{\filterset{\notprop{\falsy{}}{\x{}}}{\isprop{\falsy{}}{\x{}}}}{\emptyobject{}}
 $$
+because we can now satisify the premise of T-Local:
 $$
-\judgement{{\isprop{\UnionNilNum}{\x{}}},\notprop{\Number}{\x{}}}{\hastype{\zeroliteral{}}{\Number}}{\filterset{\topprop{}}{\topprop{}}}{\emptyobject{}}
+\inpropenv{{\propenv{}},\isprop{\Number}{\x{}}}{\isprop{\Number}{\x{}}}.
 $$
+%\judgement{{\propenv{}},\isprop{\Number}{\x{}}}{\hastype{\appexp{\inc{}}{\x{}}}{\Number{}}}{\filterset{\topprop{}}{\botprop{}}}{\emptyobject{}}
+%$$
+%$$
+%\judgement{{\propenv{}},\notprop{\Number}{\x{}}}{\hastype{\zeroliteral{}}{\Number}}{\filterset{\topprop{}}{\botprop{}}}{\emptyobject{}}
+%$$
+
 %\inc{} has type
 %$$
 %{\ArrowOne{\x{}}{\Number}{\Number}
