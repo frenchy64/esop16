@@ -1,11 +1,10 @@
 \section{Related Work}
 
 \paragraph{Multimethods} 
-Millstein and Chambers~\cite{MS02}
-describe Dubious, a simple statically typed core language including multimethods that
-dispatch on the type of its arguments. They tackle a key challenge for statically typing
-multimethods: ``it is possible for two modules containing arbitrary multimethods to typecheck
-successfully in isolation but generate type errors when linked together.''~\cite{MS02}
+\citet{MS02} describe Dubious, a simple statically typed core language including multimethods that
+dispatch on the type of its arguments. 
+In Dubious methods declare the types of arguments that they expect which corresponds to
+exclusively using \clj{class} as the dispatch function in Typed Clojure.
 
 % one sentence
 % TC based on TR, already covered
@@ -39,9 +38,9 @@ successfully in isolation but generate type errors when linked together.''~\cite
 % - rows based on polymorphism
 
 \paragraph{Record Types} 
-O'Caml-style extensible record types have been the subject of extensive research 
-(eg. Wand~\cite{Wan89}, Cardelli and Mitchell~\cite{CM91}, Harper and Pierce~\cite{HP91})
-most inference
+OCaml-style extensible record types (eg. \citet{Wan89}, \citet{CM91}, \citet{HP91})
+are defined polymorphically in terms of row variables.
+HMaps in Typed Clojure are instead designed to be used with subtyping.
 
 Dependent JavaScript~\cite{Chugh:2012:DTJ} can track similar invariants as HMaps with types
 for JS objects. They must deal with mutable objects, they feature refinement types and strong updates to the heap
@@ -59,32 +58,3 @@ for lookups on missing keys---HMaps consider lookups on missing keys normal.
   \item Flow
 \end{itemize}
 
-Typed Racket is a statically typed sister language of Racket. It
-attempts to preserve existing Racket idioms and aims to type check
-existing Racket code by simply adding top level type annotations~\cite{Tob10}.
-
-Typed Racket fully expands all macro calls before type checking~\cite{Tob10},
-avoiding the complex semantics of type checking macro definitions, an ongoing research area summarised
-by~\citet{Her10}. Typed Clojure also expands macros before type checking.
-
-\paragraph{Variable-arity Polymorphism}
-
-~\citet{STF09} invented a type system supporting variable-arity polymorphism  % doesn't fit on a line
-a version of which is included in the current implementation of Typed Racket.
-Their main innovation centres around \emph{dotted type variables}, which represent a heterogeneous sequence
-of types. Dotted type variables allow \emph{non-uniform} variable-arity function types,
-which are used to check definitions and usages of functions with non-trivial rest parameters
-
-\paragraph{Java Interoperability in Statically Typed Languages}
-
-Scala~\cite{OCD+} has nullable references for compatibility with Java.
-Programmers must manually check for
-\java{null} like in Java to avoid null-pointer exceptions. 
-
-% def checkNullOrEmpty(v:Seq[Any]):Boolean = {
-%   return v.getClass
-% }
-% 
-% checkNullOrEmpty(null) ;=> NPE
-%
-% null.getClass
