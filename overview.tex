@@ -384,7 +384,7 @@ check is returned.
   (isa? Keyword Object) ;=> true
 \end{minted}
 
-We include the above sequence of definitions as example~\ref{example:rep}.
+We include the above sequence of definitions as \egref{example:rep}.
 
 \begin{Code}
 \begin{exmp}
@@ -398,7 +398,7 @@ type checks because \clj{:a} agrees with the parameter type \clj{Any},
 but throws an error at runtime.
 
 \paragraph{HMap dispatch} The flexibility of \clj{isa?} is key to the generality of multimethods. 
-In example~\ref{example:incmap} we
+In \egref{example:incmap} we
 dispatch on the \clj{:op} key 
 of our HMap AST \clj{Expr}.
 Since keywords are functions that look themselves up in their argument, we simply
@@ -409,7 +409,7 @@ use \clj{:op} as the dispatch function.
 \label{example:incmap}
 \end{exmp}
 
-\clj{inc-map} is like example~\ref{example:decmap} except the nodes are incremented.
+\clj{inc-map} is like \egref{example:decmap} except the nodes are incremented.
 The reasoning is similar, except we only consider one branch (the current method) by
 locally considering the current \emph{dispatch value} and reasoning about how it relates
 to the \emph{dispatch function}.
@@ -424,7 +424,7 @@ same length recursively call \clj{isa?} on the elements pairwise.
   (isa? [Keyword Keyword] [Object Object]) ;=> true
 \end{minted}
 
-Example~\ref{example:multidispatch}
+\egref{example:multidispatch}
 simulates multiple dispatch by dispatching on
 a vector containing the class of both arguments. \clj{open}
 takes two arguments which can be strings or files and returns
@@ -432,12 +432,12 @@ a new file that concatenates their paths.
 
 We call three different \clj{File} constructors, each known at compile-time
 via type hints.
-Multiple dispatch follows the same kind of reasoning as example~\ref{example:incmap},
+Multiple dispatch follows the same kind of reasoning as \egref{example:incmap},
 except we update multiple bindings simultaneously.
 
 \subsection{Final example}
 
-Example~\ref{example:final}
+\egref{example:final}
 combines everything we will cover for the rest of the paper:
 multimethod dispatch, reflection resolution via type hints, Java method
 and constructor calls, conditional and exceptional flow reasoning,
