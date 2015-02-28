@@ -315,14 +315,33 @@ Subtyping for untagged unions is standard.
 %  \label{main:figure:standardopsem}
 %\end{figure}
 
-\begin{figure*}
+\begin{figure}
   \footnotesize
   \begin{mathpar}
-    \standardsubtyping{}
+    \SRefl{}
+
+    \STop{}
+
+\SUnionSuper{}
+
+\SUnionSub{}
+
+\SFunMono{}
+
+\SObject{}
+
+\SClass{}
+
+\SSBool{}
+
+\SFun{}
+
+\SSKw{}
+
   \end{mathpar}
   \caption{Core Subtyping rules}
   \label{main:figure:subtyping}
-\end{figure*}
+\end{figure}
 
 \subsection{Reasoning about Exceptional Control Flow}
 \label{sec:doformal}
@@ -569,13 +588,8 @@ which we introduce in \secref{sec:isaformal}.
 
 \subsection{Java Interoperability and Type Hints}
 
-\begin{figure}[h]
+\begin{figure}[t]
   \footnotesize
-
-  $$
-  \begin{altgrammar}
-  \end{altgrammar}
-  $$
   $$
   \begin{altgrammar}
     \e{} &::=& \ldots   \localhintsyntax{} \alt \lethintsyntax{} &\mbox{Expressions}\\
@@ -749,7 +763,7 @@ can return nil but constructors cannot.
 
 The evaluation rules B-Field, B-New and B-Method (\figref{main:figure:javatyping}) simply evaluate their
 arguments and call the relevant JVM operation, which do not model---\secref{sec:metatheory}
-states our exact assumptions about each.
+states our exact assumptions.
 
 \subsection{Multimethod preliminaries: \isaliteral}
 
@@ -765,7 +779,6 @@ The key component of the T-IsA rule is the \isacompareliteral{}
 metafunction
 (\figref{main:figure:mmsyntax}), used to calculate the propositions for
 \isaliteral{} tests.
-
 \begin{mathpar}
   \TIsA{}
 \end{mathpar}
@@ -786,7 +799,7 @@ The operational behavior of \isaliteral{} is given by B-IsA (\figref{main:figure
 
 \subsection{Multimethods}
 
-\begin{figure}
+\begin{figure}[t!]
   \footnotesize
 $$
 \begin{altgrammar}
@@ -830,7 +843,8 @@ $$
 \end{figure}
 
 To ease presentation, we present \emph{immutable}
-multimethods (\figref{main:figure:mmsyntax}). \defmethodliteral{} returns a new extended multimethod
+multimethods, with syntax and semantics given in \figref{main:figure:mmsyntax}. 
+\defmethodliteral{} returns a new extended multimethod
 without changing the original multimethod. \egref{example:rep} is now written
 \begin{minted}{clojure}
 (let [path (defmulti [Any -> (U nil String)] class)]
@@ -840,27 +854,24 @@ without changing the original multimethod. \egref{example:rep} is now written
       (path "dir/a")))) ;=> "a"
 \end{minted}
 
-The syntax for multimethods is given in \figref{main:figure:mmsyntax}.
-{\MultiFntype {\s{}} {\sp{}}} is the type of multimethods with \emph{interface type}
+The type {\MultiFntype {\s{}} {\sp{}}} characterizes multimethods with \emph{interface type}
 {\s{}} and \emph{dispatch function type} {\sp{}}.
-The expression {\createmultiexp {\s{}} {\e{}}} expression creates a multimethod
+The expression {\createmultiexp {\s{}} {\e{}}} defines a multimethod
 with interface type \s{} and dispatch function \e{}.
 The expression {\extendmultiexp {\e{m}} {\e{v}}{\e{f}}}
-takes multimethod \e{m} and returns a new multimethod with an extended dispatch
-table from dispatch value {\e{v}} to {\e{f}}.
+extends multimethod \e{m} and to map
+dispatch value {\e{v}} to {\e{f}} in an extended dispatch table.
 The value {\multi {\v{}} {\disptable{}}} is the runtime value of a multimethod
 with dispatch function {\v{}} and dispatch table {\disptable{}}.
 
-The typing rules are in \figref{main:figure:mmsyntax}.
-The T-DefMulti rule checks to ensure the type of dispatch function
-is a function that has at least as permissive a parameter type
+The T-DefMulti rule ensures that the type of the dispatch function
+has at least as permissive a parameter type
 as the interface type.
-
-For example, let us check the \defmultiliteral{} from our translation of \egref{example:rep}
+%
+For example, we can check the definition from our translation above of \egref{example:rep}
 using T-DefMulti.
-
 $$
-\judgement{\propenv{}}
+\judgement{}%{\propenv{}}
 {\hastype
 {\createmultiexp 
       {\s{}}
@@ -874,47 +885,48 @@ where \s{}  = {\ArrowOne {\x{}} {\Top{}} {\t{}} {\filterset {\topprop{}} {\toppr
 The T-DefMethod rule is carefully constructed to ensure we have a syntactic
 lambda expression as the right-most subexpression.
 This way we can manually check the body of the lambda under an extended
-environment like we sketched in \egref{example:incmap}.
-We use \isacompareliteral{} to infer the proposition for this method.
+environment as sketched in \egref{example:incmap}.
+We use \isacompareliteral{} to compute the proposition for this method,
+since \isaliteral{} is used at runtime in multimethod dispatch.
 
-Let us continue with the next line of the translation of \egref{example:rep}.
-From our previous line we have \propenvp{} = \propenv{},{\isprop{\MultiFntype {\s{}}{\sp{}}}{path}}.
+We continue with the next line of the translation of \egref{example:rep}.
+From the previous line we have \propenv{} = {\isprop{\MultiFntype {\s{}}{\sp{}}}{path}},
+so
 $$
-\judgement{\propenvp{}}
+\judgement{\propenv{}}
 {\hastype
   {\extendmultiexp {prop} {\String}
                    {\abs {\x{}} {\Top{}} {\x{}}}}
   {\MultiFntype {\s{}}{\sp{}}}}{\filterset{\topprop{}}{\botprop{}}}{\emptyobject{}}
 $$
-We know \emph{prop} is a multimethod by \propenvp{}, so now we check the body.
+We know \emph{prop} is a multimethod by \propenv{}, so now we check the body
+of this method.
 $$
-\judgement{\propenvp{},{\isprop{\Top}{\x{}}},{\isprop{\String}{\x{}}}}
+\judgement{\propenv{},{\isprop{\Top}{\x{}}},{\isprop{\String}{\x{}}}}
 {\hastype
   {\x{}}
   {\String}}{\filterset{\topprop{}}{\botprop{}}}{\emptyobject{}}
 $$
-This is checked by T-Local since {\inpropenv{\propenvp{},{\isprop{\Top}{\x{}}},{\isprop{\String}{\x{}}}}{\isprop{\String}{\x{}}}}.
-The new proposition {\isprop{\String}{\x{}}} was inferred by 
+%This is checked by T-Local since {\inpropenv{\propenv{},{\isprop{\Top}{\x{}}},{\isprop{\String}{\x{}}}}{\isprop{\String}{\x{}}}}.
+The new proposition {\isprop{\String}{\x{}}} is derived by 
 $$
   \isacompare{\Top{}}{\path{\classpe{}}{\x{}}}{\Value{\File{}}}
              {\filterset{\isprop{\String}{\x{}}}
-                        {\notprop{\String}{\x{}}}}
+                        {\notprop{\String}{\x{}}}}.
 $$
+%
+The body of the \clj{let} is checked by T-App because
+{\MultiFntype {\s{}}{\sp{}}} is a subtype of its interface type {\s{}}.
 
-The next line is similarly. The final line is checked by T-App because
-subtyping for multimethods (\figref{main:figure:mmsyntax}), specifically S-PMultiFn
-says that {\MultiFntype {\s{}}{\sp{}}} can be upcast to its interface type {\s{}}.
-Since {\s{}} has parameter type \Top{}, this holds trivially.
-
-Multimethod semantics are in \figref{main:figure:mmsyntax}.
-B-DefMulti creates a multimethod with a dispatch function and an empty dispatch table.
-B-DefMethod returns a new multimethod with an extended dispatch table.
-B-BetaMulti invokes the dispatch function with the evaluated argument to get the dispatch value,
+Multimethod definition semantics are straightforward.
+B-DefMulti creates a multimethod with the given dispatch function and an empty dispatch table.
+B-DefMethod produces a new multimethod with an extended dispatch table.
+B-BetaMulti invokes the dispatch function with the evaluated argument to obtain the dispatch value,
 and uses \getmethodliteral{} (which models Clojure's \clj{get-method}) 
-to obtain a method. The call to \getmethodliteral{} only returns a value
-if there is exactly one method such that the corresponding dispatch value
-is compatible with the current result of the dispatch function by \isaopsemliteral{}.
-Finally we return the result of applying the obtained method and the original evaluated argument.
+to extract the appropriate method. The call to \getmethodliteral{} only returns a value
+if there is \emph{exactly one} method such that the corresponding dispatch value
+is compatible, using \isaopsemliteral{}, with the result of the dispatch function.
+Finally we return the result of applying the extracted method and the original argument.
 
 \begin{figure*}
   $$

@@ -1387,7 +1387,54 @@ $$
   {\Object{}}}
 }
 
-%\newcommand\SClass[0]{
+\newcommand\SClass[0]{
+\infer [S-SClass]
+{}
+{\issubtypein {}
+  {\ValueClass}
+  {\Class{}}}
+}
+
+\newcommand\SSBool[0]{
+\infer [S-SBool]
+{}
+{\issubtypein {}
+  {\ValueBool}
+  {\Boolean{}}}
+}
+
+\newcommand\SSKw[0]{
+\infer [S-SKw]
+{}
+{\issubtypein {}
+  {\ValueKw}
+  {\Keyword}}
+}
+
+\newcommand\SFun[0]{
+\infer [S-Fun]
+{ \issubtypein {} {\sp{}} {\s{}}
+  \\
+  \issubtypein {} {\t{}} {\tp{}}
+  \\\\
+  \inpropenv {\thenprop {\prop{}}} {\thenprop {\propp{}}}
+  \\
+  \inpropenv {\elseprop {\prop{}}} {\elseprop {\propp{}}}
+  \\\\
+  \issubobjin{} {\object{}} {\objectp{}}
+}
+{ \issubtypein {}
+    {\ArrowOne {\x{}} {\s{}}
+              {\t{}}
+              {\filterset {\thenprop {\prop{}}}
+                          {\elseprop {\prop{}}}}
+              {\object{}}}
+    {\ArrowOne {\x{}} {\sp{}}
+              {\tp{}}
+              {\filterset {\thenprop {\propp{}}}
+                          {\elseprop {\propp{}}}}
+              {\objectp{}}}}
+        }
 
 % subtyping syntax
 \newcommand\standardsubtyping[0]{
@@ -1404,50 +1451,15 @@ $$
 \begin{array}{l}
 \SObject\\\\
 
-\infer [S-SClass]
-{}
-{\issubtypein {}
-  {\ValueClass}
-  {\Class{}}}
+\SClass{}
 \end{array}
 
 \begin{array}{l}
-\infer [S-SBool]
-{}
-{\issubtypein {}
-  {\ValueBool}
-  {\Boolean{}}}\\\\
-
-\infer [S-SKw]
-{}
-{\issubtypein {}
-  {\ValueKw}
-  {\Keyword}}
+\SSBool{}\\\\
+\SSKw{}
 \end{array}
 
-\infer [S-Fun]
-{ \issubtypein {} {\sp{}} {\s{}}
-  \\
-  \issubtypein {} {\t{}} {\tp{}}
-  \\
-  \inpropenv {\thenprop {\prop{}}} {\thenprop {\propp{}}}
-  \\
-  \inpropenv {\elseprop {\prop{}}} {\elseprop {\propp{}}}
-  \\
-  \issubobjin{} {\object{}} {\objectp{}}
-}
-{ \issubtypein {}
-    {\ArrowOne {\x{}} {\s{}}
-              {\t{}}
-              {\filterset {\thenprop {\prop{}}}
-                          {\elseprop {\prop{}}}}
-              {\object{}}}
-    {\ArrowOne {\x{}} {\sp{}}
-              {\tp{}}
-              {\filterset {\thenprop {\propp{}}}
-                          {\elseprop {\propp{}}}}
-              {\objectp{}}}}
-
+\SFun{}
 
 
 }
@@ -1856,13 +1868,14 @@ $$
 \newcommand\javanewassumption[1]{
 \begin{assumption}[\newjavaliteral] \label{#1:assumption:new}
   If\ $\forall i.\ {\v{i}} = {\classvalue{\classhint{i}}{\overrightarrow{\classfieldpair{\fld{j}} {\v{j}}}}}\ or\ {\v{i}}= {\nil}$
-  and {\v{i}}
+  and \consistentwith{\v{i}}{\openv{}}
   then either
   \begin{itemize}
   \item $\newjava {\classhint{}}
                 {\overrightarrow{\classhint{i}}}
                 {\overrightarrow{\v{i}}}
-                {\classvalue{\classhint{}}{\overrightarrow {\classfieldpair{\fld{k}} {\v{k}}}}}$, or
+                {\classvalue{\classhint{}}{\overrightarrow {\classfieldpair{\fld{k}} {\v{k}}}}}$
+                which \consistentwith{}{\openv{}},
   \item 
         $\newjava {\classhint{}}
                 {\overrightarrow{\classhint{i}}}
@@ -2299,22 +2312,21 @@ $$
 \begin{mathpar}
 
 \begin{array}{lllr}
-
 \constantopsem{\classconst}{\classvalue{\class{}} {\overrightarrow {\classfieldpair{\fld{}} {\v{}}}}} &=& \class{}\\
 \constantopsem{\classconst}{\class{}} &=& \Class{}\\
-\constantopsem{\classconst}{\true{}} &=& \Boolean{}\\
-\constantopsem{\classconst}{\false{}} &=& \Boolean{}\\
 \constantopsem{\classconst}{\closure {\openv{}} {\abs {\x{}} {\t{}} {\e{}}}} &=& \IFn{}\\
 \constantopsem{\classconst}{\multi {\v{d}} {\disptable{}}} &=& \PMulti{}\\
-\constantopsem{\classconst}{\mapval{}} &=& \HMapInstance{}\\
+\constantopsem{\classconst}{\mapval{}} &=& \HMapInstance{}
+\end{array}
+\begin{array}{lllr}
+\constantopsem{\classconst}{\true{}} &=& \Boolean{}\\
+\constantopsem{\classconst}{\false{}} &=& \Boolean{}\\
 \constantopsem{\classconst}{\k{}} &=& \Keyword{}\\
 %\constantopsem{\classconst}{\num{}} &=& \Number{}\\
 \constantopsem{\classconst}{\nil{}} &=& \nil{}
   %\constantopsem{\classconst}{\v{}} &=& \wrong{} & otherwise\\
 %  \\\\
 %\constantopsem{\throwconst}{\v{}} &=& \errorval{\v{}}\\
-
-
 \end{array}
 \end{mathpar}
 \caption{Primitives}
