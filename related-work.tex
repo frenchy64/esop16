@@ -52,8 +52,16 @@ for lookups on missing keys---HMaps consider lookups on missing keys normal.
 
 
 \paragraph{Optional type systems}
-\begin{itemize}
-  \item Reticulated Python~\cite{Vitousek14}
+Reticulated Python~\cite{Vitousek14} is a gradually typed
+system for Python, implemented as a source-to-source
+translation that inserts dynamic checks at language boundaries
+and supporting Python's first-class object system.
+Typed Clojure is implemented as a syntactic check on Clojure
+code with no option to insert dynamic checks automatically.
+Typed Clojure does not support a first-class object system
+because Java has nominal classes, however HMaps offer a subset 
+of the structural features offered by Reticulated.
+
   \item GradualTalk
   \item Flow
 \end{itemize}
