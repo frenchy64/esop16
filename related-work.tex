@@ -37,19 +37,26 @@ exclusively using \clj{class} as the dispatch function in Typed Clojure.
 % - based on subtyping
 % - rows based on polymorphism
 
-\paragraph{Record Types} 
-OCaml-style extensible record types (eg. \citet{Wan89}, \citet{CM91}, \citet{HP91})
-are defined polymorphically in terms of row variables.
-HMaps in Typed Clojure are instead designed to be used with subtyping.
+\paragraph{Record Types} Row polymorphism~\cite{Wan89,CM91,HP91}, used
+in systems such as the OCaml object system, provides many of the
+features of HMap types, but defined using universally-quantified row
+variables. HMaps in Typed Clojure are instead designed to be used with
+subtyping, but nonetheless provide similar expressiveness, including
+the ability to require presence and absence of certain keys. 
 
-Dependent JavaScript~\cite{Chugh:2012:DTJ} can track similar invariants as HMaps with types
-for JS objects. They must deal with mutable objects, they feature refinement types and strong updates to the heap
-to track changes to objects.
+Dependent JavaScript~\cite{Chugh:2012:DTJ} can track similar
+invariants as HMaps with types for JS objects. They must deal with
+mutable objects, they feature refinement types and strong updates to
+the heap to track changes to objects.
 
-Typed Lua~\cite{Maidl:2014:TLO} has \emph{table types} which track entries in a mutable Lua table.
-Typed Lua changes the dynamic semantics of Lua to accommodate mutability: Typed Lua raises a runtime error
-for lookups on missing keys---HMaps consider lookups on missing keys normal.
+Typed Lua~\cite{Maidl:2014:TLO} has \emph{table types} which track
+entries in a mutable Lua table.  Typed Lua changes the dynamic
+semantics of Lua to accommodate mutability: Typed Lua raises a runtime
+error for lookups on missing keys---HMaps consider lookups on missing
+keys normal.
 
+The integration of completeness information, crucial for many examples
+in Typed Clojure, is not provided by any of these systems.
 
 \paragraph{Optional type systems}
 \begin{itemize}
