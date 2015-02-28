@@ -80,7 +80,7 @@ Clojure supports mutable references with software-transactional-memory
 which Typed Clojure defines \emph{bivariantly}---with write and read type parameters
 as in the atomic reference \clj{(Atom2 Int Int)} which can write and read \clj{Int}.
 Typed Clojure also supports parametric polymorphism, including
-Typed Racket's variable-arity polymorphism~\cite{variable-arity-cite-todo}, 
+Typed Racket's variable-arity polymorphism~\cite{stf-esop}, 
 which enables us to assign a type to functions like \clj{swap!} (figure~\ref{main:fig:swap!}),
 which takes a mutable \emph{atom},
 a function and extra arguments, and swaps into the atom the result of
