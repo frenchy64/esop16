@@ -1,10 +1,15 @@
 \section{Related Work}
 
+% Cite a few of the early papers here.
+%http://www.cs.washington.edu/research/projects/cecil/www/pubs/
 \paragraph{Multimethods} 
-\citet{MS02} describe Dubious, a simple statically typed core language including multimethods that
-dispatch on the type of its arguments. 
-In Dubious methods declare the types of arguments that they expect which corresponds to
-exclusively using \clj{class} as the dispatch function in Typed Clojure.
+\citeauthor{MS02} and collaborators present a sequence of
+systems~\cite{MS02, cecil, more} with statically-typed multimethods
+and modular type checking.  In contrast to Typed Clojure, in these
+system methods declare the types of arguments that they expect which
+corresponds to exclusively using \clj{class} as the dispatch function
+in Typed Clojure. However, Typed Clojure does not attempt to rule out
+failed dispatches at runtime.
 
 % one sentence
 % TC based on TR, already covered
@@ -58,10 +63,17 @@ keys normal.
 The integration of completeness information, crucial for many examples
 in Typed Clojure, is not provided by any of these systems.
 
+\paragraph{Java Interoperability in Statically Typed Languages}
+Scala~\cite{OCD+} has nullable references for compatibility with Java.
+Programmers must manually check for
+\java{null} as in Java to avoid null-pointer exceptions. 
+
+
 \paragraph{Optional type systems}
 \begin{itemize}
   \item Reticulated Python~\cite{Vitousek14}
   \item GradualTalk
   \item Flow
 \end{itemize}
+
 
