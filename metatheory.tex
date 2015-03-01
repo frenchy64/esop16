@@ -5,7 +5,7 @@ We prove type soundness follow using the same technique as~\citet{TF10}.
 We also include errors and a \wrong{} value and prove
 well-typed programs do not go wrong.
 
-Rather than modelling Java's dynamic semantics, we instead
+Rather than modeling Java's dynamic semantics, we instead
 make our assumptions about Java explicit. We concede that
 method and constructor calls may diverge or error, but we assume they can
 never go wrong. (Assumptions for other operations are given in the supplemental
@@ -35,7 +35,7 @@ The metavariable \definedreduction{} ranges over \v{}, \errorvalv{} and \wrong{}
 
   {\soundnesslemmahypothesis}
   \begin{proof}
-    By induction on the derivation of the typing judgement. 
+    By induction on the derivation of the typing judgment. 
     (Full proof given as lemma~\ref{appendix:lemma:soundness}).
   \end{proof}
 \end{lemma}

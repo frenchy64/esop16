@@ -28,7 +28,7 @@ disjunctions, and the trivial (\topprop{}) and impossible (\botprop{}) propositi
 
 The particular part of the runtime environment we reference in a
 type proposition is called the \emph{object}.
-The typing judgement relates an object to every expression in the language.
+The typing judgment relates an object to every expression in the language.
 An object is either \emph{empty}, written \emptyobject{}, 
 which says 
 this expression is not known to evaluate to a particular part
@@ -47,7 +47,7 @@ the type \NumberFull{}, we use the proposition {\isprop{\NumberFull}{\x{}}}.
 
 Given a set of propositions, we can use logical reasoning to derive
 new information about our programs
-with the judgement \inpropenv{\propenv{}}{\prop{}}.
+with the judgment \inpropenv{\propenv{}}{\prop{}}.
 In addition to the standard rules for the logical connectives, the key
 rule is L-Update, which combines multiple propositions about the same variable,
 allowing us to refine its type.
@@ -68,7 +68,7 @@ dynamic languages
 using implicit type-based reasoning based on the result of
 conditional tests.
 For instance, \egref{example:conditionalflow}
-only utilises \clj{x} once
+only utilizes \clj{x} once
 the programmer is convinced it is safe to do so based whether
 \clj{(number? x)}
 is 
@@ -123,9 +123,9 @@ $$
 \end{figure}
 
 
-We formalise our type system following~\citet{TF10}
+We formalize our type system following~\citet{TF10}
 (with differences highlighted in $\trdiff{\text{blue}}$).
-The typing judgement 
+The typing judgment 
 $$
 {\judgement   {\propenv}
               {\hastype {\e{}} {\t{}}}
@@ -202,7 +202,7 @@ Going down the then branch, our new assumption {\isprop{\Number}{\x{}}} is cruci
 $$
 \judgement{{\propenv{}},{\isprop{\Number}{\x{}}}}{\hastype{\x{}}{\Number{}}}{\filterset{\notprop{\falsy{}}{\x{}}}{\isprop{\falsy{}}{\x{}}}}{\emptyobject{}}
 $$
-because we can now satisify the premise of T-Local:
+because we can now satisfy the premise of T-Local:
 $$
 \inpropenv{{\propenv{}},\isprop{\Number}{\x{}}}{\isprop{\Number}{\x{}}}.
 $$
@@ -233,7 +233,7 @@ $$
 in a big-step style using an environment, following~\citet{TF10}.
 We include both errors and a \wrong{} value, which is provably ruled out by the
 type system.
-The main judgement is \opsem{\openv{}}{\e{}}{\definedreduction{}}
+The main judgment is \opsem{\openv{}}{\e{}}{\definedreduction{}}
 which states that \e{} evaluates to answer \definedreduction{} in environment
 \openv{}. We chose to omit the core rules (see \figref{appendix:figure:opsem})
 however a notable difference is \nil{} is a false value, which affects the
@@ -382,7 +382,7 @@ $
 Our main insight is as follows: 
 if the first subexpression in a sequence reduces to a value, then it is either true or false.
 If we learn some proposition in both cases then we can use that proposition as an assumption to check the second subexpression.
-T-Do formalises this intuition.
+T-Do formalizes this intuition.
 
 \begin{mathpar}
     {\TDo}  
@@ -517,12 +517,10 @@ If the entry is missing, B-GetMissing produces \nil{}.
 Recall the first insight of occurrence typing---we can reason
 about specific \emph{parts} of the runtime environment
 using propositions.
-The way to refer to \emph{parts} of the runtime environment with
-occurrencing is via \emph{path elements}.
-A \emph{path} consists of a series of path elements
-applied right-to-left to a variable
-written
-\path{\pathelem{}}{\x{}}.
+We refer to parts of the runtime environment via 
+a \emph{path} that consists of a series of
+\emph{path elements} applied right-to-left to a variable
+written \path{\pathelem{}}{\x{}}.
 \citet{TF10} introduce the path elements \carpe{} and \cdrpe{}
 to reason about selector operations on cons cells.
 We instead want to reason about HMap lookups and calls to \classconst{}.
@@ -729,7 +727,7 @@ find a field matching the type hint inferred on \ep{}.
     \RFieldElimRefl{}
   $$
 
-Type hint inference is given by the judgement
+Type hint inference is given by the judgment
 \tajudgement {\taenv{}} {\hastype {\e{}} {\tatype{}}}
 which infers the (possibly-unknown) type hint \tatype{} of expression \e{} in type hint environment \taenv{}.
 We defer the remainder of the rules for rewriting and the definition of type hint inference
