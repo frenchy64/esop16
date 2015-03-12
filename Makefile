@@ -3,6 +3,7 @@ all:
 	bibtex small
 	pdflatex -shell-escape small.tex 
 	pdflatex -shell-escape small.tex 
+	pdftk small.pdf cat 1-12 output typed-clojure-draft.pdf
 
 test:
 	cd code/demo/ && ../../bin/lein test
