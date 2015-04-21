@@ -1,0 +1,273 @@
+> ===========================================================================
+>                            ICFP '15 Review #98A
+> ---------------------------------------------------------------------------
+>               Paper #98: Practical Optional Types for Clojure
+> ---------------------------------------------------------------------------
+> 
+> 
+>                       Overall merit: 4. Accept
+>                  Reviewer expertise: 1. No familiarity
+> 
+>                          ===== Paper summary =====
+> 
+> Clojure is a dynamically typed language in the Lisp family which runs on the Java Virtual Machine. It provides interoperability with Java codes, allowing programmers to use existing Java libraries within Clojure programs. The paper presents an optional type system for Clojure, building on the approach of the gradual type system in Typed Racket. The authors extend occurrence typing of Typed Racket to handle Clojure-specific features, such as interoperability with Java and multimethods, and programming idioms such as exceptional control flow and heterogeneous maps. The paper formally defines the type system, which is proved sound with respect to an operational semantics. The type system is implemented as a Clojure library, which inserts an external static analysis pass in the compiler.
+> 
+>                           ===== Evaluation =====
+> 
+> The paper is well-written and pleasant to read. I appreciate that the authors back up their theoretical work with implementation. I found the discussion over related work lame. Many features discussed in Section 2 seem to be expressible in OCaml using polymorphic variants -- I miss technical comparison to polymorphic variants in OCaml. (OCaml also supports interoperability with Java.) Nonetheless, I think the authors present an important contribution which merits publication in ICFP. 
+> 
+> It would be nice to discuss polymorphism and Java generics.
+> 
+>                     ===== Comments for author(s) =====
+> 
+> Section 2.4 and the paragraph "Branching on HMaps" in Section 2.5.
+> The use of do and if expressions, instead of pattern matching, appears to me artificial. Would pattern matching not give you the desired refinement of types? It may be the case that Clojure users prefer nested or sequential if's to pattern matching. ?
+> 
+> Page 4, left, first paragraph.
+> I could not parse the sentence "for example Typed Closure has an explicit type for null ..."
+> 
+> Page 4, left, A broken line follows the first paragraph.
+> 
+> Page 4, left, bottom.
+> I'm confused about the behaviour of (path (File. "dir/a")). I thought when (isa? (class "dir/a") String) evaluates to true, (fn [x] x) would be called.
+> 
+> Figure 4.
+> What is the type of the equality '=' ?
+> 
+> Section 3.5.
+> What is the type of isa? ? 
+> Can you pass isa? as an argument to a (higher-order) function?
+> 
+> Page 12, left, Record Types.
+> The paper says "The integration of completeness information, crucial for many examples in Typed Clojure, is not provided by any of these systems". I would like the authors to elaborate on it.
+> 
+> Grammatical suggestions.
+> 
+> Page 5, right, -1 paragraph.
+> I think 'syntax' needs an article.
+> 
+> ===========================================================================
+>                            ICFP '15 Review #98B
+> ---------------------------------------------------------------------------
+>               Paper #98: Practical Optional Types for Clojure
+> ---------------------------------------------------------------------------
+> 
+> 
+>                       Overall merit: 3. Weak accept
+>                  Reviewer expertise: 3. Knowledgeable
+> 
+>                          ===== Paper summary =====
+> 
+> the paper first introduce Typed Clojure by various examples (sections
+> 1 and 2). Then it shows the typing of that language (section
+> 3). Section 4 establishes as a theorem that well-typed programs cannot
+> go wrong (but I don't understand much of the proof).  Section 5,
+> reports on practical uses.
+> 
+>                           ===== Evaluation =====
+> 
+> pros     : - Nice fit between occurrence typing and Clojure
+>            - Covers a large part of the language
+>      - Not too far away from a practical use
+> cons     : - A small step with respect to ICFP'10 (main reason for
+>              my overall evaluation). For ICFP I found the ideas not original
+>        and innovative enough.
+>            - The presentation of the first 3 sections is hard to follow.
+>      - Some parts of Clojure are too briefly treated (mutation,
+>        multi-threading, transient values, ...)
+> 
+>                     ===== Comments for author(s) =====
+> 
+> Introduction, for readers unfamiliar with Clojure it could be stated
+> more explicitly which features are genuine Clojure features and which
+> are Typed Clojure extensions.
+> 
+> Bottom of Section 2.3, because of the context of this study (proximity
+> of Clojure and Racket and same authors) it does not seem a big
+> achievement that Typed Clojure can check the examples previously
+> designed by one of the author.
+> 
+> HMap in practice, the "complete?: true" is confusing. Is it a type
+> annotation?  Is it a kind of assertion or contract? Is it a new
+> extension brought by Typed Clojure that has not been introduced
+> before? I just don't get it and the vague explanation confuses me even
+> more.
+> 
+> Section 2.6, I would find useful to move the explanation of ^File to
+> Section 2.5 where it is first used. Then, I cannot find where you
+> explained the meaning of the metadata {:tag XXX}. When it is mentioned
+> that "Type Clojure uses the type hint to ...", is the type hint the
+> metadata {:tag File}? This is not clearly stated.
+> 
+> Why does Type Clojure considers f to be of type any, it is uses the
+> type hint f is a File? Combining type annotations + type hints seems
+> to mean that types have somehow to be given twice? To force expressing
+> twice roughly equivalent things is not something you like in a
+> language design, it is really what the paper says for Example 7?
+> Additionally, I'm not sure to have understood all the implications of
+> the examples (example 8 to 10).
+> 
+> 
+> Section 2.7, The section starts introducing multimethods and then digresses
+> to introduce isa?, please introduce isa? first (except if isa? is an
+> example of multimethod). I suppose that your point is that isa? is the
+> dispatch function (or a central element of the dispatch function) but I don't
+> think that a reason good enough not to present it before.
+> 
+> I don't understand the explanation: path resolves to the second method
+> because (isa? (class "dir/a") String is true. I would have expected path
+> to resolve to the second method because (isa? (File. "dir/a") File)
+> is true! I have been lost here.
+> 
+> HMap dispatch. There is no inc-map in your example but there is a inc-leaf.
+> Is that a typo?
+> 
+> The blue of Section 3, if you consider that graphical annotations
+> really help, please find something else that colors as they do not
+> help when reading a B&W print of the paper.
+> 
+> ===========================================================================
+>                            ICFP '15 Review #98C
+> ---------------------------------------------------------------------------
+>               Paper #98: Practical Optional Types for Clojure
+> ---------------------------------------------------------------------------
+> 
+> 
+>                       Overall merit: 2. Weak reject
+>                  Reviewer expertise: 3. Knowledgeable
+> 
+>                          ===== Paper summary =====
+> 
+> This paper describes an optional type system for Clojure, a dialect of
+> Lisp running on the Java Virtual Machine. This  type system is based
+> on that of Typed Racket, but dynamic checking of the interaction with
+> untyped code is not yet implemented. The focus of the paper is on the
+> Clojure specific aspects, such as Java interaction, multimethods, and
+> typed heterogeneous maps. A formal system is presented, for which type
+> soundness is proved (in supplemental material). A small case study was
+> done on the 10000 lines of Typed Clojure available.
+> 
+>                           ===== Evaluation =====
+> 
+> Application of optional typing to dynamically typed languages is
+> always exciting, all the more when the language has many applications.
+> However, I found this paper lacking in focus (maybe because it tries
+> to explain simultaneously several aspects of Clojure), and sometimes forgetting
+> to explain some basic things, such as the workings of multimethods (it
+> took me a while to understand that the second argument of defmulti was
+> a function to be applied to method arguments), or the special role of
+> some values in the formalization (such as (\cup nil false)).
+> As a result I think it is not yet ready for publication at ICFP.
+> 
+>                     ===== Comments for author(s) =====
+> 
+> A first problem I had with this paper is the syntax and concepts of
+> Clojure.
+> I admit I am no expert of Lisp/Scheme dialects, and in particular that
+> I had no prior knowledge of Closure.
+> As a result, I was relying on the paper to explain me the numerous
+> forms that appear, both for Closure itself and for its type system.
+> Since I think I could understand everything in the end, I suppose that
+> not too much is lacking, but I had to stop often. (Another solution
+> might have been to go and read the Closure documentation, but the
+> paper does not suggest to do that.)
+> In most cases, it is just that explanations are very terse.
+> For instance, the explanation of the ns form of example 1 mixes
+> explanations about what the keywords means, and what is the result on
+> this example, but neither are complete. For :require only the meaning
+> is given (without explicitly stating which variables are imported),
+> and for :refer-clojure, the effect is given, but I couldn't really
+> understand the explanation of the meaning (what is a "core var"?).
+> In the next paragraph, a function "check-ns" is mentioned, but without
+> explanation of how it is used.
+> 
+> Sometimes, the grammar is failing.
+> As mentioned above, what are "vars" ?
+> check-ns is supposed to "type checks" the current namespace.
+> The syntax of the argument of throw is "a class name with a dot suffix
+> as the operator followed the arguments to the constructor".
+> 
+> And sometimes, as mentioned in the evaluation, some explanation is
+> plain missing. For multi-methods, there is no explanation of the role
+> of the dispatch function, and since it is only explained on an
+> example, it is hard to generalize from the explanation of the example.
+> (It is probably just that the dispatch function applied to the
+> method's arguments returns a dispatch value, which is to be looked up
+> in the dispatch table.)
+> I found no explanation of the meaning of the "isa?" function either.
+> There is only a description of its implementation.
+> 
+> Concerning the lack of focus (that I felt), there is no easy solution.
+> The main problem is that there are 3 language features you describe
+> in detail, and that they are not really connect by the explanation,
+> except for the fact they can appear together in programs.  Connecting
+> them better at some level might help.  Heterogeneous maps could also
+> be described alone (as an extension to occurrence typing).
+> 
+> Other comments:
+> p5, fig2, maybe-parent: why write "(:file m)" rather than just "file"?
+> p7, fig6: key_k is only described in the next section (and there is no
+>   explicit forward reference).
+> p8, beginning of 3.4: "we define notation" -> "we define some notations"?
+> p8, bottom right: "that that the class"
+> p9, end of 3.4: "which do not model"
+> p10, section 4:
+>   "We prove type soundness follow using ..."
+>   "may diverge or error" -> "... or raise an error"
+>   Definition 1 is particularly hard to understand.
+> p12, related works:
+>   Concerning record types, you do not mention Remy's papers, while
+>   they form the basis of OCaml, and are different from the systems you
+>   mention. SML# implements Ohori's approach, which is different too.
+> 
+> ===========================================================================
+>                            ICFP '15 Review #98D
+> ---------------------------------------------------------------------------
+>               Paper #98: Practical Optional Types for Clojure
+> ---------------------------------------------------------------------------
+> 
+> 
+>                       Overall merit: 3. Weak accept
+>                  Reviewer expertise: 2. Some familiarity
+> 
+>                          ===== Paper summary =====
+> 
+> This paper extends occurrence typing with a variety of type system features for dealing with language constructs found in Clojure. In particular:
+> 
+> - exceptions (trivial)
+> - null pointers as falsy values (trivial)
+> - HMaps, a mild form of polymorphic record type
+> - the ‘class’ reflective function
+> - Java interop (mostly orthogonal to OT)
+> 
+> The paper introduces each feature through a sequence of practical examples, and then gives a formal semantics. It also states soundness of the overall type system. The system is implemented and successfully used in practice.
+> 
+>                           ===== Evaluation =====
+> 
+> Pros
+> 
+> - practically relevant
+> - technically solid
+> - used in the real world
+> 
+> Cons
+> 
+> - it isn’t pretty
+> - probably highly specific to Clojure
+> - just a zoo of features, what’s the deeper insight?
+> - potential algorithmic complexity
+> 
+> This work is about retro-fitting a type system onto Clojure, a Lisp-like language on the JVM. It uses the existing approach of occurrence typing (as known from Typed Racket), and extends it piecemeal with features needed for Clojure. For the Clojure community, there is high practical value in such work, and the system is already seeing industrial use.
+> 
+> On the other hand, the result isn’t particularly pretty, and most of it probably not all that interesting to anybody who does not care about Clojure. The approach taken is very pragmatic, and the type checker implemented as an offline tool. Decoupling it from the actual language implementation leads to some rather ugly duplication of information in typed code. In particular, the compiler and the external type checker only understand disjoint pieces of annotation syntax, and that forces the need for double-annotating Java class types, so that both tools can derive the right knowledge.
+> 
+> I also wonder how well type checking scales. Some of the examples in the paper show a manual encoding of pattern matching. To achieve enough precision, the propositional logic in the occurrence type system has to be powerful enough to track exhaustiveness of such patterns -- and as far as I can see, it is. However, such an analysis is known to be combinatorially expensive, and typical implementations in typed functional languages use more compact notions of abstract values for tracking positive and negative information about patterns. Here, all this information has to be encoded in the most naive manner, using a simple propositional logic over singleton assertions. I am concerned that doesn’t behave well on large matches.
+> 
+>                     ===== Comments for author(s) =====
+> 
+> Sec 2.6: The paragraph after Example 7 seems garbled.
+> Sec 2.7: The first ‘isa?’ example should probably be “(isa? (class (File “dir/a”)) File)”.
+> Fig 3: C is not defined, nor is pe.
+> Sec 3: You might want to say a few words about the update function.
+> Fig 6: No dissoc expression? How can empty maps be the only HMap values? And why is there no typing rule for {} expressions?
+> Def 1: I didn’t understand the “or rho(o’) = rho1(o’)” side condition.
