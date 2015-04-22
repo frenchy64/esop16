@@ -114,7 +114,7 @@ position
 or binding vector 
 to annotate parameter types
 and return types respectively.
-Typed Clojure provides a \clj{check-ns} function to type checks the current namespace.
+Typed Clojure provides a \clj{check-ns} function to type check the current namespace.
 \clj{number?} is
 a Java \java{instanceof} test of \clj{java.lang.Number}.
 As in Typed Racket, \clj{U} creates an \emph{untagged union} type, which can take
@@ -400,7 +400,7 @@ use \clj{:op} as the dispatch function.
 \label{example:incmap}
 \end{exmp}
 
-\clj{inc-map} is like \egref{example:decmap} except the nodes are incremented.
+\clj{inc-leaf} is like \egref{example:decmap} except the nodes are incremented.
 The reasoning is similar, except we only consider one branch (the current method) by
 locally considering the current \emph{dispatch value} and reasoning about how it relates
 to the \emph{dispatch function}.

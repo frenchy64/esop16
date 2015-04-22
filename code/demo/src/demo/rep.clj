@@ -7,4 +7,4 @@
 (defmethod path String [x] x)
 (defmethod path File [^File x] (.getPath x))
 
-(path "dir/a") ;=> "a"
+(path (File. "dir/a")) ;=> "dir/a"

@@ -139,7 +139,7 @@ proposition environment $\propenv{}$, with
 and object \object{}. We write 
 {\judgementtwo{\propenv}{\hastype {\e{}} {\t{}}} if we are only interested in the type.
 
-Syntax is given in \figref{main:figure:termsyntax}. Expressions include variables, values,
+The syntax is given in \figref{main:figure:termsyntax}. Expressions include variables, values,
 application, abstractions, conditionals and let expressions.
 All binding forms introduce fresh variables.
 Values include booleans, \nil{}, class literals, keywords, 
@@ -737,7 +737,7 @@ to the supplemental material.
 %$$
 
 As an example, we rewrite
-a simple field reference, with the assumptions that
+a simple field reference, with the assumptions
 that the class \Point{} has a field $x$ of Java type \Number
 and \intaenv {\taenv{}} {p} {\Point{}}.
 In rewriting
@@ -768,7 +768,7 @@ in the choice of nilability in the conversion function---methods
 can return nil but constructors cannot.
 
 The evaluation rules B-Field, B-New and B-Method (\figref{main:figure:javatyping}) simply evaluate their
-arguments and call the relevant JVM operation, which do not model---\secref{sec:metatheory}
+arguments and call the relevant JVM operation, which we do not model---\secref{sec:metatheory}
 states our exact assumptions.
 
 \subsection{Multimethod preliminaries: \isaliteral}
@@ -857,7 +857,7 @@ without changing the original multimethod. \egref{example:rep} is now written
   (let [path (defmethod path String [x] x)]
     (let [path (defmethod path File [^File x] 
                  (.getPath x))]
-      (path "dir/a")))) ;=> "a"
+      (path (File. "dir/a"))))) ;=> "dir/a"
 \end{minted}
 
 The type {\MultiFntype {\s{}} {\sp{}}} characterizes multimethods with \emph{interface type}
