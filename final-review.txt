@@ -1,67 +1,62 @@
-We thank our reviewers for their feedback, especially for Section 2
-where we incorporated many fixes, streamlining and clarifications.
+We thank our reviewers for their feedback, including reports on
+grammatical errors and typos. We address the major issues raise below.
 
-> A small step with respect to ICFP'10 (main reason for my overall evaluation).
+Several reviewers suggest that the type system features presented do
+not represent a significant improvement over prior work.
 
-We now understand how our presentation may have led the reviewer to this impression, 
-but we argue we have made significant contributions:
+> A small step with respect to ICFP'10 (main reason for my overall 
+> evaluation).
 
-1) Repurposing *occurrence typing* to a JVM language is novel and widely applicable. 
-Previous systems have either relied on runtime boxing to Option/Maybe types
-(Frege) or ad-hoc rules based on conditional expressions (Kotlin, Ceylon), and
-other systems such as Scala and Java address this problem by convention, not with types.
-Occurrence typing is *compositional* and therefore more desirable.
+We will adjust presentation to make this clearer, but major
+innovations include:
 
-2) Our approach to exceptional control flow was subsequently used in
-Typed Racket, several years after occurrence typing was invented.
-This helped check more Racket programs, a key goal of Typed Racket, which indicates
-the subtle nature of the problem (we disagree with reviewer D:
-our solution was simple but deriving it was not *trivial*).
+1) First, we demonstrate the importance of custom type system design
+for bringing type systems to existing dynamically-typed
+languages. This continues a tradition seen in systems such as
+Strongtalk and Typed Racket, and more recently in Flow, Hack, and
+TypeScript.
 
-3) We compositionally add support for several Clojure control-flow idioms. 
-HMaps required a subtle but direct encoding, as demonstrated in Figure 10 
-(which lacks explanation, as reviewer D suggests). We argue this convincingly 
-confirms path elements are good extension points for occurrence typing.
+2) The synergy between multimethods and occurrence typing is far from
+obvious. As a result, Typed Clojure can effectively typecheck
+Clojure's highly-expressive multimethods by leveraging type system
+features designed for other purposes, including functions using
+*arbitrary* dispatch functions. See Example 13 for a notable instance.
 
-4) We discovered a non-obvious synergy between multimethods and occurrence typing.
-By modelling the multimethod dispatch mechanism in terms of its simple
-parts, we automatically check methods with *arbitrary* dispatch functions for free
-For example, individual support for vectors and 'class' gives double dispatch on 
-runtime tags (Example 13).
+3) Repurposing of *occurrence typing* to prevent null-pointer
+exceptions in a JVM language is novel and widely applicable. Previous
+systems have allowed null pointers everywhere, as in Java, Scala, or
+OcamlJava, relied on runtime boxing to Option/Maybe types (Frege) or
+ad-hoc rules based on conditional expressions (Kotlin,
+Ceylon). Occurrence typing is *compositional* and more
+expressive. More generally, we show how occurrence typing scales to
+new features such as exceptional control flow and heterogenous maps
+that are crucial to Clojure in practice.
 
-> For ICFP I found the ideas not original and innovative enough.
+> Many features discussed in Section 2 seem to be expressible in OCaml
+  using polymorphic variants -- I miss technical comparison to
+  polymorphic variants in OCaml.
 
-We disagree, and argue that while it is unsurprising occurrence typing can be repurposed for Clojure,
-several technical innovations and discoveries were necessary to fully realise this goal.
-Our insights connecting multimethods 
-We believe as a whole 
+Untagged union types in Typed Clojure are related to OCaml polymorphic
+variants, however are not novel to this paper. Instead we argue our
+comparison of HMaps to OCaml records is relevant, which reviewer C
+correctly indicates is insufficient.
 
-> I found this paper lacking in focus [..]
-
-> [..] sometimes forgetting to explain some basic things
+> I found this paper lacking in focus and sometimes forgetting to explain 
+some basic things
 
 We will remove extraneous Clojure features to help focus the paper and
 explain relevant features.
 
-> Many features discussed in Section 2 seem to be expressible in OCaml using polymorphic variants -- I miss technical comparison to polymorphic variants in OCaml. 
-
-Untagged union types in Typed Clojure are related to OCaml polymorphic variants, however are not
-novel to this paper. Instead we argue our comparison of HMaps to OCaml records is relevant,
-which reviewer C correctly indicates is insufficient.
-
-> OCaml also supports interoperability with Java.
-
-We thank the reviewer for bringing this to our attention. On further investigation, OCaml's Java 
-interoperability uses nullable reference types; in other words, it cannot statically prevent null-pointer
-exceptions in OCaml, unlike Typed Clojure which prevents null-pointer exceptions in typed code.
-
 > I also wonder how well type checking scales. 
 
-Propositional satisfiability is NP-complete, and we rely on well-known optimisations (described in ICFP'10)
-as well as recent Typed Racket innovations such as let-aliasing such that in practice, most code does not pay
-a significant performance penalty. We believe there are further performance improvements that can be applied.
+Propositional satisfiability is NP-complete, and we rely on well-known 
+optimisations (reiterated in ICFP'10) as well as recent Typed Racket 
+innovations such as let-aliasing such that in practice, most code does not pay
+a significant performance penalty.
 
-> Fig 6: No dissoc expression? How can empty maps be the only HMap values? And why is there no typing rule for {} expressions?
+> Fig 6: No dissoc expression? How can empty maps be the only HMap values? 
+> And why is there no typing rule for {} expressions?
 
-For presentational purposes we chose not to model dissoc. We chose allow maps to be build in the calculus
-only by combining assoc and {} (whose typing rule in the appendix should be in the body).
+For presentational purposes we chose not to model dissoc, and provide assoc 
+and {} (whose typing rule is missing) as the only way to build non-empty
+HMaps.
