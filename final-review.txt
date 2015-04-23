@@ -1,5 +1,5 @@
 We thank our reviewers for their feedback, including reports on
-grammatical errors and typos. We address the major issues raise below.
+grammatical errors and typos. We address the major issues raised below.
 
 Several reviewers suggest that the type system features presented do
 not represent a significant improvement over prior work.
@@ -51,8 +51,8 @@ explain relevant features.
 
 Propositional satisfiability is NP-complete, and we rely on well-known 
 optimisations (reiterated in ICFP'10) as well as recent Typed Racket 
-innovations such as let-aliasing such that in practice, most code does not pay
-a significant performance penalty.
+innovations such as let-aliasing such that in practice, most code does 
+not pay a significant performance penalty.
 
 > Fig 6: No dissoc expression? How can empty maps be the only HMap values? 
 > And why is there no typing rule for {} expressions?
