@@ -1,39 +1,37 @@
 We thank our reviewers for their feedback, including reports on
 grammatical errors and typos. We address the major issues raise below.
 
+Several reviewers suggest that the type system features presented do
+not represent a significant improvement over prior work.
+
 > A small step with respect to ICFP'10 (main reason for
 > my overall evaluation). For ICFP I found the ideas not original
 > and innovative enough.
 
-We now understand how our presentation may have led the reviewer to
-this impression, but we argue we have made significant contributions:
+We will adjust presentation to make this clearer, but major
+innovations include:
 
-1) Repurposing of *occurrence typing* to prevent null-pointer
+1) First, we demonstrate the importance of custom type system design
+for bringing type systems to existing dynamically-typed
+languages. This continues a tradition seen in systems such as
+Strongtalk and Typed Racket, and more recently in Flow, Hack, and
+TypeScript.
+
+2) The synergy between multimethods and occurrence typing is far from
+obvious. As a result, Typed Clojure can effectively typecheck
+Clojure's highly-expressive multimethods by leveraging type system
+features designed for other purposes, including functions using
+*arbitrary* dispatch functions. See Example 13 for a notable instance.
+
+3) Repurposing of *occurrence typing* to prevent null-pointer
 exceptions in a JVM language is novel and widely applicable. Previous
-systems have either relied on runtime boxing to Option/Maybe types
-(Frege) or ad-hoc rules based on conditional expressions (Kotlin,
-Ceylon). Occurrence typing is *compositional* and therefore more
-desirable.
-
-2) Our approach to exceptional control flow was subsequently used in
-Typed Racket, several years after occurrence typing was invented.
-This helped check more Racket programs, a key goal of Typed Racket,
-which indicates the subtle nature of the problem.
-
-3) We compositionally add support for several Clojure control-flow
-idioms without fundamental extensions to occurrence typing. HMaps
-required a subtle but direct encoding, as demonstrated in Figure 10
-(which lacks explanation, as reviewer D suggests).  We argue this
-convincingly confirms the general applicability of occurrence typing's
-extension points.
-
-4) We discovered a strong synergy between multimethods and occurrence
-typing that was not initially obvious. By modelling the multimethod
-dispatch mechanism in terms of its simple parts, we can automatically
-check methods with *arbitrary* dispatch functions for free (limited
-only by what we can check in an 'if' expression). For example,
-compositional support for vectors and 'class' gives double dispatch
-(Example 13).
+systems have allowed null pointers everywhere, as in Java, Scala, or
+OcamlJava, relied on runtime boxing to Option/Maybe types (Frege) or
+ad-hoc rules based on conditional expressions (Kotlin,
+Ceylon). Occurrence typing is *compositional* and more
+expressive. More generally, we show how occurrence typing scales to
+new features such as exceptional control flow and heterogenous maps
+that are crucial to Clojure in practice.
 
 > Many features discussed in Section 2 seem to be expressible in OCaml
   using polymorphic variants -- I miss technical comparison to
