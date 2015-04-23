@@ -1,43 +1,54 @@
-We thank our reviewers for their feedback, including reports on grammatical errors and typos.
+We thank our reviewers for their feedback, including reports on
+grammatical errors and typos. We address the major issues raise below.
 
 > A small step with respect to ICFP'10 (main reason for
 > my overall evaluation). For ICFP I found the ideas not original
 > and innovative enough.
 
-We now understand how our presentation may have led the reviewer to this impression, 
-but we argue we have made significant contributions:
+We now understand how our presentation may have led the reviewer to
+this impression, but we argue we have made significant contributions:
 
-1) Repurposing of *occurrence typing* to prevent null-pointer exceptions in a JVM language
-is novel and widely applicable. Previous systems have either relied on runtime boxing to Option/Maybe types
-(Frege) or ad-hoc rules based on conditional expressions (Kotlin, Ceylon). Occurrence typing
-is *compositional* and therefore more desirable.
+1) Repurposing of *occurrence typing* to prevent null-pointer
+exceptions in a JVM language is novel and widely applicable. Previous
+systems have either relied on runtime boxing to Option/Maybe types
+(Frege) or ad-hoc rules based on conditional expressions (Kotlin,
+Ceylon). Occurrence typing is *compositional* and therefore more
+desirable.
 
 2) Our approach to exceptional control flow was subsequently used in
 Typed Racket, several years after occurrence typing was invented.
-This helped check more Racket programs, a key goal of Typed Racket, which indicates
-the subtle nature of the problem.
+This helped check more Racket programs, a key goal of Typed Racket,
+which indicates the subtle nature of the problem.
 
-3) We compositionally add support for several Clojure control-flow idioms
-without fundamental extensions to occurrence typing. HMaps required a subtle but direct encoding,
-as demonstrated in Figure 10 (which lacks explanation, as reviewer D suggests).
-We argue this convincingly confirms the general applicability of occurrence typing's extension
-points.
+3) We compositionally add support for several Clojure control-flow
+idioms without fundamental extensions to occurrence typing. HMaps
+required a subtle but direct encoding, as demonstrated in Figure 10
+(which lacks explanation, as reviewer D suggests).  We argue this
+convincingly confirms the general applicability of occurrence typing's
+extension points.
 
-4) We discovered a strong synergy between multimethods and occurrence typing that 
-was not initially obvious. By modelling the multimethod dispatch mechanism in terms of its simple
-parts, we can automatically check methods with *arbitrary* dispatch functions for free
-(limited only by what we can check in an 'if' expression). For example, compositional support
-for vectors and 'class' gives double dispatch (Example 13).
+4) We discovered a strong synergy between multimethods and occurrence
+typing that was not initially obvious. By modelling the multimethod
+dispatch mechanism in terms of its simple parts, we can automatically
+check methods with *arbitrary* dispatch functions for free (limited
+only by what we can check in an 'if' expression). For example,
+compositional support for vectors and 'class' gives double dispatch
+(Example 13).
 
-> Many features discussed in Section 2 seem to be expressible in OCaml using polymorphic variants -- I miss technical comparison to polymorphic variants in OCaml. 
+> Many features discussed in Section 2 seem to be expressible in OCaml
+  using polymorphic variants -- I miss technical comparison to
+  polymorphic variants in OCaml.
 
-Untagged union types in Typed Clojure are related to OCaml polymorphic variants, however are not
-novel to this paper. Instead we argue our comparison of HMaps to OCaml records is relevant,
-which reviewer C correctly indicates is insufficient.
+Untagged union types in Typed Clojure are related to OCaml polymorphic
+variants, however are not novel to this paper. Instead we argue our
+comparison of HMaps to OCaml records is relevant, which reviewer C
+correctly indicates is insufficient.
 
 > OCaml also supports interoperability with Java.
 
-We thank the reviewer for bringing this to our attention. On further investigation, OCaml's Java 
-interoperability uses nullable reference types; in other words, it cannot statically prevent null-pointer
-exceptions in OCaml, unlike Typed Clojure which prevents null-pointer exceptions in typed code.
+We thank the reviewer for bringing this to our attention. On further
+investigation, OCaml's Java interoperability uses nullable reference
+types; in other words, it cannot statically prevent null-pointer
+exceptions in OCaml, unlike Typed Clojure which prevents null-pointer
+exceptions in typed code.
 
