@@ -47,8 +47,9 @@ correctly indicates is insufficient.
 > I found this paper lacking in focus and sometimes forgetting to explain 
 some basic things
 
-We will remove extraneous Clojure features to help focus the paper and
-explain relevant features.
+We will omit irrelevant Clojure features such as 'ns' to help focus the paper and
+explain relevant features. As the reviewer notes, multimethods and the 
+interaction between type hints lack clear explanations.
 
 > I also wonder how well type checking scales. 
 
