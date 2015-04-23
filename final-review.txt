@@ -19,7 +19,7 @@ TypeScript.
 2) The synergy between multimethods and occurrence typing is far from
 obvious. As a result, Typed Clojure can effectively typecheck
 Clojure's highly-expressive multimethods by leveraging type system
-features designed for other purposes, including functions using
+features designed for other purposes, including multimethods using
 *arbitrary* dispatch functions. See Example 13 for a notable instance.
 
 3) Repurposing of *occurrence typing* to prevent null-pointer
