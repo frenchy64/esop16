@@ -25,14 +25,14 @@ features designed for other purposes, including multimethods using
 3) Repurposing of *occurrence typing* to prevent null-pointer
 exceptions in a JVM language is novel and widely applicable. Previous
 systems have either
-  1. allowed null pointers everywhere, as in Java, Scala, or OcamlJava, 
+  1. allowed null pointers everywhere, as in Java, Scala, or OCamlJava, 
   2. relied on runtime boxing to Option/Maybe types (Frege), or
   3. tracked nullable types (Kotlin, Ceylon), but relied on ad-hoc rules 
      that ICFP'10 generalizes to a *compositional* and more expressive
      system.
 
 More generally, we show how occurrence typing scales to
-new features such as exceptional control flow and heterogenous maps
+new features such as exceptional control flow and heterogeneous maps
 that are crucial to Clojure in practice.
 
 > Many features discussed in Section 2 seem to be expressible in OCaml
@@ -54,7 +54,7 @@ interaction between type hints lack clear explanations.
 > I also wonder how well type checking scales. 
 
 Propositional satisfiability is NP-complete, and we rely on well-known 
-optimisations (reiterated in ICFP'10) as well as recent Typed Racket 
+optimizations (reiterated in ICFP'10) as well as recent Typed Racket 
 innovations such as let-aliasing such that in practice, most code does 
 not pay a significant performance penalty.
 
