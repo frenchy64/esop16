@@ -27,7 +27,9 @@ There are many similarities between Typed Clojure union types and OCaml variants
 
 > (OCaml also supports interoperability with Java.) 
 
-We thank the reviewer for bringing this to our attention.
+We thank the reviewer for bringing this to our attention. On further investigation, OCaml's Java 
+interoperability uses nullable reference types; in other words, it cannot statically prevent null-pointer
+exceptions in OCaml code like Typed Clojure can.
 
 > Nonetheless, I think the authors present an important contribution which merits publication in ICFP. 
 
@@ -47,16 +49,29 @@ We agree. Typed Clojure does not interact with Java generics, a point that needs
 >                     ===== Comments for author(s) =====
 > 
 > Section 2.4 and the paragraph "Branching on HMaps" in Section 2.5.
-> The use of do and if expressions, instead of pattern matching, appears to me artificial. Would pattern matching not give you the desired refinement of types? It may be the case that Clojure users prefer nested or sequential if's to pattern matching. ?
+> The use of do and if expressions, instead of pattern matching, appears to me artificial. 
 
-We failed to note that Typed Clojure fully expands macros before type checking. Clojure pattern matching and contract
-libraries expand to do and if expressions, so the flow analysis presented in Section 2 is essential to type checking
-such expansions.
+For presentational purposes, we chose to type check fully expanded programs only.
 
-> 
+We failed to note that Typed Clojure fully expands macros before type checking. 
+> Would pattern matching not give you the desired refinement of types? 
+
+Yes, Clojure pattern matching and contract libraries expand to do and if expressions, so
+the flow analysis presented in Section 2 is essential to type checking such expansions.
+
+> It may be the case that Clojure users prefer nested or sequential if's to pattern matching. ?
+
+Not particularly; for example this is Example 2 unexpanded
+
+  (fn [x :- (U nil Num)] 
+    {:pre [(number? x)]}
+    (inc x))
+
 > Page 4, left, first paragraph.
 > I could not parse the sentence "for example Typed Closure has an explicit type for null ..."
-> 
+
+This paragraph has been rewritten for clarity.
+
 > Page 4, left, A broken line follows the first paragraph.
 
 Fixed.
@@ -96,7 +111,7 @@ This is important when merging maps. FIXME perhaps row  polymorphism provides an
 > Page 5, right, -1 paragraph.
 > I think 'syntax' needs an article.
 
-Agreed.
+Fixed.
 
 > 
 > ===========================================================================
@@ -120,20 +135,45 @@ Agreed.
 >                           ===== Evaluation =====
 > 
 > pros     : - Nice fit between occurrence typing and Clojure
+
+We agree.
+
 >            - Covers a large part of the language
->      - Not too far away from a practical use
+
+>            - Not too far away from a practical use
+
+In our opinion, Typed Clojure is in practical use today, and we describe the largest known
+Typed Clojure installation in Section 5.3.
+
+
 > cons     : - A small step with respect to ICFP'10 (main reason for
 >              my overall evaluation). For ICFP I found the ideas not original
->        and innovative enough.
+>              and innovative enough.
+
+We understand how our presentation may have led the reviewer to this impression, 
+but we argue we have made significant contributions.
+
+Our application of *occurrence typing* to prevent null-pointer exceptions in a JVM language
+is novel and widely applicable. Other comparable attempts have either relied on runtime boxing in Option/Maybe types
+(Frege) or ad-hoc rules based on conditional expressions (Kotlin, Ceylon).
+
 >            - The presentation of the first 3 sections is hard to follow.
->      - Some parts of Clojure are too briefly treated (mutation,
->        multi-threading, transient values, ...)
-> 
+
+We agree, we presented too many concepts.
+
+>            - Some parts of Clojure are too briefly treated (mutation,
+>              multi-threading, transient values, ...)
+
+The reviewer is correct, however we argue these areas were not relevant to our overall
+goals of presenting Typed Clojure as an extension of occurrence typing.
+
 >                     ===== Comments for author(s) =====
 > 
 > Introduction, for readers unfamiliar with Clojure it could be stated
 > more explicitly which features are genuine Clojure features and which
 > are Typed Clojure extensions.
+
+We agree and are now more explicit.
 
 This was not clearly distinguished. In general, Typed Clojure adds no runtime extensions
 but instead only macros to help annotating expressions.
@@ -387,16 +427,18 @@ Fixed.
 > 
 > - exceptions (trivial)
 
-We support exceptional control flow with a simple rule that is a clean
-extension to the original occurrence typing formulation.
-Typed Racket subsequently supported this feature after our Typed Clojure implementation,
+While our solution to exceptional control-flow analysis is *simple*, 
+combining several insights of the existing formulation,
+we argue deriving it was not *trivial*.
+
+Typed Racket subsequently supported this feature based on our Typed Clojure implementation,
 several years after occurrence typing was invented.
 This helped check more Racket programs, a key goal of Typed Racket, which indicates
-the subtle nature of our solution.
+the subtle nature of the problem.
 
 > - null pointers as falsy values (trivial)
 
-Agreed, however this is part of a larger story.
+We agree this was trivial, but should be considered a key part of a larger interoperability story.
 
 > - HMaps, a mild form of polymorphic record type
 > - the ‘class’ reflective function
@@ -404,14 +446,8 @@ Agreed, however this is part of a larger story.
 
 We respectfully disagree. 
 
-OCaml Java, which uses the OCaml Typer has nullable reference types.
-
-  val null : 'a java_instance
-
-Nullable references can be manually turned into an option type, but the type
-system does not prevent null-pointer exceptions in OCaml code.
-
-  val wrap : 'a java_instance -> 'a java_instance option
+OCaml Java, which uses the OCaml Typer has nullable reference types,
+and the type system system does not prevent null-pointer exceptions in OCaml code.
 
 In contrast, null is explicit in Typed Clojure, so typed code cannot
 throw null-pointer exceptions.
@@ -434,13 +470,13 @@ with occurrence typing, which is an important demonstration of the generality of
 > - technically solid
 > - used in the real world
 
-We agree.
+We agree with these pros.
 
 > Cons
 > 
 > - it isn’t pretty
 
-We agree Typed Clojure can be uglier than Clojure, our aim was
+While we agree Typed Clojure can be uglier than Clojure, our aim was
 to minimize the amount of code programmers must change to port untyped code, which we believe we achieved
 to an acceptable degree.
 

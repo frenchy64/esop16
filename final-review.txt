@@ -1,0 +1,34 @@
+We thank our reviewers for their feedback, including reports on 
+grammatical errors and typos.
+
+> Cons     : - A small step with respect to ICFP'10 (main reason for
+>              my overall evaluation). For ICFP I found the ideas not original
+>              and innovative enough.
+
+We understand how our presentation may have led the reviewer to this impression, 
+but we argue we have made significant contributions.
+
+Repurposing of *occurrence typing* to prevent null-pointer exceptions in a JVM language
+is novel and widely applicable. Previous systems have either relied on runtime boxing in Option/Maybe types
+(Frege) or ad-hoc rules based on conditional expressions (Kotlin, Ceylon).
+
+Furthermore, our approach to exceptional control flow was subsequently used in
+Typed Racket, several years after occurrence typing was invented.
+This helped check more Racket programs, a key goal of Typed Racket, which indicates
+the subtle nature of the problem.
+
+We compositionally add support for HMap- and tag-based control flow via path elements.
+The complexity of the 'update' cases for each of these shows their non-trivial nature
+in design and implementation, again without fundamental extensions to occurrence typing.
+
+Finally, the encoding of multimethod dispatch via occurrence typing is unexpectedly direct .
+
+> Many features discussed in Section 2 seem to be expressible in OCaml using polymorphic variants -- I miss technical comparison to polymorphic variants in OCaml. 
+
+We
+
+> (OCaml also supports interoperability with Java.) 
+
+We thank the reviewer for bringing this to our attention. On further investigation, OCaml's Java 
+interoperability uses nullable reference types; in other words, it cannot statically prevent null-pointer
+exceptions in OCaml code like Typed Clojure can.
