@@ -4,8 +4,12 @@ grammatical errors and typos. We address the major issues raised below.
 Several reviewers suggest that the type system features presented do
 not represent a significant improvement over prior work.
 
+Review B:
 > A small step with respect to ICFP'10 (main reason for my overall 
 > evaluation).
+Review C:
+> The main problem is that there are 3 language features you describe
+> in detail
 
 We will adjust presentation to make this clearer, but major
 innovations include:
@@ -14,7 +18,9 @@ innovations include:
 for bringing type systems to existing dynamically-typed
 languages. This continues a tradition seen in systems such as
 Strongtalk and Typed Racket, and more recently in Flow, Hack, and
-TypeScript.
+TypeScript. This necessitates coverage of multiple features as used in
+real Clojure programs, meaning that a focus on one single type system
+extension would be insufficient.
 
 2) The synergy between multimethods and occurrence typing is far from
 obvious. As a result, Typed Clojure can effectively typecheck
@@ -40,27 +46,29 @@ that are crucial to Clojure in practice.
   polymorphic variants in OCaml.
 
 Untagged union types in Typed Clojure are related to OCaml polymorphic
-variants, however are not novel to this paper. Instead we argue our
-comparison of HMaps to OCaml records is relevant, which reviewer C
-correctly indicates is insufficient.
+variants, but union types have a long history prior to this
+paper. However, polymorphic variants cannot support untagged unions in
+the form described in section 2.  More closely related to HMaps are
+records, which as review C points out, are insufficient for our
+purposes.
 
 > I found this paper lacking in focus and sometimes forgetting to explain 
 some basic things
 
-We will omit irrelevant Clojure features such as 'ns' to help focus the paper and
-explain relevant features. As the reviewer notes, multimethods and the 
-interaction between type hints lack clear explanations.
+We will omit irrelevant Clojure features such as 'ns' to help focus
+the paper and focus on the crucial features such as multimethods.
 
 > I also wonder how well type checking scales. 
 
-Propositional satisfiability is NP-complete, and we rely on well-known 
-optimizations (reiterated in ICFP'10) as well as recent Typed Racket 
-innovations such as let-aliasing such that in practice, most code does 
-not pay a significant performance penalty.
+Propositional satisfiability is NP-complete, however we make use of
+optimizations developed for Typed Racket to avoid the need to solve
+propositional formulas in most cases. In practice, type checking
+scales to tens of thousands of lines of code, as demonstrated in our
+case studies.
 
 > Fig 6: No dissoc expression? How can empty maps be the only HMap values? 
 > And why is there no typing rule for {} expressions?
 
-For presentational purposes we chose not to model dissoc, and provide assoc 
-and {} (whose typing rule is missing) as the only way to build non-empty
-HMaps.
+HMap values include non-empty maps constructed with `assoc`, but we
+omit other map literals and dissoc for simplicity. The typing rule for
+{} is omitted accidently from the supplement. 
