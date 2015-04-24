@@ -49,14 +49,13 @@ Untagged union types in Typed Clojure are related to OCaml polymorphic
 variants, but union types have a long history prior to this
 paper. However, polymorphic variants cannot support untagged unions in
 the form described in Section 2.  More closely related to HMaps are
-records, which as review C points out, are insufficient for our
-purposes.
+records, which as review C points out, are insufficiently cited.
 
 > I found this paper lacking in focus and sometimes forgetting to explain 
   some basic things
 
-We will omit irrelevant Clojure features such as 'ns' to help focus
-the paper and focus on the crucial features such as multimethods.
+We will omit irrelevant Clojure features such as 'ns' to focus on 
+the crucial features such as multimethods.
 
 > I also wonder how well type checking scales. 
 
