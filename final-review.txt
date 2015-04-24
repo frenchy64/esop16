@@ -28,7 +28,7 @@ Clojure's highly-expressive multimethods by leveraging type system
 features designed for other purposes, including multimethods using
 *arbitrary* dispatch functions. See Example 13 for a notable instance.
 
-3) Repurposing of occurrence typing to prevent null-pointer
+3) Repurposing occurrence typing to prevent null-pointer
 exceptions in a JVM language is novel and widely applicable. Previous
 systems have either
   1. allowed null pointers everywhere, as in Java, Scala, or OCamlJava, 
