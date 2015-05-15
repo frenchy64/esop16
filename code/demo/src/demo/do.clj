@@ -11,5 +11,5 @@
   (inc x))
 
 (fn [x :- (U nil Num)]
-  (do (if (number? x) nil (throw (Exception.)))
+  (do (if (number? x) nil (throw (new Exception)))
       (inc x)))

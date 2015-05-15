@@ -52,7 +52,7 @@ a technique for deriving type information from conditional control flow.
 They introduced the concept of occurrence typing 
 with the following example.
 
-\inputminted[firstline=1]{racket}{code/tr/example1.rkt}
+\inputminted[firstline=3]{racket}{code/tr/example1.rkt}
 
 This function takes a value that is either \emph{\#f} % mintinline really hates #
 or a number, represented by an \emph{untagged} union type.
@@ -83,38 +83,19 @@ which cannot prove strong properties about programs
 and soft typing~\cite{CF91}
 which has proved too complicated in practice.
 
-\newpage
 Here is the above program in Typed Clojure.
 \begin{exmp}
-\inputminted[firstline=1]{clojure}{code/demo/src/demo/eg1.clj}
+\inputminted[firstline=5]{clojure}{code/demo/src/demo/eg1.clj}
 \label{example:conditionalflow}
 \end{exmp}
 
-This is a regular Clojure file compiled with
-the Clojure compiler, with the \clj{ns} form
-declaring a
-\emph{namespace}
-for managing var and class imports.
-Here \clj{:require} declares a runtime dependency 
-on
-\clj{clojure.core.typed},
-Typed Clojure's core namespace, and
-\clj{:refer}
-brings a collection of vars into scope by name.
-The \clj{:refer-clojure} \clj{:exclude} option unmaps core vars from the current 
-namespace---here we unmap \clj{clojure.core/fn},
-which creates a function from a parameter vector and a body expression,
-and import a typed variant of \clj{fn}
-that supports type annotations.
-
-The typed \clj{fn} supports optional annotations by 
+The \clj{fn} macro (provided by core.typed) supports optional annotations by 
 adding
 \clj{:-} and a type after a parameter
 position
 or binding vector 
 to annotate parameter types
 and return types respectively.
-Typed Clojure provides a \clj{check-ns} function to type check the current namespace.
 \clj{number?} is
 a Java \java{instanceof} test of \clj{java.lang.Number}.
 As in Typed Racket, \clj{U} creates an \emph{untagged union} type, which can take
@@ -135,14 +116,10 @@ to assert type-related invariants.
 \label{example:doexception}
 \end{exmp}
 
-The \clj{do} form sequences two expressions returning the latter,
-\clj{throw} corresponds to Java's \java{throw}
-and \clj{(class. args*)} is the syntax for Java constructors---that 
-is a class name with a dot suffix as the operator followed the arguments to the constructor.
-
-In this example a \clj{throw} expression guards \clj{(inc x)}, the increment function for numbers,
-from being evaluated if \clj{x} is \clj{nil}, preventing
+The fully expanded increment function in~\egref{example:doexception}
+guards its final call with a number check, preventing
 a possible null-pointer exception.
+Without this check, the type system would reject the program.
 
 To check this example,
 occurrence typing 
@@ -151,7 +128,7 @@ assumes
 \clj{x} is a number when checking the second \clj{do} subexpression
 based on the first subexpression.
 \footnote{See \url{https://github.com/typedclojure/examples}
-  for full examples. From here we omit \clj{ns} forms.}
+  for full examples.}
 We model this formally (section~\ref{sec:doformal}) and prove
 null-pointer exceptions are impossible in typed code (section~\ref{sec:metatheory}).
 

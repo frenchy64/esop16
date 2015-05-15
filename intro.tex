@@ -51,7 +51,7 @@ a result, Typed Clojure is used in industry, experience we discuss
 in this paper.
 
 \begin{figure}
-\inputminted[firstline=5,lastline=7]{clojure}{code/demo/src/demo/parent2.clj}
+\inputminted[firstline=5]{clojure}{code/demo/src/demo/parent2.clj}
 \caption{A simple Typed Clojure program}
 \label{fig:ex1}
 \end{figure}
@@ -59,8 +59,8 @@ in this paper.
 Figure~\ref{fig:ex1} presents a simple program demonstrating many
 aspects of our system, from simple type annotations to explicit
 handling of Java's \java{null} (written \clj{nil}) in interoperation, as well as an
-extended form of occurrence typing and Clojure's \emph{type hints},
-which are central to Typed Clojure's approach to interoperability. 
+extended form of occurrence typing and method resolution of
+Java interoperability based on static type information.
 
 The \clj{parent} function has the type 
 $$
@@ -71,11 +71,6 @@ which means that it takes a hash table whose \clj{:file} key maps to either
 \clj{String}. The \clj{parent} function uses the \clj{:file} keyword
 as an accessor to get the file, checks that it isn't \clj{nil}, and
 then obtains the parent by making a Java method call.
-%
-The annotation \clj{^File f} is a type hint on \clj{f}, which instructs the Clojure
-compiler (running prior to Typed Clojure typechecking) to statically
-resolve the \clj{getParent} 
-call to \clj{File}'s \clj{getParent} method with signature \java{String getParent();}, rather than using reflection at runtime.
 
 In the remainder of this paper, we describe how Typed Clojure's
 central innovations, including Java interoperability, multimethods,
@@ -89,3 +84,17 @@ implementation of Typed Clojure, dubbed \coretyped{}, which extends
 the formal model in many ways, and the experience gained from its use
 in \secref{sec:experience}. Finally, we discuss related work and
 conclude.
+
+\subsection{Contributions}
+
+These are our main contributions.
+
+\begin{itemize}
+  \item We motivate, describe and evaluate Typed Clojure, an optional type system for Clojure
+        that understands existing Clojure idioms.
+  \item We present the theory and implementation of a type system
+        based on \emph{occurrence typing} that statically prevents null-pointer 
+        exceptions in typed code in the presence of Java interoperability, 
+        applicable to existing JVM languages.
+  \item We prove type soundness for Typed Clojure.
+\end{itemize}
