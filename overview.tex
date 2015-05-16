@@ -237,48 +237,6 @@ Calls to Java methods and fields have prefix notation
 like \clj{(.method target args*)} and \clj{(.field target)} respectively,
 with method and field names prefixed with a dot and methods taking some number of arguments.
 
-Unlike Java, Clojure is dynamically typed. We have no type information about \clj{f}
-but we still need to pick a method to call. The Clojure compiler delegates
-the choice to runtime using \emph{Java reflection}.
-Unfortunately reflection is slow and unpredictable, so Clojure supports \emph{type hints}
-to help eliminate it where possible, 
-
-\begin{minted}{clj}
-  (fn [^File f] (.getParent f))
-\end{minted}
-
-Symbols support \emph{metadata}---the syntax \clj{^File f}
-is a single expression that is a symbol \clj{f} with metadata \clj{{:tag File}}.
-In binding positions like \clj{(fn [^File f] ...)}
-syntactic occurrences preserve metadata.
-
-The Clojure compiler uses the type hint
-to statically resolve 
-the method call to the
-\mintinline{java}{public String getParent()}
-method of \clj{java.io.File}.
-The call to \clj{getParent} is unambiguous at runtime but type 
-checking fails---Typed Clojure
-considers \clj{f} to be of type \clj{Any}, which is unsafe 
-to use as the target of even a resolved method.
-If instead we annotate the function parameter with type \clj{File},
-we get a static type error.
-
-\begin{minted}{clj}
-  (fn [f :- File] (.getParent f)) ;; type error
-\end{minted}
-
-Typed Clojure disallows reflection in typed code
-so we must add back the type hint to obtain a well-typed
-expression.
-\newpage
-\begin{exmp}
-\inputminted[firstline=10,lastline=10]{clojure}{code/demo/src/demo/parent3.clj}
-\end{exmp}
-A type hint does not correspond to a static property so they are ignored by Typed Clojure.
-Type hints are still required, however, as Typed Clojure has no mechanism to provide
-optimisations (discussed in \secref{sec:experience}).
-
 \begin{exmp}
 \inputminted[firstline=18,lastline=19]{clojure}{code/demo/src/demo/parent3.clj}
 \end{exmp}
@@ -326,13 +284,13 @@ the \emph{dispatch value} \clj{String} to the function
 We add another method
 which maps
 \clj{File} to the function
-\clj{(fn [^File x] (.getPath x))}
+\clj{(fn [x] (.getPath x))}
 in the dispatch table.
 \inputminted[firstline=8,lastline=8]{clojure}{code/demo/src/demo/rep.clj}
 
 After installing both methods, the call 
 $$
-\clj{(path (File. "dir/a"))}
+\clj{(path (new File "dir/a"))}
 $$
 dispatches to the second method we installed because
 $$
@@ -340,7 +298,7 @@ $$
 $$
 is true, and finally returns 
 $$
-\clj{((fn [^File x] (.getPath x)) "dir/a")}.
+\clj{((fn [x] (.getPath x)) "dir/a")}.
 $$
 
 The \clj{isa?} function first tries an equality check
@@ -414,7 +372,7 @@ and HMaps.
 
 \begin{figure}
 \begin{exmp}
-\inputminted[firstline=6,lastline=22]{clojure}{code/demo/src/demo/eg7.clj}
+\inputminted[firstline=6,lastline=23]{clojure}{code/demo/src/demo/eg7.clj}
 \label{example:multidispatch}
 \end{exmp}
 \begin{exmp}

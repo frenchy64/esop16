@@ -282,11 +282,11 @@
 \newmeta\ctmethod{m}
 \newmeta\ctfield{f}
 \newmeta\ctctor{c}
-\newcommand\ctmethodsliteral[0]{\metafunctionfont{mths}}
-\newcommand\ctfieldsliteral[0]{\metafunctionfont{flds}}
-\newcommand\ctconstructorsliteral[0]{\metafunctionfont{ctors}}
-\newcommand\ctmthentry[3]{\ma{[#1, [#2], #3]}}
-\newcommand\ctfldentry[2]{\ma{[#1, #2]}}
+\newcommand\ctmethodsliteral[0]{\metafunctionfont{mth}}
+\newcommand\ctfieldsliteral[0]{\metafunctionfont{fld}}
+\newcommand\ctconstructorsliteral[0]{\metafunctionfont{ctr}}
+\newcommand\ctmthentry[3]{\ma{#1 \mapsto [[#2], #3]}}
+\newcommand\ctfldentry[2]{\ma{#1 \mapsto #2}}
 \newcommand\ctctorentry[1]{\ma{[#1]}}
 \newcommand\set[1]{\ma{\{#1\}}}
 % WARNING specific formatting for figure
@@ -391,23 +391,23 @@
 % new special functions
 % Type -> [Type]
 \newcommand\ctorparamsliteral[0]{\metafnfont{Ctor}}
-\newcommand\ctorparamsnoeq[3]{\ma{\ctorparamsliteral(#1, #2, [#3])}}
-\newcommand\ctorparams[4]{\ma{\ctorparamsnoeq{#1}{#2}{#3} = [#4]}}
-\newcommand\ctorparamsalign[4]{\ma{\ctorparamsnoeq{#1}{#2}{#3} &=& [#4]}}
+\newcommand\ctorparamsnoeq[2]{\ma{\ctorparamsliteral(#1, #2)}}
+\newcommand\ctorparams[3]{\ma{\ctorparamsnoeq{#1}{#2} = [#3]}}
+\newcommand\ctorparamsalign[3]{\ma{\ctorparamsnoeq{#1}{#2} &=& [#3]}}
 
 % field special functions
 % Type Field -> Type
 \newcommand\fieldtypeliteral[0]{\ma{\metafnfont{Fld}}}
 \newcommand\fieldtypenoeq[3]{\ma{\fieldtypeliteral(#1, #2, #3)}}
-\newcommand\fieldtype[5]{\ma{\fieldtypenoeq{#1}{#2}{#3} = [#4, #5]}}
-\newcommand\fieldtypealign[5]{\ma{\fieldtypenoeq{#1}{#2}{#3} &=& [#4, #5]}}
+\newcommand\fieldtype[4]{\ma{\fieldtypenoeq{#1}{#2}{#3} = [#4]}}
+\newcommand\fieldtypealign[4]{\ma{\fieldtypenoeq{#1}{#2}{#3} &=& [#4]}}
 
 % method special functions
 % Type [Type] Method -> [Type]
 \newcommand\methodtypeliteral[0]{\metafnfont{Mth}}
-\newcommand\methodtypenoeq[4]{\ma{\methodtypeliteral(#1, #2, #3, [#4])}}
-\newcommand\methodtype[7]{\ma{\methodtypenoeq{#1}{#2}{#3}{#4} = [#5, [#6], #7]}}
-\newcommand\methodtypealign[7]{\ma{\methodtypenoeq{#1}{#2}{#3}{#4} &=& [#5, [#6], #7]}}
+\newcommand\methodtypenoeq[3]{\ma{\methodtypeliteral(#1, #2, #3)}}
+\newcommand\methodtype[5]{\ma{\methodtypenoeq{#1}{#2}{#3} = [[#4], #5]}}
+\newcommand\methodtypealign[5]{\ma{\methodtypenoeq{#1}{#2}{#3} &=& [[#4], #5]}}
 
 % java subtyping
 \newcommand\assignable[2]{\ma{assignable(#1, #2)}}
@@ -492,6 +492,18 @@
 \newcommand\getfieldliteral[0]{\ma{\JVMliteral_{\metafunctionfont{getstatic}}}}
 \newcommand\getfieldjavanoeq[4]{\ma{\getfieldliteral[#1, #2, #3, #4]}}
 \newcommand\getfieldjava[5]{\ma{\getfieldjavanoeq{#1}{#2}{#3}{#4} = #5}}
+
+\newcommand\jvmfieldliteral[0]{\ma{\JVMliteral_{\metafunctionfont{field}}}}
+\newcommand\jvmfieldnoeq[2]{\ma{\jvmfieldliteral[#1, #2]}}
+\newcommand\jvmfield[3]{\ma{\jvmfieldnoeq{#1}{#2} = #3}}
+
+\newcommand\jvmmethodliteral[0]{\ma{\JVMliteral_{\metafunctionfont{method}}}}
+\newcommand\jvmmethodnoeq[3]{\ma{\jvmmethodliteral[#1, #2, #3]}}
+\newcommand\jvmmethod[4]{\ma{\jvmmethodnoeq{#1}{#2}{#3} = #4}}
+
+\newcommand\jvmctorliteral[0]{\ma{\JVMliteral_{\metafunctionfont{ctor}}}}
+\newcommand\jvmctornoeq[2]{\ma{\jvmctorliteral[#1, #2]}}
+\newcommand\jvmctor[3]{\ma{\jvmctornoeq{#1}{#2} = #3}}
 % Class Target Bool
 \newcommand\instanceofjava[3]{\ma{JVM_{instanceof}[#1, #2] = #3}}
 
@@ -698,6 +710,27 @@
              {\objectp{}}}
          }
 
+\newcommand\TNew[0]{
+\infer [T-New]
+{ 
+  \ctorparams{\ct{}}{\class{}}{\overrightarrow{\classhint{i}}}
+  \\
+  \overrightarrow{
+\javatotcnil {\classhint{i}}
+             {\t{i}}
+             }
+  \\
+  \overrightarrow{
+  \judgementtwo {\propenv{}}
+                    {\hastype {\e{i}} {\t{i}}}
+                  }
+           }
+{ \judgementfillcol {\propenv{}} {\hastype {\newexp {\class{}} {\overrightarrow{\e{i}}}} {\class{}}}
+             {\filterset {\topprop{}} {\botprop{}}}
+             {\emptyobject}
+             }
+         }
+
 \newcommand\TNewStatic[0]{
 \infer [T-NewStatic]
 { 
@@ -721,6 +754,20 @@
              }
          }
 
+\newcommand\TField[0]{
+\infer [T-Field]
+{ \judgementtwo {\propenv{}} {\hastype {\e{}} {\class{}}}
+  \\
+               \fieldtype {\ct{}} {\class{}} {\fld{}} {\classhint{f}}
+               \\
+  \javatotcnil {\classhint{f}} {\t{}}
+  \\
+           }
+{ \judgement {\propenv{}} {\hastype {\fieldexp {\fld{}} {\e{}}} {\t{}}}
+             {\filterset {\topprop{}} {\topprop}}
+             {\emptyobject{}}}
+         }
+
 \newcommand\TFieldStatic[0]{
 \infer [T-FieldStatic]
 { \javatotc {\classhint{1}} {\s{}}
@@ -731,6 +778,28 @@
            }
 { \judgement {\propenv{}} {\hastype {\fieldstaticexp {\classhint{1}} {\classhint{2}} {\fld{}} {\e{}}} {\t{}}}
              {\filterset {\topprop{}} {\topprop}}
+             {\emptyobject{}}}
+         }
+
+\newcommand\TMethod[0]{
+\infer [T-Method]
+{ 
+  \judgementtwo {\propenv{}} {\hastype {\e{}} {\class{}}}
+  \\
+  \methodtype {\ct{}}{\class{}} {\mth{}} {\overrightarrow{\class{i}}}{\class{r}}
+  \\
+  \overrightarrow{\javatotcnil {\classhint{i}} {\t{i}}}
+             \\
+             \overrightarrow{
+  \judgementtwo {\propenv{}} {\hastype {\e{i}} {\t{i}}}
+                  }
+                  \\
+             \javatotcnil {\classhint{r}} {\t{}}
+             \\
+           }
+{ \judgementfillcol {\propenv{}} {\hastype {\methodexp {\mth{}} {\e{}} {\overrightarrow{\e{i}}}}
+                                    {\t{}}}
+             {\filterset {\topprop{}} {\topprop{}}}
              {\emptyobject{}}}
          }
 
@@ -1216,14 +1285,14 @@ $$
 \newcommand\BField[0]{
 \infer [B-Field]
 { \opsem {\openv{}}
-         {\e{}} 
-       {\v{1}}
+         {\e{}}
+       {\v{}}
          \\\\
-         \getfieldjava{\classhint{1}} {\v{1}} {\fld{}} {\classhint{2}} {\v{}}
+         \jvmfield{\fld{}}{\v{}} {\vp{}}
        }
 { \opsem {\openv{}}
-         {\fieldstaticexp {\classhint{1}} {\classhint{2}} {\fld{}} {\e{}}}
-         {\v{}}
+         {\fieldexp {\e{}} {\fld{}}}
+         {\vp{}}
    }
 }
 
@@ -1239,13 +1308,12 @@ $$
          {\v{a}}
        }
   \\\\
-  \invokejavamethod {\classhint{1}} {\v{m}} {mth}
-                    {\overrightarrow{\classhint{a}}} {\overrightarrow{\v{a}}}
-                    {\classhint{2}}
+  \jvmmethod  {mth} {\v{m}}
+                    {\overrightarrow{\v{a}}}
                     {\v{}}
 }
 {\opsem {\openv{}}
-        {\methodstaticexp {\classhint{1}} {\overrightarrow{\classhint{a}}} {\classhint{2}} {mth} {\e{m}} {\overrightarrow{\e{a}}}}
+        {\methodexp {mth} {\e{m}} {\overrightarrow{\e{a}}}}
         {\v{}}
       }
 }
@@ -1259,14 +1327,12 @@ $$
          {\v{i}}
        }
          \\\\
-         \newjava {\classhint{1}}
-                  {\overrightarrow{\classhint{i}}}
+         \jvmctor {\class{}}
                   {\overrightarrow{\v{i}}}
                   {\v{}}
        }
 { \opsem {\openv{}}
-         {\newstaticexp {\overrightarrow{\classhint{i}}} {\classhint{1}} 
-                        {\class{}} {\overrightarrow{\e{i}}}}
+         {\newexp {\class{}} {\overrightarrow{\e{i}}}}
          {\v{}}}
 }
 
@@ -1667,8 +1733,8 @@ $$
   \{ \ctmethodsliteral \mapsto 
   \set{\overrightarrow{\ctmthentry{\mth{}}{\overrightarrow{\classhint{}}}{\classhint{}}}},&\mbox{Class descriptors} \\
   &&\ \ 
-  \ctfieldsliteral \mapsto \{\overrightarrow{\ctfldentry{\fld{}}{\classhint{}}} \},\\&&\ \ 
-  \ctconstructorsliteral \mapsto \{\overrightarrow{\ctctorentry{\overrightarrow{\classhint{}}}} \}
+  \ctfieldsliteral \mapsto \{ \overrightarrow{\ctfldentry{\fld{}}{\classhint{}}} \},\\&&\ \ 
+  \ctconstructorsliteral \mapsto \{ \ctctorentry{\overrightarrow{\classhint{}}} \}
                           \}\\
   \ct{}   &::=& \{ \overrightarrow{\classhint{} \mapsto \ctentrymeta{}} \}
                &\mbox{Class Table}
@@ -1703,7 +1769,7 @@ $$
                {\hastype {\e{j}} {\classhint{j}}}
              }
                \\\\
-  \ctorparams {\ct{}}{\classhint{}}{\overrightarrow{\classhint{j}}}{\overrightarrow{\classhint{k}}}
+  \ctorparams {\ct{}}{\classhint{}}{\overrightarrow{\classhint{k}}}
              }
 { \rewrite {\taenv{}}
            {\newexp {\class{}} {\overrightarrow {\e{i}}}}
@@ -1763,7 +1829,7 @@ $$
   \tajudgement {\taenv{}}
                {\hastype {\ep{}} {\classhint{}}}
                \\\\
-               \fieldtype {\ct{}} {\classhint{}} {\fld{}} {\classhint{t}}{\classhint{f}}
+               \fieldtype {\ct{}} {\classhint{}} {\fld{}} {\classhint{f}}
          }
 { \rewrite {\taenv{}}
            {\fieldexp {\fld{}} {\e{}}}
@@ -1790,7 +1856,7 @@ $$
                {\hastype {\e{j}} {\classhint{j}}}
              }
                \\\\
-  \methodtype {\ct{}}{\classhint{}} {\mth{}} {\overrightarrow{\classhint{j}}}{\classhint{t}}{\overrightarrow{\classhint{p}}}{\classhint{r}}
+  \methodtype {\ct{}}{\classhint{}} {\mth{}} {\overrightarrow{\classhint{p}}}{\classhint{r}}
          }
 { \rewrite {\taenv{}}
            {\methodexp {\mth} {\e{}} {\overrightarrow {\e{i}}}}
@@ -2095,7 +2161,6 @@ $$
   {\ct{}}
   {\classhint{}}
   {\fld{}}
-  {\classhint{}}
   {\classhint{f}}
   & \text{if}\ \ctfldentry{\fld{}}{\classhint{f}} \in {\ctlookupfields{\ct{}}{\classhint{}}}
       \\
@@ -2103,15 +2168,12 @@ $$
       {\ct{}}
       {\classhint{}}
       {\overrightarrow{\class{p{}}}}
-      {\overrightarrow{\class{p{}}}}
   & \text{if}\ \ctctorentry{\overrightarrow{\class{p{}}}} \in {\ctlookupctors{\ct{}}{\classhint{}}}
   \\
   \methodtypealign
   {\ct{}}
   {\classhint{}}
   {\mth{}}
-  {\overrightarrow{\classhint{p}}}
-  {\classhint{}}
   {\overrightarrow{\classhint{p}}}
   {\classhint{r}}
   & \text{if}\ \ctmthentry{\mth{}}{\overrightarrow{\classhint{p}}}{\classhint{r}} \in {\ctlookupmethods{\ct{}}{\classhint{}}}

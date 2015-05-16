@@ -10,11 +10,11 @@
 (ann maybe-parent [FSM -> (U nil Str)])
 (defmulti maybe-parent :p)
 (defmethod maybe-parent :F [{file :file :as m}]
-  (if (:file m) (.getParent ^File file) nil))
-(defmethod maybe-parent :S [{^String str :str}]
-  (do (if str nil (throw (Exception.)))
-      (.getParent (File. str))))
+  (if (:file m) (.getParent file) nil))
+(defmethod maybe-parent :S [{str :str}]
+  (do (if str nil (throw (new Exception)))
+      (.getParent (new File str))))
 
 (maybe-parent {:p :S :str "dir/a"}) ;=> "dir"
-(maybe-parent {:p :F :file (File. "dir/a")});=> "dir"
+(maybe-parent {:p :F :file (new File "dir/a")});=> "dir"
 (maybe-parent {:p :F :file nil}) ;=> nil

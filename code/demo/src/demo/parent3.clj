@@ -4,7 +4,7 @@
   (:import (java.io File)))
 
 (ann parent [(U nil File) -> (U nil Str)])
-(defn parent [^File f]
+(defn parent [f]
   (if f (.getParent f) nil))
 
 (fn [^File f :- File] (.getParent f))
@@ -12,8 +12,8 @@
 (fn [^File f :- File] :- (U nil Str)
   (.getParent f))
 
-(fn [^String s :- String] :- File
-  (File. s))
+(fn [s :- String] :- File
+  (new File s))
 
-(defn parent [^File f :- (U nil File)]
+(defn parent [f :- (U nil File)]
   (if f (.getParent f) nil))

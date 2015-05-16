@@ -399,8 +399,10 @@ makes our insight interesting.
 
 Recall \egref{example:doexception}.
 \begin{minted}{clojure}
-...  (do (if (number? x) nil (throw (Exception.)))
-         (inc x)) ...
+...
+  (do (if (number? x) nil (throw (new Exception)))
+      (inc x)) 
+...
 \end{minted}
 
 As before, checking \appexp{\numberhuh{}}{\x{}} allows us to use the proposition \isprop{\Number}{\x{}}
@@ -592,29 +594,25 @@ The dynamic semantics are given in \figref{main:figure:primitivesem}.
 The definition of \updateliteral{} supports various idioms relating to \classpe{}
 which we introduce in \secref{sec:isaformal}.
 
-\subsection{Java Interoperability and Type Hints}
+\subsection{Java Interoperability}
 
 \begin{figure}[t]
   \footnotesize
   $$
   \begin{altgrammar}
-    \e{} &::=& \ldots   \localhintsyntax{} \alt \lethintsyntax{} &\mbox{Expressions}\\
-            &\alt& \reflectiveexpsyntax{} \\
-     &\alt& \mininonreflectiveexpsyntax{}
+    \e{} &::=& \ldots \alt \reflectiveexpsyntax{} &\mbox{Expressions}\\
     \\
 
     \v{} &::=& \ldots \alt {\classvalue{\classhint{}} {\overrightarrow {\classfieldpair{\fld{}} {\v{}}}}}
     &\mbox{Values} \\
 
-    \tatypesyntax{}\\
-    \typehintenvsyntax{}\\
     \classtableallsyntax{}
   \end{altgrammar}
   $$
   \begin{mathpar}
-    {\TNewStatic}
+    {\TNew}
 
-    {\TMethodStatic}
+    {\TMethod}
 
     %{\TInstance}
   \end{mathpar}
@@ -634,138 +632,30 @@ which we introduce in \secref{sec:isaformal}.
 
     \BMethod{}
   \end{mathpar}
-  \begin{mathpar}
-    %\RAbs{}
-%
-%    \RNewElimRefl{}
-%
-%    \RMethodElimRefl{}
-%
-%    \RFieldElimRefl{}
-%
-%    \RLet{}
-%
-
-%    \RLetHint{}
-  \end{mathpar}
   \caption{Java Interoperability Syntax, Typing and Operational Semantics}
   \label{main:figure:javatyping}
 \end{figure}
 
-In \secref{sec:overviewjavainterop} we discussed the role of type hints
-to help eliminate reflective calls.
-In this section, we introduce our model of Java and provide user-facing
-syntax corresponding to Clojure's Java interoperability forms and type hinted forms.
-Then we model the Clojure compiler's compile-time reflection resolution
-algorithm.
-To achieve this, first we define notation for
-\emph{non-reflective} Java forms that 
-unambiguously call a field, method or constructor.
-Then we define a rewrite relation that uses
-type hints to resolve reflection explicitly.
-Finally we give typing rules that model how
-Typed Clojure interacts with non-reflective calls.
-
 We present Java interoperability in a restricted setting without class inheritance,
 overloading or Java Generics.
 
-We extend the syntax in \figref{main:figure:javatyping} with
-type hinted expressions, reflective and non-reflective Java field lookups and calls to
+We extend the syntax in \figref{main:figure:javatyping} with Java field lookups and calls to
 methods and constructors. 
 We model the syntax after the `dot' special
 form to prevent ambiguity---\clj{(.fld e)} is now \fieldexp{\fld{}}{\e{}},
 \clj{(.mth e es*)} is $\methodexp{\mth{}}{\e{}}{\overrightarrow{es}}$
-and \clj{(.class es*)} is $\newexp{\class{}}{\overrightarrow{es}}$.
-The reflective expressions come without typing rules because Typed Clojure
-only reasons about resolved reflection
-(as demonstrated in \secref{sec:overviewjavainterop}).
-%
-The method call ${\methodstaticexp {\classhint{1}}
-                             {\overrightarrow {\classhint{i}}}
-                             {\classhint{2}}
-                             {\mth{}} {\e{}} {\overrightarrow{\e{i}}}}$
-is a non-reflective call to the \mth{} method on class {\class{1}}, 
-with Java signature 
-${\classhint{2}}\ \mth{}\ (\overrightarrow {\classhint{i}});$.
-The field access {\fieldstaticexp {\classhint{1}} {\classhint{2}} {\fld{}} {\e{}}}
-calls the field on class {\classhint{1}} with Java signature
-${\classhint{2}}\ \fld{};$.
-The constructor invocation {\newstaticexp {\overrightarrow{\classhint{i}}} {\classhint{}} 
-                               {\class{}} {\overrightarrow{\e{i}}}}
-calls the constructor with Java signature
-${\classhint{}}\ ({\overrightarrow{\classhint{i}}});$.
+and \clj{(new class es*)} is $\newexp{\class{}}{\overrightarrow{es}}$.
 
-%\begin{figure}
-%  \footnotesize
-%  \begin{mathpar}
-%%    \TALocal{}
-%%
-%%    \TANil{}
-%%
-%%    \TANewStatic{}
-%%
-%%    \TALetHint{}
-%
-%%    \TALet{}
-%  \end{mathpar}
-%\caption{Type Hint Inference (select rules, figure~\ref{appendix:figure:hintinfer} for full rules)}
-%\label{main:figure:hintinfer}
-%\end{figure}
-
-
-We model Clojure's reflection resolution algorithm as a 
-rewrite relation
-\rewrite {\taenv{}} {\e{}} {\ep{}}
-which rewrites \e{} to a possibly-less reflective expression
-\ep{} with respect to type hint environment
-\taenv{} and Java class table \ct{}.
-%
-For example,
-R-FieldElimRefl emits a non-reflective field if it can
-find a field matching the type hint inferred on \ep{}.
-  $$
-    \RFieldElimRefl{}
-  $$
-
-Type hint inference is given by the judgment
-\tajudgement {\taenv{}} {\hastype {\e{}} {\tatype{}}}
-which infers the (possibly-unknown) type hint \tatype{} of expression \e{} in type hint environment \taenv{}.
-We defer the remainder of the rules for rewriting and the definition of type hint inference
-to the supplemental material.
-%$$
-%\TALetHint{}
-%$$
-
-As an example, we rewrite
-a simple field reference, with the assumptions
-that the class \Point{} has a field $x$ of Java type \Number
-and \intaenv {\taenv{}} {p} {\Point{}}.
-In rewriting
-the expression \fieldexp{x}{p},
-{\Point{}} is inferred as the type hint of $p$
-and \Number{} is the field type
-by \fieldtypeliteral{} (\figref{main:figure:javatyping}).
-Now we just plug in the new information into our new expression
-$$
-\fieldstaticexp{\Point}{\Number}{x}{p}.
-$$
-
-Now we present the typing rules for resolved Java interoperability.
-T-FieldStatic checks a resolved field expression by ensuring the target has
+T-Field checks a resolved field expression by ensuring the target has
 the correct static type, then returns a nilable type corresponding the Java type.
 
 \begin{mathpar}
-    {\TFieldStatic}
+    {\TField}
 \end{mathpar}
 
-To continue our example, assume \propenv{} = {\isprop{\Point}{p}}.
-T-FieldStatic therefore produces the type
-{\Union{\Nil}{\Number}}
-for the entire expression.
-
-The rules T-MethodStatic and T-NewStatic work similarly (\figref{main:figure:javatyping}), varying
+The rules T-Method and T-New work similarly (\figref{main:figure:javatyping}), varying
 in the choice of nilability in the conversion function---methods
-can return nil but constructors cannot.
+can return nil but constructors cannot. Void also does not have a constructor.
 
 The evaluation rules B-Field, B-New and B-Method (\figref{main:figure:javatyping}) simply evaluate their
 arguments and call the relevant JVM operation, which we do not model---\secref{sec:metatheory}
