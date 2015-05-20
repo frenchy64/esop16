@@ -612,9 +612,9 @@ which we introduce in \secref{sec:isaformal}.
   \end{altgrammar}
   $$
   \begin{mathpar}
-    {\TNew}
+    {\TNewStatic}
 
-    {\TMethod}
+    {\TMethodStatic}
 
     %{\TInstance}
   \end{mathpar}
@@ -648,14 +648,14 @@ form to prevent ambiguity---\clj{(.fld e)} is now \fieldexp{\fld{}}{\e{}},
 \clj{(.mth e es*)} is $\methodexp{\mth{}}{\e{}}{\overrightarrow{es}}$
 and \clj{(new class es*)} is $\newexp{\class{}}{\overrightarrow{es}}$.
 
-T-Field checks a resolved field expression by ensuring the target has
+T-FieldStatic checks a resolved field expression by ensuring the target has
 the correct static type, then returns a nilable type corresponding the Java type.
 
 \begin{mathpar}
-    {\TField}
+    {\TFieldStatic}
 \end{mathpar}
 
-The rules T-Method and T-New work similarly (\figref{main:figure:javatyping}), varying
+The rules T-MethodStatic and T-NewStatic work similarly (\figref{main:figure:javatyping}), varying
 in the choice of nilability in the conversion function---methods
 can return nil but constructors cannot. Void also does not have a constructor.
 

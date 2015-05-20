@@ -726,27 +726,6 @@
            }
          }
 
-\newcommand\TNew[0]{
-\infer [T-New]
-{ 
-  \ctorparams{\ct{}}{\class{}}{\overrightarrow{\classhint{i}}}
-  \\
-  \overrightarrow{
-\javatotcnil {\classhint{i}}
-             {\t{i}}
-             }
-  \\
-  \overrightarrow{
-  \judgementtwo {\propenv{}}
-                    {\e{i}} {\t{i}}
-                  }
-           }
-{ \judgement {\propenv{}} {\newexp {\class{}} {\overrightarrow{\e{i}}}} {\class{}}
-             {\filterset {\topprop{}} {\botprop{}}}
-             {\emptyobject}
-             }
-         }
-
 \newcommand\TNewStatic[0]{
 \infer [T-NewStatic]
 { 
@@ -770,20 +749,6 @@
              }
          }
 
-\newcommand\TField[0]{
-\infer [T-Field]
-{ \judgementtwo {\propenv{}} {\e{}} {\class{}}
-  \\
-               \fieldtype {\ct{}} {\class{}} {\fld{}} {\classhint{f}}
-               \\
-  \javatotcnil {\classhint{f}} {\t{}}
-  \\
-           }
-{ \judgement {\propenv{}} {\fieldexp {\fld{}} {\e{}}} {\t{}}
-             {\filterset {\topprop{}} {\topprop}}
-             {\emptyobject{}}}
-         }
-
 \newcommand\TFieldStatic[0]{
 \infer [T-FieldStatic]
 { \javatotc {\classhint{1}} {\s{}}
@@ -794,28 +759,6 @@
            }
 { \judgement {\propenv{}} {\fieldstaticexp {\classhint{1}} {\classhint{2}} {\fld{}} {\e{}}} {\t{}}
              {\filterset {\topprop{}} {\topprop}}
-             {\emptyobject{}}}
-         }
-
-\newcommand\TMethod[0]{
-\infer [T-Method]
-{ 
-  \judgementtwo {\propenv{}} {\e{}} {\class{}}
-  \\
-  \methodtype {\ct{}}{\class{}} {\mth{}} {\overrightarrow{\class{i}}}{\class{r}}
-  \\
-  \overrightarrow{\javatotcnil {\classhint{i}} {\t{i}}}
-             \\
-             \overrightarrow{
-  \judgementtwo {\propenv{}} {\e{i}} {\t{i}}
-                  }
-                  \\
-             \javatotcnil {\classhint{r}} {\t{}}
-             \\
-           }
-{ \judgement {\propenv{}} {\methodexp {\mth{}} {\e{}} {\overrightarrow{\e{i}}}}
-                                    {\t{}}
-             {\filterset {\topprop{}} {\topprop{}}}
              {\emptyobject{}}}
          }
 
