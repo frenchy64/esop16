@@ -26,17 +26,20 @@
 \infer [T-Clos]
 { \exists {\propenv{}}. \satisfies{\openv{}}{\propenv{}}
   \ \text{and}\ 
-\judgement {\propenv{}} {\abs {\x{}} {\t{}} {\e{}}} {\s{}}
+\judgementrewrite {\propenv{}} {\abs {\x{}} {\t{}} {\e{}}} {\s{}}
                  {\filterset {\thenprop {\prop{}}}
                              {\elseprop {\prop{}}}}
                  {\object{}}
+                 {\abs {\x{}} {\t{}} {\ep{}}}
               }
-{ \judgement {}
+{ \judgementrewrite {}
             {\closure {\openv{}} {\abs {\x{}} {\t{}} {\e{}}}} 
                       {\s{}}
              {\filterset {\thenprop {\prop{}}}
                          {\elseprop {\prop{}}}}
-             {\object{}}}
+             {\object{}}
+            {\closure {\openv{}} {\abs {\x{}} {\t{}} {\ep{}}}}
+          }
 
            {\TError}
 
@@ -72,17 +75,19 @@
 \TIsA{}
 
 \infer [T-Multi]
-{ \judgementtwo {} {\v{}} {\t{}}
+{ \judgementtworewrite {} {\v{}} {\t{}} {\vp{}}
   \\
-  \overrightarrow{\judgementtwo{}{\v{k}}{\Top{}}}
+  \overrightarrow{\judgementtworewrite{}{\v{k}}{\Top}{\vp{k}}}
   \\
-  \overrightarrow{\judgementtwo{}{\v{v}}{\s{}}}
+  \overrightarrow{\judgementtworewrite{}{\v{v}}{\s{}}{\vp{v}}}
 }
-{ \judgement {}
+{ \judgementrewrite {}
   {\multi {\v{}} {\curlymapvaloverright{\v{k}}{\v{v}}}}
                       {\MultiFntype {\s{}} {\t{}}}
              {\filterset {\topprop{}} {\botprop{}}}
-           {\emptyobject{}}}
+           {\emptyobject{}}
+  {\multi {\vp{}} {\curlymapvaloverright{\vp{k}}{\vp{v}}}}
+}
 
 \end{mathpar}
 \caption{Multimethod Typing Rules}
@@ -114,15 +119,17 @@
 %}
 
 \infer [T-HMap]
-{ \overrightarrow{\judgementtwo {} {\v{k}}{\Value \k{}}}\\
-  \overrightarrow{\judgementtwo {} {\v{v}}{\t{v}}}\\
+{ \overrightarrow{\judgementtworewrite {} {\v{k}}{\Value \k{}}{\vp{k}}}\\
+  \overrightarrow{\judgementtworewrite {} {\v{v}}{\t{v}}{\vp{v}}}\\
   \mandatory{} = \mandatorysetoverright{\k{}}{\t{v}}
 }
-{ \judgement {}
+{ \judgementrewrite {}
              {\curlymapvaloverright{\v{k}}{\v{v}}}
                        {\HMapc {\mandatory{}}}
              {\filterset {\topprop{}} {\botprop{}}}
-             {\emptyobject{}}}
+             {\emptyobject{}}
+             {\curlymapvaloverright{\vp{k}}{\vp{v}}}
+           }
 
     {\TKw}
 

@@ -29,6 +29,7 @@
 \newmeta\P{P}
 \newmeta\e{e}
 \newmeta\ep{e'}
+\newmeta\epp{e''}
 \newmeta\expd{d}
 \newmeta\ReflectiveExp{R}
 \newmeta\NonReflectiveExp{E}
@@ -303,14 +304,16 @@
 \newcommand\issubtypein[3]{\ma{{\inpropenv{#1} {#2 \mathbin{<:} #3}}}}
 \newcommand\issubobjin[3]{\ma{{\inpropenv{#1} {#2 \mathbin{<:} #3}}}}
 \newcommand\notsubtypein[3]{\ma{{\inpropenv{#1} {#2 \mathbin{\not<:} #3}}}}
-% 4 place relation (TR formalism)
+% 5 place relation (TR formalism)
 \newcommand\judgement[5]{\ma{#1 \vdash {\hastype{#2}{#3}} \ ;\ #4\ ;\ #5}}
-% 5 place relation (w/ rewrite)
+% 6 place relation (w/ rewrite)
+\newcommand\judgementselfrewrite[5]{\ma{#1 \vdash {\hastype{#2}{#3}}\ ;\ #4\ ;\ #5 \Rightarrow #2}}
 \newcommand\judgementrewrite[6]{\ma{#1 \vdash {\hastype{#2}{#3}}\ ;\ #4\ ;\ #5 \Rightarrow #6}}
 %\newcommand\judgementsev[7]{\ma{#3 \vdash_{\scriptscriptstyle{\trdiff{\ct{}}}} #4\ ;\ #5\ ;\ #6}}
 % lookuping props in the env
 % 2 place relation (same as tt | tt; empty)
 \newcommand\judgementtwo[3]{\ma{#1 \vdash {\hastype{#2}{#3}}}}
+\newcommand\judgementtworewrite[4]{\ma{#1 \vdash {\hastype{#2}{#3}} \Rightarrow #4}}
 \newcommand\inpropenv[2]{\ma{#1 \vdash #2}}
 
 % operational semantics
@@ -520,7 +523,7 @@
 { \inpropenv {\propenv{}} {\isprop {\t{}} {\x{}}}
   \\\\
   \s{} = {\falsydiff} }
-{ \judgement {\propenv{}} 
+{ \judgementselfrewrite {\propenv{}} 
             {\x{}} {\t{}}
             {\filterset {{\notprop {\s{}} {\x{}}}} {{\isprop {\s{}} {\x{}}}}}
             {\x{}}
@@ -530,7 +533,7 @@
 \newcommand\TNum[0]{
 \infer [T-Num]
 {}
-{ \judgement {\propenv{}}
+{ \judgementselfrewrite {\propenv{}}
       {\num{}} {\Number{}}
       {\filterset {\topprop{}} {\botprop{}}}
       {\emptyobject{}}
@@ -540,7 +543,7 @@
 \newcommand\TTrue[0]{
 \infer [T-True]
 {}
-{ \judgement {\propenv{}}
+{ \judgementselfrewrite {\propenv{}}
       {\true{}} {\True{}}
       {{\filterset {\topprop{}} {\botprop{}}}}
       {\emptyobject{}}
@@ -550,7 +553,7 @@
 \newcommand\TFalse[0]{
 \infer [T-False]
 {}
-{ \judgement {\propenv{}}
+{ \judgementselfrewrite {\propenv{}}
       {\false{}} {\False{}}
       {\filterset {\botprop{}} {\topprop{}}}
     {\emptyobject{}}
@@ -560,7 +563,7 @@
 \newcommand\TNil[0]{
 \infer [T-Nil]
 {}
-{ \judgement {\propenv{}} 
+{ \judgementselfrewrite {\propenv{}} 
       {\nil{}} {\Nil{}}
       {\filterset {\trdiff{\botprop{}}} {\topprop{}}}
       {\emptyobject{}} 
@@ -570,73 +573,83 @@
 \newcommand\TDo[0]{
 \infer [T-Do]
 { 
-  \judgement {\propenv{}} 
+  \judgementrewrite {\propenv{}} 
              {\e1} {\t1}
              {\filterset {\thenprop {\prop{1}}} {\elseprop {\prop1}}} 
              {\object{1}}
+             {\ep1}
 \\\\
-\judgement {\propenv{}, {\orprop {\thenprop {\prop{1}}} {\elseprop {\prop{1}}}}}
+\judgementrewrite {\propenv{}, {\orprop {\thenprop {\prop{1}}} {\elseprop {\prop{1}}}}}
            {\e{}} {\t{}}
            {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}} 
            {\object{}}
+           {\ep{}}
   }
-{ \judgement
+{ \judgementrewrite
     {\propenv{}} 
     {\doexp {\e1} {\e{}}} {\t{}}
     {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}} {\object{}} 
+    {\doexp {\ep1} {\ep{}}}
              }
            }
 
 \newcommand\TIf[0]{
 \infer [T-If]
-{ \judgement {\propenv{}} {\e1} {\t{1}} {\filterset {\thenprop {\prop{1}}} {\elseprop {\prop{1}}}}
+{ \judgementrewrite {\propenv{}} {\e1} {\t{1}} {\filterset {\thenprop {\prop{1}}} {\elseprop {\prop{1}}}}
                  {\object{1}} 
+                 {\ep1}
              \\\\
-  \judgement {\propenv{}, {\thenprop {\prop{1}}}}
+  \judgementrewrite {\propenv{}, {\thenprop {\prop{1}}}}
                  {\e2} {\t{}} {\filterset {\thenprop {\prop{2}}} {\elseprop {\prop{2}}}}
                  {\object{}}
+                 {\ep2}
   \\\\
-  \judgement {\propenv{}, {\elseprop {\prop{1}}}}
+  \judgementrewrite {\propenv{}, {\elseprop {\prop{1}}}}
                  {\e3} {\t{}} {\filterset {\thenprop {\prop{3}}} {\elseprop {\prop{3}}}}
                  {\object{}}
+                 {\ep3}
              }
-{ \judgement {\propenv{}} {\ifexp {\e1} {\e2} {\e3}} {\t{}}
+{ \judgementrewrite {\propenv{}} {\ifexp {\e1} {\e2} {\e3}} {\t{}}
                  {\filterset {\orprop {\thenprop {\prop{2}}} {\thenprop {\prop{3}}}} 
                              {\orprop {\elseprop {\prop{2}}} {\elseprop {\prop{3}}}}}
-                 {\object{}} }
+                 {\object{}} 
+                 {\ifexp {\ep1} {\ep2} {\ep3}}}
 
              }
 
 \newcommand\TLet[0]{
 \infer [T-Let]
-{ \judgement {\propenv{}} {\e{1}} {\s{}} {\filterset {\thenprop {\prop{1}}} {\elseprop {\prop{1}}}}
+{ \judgementrewrite {\propenv{}} {\e{1}} {\s{}} {\filterset {\thenprop {\prop{1}}} {\elseprop {\prop{1}}}}
              {\object{1}}
+             {\ep{1}}
              \\\\
              \propp{} = {\impprop {\notprop {\falsydiff{}} {\x{}}} {\thenprop {\prop{1}}}}
              \\\\
              \proppp{} = {\impprop {\isprop {\falsydiff{}} {\x{}}} {\elseprop {\prop{1}}}}
   \\\\
-  \judgement
+  \judgementrewrite
        {\propenv{}, {\isprop {\s{}} {\x{}}},
          {\propp{}},
          {\proppp{}}}
              {\e{}} {\t{}} {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}}
              {\object{}} 
+             {\ep{}}
              }
-{ \judgement {\propenv{}} {\letexp {\x{}} {\e{1}} {\e{}}} {\t{}}
+{ \judgementrewrite {\propenv{}} {\letexp {\x{}} {\e{1}} {\e{}}} {\t{}}
              {\replacefor {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}}
                           {\object{1}}
                           {\x{}}}
              {\replacefor {\object{}} 
                           {\object{1}}
                           {\x{}}}
+             {\letexp {\x{}} {\ep{1}} {\ep{}}}
              }
 
            }
 
 \newcommand\TApp[0]{
 \infer [T-App]
-{ \judgement {\propenv{}} {\e{}} {\ArrowOne {\x{}} {\s{}}
+{ \judgementrewrite {\propenv{}} {\e{}} {\ArrowOne {\x{}} {\s{}}
                                                        {\t{}}
                                                        {\filterset {\thenprop {\prop{f}}}
                                                                    {\elseprop {\prop{f}}}}
@@ -644,14 +657,16 @@
                 {\filterset {\thenprop {\prop{}}}
                             {\elseprop {\prop{}}}}
                 {\object{}}
+                {\e{1}}
   \\\\
-  \judgement {\propenv{}}
+  \judgementrewrite {\propenv{}}
                  {\ep{}} {\s{}}
                  {\filterset {\thenprop {\propp{}}}
                              {\elseprop {\propp{}}}}
                  {\objectp{}} 
+                {\ep{1}}
 }
-{ \judgement {\propenv{}} {\appexp {\e{}} {\ep{}}}
+{ \judgementrewrite {\propenv{}} {\appexp {\e{}} {\ep{}}}
                                         {\replacefor {\t{}}
                                                      {\objectp{}}
                                                      {\x{}}}
@@ -662,17 +677,20 @@
                  {\replacefor {\object{f}}
                               {\objectp{}}
                               {\x{}}}
+                 {\appexp {\e{1}} {\ep{1}}}
 }
 }
 
 \newcommand\TAbs[0]{
 \infer [T-Abs]
-{ \judgement {\propenv{}, {\isprop {\s{}} {\x{}}}}
+{ \judgementrewrite {\propenv{}, {\isprop {\s{}} {\x{}}}}
             {\e{}} {\t{}}
              {\filterset {\thenprop {\prop{}}}
                          {\elseprop {\prop{}}}}
-             {\object{}}}
-{ \judgement {\propenv{}} {\abs {\x{}} {\s{}} {\e{}}}
+             {\object{}}
+             {\ep{}}
+           }
+{ \judgementrewrite {\propenv{}} {\abs {\x{}} {\s{}} {\e{}}}
                                            {\ArrowOne {\x{}} {\s{}}
                                                       {\t{}}
                                                       {\filterset {\thenprop {\prop{}}}
@@ -680,15 +698,17 @@
                                                       {\object{}}}
                 {\filterset {\topprop{}}
                             {\botprop{}}}
-                {\emptyobject{}}}
+                {\emptyobject{}}
+                {\abs {\x{}} {\s{}} {\ep{}}}}
             }
 
 \newcommand\TSubsume[0]{
 \infer [T-Subsume]
-{ \judgement {\propenv{}} {\e{}} {\t{}}
+{ \judgementrewrite {\propenv{}} {\e{}} {\t{}}
              {\filterset {\thenprop {\prop{}}}
                          {\elseprop {\prop{}}}}
-             {\object}
+             {\object{}}
+             {\ep{}}
 \\\\
 \inpropenv {\propenv{}, {\thenprop {\prop{}}}} {\thenprop {\propp{}}}
 \\
@@ -698,10 +718,12 @@
 \\
 \inpropenv {} {\issubtype {\object{}} {\objectp{}}}
 }
-{ \judgement {\propenv{}} {\e{}} {\tp{}}
+{ \judgementrewrite {\propenv{}} {\e{}} {\tp{}}
              {\filterset {\thenprop {\propp{}}}
                          {\elseprop {\propp{}}}}
-             {\objectp{}}}
+             {\objectp{}}
+           {\ep{}}
+           }
          }
 
 \newcommand\TNew[0]{
@@ -839,15 +861,17 @@
                                       {\elseprop {\propp{}}}}
                           {\objectp{}}}
                 \\
-\judgementtwo {\propenv{}} {\e{}} {\sp{}}
+\judgementtworewrite {\propenv{}} {\e{}} {\sp{}} {\ep{}}
 }
 {
-  \judgement {\propenv{}}  
+  \judgementrewrite {\propenv{}}  
       {\createmultiexp {\s{}}
                                  {\e{}}} 
                 {\MultiFntype {\s{}} {\sp{}}}
              {\filterset {\topprop{}} {\botprop{}}}
              {\emptyobject{}}
+      {\createmultiexp {\s{}}
+                                 {\ep{}}} 
 }
 }
 
@@ -864,142 +888,161 @@
                                {\elseprop {\propp{}}}}
                    {\objectp{}}}
              \\\\
-\judgementtwo {\propenv{}}
+\judgementtworewrite {\propenv{}}
                   {\e{m}} {\MultiFntype {\t{m}} {\t{d}}}
+                  {\ep{m}}
 \\
   \isacompare{\sp{}}{\objectp{}}{\t{v}}{\filterset {\thenprop {\proppp{}}} {\elseprop {\proppp{}}}}
 \\\\
-\judgementtwo {\propenv{}}
+\judgementtworewrite {\propenv{}}
            {\e{v}} {\t{v}}
+           {\ep{v}}
            \\
-\judgement {\propenv{}, {\isprop{\t{}} {\x{}}}, {\thenprop {\proppp{}}}}
+\judgementrewrite {\propenv{}, {\isprop{\t{}} {\x{}}}, {\thenprop {\proppp{}}}}
            {\e{b}} {\s{}}
            {\filterset {\thenprop {\prop{}}}
                        {\elseprop {\prop{}}}}
            {\object{}}
+           {\ep{b}}
 }
-{ \judgement {\propenv{}} {\extendmultiexp {\e{m}} {\e{v}} 
+{ \judgementrewrite {\propenv{}} {\extendmultiexp {\e{m}} {\e{v}} 
                                                             {\abs {\x{}} {\t{}} {\e{b}}}}
                                            {\MultiFntype {\t{m}} {\t{d}}}
              {\filterset {\topprop{}} {\botprop{}}}
              {\emptyobject{}}
+             {\extendmultiexp {\ep{m}} {\ep{v}} 
+               {\abs {\x{}} {\t{}} {\ep{b}}}}
 }
 }
 
 \newcommand\TIsA[0]{
 \infer [T-IsA]
 {
-  \judgement {\propenv{}} {\e{}} {\s{}}
+  \judgementrewrite {\propenv{}} {\e{}} {\s{}}
              {\filterset {\thenprop {\propp{}}}
                          {\elseprop {\propp{}}}}
                        {\object{}}
+                       {\e{1}}
   \\
-  \judgementtwo {\propenv{}} {\ep{}} {\t{}}
+  \judgementtworewrite {\propenv{}} {\ep{}} {\t{}}
+                       {\ep{1}}
              \\
   \isacompare{\s{}}{\object{}}{\t{}}{\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}}
 }
-{ \judgement {\propenv{}} {\isaapp {\e{}} {\ep{}}}
+{ \judgementrewrite {\propenv{}} {\isaapp {\e{}} {\ep{}}}
                                     {\Boolean{}}
              {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}}
-             {\emptyobject}}
+             {\emptyobject{}}
+             {\isaapp {\e{1}} {\ep{1}}}
+         }
          }
 
 \newcommand\TAssoc[0]{
 \infer [T-AssocHMap]
 { 
-  \judgementtwo {\propenv{}} {\e{}} {\HMapgeneric {\mandatory{}} {\absent}}
+  \judgementtworewrite {\propenv{}} {\e{}} {\HMapgeneric {\mandatory{}} {\absent}} {\ep{}}
   \\
-  \judgementtwo {\propenv{}} {\e{k}} {\Value{\k{}}}
+  \judgementtworewrite {\propenv{}} {\e{k}} {\Value{\k{}}} {\ep{k}}
   \\
-  \judgementtwo {\propenv{}} {\e{v}} {\t{}}
+  \judgementtworewrite {\propenv{}} {\e{v}} {\t{}} {\ep{v}}
   \\
   {\k{}} \not\in {\absent{}}
 }
-{ \judgement {\propenv{}} 
+{ \judgementrewrite {\propenv{}} 
              {\assocexp {\e{}} {\e{k}} {\e{v}}}
                        {\HMapgeneric {\extendmandatoryset {\mandatory{}}{\k{}}{\t{}}} {\absent}}
              {\filterset {\topprop{}} {\botprop{}}}
              {\emptyobject{}}
+             {\assocexp {\ep{}} {\ep{k}} {\ep{v}}}
 }
          }
 
 \newcommand\TGetHMap[0]{
 \infer [T-GetHMap]
-{ \judgement {\propenv{}} 
+{ \judgementrewrite {\propenv{}} 
   {\e{}} {\Unionsplice {{\overrightarrow {\HMapgeneric {\mandatory{}} {\absent{}}}}^i}}
   {\filterset {\thenprop{\prop{1}}}{\elseprop{\prop{1}}}}
   {\object{}}
+  {\ep{}}
            \\
-  \judgementtwo {\propenv{}} {\e{k}} {\Value {k}}
+  \judgementtworewrite {\propenv{}} {\e{k}} {\Value {k}} {\ep{k}}
              \\
              {\overrightarrow{\inmandatory{\k{}}{\t{}}{\mandatory{}}}}^i
        }
-{ \judgement {\propenv{}} {\getexp {\e{}} {\e{k}}} {\Unionsplice {{\overrightarrow {\t{}}}^i}}
+{ \judgementrewrite {\propenv{}} {\getexp {\e{}} {\e{k}}} {\Unionsplice {{\overrightarrow {\t{}}}^i}}
              {\filterset {\topprop{}} {\topprop{}}}
              {\replacefor {\path {\keype{k}} {\x{}}}
                           {\object{}}
                           {\x{}}}
+                        {\getexp {\ep{}} {\ep{k}}}
                                   }
                                 }
 
 \newcommand\TGetAbsent[0]{
 \infer [T-GetHMapAbsent]
-{ \judgement {\propenv{}} {\e{}} {\HMapgeneric {\mandatory{}} {\absent}}
+{ \judgementrewrite {\propenv{}} {\e{}} {\HMapgeneric {\mandatory{}} {\absent}}
   {\filterset {\thenprop{\prop{1}}}{\elseprop{\prop{1}}}}
   {\object{}}
+  {\ep{}}
          \\
-  \judgementtwo {\propenv{}} {\e{k}} {\Value {k}}
+  \judgementtworewrite {\propenv{}} {\e{k}} {\Value {k}} {\ep{k}}
              \\
              {\inabsent{\k{}}{\absent{}}}
        }
-{ \judgement {\propenv{}} {\getexp {\e{}} {\e{k}}}
+{ \judgementrewrite {\propenv{}} {\getexp {\e{}} {\e{k}}}
                                     {\Nil{}}
              {\filterset {\topprop{}} {\topprop{}}}
              {\replacefor
                {\path {\keype{k}} {\x{}}}
                           {\object{}}
                           {\x{}}}
+                        {\getexp {\ep{}} {\ep{k}}}
                         }
                       }
 
 \newcommand\TGetHMapPartialDefault[0]{
 \infer [T-GetHMapPartialDefault]
-{ \judgement {\propenv{}} {\e{}} {\HMapp {\mandatory{}} {\absent}}
+{ \judgementrewrite {\propenv{}} {\e{}} {\HMapp {\mandatory{}} {\absent}}
   {\filterset {\thenprop{\prop{1}}}{\elseprop{\prop{1}}}}
   {\object{}}
+  {\ep{}}
          \\
-  \judgementtwo {\propenv{}} {\e{k}} {\Value {k}}
+  \judgementtworewrite {\propenv{}} {\e{k}} {\Value {k}} {\ep{k}}
              \\
              {\notinmandatory{\k{}}{\t{}}{\mandatory{}}}
              \\
              {\notinabsent{\k{}}{\absent{}}}
        }
-{ \judgement {\propenv{}} {\getexp {\e{}} {\e{k}}}
+{ \judgementrewrite {\propenv{}} {\getexp {\e{}} {\e{k}}}
                                     {\Top{}}
              {\filterset {\topprop{}} {\topprop{}}}
              {\replacefor
                {\path {\keype{k}} {\x{}}}
                           {\object{}}
                           {\x{}}}
+                        {\getexp {\ep{}} {\ep{k}}}
                         }
 }
 
 \newcommand\TKw[0]{
 \infer [T-Kw]
 {}
-{ \judgement {\propenv{}} 
+{ \judgementrewrite {\propenv{}} 
       {\k{}} {\ValueKw}
       {\filterset {\topprop{}}{\botprop{}}}
       {\emptyobject{}} 
+      {\k{}}
     }
 }
 
 \newcommand\TError[0]{
 \infer [T-Error]
 {}
-{ \judgement {\propenv{}} {\errorvalv} {\Bot}
+{ \judgementrewrite {\propenv{}} {\errorvalv} {\Bot}
             {\filterset {\botprop{}} {\botprop{}}}
-           {\emptyobject{}}}
+           {\emptyobject{}}
+         {\errorvalv}
+       }
 }
 
 \newcommand\pathelemsyntax[0]{
@@ -2402,7 +2445,7 @@ $$
 \newcommand\TConst[0]{
 \infer [T-Const]
 {}
-{ \judgement {\propenv{}} 
+{ \judgementselfrewrite {\propenv{}} 
              {\const{}} {\constanttype{\const{}}}
              {\filterset {\topprop{}}{\botprop{}}}
              {\emptyobject{}}
