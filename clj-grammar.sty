@@ -304,19 +304,13 @@
 \newcommand\issubobjin[3]{\ma{{\inpropenv{#1} {#2 \mathbin{<:} #3}}}}
 \newcommand\notsubtypein[3]{\ma{{\inpropenv{#1} {#2 \mathbin{\not<:} #3}}}}
 % 4 place relation (TR formalism)
-\newcommand\judgement[4]{\ma{#1 \vdash #2\ ;\ #3\ ;\ #4}}
-% 7 place relation (TC formalism)
-\newcommand\judgementsev[7]{\ma{#3 \vdash #4\ ;\ #5\ ;\ #6}}
+\newcommand\judgement[5]{\ma{#1 \vdash {\hastype{#2}{#3}} \ ;\ #4\ ;\ #5}}
+% 5 place relation (w/ rewrite)
+\newcommand\judgementrewrite[6]{\ma{#1 \vdash {\hastype{#2}{#3}}\ ;\ #4\ ;\ #5 \Rightarrow #6}}
 %\newcommand\judgementsev[7]{\ma{#3 \vdash_{\scriptscriptstyle{\trdiff{\ct{}}}} #4\ ;\ #5\ ;\ #6}}
-% 7 place relation with color
-\newcommand\judgementsevcol[7]{\judgementsev {\trdiff{#1}} {\trdiff{#2}} {#3} {#4} {#5} {#6} {\trdiff #7}}
-% expands to 7 place but with 4 args (the TR formalism)
-\newcommand\judgementfillcol[4]{\judgementsevcol {\mmenv} {\taenv} {#1} {#2} {#3} {#4} {\mmenv}}
-% expects everything except mmenv
-\newcommand\judgementfillmmcol[5]{\judgementsevcol {\mmenv} {#1} {#2} {#3} {#4} {#5} {\mmenv}}
 % lookuping props in the env
 % 2 place relation (same as tt | tt; empty)
-\newcommand\judgementtwo[2]{\ma{#1 \vdash #2}}
+\newcommand\judgementtwo[3]{\ma{#1 \vdash {\hastype{#2}{#3}}}}
 \newcommand\inpropenv[2]{\ma{#1 \vdash #2}}
 
 % operational semantics
@@ -526,19 +520,19 @@
 { \inpropenv {\propenv{}} {\isprop {\t{}} {\x{}}}
   \\\\
   \s{} = {\falsydiff} }
-{ \judgementfillcol {\propenv{}} 
-                    {\hastype {\x{}} {\t{}}}
-                    {\filterset {{\notprop {\s{}} {\x{}}}} {{\isprop {\s{}} {\x{}}}}}
-                    {\x{}}
-                   }
+{ \judgement {\propenv{}} 
+            {\x{}} {\t{}}
+            {\filterset {{\notprop {\s{}} {\x{}}}} {{\isprop {\s{}} {\x{}}}}}
+            {\x{}}
+           }
                  }
 
 \newcommand\TNum[0]{
 \infer [T-Num]
 {}
-{ \judgementfillcol {\propenv{}}
-      {{\hastype {\num{}} {\Number{}}}}
-      {{\filterset {\topprop{}} {\botprop{}}}}
+{ \judgement {\propenv{}}
+      {\num{}} {\Number{}}
+      {\filterset {\topprop{}} {\botprop{}}}
       {\emptyobject{}}
     }
   }
@@ -546,8 +540,8 @@
 \newcommand\TTrue[0]{
 \infer [T-True]
 {}
-{ \judgementfillcol {\propenv{}}
-      {{\hastype {\true{}} {\True{}}}}
+{ \judgement {\propenv{}}
+      {\true{}} {\True{}}
       {{\filterset {\topprop{}} {\botprop{}}}}
       {\emptyobject{}}
     }
@@ -556,8 +550,8 @@
 \newcommand\TFalse[0]{
 \infer [T-False]
 {}
-{ \judgementfillcol {\propenv{}}
-      {{\hastype {\false{}} {\False{}}}}
+{ \judgement {\propenv{}}
+      {\false{}} {\False{}}
       {\filterset {\botprop{}} {\topprop{}}}
     {\emptyobject{}}
    }
@@ -566,8 +560,8 @@
 \newcommand\TNil[0]{
 \infer [T-Nil]
 {}
-{ \judgementfillcol {\propenv{}} 
-      {{\hastype {\nil{}} {\Nil{}}}} 
+{ \judgement {\propenv{}} 
+      {\nil{}} {\Nil{}}
       {\filterset {\trdiff{\botprop{}}} {\topprop{}}}
       {\emptyobject{}} 
     }
@@ -577,36 +571,36 @@
 \infer [T-Do]
 { 
   \judgement {\propenv{}} 
-             {\hastype {\e1} {\t1}} 
+             {\e1} {\t1}
              {\filterset {\thenprop {\prop{1}}} {\elseprop {\prop1}}} 
              {\object{1}}
 \\\\
 \judgement {\propenv{}, {\orprop {\thenprop {\prop{1}}} {\elseprop {\prop{1}}}}}
-           {\hastype {\e{}} {\t{}}} 
+           {\e{}} {\t{}}
            {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}} 
            {\object{}}
   }
 { \judgement
     {\propenv{}} 
-    {\hastype {\doexp {\e1} {\e{}}} {\t{}}} 
+    {\doexp {\e1} {\e{}}} {\t{}}
     {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}} {\object{}} 
              }
            }
 
 \newcommand\TIf[0]{
 \infer [T-If]
-{ \judgement {\propenv{}} {\hastype {\e1} {\t{1}}} {\filterset {\thenprop {\prop{1}}} {\elseprop {\prop{1}}}}
+{ \judgement {\propenv{}} {\e1} {\t{1}} {\filterset {\thenprop {\prop{1}}} {\elseprop {\prop{1}}}}
                  {\object{1}} 
              \\\\
   \judgement {\propenv{}, {\thenprop {\prop{1}}}}
-                 {\hastype {\e2} {\t{}}} {\filterset {\thenprop {\prop{2}}} {\elseprop {\prop{2}}}}
+                 {\e2} {\t{}} {\filterset {\thenprop {\prop{2}}} {\elseprop {\prop{2}}}}
                  {\object{}}
   \\\\
   \judgement {\propenv{}, {\elseprop {\prop{1}}}}
-                 {\hastype {\e3} {\t{}}} {\filterset {\thenprop {\prop{3}}} {\elseprop {\prop{3}}}}
+                 {\e3} {\t{}} {\filterset {\thenprop {\prop{3}}} {\elseprop {\prop{3}}}}
                  {\object{}}
              }
-{ \judgement {\propenv{}} {\hastype {\ifexp {\e1} {\e2} {\e3}} {\t{}}} 
+{ \judgement {\propenv{}} {\ifexp {\e1} {\e2} {\e3}} {\t{}}
                  {\filterset {\orprop {\thenprop {\prop{2}}} {\thenprop {\prop{3}}}} 
                              {\orprop {\elseprop {\prop{2}}} {\elseprop {\prop{3}}}}}
                  {\object{}} }
@@ -615,7 +609,7 @@
 
 \newcommand\TLet[0]{
 \infer [T-Let]
-{ \judgement {\propenv{}} {\hastype {\e{1}} {\s{}}} {\filterset {\thenprop {\prop{1}}} {\elseprop {\prop{1}}}}
+{ \judgement {\propenv{}} {\e{1}} {\s{}} {\filterset {\thenprop {\prop{1}}} {\elseprop {\prop{1}}}}
              {\object{1}}
              \\\\
              \propp{} = {\impprop {\notprop {\falsydiff{}} {\x{}}} {\thenprop {\prop{1}}}}
@@ -626,10 +620,10 @@
        {\propenv{}, {\isprop {\s{}} {\x{}}},
          {\propp{}},
          {\proppp{}}}
-             {\hastype {\e{}} {\t{}}} {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}}
+             {\e{}} {\t{}} {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}}
              {\object{}} 
              }
-{ \judgement {\propenv{}} {\hastype {\letexp {\x{}} {\e{1}} {\e{}}} {\t{}}}
+{ \judgement {\propenv{}} {\letexp {\x{}} {\e{1}} {\e{}}} {\t{}}
              {\replacefor {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}}
                           {\object{1}}
                           {\x{}}}
@@ -642,25 +636,25 @@
 
 \newcommand\TApp[0]{
 \infer [T-App]
-{ \judgement {\propenv{}} {\hastype {\e{}} {\ArrowOne {\x{}} {\s{}}
+{ \judgement {\propenv{}} {\e{}} {\ArrowOne {\x{}} {\s{}}
                                                        {\t{}}
                                                        {\filterset {\thenprop {\prop{f}}}
                                                                    {\elseprop {\prop{f}}}}
-                                                       {\object{f}}}}
+                                                       {\object{f}}}
                 {\filterset {\thenprop {\prop{}}}
                             {\elseprop {\prop{}}}}
                 {\object{}}
   \\\\
   \judgement {\propenv{}}
-                 {\hastype {\ep{}} {\s{}}}
+                 {\ep{}} {\s{}}
                  {\filterset {\thenprop {\propp{}}}
                              {\elseprop {\propp{}}}}
                  {\objectp{}} 
 }
-{ \judgementfillcol {\propenv{}} {\hastype {\appexp {\e{}} {\ep{}}}
+{ \judgement {\propenv{}} {\appexp {\e{}} {\ep{}}}
                                         {\replacefor {\t{}}
                                                      {\objectp{}}
-                                                     {\x{}}}}
+                                                     {\x{}}}
                  {\replacefor {\filterset {\thenprop {\prop{f}}}
                                           {\elseprop {\prop{f}}}}
                               {\objectp{}}
@@ -674,16 +668,16 @@
 \newcommand\TAbs[0]{
 \infer [T-Abs]
 { \judgement {\propenv{}, {\isprop {\s{}} {\x{}}}}
-            {\hastype {\e{}} {\t{}}}
+            {\e{}} {\t{}}
              {\filterset {\thenprop {\prop{}}}
                          {\elseprop {\prop{}}}}
              {\object{}}}
-{ \judgement {\propenv{}} {\hastype {\abs {\x{}} {\s{}} {\e{}}}
+{ \judgement {\propenv{}} {\abs {\x{}} {\s{}} {\e{}}}
                                            {\ArrowOne {\x{}} {\s{}}
                                                       {\t{}}
                                                       {\filterset {\thenprop {\prop{}}}
                                                                   {\elseprop {\prop{}}}}
-                                                      {\object{}}}}
+                                                      {\object{}}}
                 {\filterset {\topprop{}}
                             {\botprop{}}}
                 {\emptyobject{}}}
@@ -691,7 +685,7 @@
 
 \newcommand\TSubsume[0]{
 \infer [T-Subsume]
-{ \judgement {\propenv{}} {\hastype {\e{}} {\t{}}}
+{ \judgement {\propenv{}} {\e{}} {\t{}}
              {\filterset {\thenprop {\prop{}}}
                          {\elseprop {\prop{}}}}
              {\object}
@@ -704,7 +698,7 @@
 \\
 \inpropenv {} {\issubtype {\object{}} {\objectp{}}}
 }
-{ \judgement {\propenv{}} {\hastype {\e{}} {\tp{}}}
+{ \judgement {\propenv{}} {\e{}} {\tp{}}
              {\filterset {\thenprop {\propp{}}}
                          {\elseprop {\propp{}}}}
              {\objectp{}}}
@@ -722,10 +716,10 @@
   \\
   \overrightarrow{
   \judgementtwo {\propenv{}}
-                    {\hastype {\e{i}} {\t{i}}}
+                    {\e{i}} {\t{i}}
                   }
            }
-{ \judgementfillcol {\propenv{}} {\hastype {\newexp {\class{}} {\overrightarrow{\e{i}}}} {\class{}}}
+{ \judgement {\propenv{}} {\newexp {\class{}} {\overrightarrow{\e{i}}}} {\class{}}
              {\filterset {\topprop{}} {\botprop{}}}
              {\emptyobject}
              }
@@ -744,11 +738,11 @@
   \\
   \overrightarrow{
   \judgementtwo {\propenv{}}
-                    {\hastype {\e{i}} {\t{i}}}
+                    {\e{i}} {\t{i}}
                   }
            }
-{ \judgementfillcol {\propenv{}} {\hastype {\newstaticexp {\overrightarrow{\classhint{i}}} {\classhint{}} 
-                                                          {\class{}} {\overrightarrow{\e{i}}}} {\t{}}}
+{ \judgement {\propenv{}} {\newstaticexp {\overrightarrow{\classhint{i}}} {\classhint{}} 
+                                                          {\class{}} {\overrightarrow{\e{i}}}} {\t{}}
              {\filterset {\topprop{}} {\botprop{}}}
              {\emptyobject}
              }
@@ -756,14 +750,14 @@
 
 \newcommand\TField[0]{
 \infer [T-Field]
-{ \judgementtwo {\propenv{}} {\hastype {\e{}} {\class{}}}
+{ \judgementtwo {\propenv{}} {\e{}} {\class{}}
   \\
                \fieldtype {\ct{}} {\class{}} {\fld{}} {\classhint{f}}
                \\
   \javatotcnil {\classhint{f}} {\t{}}
   \\
            }
-{ \judgement {\propenv{}} {\hastype {\fieldexp {\fld{}} {\e{}}} {\t{}}}
+{ \judgement {\propenv{}} {\fieldexp {\fld{}} {\e{}}} {\t{}}
              {\filterset {\topprop{}} {\topprop}}
              {\emptyobject{}}}
          }
@@ -774,9 +768,9 @@
              \\
   \javatotcnil {\classhint{2}} {\t{}}
   \\
-  \judgementtwo {\propenv{}} {\hastype {\e{}} {\s{}}}
+  \judgementtwo {\propenv{}} {\e{}} {\s{}}
            }
-{ \judgement {\propenv{}} {\hastype {\fieldstaticexp {\classhint{1}} {\classhint{2}} {\fld{}} {\e{}}} {\t{}}}
+{ \judgement {\propenv{}} {\fieldstaticexp {\classhint{1}} {\classhint{2}} {\fld{}} {\e{}}} {\t{}}
              {\filterset {\topprop{}} {\topprop}}
              {\emptyobject{}}}
          }
@@ -784,21 +778,21 @@
 \newcommand\TMethod[0]{
 \infer [T-Method]
 { 
-  \judgementtwo {\propenv{}} {\hastype {\e{}} {\class{}}}
+  \judgementtwo {\propenv{}} {\e{}} {\class{}}
   \\
   \methodtype {\ct{}}{\class{}} {\mth{}} {\overrightarrow{\class{i}}}{\class{r}}
   \\
   \overrightarrow{\javatotcnil {\classhint{i}} {\t{i}}}
              \\
              \overrightarrow{
-  \judgementtwo {\propenv{}} {\hastype {\e{i}} {\t{i}}}
+  \judgementtwo {\propenv{}} {\e{i}} {\t{i}}
                   }
                   \\
              \javatotcnil {\classhint{r}} {\t{}}
              \\
            }
-{ \judgementfillcol {\propenv{}} {\hastype {\methodexp {\mth{}} {\e{}} {\overrightarrow{\e{i}}}}
-                                    {\t{}}}
+{ \judgement {\propenv{}} {\methodexp {\mth{}} {\e{}} {\overrightarrow{\e{i}}}}
+                                    {\t{}}
              {\filterset {\topprop{}} {\topprop{}}}
              {\emptyobject{}}}
          }
@@ -812,17 +806,17 @@
              \\\\
              \javatotcnil {\classhint{2}} {\t{}}
              \\
-  \judgementtwo {\propenv{}} {\hastype {\e{}} {\s{}}}
+  \judgementtwo {\propenv{}} {\e{}} {\s{}}
              \\
              \overrightarrow{
-  \judgementtwo {\propenv{}} {\hastype {\e{i}} {\t{i}}}
+  \judgementtwo {\propenv{}} {\e{i}} {\t{i}}
                   }
            }
-{ \judgementfillcol {\propenv{}} {\hastype {\methodstaticexp {\classhint{1}} 
+{ \judgement {\propenv{}} {\methodstaticexp {\classhint{1}} 
                                                             {\overrightarrow {\classhint{i}}} 
                                                             {\classhint{2}}
                                                             {\mth{}} {\e{}} {\overrightarrow{\e{i}}}}
-                                    {\t{}}}
+                                    {\t{}}
              {\filterset {\topprop{}} {\topprop{}}}
              {\emptyobject{}}}
          }
@@ -830,7 +824,7 @@
 \newcommand\TClass[0]{
 \infer [T-Class]
 {}
-{ \judgement {\propenv{}} {\hastype{\class{}}{\ValueClass}}{\filterset{\topprop{}}{\botprop{}}}{\emptyobject{}}}
+{ \judgement {\propenv{}} {\class{}}{\ValueClass}{\filterset{\topprop{}}{\botprop{}}}{\emptyobject{}}}
          }
 
 \newcommand\TDefMulti[0]{
@@ -845,13 +839,13 @@
                                       {\elseprop {\propp{}}}}
                           {\objectp{}}}
                 \\
-\judgementtwo {\propenv{}} {\hastype {\e{}} {\sp{}}}
+\judgementtwo {\propenv{}} {\e{}} {\sp{}}
 }
 {
   \judgement {\propenv{}}  
-      {\hastype {\createmultiexp {\s{}}
+      {\createmultiexp {\s{}}
                                  {\e{}}} 
-                {\MultiFntype {\s{}} {\sp{}}}}
+                {\MultiFntype {\s{}} {\sp{}}}
              {\filterset {\topprop{}} {\botprop{}}}
              {\emptyobject{}}
 }
@@ -871,22 +865,22 @@
                    {\objectp{}}}
              \\\\
 \judgementtwo {\propenv{}}
-                  {\hastype {\e{m}} {\MultiFntype {\t{m}} {\t{d}}}}
+                  {\e{m}} {\MultiFntype {\t{m}} {\t{d}}}
 \\
   \isacompare{\sp{}}{\objectp{}}{\t{v}}{\filterset {\thenprop {\proppp{}}} {\elseprop {\proppp{}}}}
 \\\\
 \judgementtwo {\propenv{}}
-           {\hastype {\e{v}} {\t{v}}}
+           {\e{v}} {\t{v}}
            \\
 \judgement {\propenv{}, {\isprop{\t{}} {\x{}}}, {\thenprop {\proppp{}}}}
-           {\hastype {\e{b}} {\s{}}}
+           {\e{b}} {\s{}}
            {\filterset {\thenprop {\prop{}}}
                        {\elseprop {\prop{}}}}
            {\object{}}
 }
-{ \judgementfillcol {\propenv{}} {\hastype {\extendmultiexp {\e{m}} {\e{v}} 
+{ \judgement {\propenv{}} {\extendmultiexp {\e{m}} {\e{v}} 
                                                             {\abs {\x{}} {\t{}} {\e{b}}}}
-                                           {\MultiFntype {\t{m}} {\t{d}}}}
+                                           {\MultiFntype {\t{m}} {\t{d}}}
              {\filterset {\topprop{}} {\botprop{}}}
              {\emptyobject{}}
 }
@@ -895,17 +889,17 @@
 \newcommand\TIsA[0]{
 \infer [T-IsA]
 {
-  \judgement {\propenv{}} {\hastype {\e{}} {\s{}}}
+  \judgement {\propenv{}} {\e{}} {\s{}}
              {\filterset {\thenprop {\propp{}}}
                          {\elseprop {\propp{}}}}
                        {\object{}}
   \\
-  \judgementtwo {\propenv{}} {\hastype {\ep{}} {\t{}}}
+  \judgementtwo {\propenv{}} {\ep{}} {\t{}}
              \\
   \isacompare{\s{}}{\object{}}{\t{}}{\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}}
 }
-{ \judgement {\propenv{}} {\hastype {\isaapp {\e{}} {\ep{}}}
-                                    {\Boolean{}}}
+{ \judgement {\propenv{}} {\isaapp {\e{}} {\ep{}}}
+                                    {\Boolean{}}
              {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}}
              {\emptyobject}}
          }
@@ -913,17 +907,17 @@
 \newcommand\TAssoc[0]{
 \infer [T-AssocHMap]
 { 
-  \judgementtwo {\propenv{}} {\hastype {\e{}} {\HMapgeneric {\mandatory{}} {\absent}}}
+  \judgementtwo {\propenv{}} {\e{}} {\HMapgeneric {\mandatory{}} {\absent}}
   \\
-  \judgementtwo {\propenv{}} {\hastype {\e{k}} {\Value{\k{}}}}
+  \judgementtwo {\propenv{}} {\e{k}} {\Value{\k{}}}
   \\
-  \judgementtwo {\propenv{}} {\hastype {\e{v}} {\t{}}}
+  \judgementtwo {\propenv{}} {\e{v}} {\t{}}
   \\
   {\k{}} \not\in {\absent{}}
 }
 { \judgement {\propenv{}} 
-             {\hastype {\assocexp {\e{}} {\e{k}} {\e{v}}}
-                       {\HMapgeneric {\extendmandatoryset {\mandatory{}}{\k{}}{\t{}}} {\absent}}}
+             {\assocexp {\e{}} {\e{k}} {\e{v}}}
+                       {\HMapgeneric {\extendmandatoryset {\mandatory{}}{\k{}}{\t{}}} {\absent}}
              {\filterset {\topprop{}} {\botprop{}}}
              {\emptyobject{}}
 }
@@ -932,15 +926,15 @@
 \newcommand\TGetHMap[0]{
 \infer [T-GetHMap]
 { \judgement {\propenv{}} 
-  {\hastype {\e{}} {\Unionsplice {{\overrightarrow {\HMapgeneric {\mandatory{}} {\absent{}}}}^i}}}
+  {\e{}} {\Unionsplice {{\overrightarrow {\HMapgeneric {\mandatory{}} {\absent{}}}}^i}}
   {\filterset {\thenprop{\prop{1}}}{\elseprop{\prop{1}}}}
   {\object{}}
            \\
-  \judgementtwo {\propenv{}} {\hastype {\e{k}} {\Value {k}}}
+  \judgementtwo {\propenv{}} {\e{k}} {\Value {k}}
              \\
              {\overrightarrow{\inmandatory{\k{}}{\t{}}{\mandatory{}}}}^i
        }
-{ \judgement {\propenv{}} {\hastype {\getexp {\e{}} {\e{k}}} {\Unionsplice {{\overrightarrow {\t{}}}^i}}}
+{ \judgement {\propenv{}} {\getexp {\e{}} {\e{k}}} {\Unionsplice {{\overrightarrow {\t{}}}^i}}
              {\filterset {\topprop{}} {\topprop{}}}
              {\replacefor {\path {\keype{k}} {\x{}}}
                           {\object{}}
@@ -950,16 +944,16 @@
 
 \newcommand\TGetAbsent[0]{
 \infer [T-GetHMapAbsent]
-{ \judgement {\propenv{}} {\hastype {\e{}} {\HMapgeneric {\mandatory{}} {\absent}}}
+{ \judgement {\propenv{}} {\e{}} {\HMapgeneric {\mandatory{}} {\absent}}
   {\filterset {\thenprop{\prop{1}}}{\elseprop{\prop{1}}}}
   {\object{}}
          \\
-  \judgementtwo {\propenv{}} {\hastype {\e{k}} {\Value {k}}}
+  \judgementtwo {\propenv{}} {\e{k}} {\Value {k}}
              \\
              {\inabsent{\k{}}{\absent{}}}
        }
-{ \judgement {\propenv{}} {\hastype {\getexp {\e{}} {\e{k}}}
-                                    {\Nil{}}}
+{ \judgement {\propenv{}} {\getexp {\e{}} {\e{k}}}
+                                    {\Nil{}}
              {\filterset {\topprop{}} {\topprop{}}}
              {\replacefor
                {\path {\keype{k}} {\x{}}}
@@ -970,18 +964,18 @@
 
 \newcommand\TGetHMapPartialDefault[0]{
 \infer [T-GetHMapPartialDefault]
-{ \judgement {\propenv{}} {\hastype {\e{}} {\HMapp {\mandatory{}} {\absent}}}
+{ \judgement {\propenv{}} {\e{}} {\HMapp {\mandatory{}} {\absent}}
   {\filterset {\thenprop{\prop{1}}}{\elseprop{\prop{1}}}}
   {\object{}}
          \\
-  \judgementtwo {\propenv{}} {\hastype {\e{k}} {\Value {k}}}
+  \judgementtwo {\propenv{}} {\e{k}} {\Value {k}}
              \\
              {\notinmandatory{\k{}}{\t{}}{\mandatory{}}}
              \\
              {\notinabsent{\k{}}{\absent{}}}
        }
-{ \judgement {\propenv{}} {\hastype {\getexp {\e{}} {\e{k}}}
-                                    {\Top{}}}
+{ \judgement {\propenv{}} {\getexp {\e{}} {\e{k}}}
+                                    {\Top{}}
              {\filterset {\topprop{}} {\topprop{}}}
              {\replacefor
                {\path {\keype{k}} {\x{}}}
@@ -993,8 +987,8 @@
 \newcommand\TKw[0]{
 \infer [T-Kw]
 {}
-{ \judgementfillcol {\propenv{}} 
-      {\hastype {\k{}} {\ValueKw}}
+{ \judgement {\propenv{}} 
+      {\k{}} {\ValueKw}
       {\filterset {\topprop{}}{\botprop{}}}
       {\emptyobject{}} 
     }
@@ -1003,7 +997,7 @@
 \newcommand\TError[0]{
 \infer [T-Error]
 {}
-{ \judgement {\propenv{}} {\hastype {\errorvalv} {\Bot}}
+{ \judgement {\propenv{}} {\errorvalv} {\Bot}
             {\filterset {\botprop{}} {\botprop{}}}
            {\emptyobject{}}}
 }
@@ -1054,7 +1048,7 @@
 \newcommand\TInstance[0]{
 \infer [T-Instance]
 {}
-{ \judgement {\propenv{}} {\hastype{\classvalue{\classhint{}} {\overrightarrow {\classfieldpair{\fld{}} {\v{}}}}}{\class{}}}{\filterset{\topprop{}}{\botprop{}}}{\emptyobject{}}}
+{ \judgement {\propenv{}} {\classvalue{\classhint{}} {\overrightarrow {\classfieldpair{\fld{}} {\v{}}}}}{\class{}}{\filterset{\topprop{}}{\botprop{}}}{\emptyobject{}}}
 }
 
 \newcommand\singletonallsyntax[0]{
@@ -2023,7 +2017,7 @@ $$
 }
 
 \newcommand\soundnesslemmahypothesis[0]{
-If \judgement{\propenv{}}{\hastype{\e{}}{\t{}}}{\filterset{\thenprop{\prop{}}}{\elseprop{\prop{}}}}{\object{}},
+If \judgement{\propenv{}}{\e{}}{\t{}}{\filterset{\thenprop{\prop{}}}{\elseprop{\prop{}}}}{\object{}},
 \satisfies{\openv{}}{\propenv{}}, 
 \isconsistent{\openv{}},
 and \opsem {\openv{}} {\e{}} {\a{}} 
@@ -2036,7 +2030,7 @@ and all of the following hold:
   \item either \object{} = \emptyobject{} or \inopenv {\openv{}} {\object{}} {\v{}},
   \item either {\istrueval{\v{}}} and {\satisfies{\openv{}}{\thenprop{\prop{}}}} or 
                {\isfalseval{\v{}}} and {\satisfies{\openv{}}{\elseprop{\prop{}}}},
-  \item \judgement{}{\hastype{\v{}}{\t{}}}{\filterset{\thenprop{\propp{}}}{\elseprop{\propp{}}}}{\objectp{}}
+  \item \judgement{}{\v{}}{\t{}}{\filterset{\thenprop{\propp{}}}{\elseprop{\propp{}}}}{\objectp{}}
         for some \thenprop{\propp{}}, \elseprop{\propp{}} and {\objectp{}}, and
   \item \consistentwith{\v{}}{\openv{}}, or
 \end{enumerate}
@@ -2047,9 +2041,9 @@ and all of the following hold:
 }
 
 \newcommand\soundnesstheorembody[1]{
-If \judgement{\propenv{}}{\hastype{\e{}}{\t{}}}{\filterset{\thenprop{\prop{}}}{\elseprop{\prop{}}}}{\object{}}
+If \judgement{\propenv{}}{\e{}}{\t{}}{\filterset{\thenprop{\prop{}}}{\elseprop{\prop{}}}}{\object{}}
 and \opsem {\openv{}} {\e{}} {\v{}} 
-then \judgement{}{\hastype{\v{}}{\t{}}}{\filterset{\thenprop{\propp{}}}{\elseprop{\propp{}}}}{\objectp{}}
+then \judgement{}{\v{}}{\t{}}{\filterset{\thenprop{\propp{}}}{\elseprop{\propp{}}}}{\objectp{}}
         for some \thenprop{\propp{}}, \elseprop{\propp{}} and {\objectp{}}
       }
 
@@ -2073,7 +2067,7 @@ then \judgement{}{\hastype{\v{}}{\t{}}}{\filterset{\thenprop{\propp{}}}{\elsepro
 }
 
 \newcommand\wrongtheorembody[1]{
-  If {\judgement {} {\hastype {\e{}} {\t{}}} {\filterset {\thenprop{\prop{}}}{\elseprop{\prop{}}}} {\object{}}}
+  If {\judgement {} {\e{}} {\t{}} {\filterset {\thenprop{\prop{}}}{\elseprop{\prop{}}}} {\object{}}}
   then \notopsem{}{\e{}}{\wrong{}}.
 }
 
@@ -2089,7 +2083,7 @@ then \judgement{}{\hastype{\v{}}{\t{}}}{\filterset{\thenprop{\propp{}}}{\elsepro
 
 \begin{proof}
   Corollary of lemma~\ref{#1:lemma:soundness}, since by lemma~\ref{#1:lemma:soundness}
-  when {\judgement {} {\hastype {\e{}} {\t{}}} {\filterset {\thenprop{\prop{}}}{\elseprop{\prop{}}}} {\object{}}}, 
+  when {\judgement {} {\e{}} {\t{}} {\filterset {\thenprop{\prop{}}}{\elseprop{\prop{}}}} {\object{}}}, 
  either
     \opsem {} {\e{}} {\v{}} or
     \opsem {} {\e{}} {\errorvalv{}}, therefore \notopsem{}{\e{}}{\wrong{}}.
@@ -2098,7 +2092,7 @@ then \judgement{}{\hastype{\v{}}{\t{}}}{\filterset{\thenprop{\propp{}}}{\elsepro
 }
 
 \newcommand\nilinvoketheorembody[1]{
-  If \judgement{\propenv{}}{\hastype{\e{}}{\t{}}}{\filterset{\thenprop{\prop{}}}{\elseprop{\prop{}}}}{\object{}} then \e{} is not
+  If \judgement{\propenv{}}{\e{}}{\t{}}{\filterset{\thenprop{\prop{}}}{\elseprop{\prop{}}}}{\object{}} then \e{} is not
   \appexp{\nil{}}{\ep{}}, 
   \fieldexp{\fld{}}{\nil{}}, or
   $\methodexp{\mth{}}{\nil{}}{\overrightarrow{\ep{}}}$.
@@ -2126,7 +2120,7 @@ then \judgement{}{\hastype{\v{}}{\t{}}}{\filterset{\thenprop{\propp{}}}{\elsepro
 \begin{definition} \label{#1:definition:consistentwith}
   \consistentwith{\v{}}{\openv{}}
   iff $\forall$ \closure{\openv{1}}{\abs{\x{}}{\s{}}{\e{}}} in \v{},
-  if \judgement{}{\hastype{\closure{\openv{1}}{\abs{\x{}}{\s{}}{\e{}}}}{\t{}}}{\filterset{\topprop{}}{\botprop{}}}{\emptyobject{}}
+  if \judgement{}{\closure{\openv{1}}{\abs{\x{}}{\s{}}{\e{}}}}{\t{}}{\filterset{\topprop{}}{\botprop{}}}{\emptyobject{}}
   and $\forall$ \objectp{} in \t{}, either 
   \objectp{} = \emptyobject{}, or 
   \objectp{} = {\path{\pathelemp{}}{\x{}}},
@@ -2332,9 +2326,9 @@ $$
 \newcommand\restrictremovefigure[0]{
 \restrict{\t{}} {\s{}} &=& \Bot{}\\
                        & & \text{if} \not\exists \v{}.\  
-                          {\judgement {} {\hastype {\v{}} {\t{}}} {\prop{1}}{\object{1}}}\\
+                          {\judgement {} {\v{}} {\t{}} {\prop{1}}{\object{1}}}\\
                        & &\text{and}\ 
-                          {\judgement {} {\hastype {\v{}} {\s{}}} {\prop{2}}{\object{2}}}
+                          {\judgement {} {\v{}} {\s{}} {\prop{2}}{\object{2}}}
                           \\
 \restrict{\Unionsplice{\overrightarrow{{\t{}}}}}{\s{}} &=& 
 \Unionsplice{\overrightarrow{\restrict{{\t{}}}{\s{}}}}
@@ -2409,7 +2403,7 @@ $$
 \infer [T-Const]
 {}
 { \judgement {\propenv{}} 
-             {\hastype {\const{}} {\constanttype{\const{}}}}
+             {\const{}} {\constanttype{\const{}}}
              {\filterset {\topprop{}}{\botprop{}}}
              {\emptyobject{}}
                    }

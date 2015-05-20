@@ -88,7 +88,7 @@
   \satisfies{\openv{}}{\propenv{}}
   and {\openv{}}({\path{\pathelem{}}{\x{}}}) = \v{}
   then
-  \judgement{}{\hastype{\v{}}{\t{}}}{\filterset{\thenprop{\propp{}}}{\elseprop{\propp{}}}}{\objectp{}}
+  \judgement{}{\v{}}{\t{}}{\filterset{\thenprop{\propp{}}}{\elseprop{\propp{}}}}{\objectp{}}
   for some {\thenprop{\propp{}}}, {\elseprop{\propp{}}} and {\objectp{}}.
   \begin{proof}
     Corollary of lemma~\ref{appendix:lemma:satisfies}.
@@ -176,8 +176,8 @@ By induction on the derivation of the typing judgement.
   \thenprop{\prop{}} = {\topprop{}},
   \elseprop{\prop{}} = {\botprop{}},
   \object{} = {\emptyobject{}},
-  $\overrightarrow{\judgementtwo {} {\hastype{\v{k}}{\Value \k{}}}}$,
-  $\overrightarrow{\judgementtwo {} {\hastype{\v{v}}{\t{v}}}}$,
+  $\overrightarrow{\judgementtwo {} {\v{k}}{\Value \k{}}}$,
+  $\overrightarrow{\judgementtwo {} {\v{v}}{\t{v}}}$,
   \mandatory{} = \mandatorysetoverright{\k{}}{\t{v}}
 
   \begin{itemize}
@@ -305,11 +305,11 @@ Part 4 holds vacuously.
 \begin{case}[T-Do]
 \e{} = {\doexp {\e1} {\e2}},
   \judgement {\propenv{}} 
-             {\hastype {\e1} {\t1}} 
+             {\e1} {\t1}
              {\filterset {\thenprop {\prop{1}}} {\elseprop {\prop1}}} 
              {\object{1}},
 \judgement {\propenv{}, {\orprop {\thenprop {\prop{1}}} {\elseprop {\prop{1}}}}}
-           {\hastype {\e{2}} {\t{}}} 
+           {\e{2}} {\t{}}
            {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}} 
            {\object{}},
 
@@ -325,7 +325,7 @@ For all parts we note
     by M-Or,
     which together with 
 \judgement {\propenv{}, {\orprop {\thenprop {\prop{1}}} {\elseprop {\prop{1}}}}}
-           {\hastype {\e{2}} {\t{}}} 
+           {\e{2}} {\t{}}
            {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}} 
            {\object{}},
     and
@@ -380,7 +380,7 @@ Parts 3 and 4 follow from the induction hypothesis on \e{2}.
             $
   \overrightarrow{
   \judgementtwo {\propenv{}}
-                    {\hastype {\e{i}} {\t{i}}}
+                    {\e{i}} {\t{i}}
                   }$
 
 \begin{itemize}
@@ -446,7 +446,7 @@ instance of \class{} via \newjavaliteral (by assumption~\ref{appendix:assumption
   \e{} = {\fieldstaticexp {\classhint{1}} {\classhint{2}} {\fld{}} {\e{1}}},
   \javatotc {\classhint{1}} {\class{}},
   \javatotcnil {\classhint{2}} {\t{}},
-  \judgementtwo {\propenv{}} {\hastype {\e{1}} {\class{}}}
+  \judgementtwo {\propenv{}} {\e{1}} {\class{}}
 
 \begin{itemize}
   \item[]
@@ -489,9 +489,9 @@ and \javatotcnil{\classhint{2}} {\t{}}.
   $\overrightarrow{\javatotc {\classhint{i}} {\t{i}}}$,
              \javatotc {\classhint{1}} {\class{}},
              \javatotcnil {\classhint{2}} {\t{}},
-  \judgementtwo {\propenv{}} {\hastype {\e{m}} {\class{}}},
+  \judgementtwo {\propenv{}} {\e{m}} {\class{}},
              $\overrightarrow{
-  \judgementtwo {\propenv{}} {\hastype {\e{a}} {\t{a}}}
+  \judgementtwo {\propenv{}} {\e{a}} {\t{a}}
                   }$
 
 \begin{itemize}
@@ -585,7 +585,7 @@ and \javatotcnil{\classhint{2}} {\t{}}.
                           {\filterset {\thenprop {\prop{2}}}
                                       {\elseprop {\prop{2}}}}
                           {\object{2}}},
-  \judgementtwo {\propenv{}} {\hastype {\e{d}} {\t{d}}}
+  \judgementtwo {\propenv{}} {\e{d}} {\t{d}}
 
 
 \begin{itemize}
@@ -596,8 +596,8 @@ and \javatotcnil{\classhint{2}} {\t{}}.
 
 
 Part 1 and 2 hold for the same reasons as T-True.
-For part 3 we show \judgementtwo{}{\hastype{\multi {\v{d}} {\emptydisptable}}{\MultiFntype {\s{}} {\t{d}}}}
-by T-Multi, since \judgementtwo {} {\hastype {\v{d}} {\t{d}}} by the inductive hypothesis on {\e{d}}
+For part 3 we show \judgementtwo{}{\multi {\v{d}} {\emptydisptable}}{\MultiFntype {\s{}} {\t{d}}}
+by T-Multi, since \judgementtwo {} {\v{d}} {\t{d}} by the inductive hypothesis on {\e{d}}
 and {\emptydisptable} vacuously satisfies the other premises of T-Multi, so we are done.
 
 \end{subcase}
@@ -638,15 +638,15 @@ and {\emptydisptable} vacuously satisfies the other premises of T-Multi, so we a
                                  {\elseprop {\prop{d}}}}
                      {\object{d}}},
           \item
-  \judgementtwo {\propenv{}} {\hastype {\e{m}} {\MultiFntype {\t{m}} {\t{d}}}},
+  \judgementtwo {\propenv{}} {\e{m}} {\MultiFntype {\t{m}} {\t{d}}},
           \item
   \isacompare{\sp{}}{\object{d}}{\t{v}}{\filterset {\thenprop {\prop{i}}} {\elseprop {\prop{i}}}},
           \item
   \judgementtwo {\propenv{}}
-               {\hastype {\e{v}} {\t{v}}},
+               {\e{v}} {\t{v}},
           \item
   \judgement {\propenv{}, {\isprop{\t{1}} {\x{}}}, {\thenprop {\prop{i}}}}
-           {\hastype {\e{b}} {\s{}}}
+           {\e{b}} {\s{}}
            {\filterset {\thenprop {\prop{m}}}
                        {\elseprop {\prop{m}}}}
            {\object{m}}
@@ -682,11 +682,11 @@ and {\emptydisptable} vacuously satisfies the other premises of T-Multi, so we a
                                 and object agree with T-Multi.
 
 For part 3 we show
-\judgementtwo{}{\hastype{\multi {\v{d}} {\extenddisptable {\disptable{}}{\v{v}}{\v{f}}}}{\MultiFntype {\t{m}} {\t{d}}}}
-by noting \judgementtwo {} {\hastype {\v{d}} {\t{d}}},
-  \judgementtwo{}{\hastype{\v{v}}{\Top{}}}
+\judgementtwo{}{\multi {\v{d}} {\extenddisptable {\disptable{}}{\v{v}}{\v{f}}}}{\MultiFntype {\t{m}} {\t{d}}}
+by noting \judgementtwo {} {\v{d}} {\t{d}},
+  \judgementtwo{}{\v{v}}{\Top{}}
   and
-  \judgementtwo{}{\hastype{\v{f}}{\t{m}}}, and since \disptable{} is in the correct form by the inductive
+  \judgementtwo{}{\v{f}}{\t{m}}, and since \disptable{} is in the correct form by the inductive
   hypothesis on {\e{m}} we can satisfy all premises of T-Multi, so we are done.
 
 
@@ -765,17 +765,17 @@ by noting \judgementtwo {} {\hastype {\v{d}} {\t{d}}},
                            {\object{2}}
                            {\x{}}},
     \item
-  \judgement {\propenv{}} {\hastype {\e{1}} {\ArrowOne {\x{}} {\s{}}
+  \judgement {\propenv{}} {\e{1}} {\ArrowOne {\x{}} {\s{}}
                                                        {\t{f}}
                                                        {\filterset {\thenprop {\prop{f}}}
                                                                    {\elseprop {\prop{f}}}}
-                                                       {\object{f}}}}
+                                                       {\object{f}}}
                 {\filterset {\thenprop {\prop{1}}}
                             {\elseprop {\prop{1}}}}
                 {\object{1}},
     \item
   \judgement {\propenv{}}
-                 {\hastype {\e{2}} {\s{}}}
+                 {\e{2}} {\s{}}
                  {\filterset {\thenprop {\prop{2}}}
                              {\elseprop {\prop{2}}}}
                  {\object{2}},
@@ -858,11 +858,11 @@ by noting \judgementtwo {} {\hastype {\v{d}} {\t{d}}},
            \item
               \satisfies{\openv{c}}{\propenvc{}} and
             \item
-  \judgement {\propenvc{}} {\hastype {\abs {\x{}} {\s{}} {\e{b}}} {\ArrowOne {\x{}} {\s{}}
+  \judgement {\propenvc{}} {\abs {\x{}} {\s{}} {\e{b}}} {\ArrowOne {\x{}} {\s{}}
                                                        {\t{f}}
                                                        {\filterset {\thenprop {\prop{f}}}
                                                                    {\elseprop {\prop{f}}}}
-                                                       {\object{f}}}}
+                                                       {\object{f}}}
                 {\filterset {\thenprop {\prop{1}}}
                             {\elseprop {\prop{1}}}}
                 {\object{1}},
@@ -871,7 +871,7 @@ by noting \judgementtwo {} {\hastype {\v{d}} {\t{d}}},
          \begin{itemize}
            \item
   { \judgement {\propenvc{}, {\isprop {\s{}} {\x{}}}}
-              {\hastype {\e{b}} {\t{f}}}
+              {\e{b}} {\t{f}}
                {\filterset {\thenprop {\prop{f}}}
                            {\elseprop {\prop{f}}}}
                {\object{f}}}.
@@ -1034,7 +1034,7 @@ so we know $\forall v \in \fv{\thenprop{\prop{}}} - \x{}$,
      By inversion on \e{1} via T-Multi we know 
      \begin{enumerate}[resume]
        \item
-         \judgement{\propenv{}}{\hastype{\e{1}}{\MultiFntype{\s{t}}{\s{d}}}}
+         \judgement{\propenv{}}{\e{1}}{\MultiFntype{\s{t}}{\s{d}}}
                 {\filterset {\thenprop {\prop{1}}}
                             {\elseprop {\prop{1}}}}
                 {\object{1}},
@@ -1050,19 +1050,19 @@ so we know $\forall v \in \fv{\thenprop{\prop{}}} - \x{}$,
                                                                    {\elseprop {\prop{d}}}}
                                                        {\object{d}}},
        \item
-         \judgement{}{\hastype{\v{d}}{\s{d}}}
+         \judgement{}{\v{d}}{\s{d}}
                 {\filterset {\thenprop {\prop{3}}}
                             {\elseprop {\prop{3}}}}
                 {\object{3}},
               \item
-  $\overrightarrow{\judgementtwo{}{\hastype{\v{k}}{\Top{}}}}$, and 
+  $\overrightarrow{\judgementtwo{}{\v{k}}{\Top{}}}$, and 
 \item
-  $\overrightarrow{\judgementtwo{}{\hastype{\v{v}}{\s{t}}}}$.
+  $\overrightarrow{\judgementtwo{}{\v{v}}{\s{t}}}$.
   \end{enumerate}
 
   By the inductive hypothesis on \e{2} we know 
   \begin{enumerate}[resume]
-    \item \judgementtwo{\propenv{}}{\hastype{\v{2}}{\s{}}}, and
+    \item \judgementtwo{\propenv{}}{\v{2}}{\s{}}, and
     \item \object{2} = \emptyobject{} or \inopenv{\openv{}}{\object{2}}{\v{2}}.
   \end{enumerate}
 
@@ -1077,7 +1077,7 @@ so we know $\forall v \in \fv{\thenprop{\prop{}}} - \x{}$,
   that 
   \begin{enumerate}[resume]
     \item
-  {\judgementtwo{}{\hastype{\v{g}}{\s{t}}}}.
+  {\judgementtwo{}{\v{g}}{\s{t}}}.
   \end{enumerate}
 
   For part 1, we note
@@ -1132,7 +1132,7 @@ so we know $\forall v \in \fv{\thenprop{\prop{}}} - \x{}$,
 
                     Part 2 is trivial since both propositions are \topprop{} by substitution.
                     
-                    Part 3 holds because {\judgementtwo{}{\hastype{\v{2}}{\Class{}}}}.
+                    Part 3 holds because {\judgementtwo{}{\v{2}}{\Class{}}}.
                   \end{subcase}
           \item[] \begin{subcase}[\v{2} = \class{}] \v{} = \Class{}
 
@@ -1165,7 +1165,7 @@ so we know $\forall v \in \fv{\thenprop{\prop{}}} - \x{}$,
           \item[] \begin{subcase}[\v{2} = {\nil{}}] \v{} = \nil{}
 
              Parts 1 and 2 as above.
-                    Part 3 holds because {\judgementtwo{}{\hastype{\v{2}}{\Nil}}}.
+                    Part 3 holds because {\judgementtwo{}{\v{2}}{\Nil}}.
                   \end{subcase}
         \end{itemize}
       \end{subcase}
@@ -1211,11 +1211,11 @@ so we know $\forall v \in \fv{\thenprop{\prop{}}} - \x{}$,
 
 \begin{case}[T-IsA]\e{} = {\isaapp {\e{1}} {\e{2}}},
   \t{} = {\Boolean{}},
-  \judgement {\propenv{}} {\hastype {\e{1}} {\t{1}}}
+  \judgement {\propenv{}} {\e{1}} {\t{1}}
              {\filterset {\thenprop {\prop{1}}}
                          {\elseprop {\prop{1}}}}
                        {\object{1}},
-  \judgement {\propenv{}} {\hastype {\e{2}} {\t{2}}}
+  \judgement {\propenv{}} {\e{2}} {\t{2}}
              {\filterset {\thenprop {\prop{2}}}
                          {\elseprop {\prop{2}}}}
                        {\object{2}},
@@ -1306,7 +1306,7 @@ so we know $\forall v \in \fv{\thenprop{\prop{}}} - \x{}$,
 
                     Since \v{1} = {\v{2}} then \t{1} = \t{2}, and since \t{2} = {\Value{\singletonmeta{}}}
                       then \t{1} = {\Value{\singletonmeta{}}}, so
-                    \judgementtwo {} {\hastype {\v{1}} {\Value{\singletonmeta{}}}}
+                    \judgementtwo {} {\v{1}} {\Value{\singletonmeta{}}}
 
                     If \object{1} = \emptyobject{} then \thenprop{\prop{}} = \topprop{} and
                     we derive
@@ -1315,9 +1315,9 @@ so we know $\forall v \in \fv{\thenprop{\prop{}}} - \x{}$,
                     Otherwise \object{1} = \path{\pathelem{}}{\x{}} and \thenprop{\prop{}} =
                     {\isprop{\Value{\singletonmeta{}}}{\path{\pathelem{}}{\x{}}}},
                     and since
-                    \judgementtwo {} {\hastype {\v{1}} {\Value{\singletonmeta{}}}}
+                    \judgementtwo {} {\v{1}} {\Value{\singletonmeta{}}}
                     then
-                    \judgementtwo {} {\hastype {{\openv{}}(\path{\pathelem{}}{\x{}})} {\Value{\singletonmeta{}}}},
+                    \judgementtwo {} {{\openv{}}(\path{\pathelem{}}{\x{}})} {\Value{\singletonmeta{}}},
                     which we can use M-Type to derive
                     {\satisfies{\openv{}}{\isprop{\Value{\singletonmeta{}}}{\path{\pathelem{}}{\x{}}}}}.
                   \end{subcase}
@@ -1433,9 +1433,9 @@ so we know $\forall v \in \fv{\thenprop{\prop{}}} - \x{}$,
                     If {\v{1}} = \nil{}, then we know from the definition of \isaopsemliteral that 
                     {\openv{}({\path{\pathelem{}}{\x{}}})} = \nil{}.
 
-                    Since \judgementtwo{}{\hastype{\openv{}({\path{\pathelem{}}{\x{}}})}{\Nil}},
-                    and there is no \v{1} such that both \judgementtwo{}{\hastype{\openv{}({\path{\pathelem{}}{\x{}}})}{\class}} and
-                    \judgementtwo{}{\hastype{\openv{}({\path{\pathelem{}}{\x{}}})}{\Nil{}}},
+                    Since \judgementtwo{}{\openv{}({\path{\pathelem{}}{\x{}}})}{\Nil},
+                    and there is no \v{1} such that both \judgementtwo{}{\openv{}({\path{\pathelem{}}{\x{}}})}{\class} and
+                    \judgementtwo{}{\openv{}({\path{\pathelem{}}{\x{}}})}{\Nil{}},
                     we use M-NotType to derive 
                     \satisfies{\openv{}}{\notprop{\class{}} {\path{\pathelem{}}{\x{}}}}.
 
@@ -1443,10 +1443,10 @@ so we know $\forall v \in \fv{\thenprop{\prop{}}} - \x{}$,
                     we know {\notsubtypein{}{\class{1}}{\class{}}} and 
                     {\openv{}({\path{\pathelem{}}{\x{}}})} = \class{1}.
 
-                    Since \judgementtwo{}{\hastype{\openv{}({\path{\pathelem{}}{\x{}}})}{\class{1}}},
+                    Since \judgementtwo{}{\openv{}({\path{\pathelem{}}{\x{}}})}{\class{1}},
                     and there is no \v{1} such that both 
-                    \judgementtwo{}{\hastype{\v{1}}{\class{}}} and
-                    \judgementtwo{}{\hastype{\v{1}}{\class{1}}},
+                    \judgementtwo{}{\v{1}}{\class{}} and
+                    \judgementtwo{}{\v{1}}{\class{1}},
                     we use M-NotType to derive 
                     \satisfies{\openv{}}{\notprop{\class{}} {\path{\pathelem{}}{\x{}}}}.
 
@@ -1483,11 +1483,11 @@ so we know $\forall v \in \fv{\thenprop{\prop{}}} - \x{}$,
                     Otherwise \object{1} = \path{\pathelem{}}{\x{}} and \elseprop{\prop{}} =
                     {\notprop{\Value{\singletonmeta{}}}{\path{\pathelem{}}{\x{}}}}.
                     Noting that \v{1} \notequal\ \v{2},
-                    we know \judgementtwo{}{\hastype{\openv{}({\path{\pathelem{}}{\x{}}})}{\s{}}}
+                    we know \judgementtwo{}{\openv{}({\path{\pathelem{}}{\x{}}})}{\s{}}
                     where \s{} \notequal\ {\Value{\singletonmeta{}}},
                     and there is no \v{1} such that both 
-                    \judgementtwo{}{\hastype{\v{1}}{\Value{\singletonmeta{}}}} and
-                    \judgementtwo{}{\hastype{\v{1}}{\s{}}}
+                    \judgementtwo{}{\v{1}}{\Value{\singletonmeta{}}} and
+                    \judgementtwo{}{\v{1}}{\s{}}
                     so we can use M-NotType to derive
                     {\satisfies{\openv{}}{\notprop{\Value{\singletonmeta{}}}{\path{\pathelem{}}{\x{}}}}}.
                   \end{subcase}
@@ -1506,9 +1506,9 @@ so we know $\forall v \in \fv{\thenprop{\prop{}}} - \x{}$,
 
         Part 3 holds because by the definition of \isaopsemliteral
         \v{} can only be \true\ or \false, 
-        and since \judgementtwo{\propenv{}}{\hastype{\true}{\t{}}}
+        and since \judgementtwo{\propenv{}}{\true}{\t{}}
         and
-        \judgementtwo{\propenv{}}{\hastype{\false}{\t{}}}
+        \judgementtwo{\propenv{}}{\false}{\t{}}
         we are done.
       \end{subcase}
     \item[]
@@ -1535,8 +1535,8 @@ so we know $\forall v \in \fv{\thenprop{\prop{}}} - \x{}$,
   \object{} = {\replacefor {\path {\keype{k}} {\x{}}}
                           {\object{m}}
                           {\x{}}},
-  $\judgementtwo {\propenv{}} {\hastype {\e{k}} {\Value {k}}}$,
-  $\judgement {\propenv{}} {\hastype {\e{m}} {\Unionsplice {\overrightarrow {\HMapgeneric {\mandatory{}} {\absent{}}}}}}
+  $\judgementtwo {\propenv{}} {\e{k}} {\Value {k}}$,
+  $\judgement {\propenv{}} {\e{m}} {\Unionsplice {\overrightarrow {\HMapgeneric {\mandatory{}} {\absent{}}}}}
            {\filterset {\thenprop {\prop{m}}} {\elseprop {\prop{m}}}}
            {\object{m}}$,
   $\overrightarrow{\inmandatory{\k{}}{\t{i}}{\mandatory{}}}$
@@ -1575,13 +1575,13 @@ so we know $\forall v \in \fv{\thenprop{\prop{}}} - \x{}$,
          and \elseprop{\prop{}} = {\topprop{}}.
 
          To prove part 3 we note that (by the induction hypothesis on \e{m})
-         $\judgementtwo{}{\hastype{\v{m}}{\Unionsplice{\overrightarrow {\HMapgeneric {\mandatory{}} {\absent{}}}}}}$,
+         $\judgementtwo{}{\v{m}}{\Unionsplice{\overrightarrow {\HMapgeneric {\mandatory{}} {\absent{}}}}}$,
          where $\overrightarrow{\inmandatory{\k{}}{\t{i}}{\mandatory{}}}$, and 
          both
          $\keyinmap{\k{}}{\curlymap{\overrightarrow{({\v{a}}\ {\v{b}})}}}$
          and
          \getmap{\curlymap{\overrightarrow{({\v{a}}\ {\v{b}})}}} {\k{}} = {\v{}}
-         imply \judgementtwo{}{\hastype{\v{}}{\Unionsplice {\overrightarrow {\t{i}}}}}.
+         imply \judgementtwo{}{\v{}}{\Unionsplice {\overrightarrow {\t{i}}}}.
 
       \end{subcase}
     \item[]
@@ -1614,8 +1614,8 @@ so we know $\forall v \in \fv{\thenprop{\prop{}}} - \x{}$,
                {\path {\keype{k}} {\x{}}}
                           {\object{m}}
                           {\x{}}},
-  \judgementtwo {\propenv{}} {\hastype {\e{k}} {\Value {k}}},
-  \judgement {\propenv{}} {\hastype {\e{m}} {\HMapgeneric {\mandatory{}} {\absent}}}
+  \judgementtwo {\propenv{}} {\e{k}} {\Value {k}},
+  \judgement {\propenv{}} {\e{m}} {\HMapgeneric {\mandatory{}} {\absent}}
            {\filterset {\thenprop {\prop{m}}} {\elseprop {\prop{m}}}}
            {\object{m}},
   {\inabsent{\k{}}{\absent{}}}
@@ -1692,8 +1692,8 @@ so we know $\forall v \in \fv{\thenprop{\prop{}}} - \x{}$,
                {\path {\keype{k}} {\x{}}}
                           {\object{m}}
                           {\x{}}},
-  \judgementtwo {\propenv{}} {\hastype {\e{k}} {\Value {k}}},
- \judgement {\propenv{}} {\hastype {\e{m}} {\HMapp {\mandatory{}} {\absent}}}
+  \judgementtwo {\propenv{}} {\e{k}} {\Value {k}},
+ \judgement {\propenv{}} {\e{m}} {\HMapp {\mandatory{}} {\absent}}
            {\filterset {\thenprop {\prop{m}}} {\elseprop {\prop{m}}}}
            {\object{m}},
              ${\notinmandatory{\k{}}{\t{}}{\mandatory{}}}$,
@@ -1742,9 +1742,9 @@ so we know $\forall v \in \fv{\thenprop{\prop{}}} - \x{}$,
   \thenprop{\prop{}} = {\topprop{}},
   \elseprop{\prop{}} = {\botprop{}},
   \object{} = \emptyobject,
-  \judgementtwo {\propenv{}} {\hastype {\e{m}} {\HMapgeneric {\mandatory{}} {\absent}}},
-  \judgementtwo {\propenv{}} {\hastype {\e{k}} {\Value{\k{}}}},
-  \judgementtwo {\propenv{}} {\hastype {\e{v}} {\t{}}},
+  \judgementtwo {\propenv{}} {\e{m}} {\HMapgeneric {\mandatory{}} {\absent}},
+  \judgementtwo {\propenv{}} {\e{k}} {\Value{\k{}}},
+  \judgementtwo {\propenv{}} {\e{v}} {\t{}},
   {\k{}} $\not\in$ {\absent{}}
 
   \begin{itemize}
@@ -1774,13 +1774,13 @@ so we know $\forall v \in \fv{\thenprop{\prop{}}} - \x{}$,
 \end{case}
 
 \begin{case}[T-If] \e{} = {\ifexp {\e1} {\e2} {\e3}},
-  \judgement {\propenv{}} {\hastype {\e1} {\t{1}}} {\filterset {\thenprop {\prop{1}}} {\elseprop {\prop{1}}}}
+  \judgement {\propenv{}} {\e1} {\t{1}} {\filterset {\thenprop {\prop{1}}} {\elseprop {\prop{1}}}}
                  {\object{1}},
   \judgement {\propenv{}, {\thenprop {\prop{1}}}}
-                 {\hastype {\e2} {\t{}}} {\filterset {\thenprop {\prop{2}}} {\elseprop {\prop{2}}}}
+                 {\e2} {\t{}} {\filterset {\thenprop {\prop{2}}} {\elseprop {\prop{2}}}}
                  {\object{}},
   \judgement {\propenv{}, {\elseprop {\prop{1}}}}
-                 {\hastype {\e3} {\t{}}} {\filterset {\thenprop {\prop{3}}} {\elseprop {\prop{3}}}}
+                 {\e3} {\t{}} {\filterset {\thenprop {\prop{3}}} {\elseprop {\prop{3}}}}
                  {\object{}},
   \thenprop{\prop{}} = {\orprop {\thenprop {\prop{2}}} {\thenprop {\prop{3}}}},
   \elseprop{\prop{}} = {\orprop {\elseprop {\prop{2}}} {\elseprop {\prop{3}}}}
@@ -1810,7 +1810,7 @@ so we know $\forall v \in \fv{\thenprop{\prop{}}} - \x{}$,
 
               Part 3 is trivial as
               \opsem {\openv{}} {\e{2}} {\v{}}
-              and {\judgementtwo{}{\hastype{\v{}}{\t{}}}} by the induction hypothesis on {\e{2}}.
+              and {\judgementtwo{}{\v{}}{\t{}}} by the induction hypothesis on {\e{2}}.
 
 
       \end{subcase}
@@ -1838,7 +1838,7 @@ so we know $\forall v \in \fv{\thenprop{\prop{}}} - \x{}$,
 
               Part 3 is trivial as
               \opsem {\openv{}} {\e{3}} {\v{}}
-              and {\judgementtwo{}{\hastype{\v{}}{\t{}}}} by the induction hypothesis on {\e{3}}.
+              and {\judgementtwo{}{\v{}}{\t{}}} by the induction hypothesis on {\e{3}}.
       \end{subcase}
     \item[]
       \begin{subcase}[BE-If]
@@ -1848,7 +1848,7 @@ so we know $\forall v \in \fv{\thenprop{\prop{}}} - \x{}$,
 
 \begin{case}[T-Let]
   \e{} = {\letexp {\x{}} {\e{1}} {\e{2}}},
-  \judgement {\propenv{}} {\hastype {\e{1}} {\s{}}} {\filterset {\thenprop {\prop{1}}} {\elseprop {\prop{1}}}}
+  \judgement {\propenv{}} {\e{1}} {\s{}} {\filterset {\thenprop {\prop{1}}} {\elseprop {\prop{1}}}}
              {\object{1}},
              \propp{} = {\impprop {\notprop {\falsy{}} {\x{}}} {\thenprop {\prop{1}}}},
              \proppp{} = {\impprop {\isprop {\falsy{}} {\x{}}} {\elseprop {\prop{1}}}},
@@ -1856,7 +1856,7 @@ so we know $\forall v \in \fv{\thenprop{\prop{}}} - \x{}$,
        {\propenv{}, {\isprop {\s{}} {\x{}}},
          {\propp{}},
          {\proppp{}}}
-             {\hastype {\e{2}} {\t{}}} {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}}
+             {\e{2}} {\t{}} {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}}
              {\object{}} 
 
 
@@ -1889,7 +1889,7 @@ so we know $\forall v \in \fv{\thenprop{\prop{}}} - \x{}$,
   {\thenprop {\prop{}}}
   $\exists {\propenvp{}}. \satisfies{\openv{}}{\propenvp{}}$
   \ \text{and}\ 
-\judgement {\propenvp{}} {\hastype {\abs {\x{}} {\s{}} {\e{1}}} {\t{}}}
+\judgement {\propenvp{}} {\abs {\x{}} {\s{}} {\e{1}}} {\t{}}
                  {\filterset {\thenprop {\prop{}}}
                              {\elseprop {\prop{}}}}
                  {\object{}}
@@ -1901,13 +1901,13 @@ so we know $\forall v \in \fv{\thenprop{\prop{}}} - \x{}$,
         We assume some \propenvp{}, such that
         \begin{itemize}
           \item \satisfies{\openv{}}{\propenvp{}}
-          \item \judgement {\propenvp{}} {\hastype {\abs {\x{}} {\s{}} {\e{1}}} {\t{}}}
+          \item \judgement {\propenvp{}} {\abs {\x{}} {\s{}} {\e{1}}} {\t{}}
                            {\filterset {\thenprop {\prop{}}}
                                        {\elseprop {\prop{}}}}
                            {\object{}}.
        \end{itemize}
        Note the last rule in the derivation of
-          \judgement {\propenvp{}} {\hastype {\abs {\x{}} {\s{}} {\e{1}}} {\t{}}}
+          \judgement {\propenvp{}} {\abs {\x{}} {\s{}} {\e{1}}} {\t{}}
                            {\filterset {\thenprop {\prop{}}}
                                        {\elseprop {\prop{}}}}
                            {\object{}}
@@ -1928,9 +1928,9 @@ so we know $\forall v \in \fv{\thenprop{\prop{}}} - \x{}$,
   {\thenprop {\prop{}}} = {\topprop{}},
   {\elseprop{\prop{}}} = {\botprop{}},
   {\object{}} = {\emptyobject{}},
-  \judgementtwo {} {\hastype {\v{1}} {\t{1}}},
-  $\overrightarrow{\judgementtwo{}{\hastype{\v{k}}{\Top{}}}}$,
-  $\overrightarrow{\judgementtwo{}{\hastype{\v{v}}{\s{}}}}$
+  \judgementtwo {} {\v{1}} {\t{1}},
+  $\overrightarrow{\judgementtwo{}{\v{k}}{\Top{}}}$,
+  $\overrightarrow{\judgementtwo{}{\v{v}}{\s{}}}$
 
   \begin{itemize}
     \item[]
@@ -1952,11 +1952,11 @@ so we know $\forall v \in \fv{\thenprop{\prop{}}} - \x{}$,
   {\elseprop{\prop{}}}= {\botprop{}},
   {\object{}}= {\emptyobject{}},
 { \judgement {\propenv{}, {\isprop {\s{}} {\x{}}}}
-            {\hastype {\e{1}} {\t{}}}
+            {\e{1}} {\t{}}
              {\filterset {\thenprop {\prop{1}}}
                          {\elseprop {\prop{1}}}}
              {\object{1}}},
-\judgement {\propenv{}} {\hastype {\abs {\x{}} {\s{}} {\e{1}}} {\t{}}}
+\judgement {\propenv{}} {\abs {\x{}} {\s{}} {\e{1}}} {\t{}}
                  {\filterset {\thenprop {\prop{}}}
                              {\elseprop {\prop{}}}}
                  {\object{}}
@@ -1993,7 +1993,7 @@ so we know $\forall v \in \fv{\thenprop{\prop{}}} - \x{}$,
 \end{case}
 
 \begin{case}[T-Subsume]
-  \judgement {\propenv{}} {\hastype {\e{}} {\tp{}}}
+  \judgement {\propenv{}} {\e{}} {\tp{}}
              {\filterset {\thenprop {\propp{}}}
                          {\elseprop {\propp{}}}}
              {\objectp{}},
@@ -2040,7 +2040,7 @@ Part 3 holds because \e{} is of type \tp{} and
 {\soundnesstheorem{appendix}}
 
 \begin{theorem}[\nil{} cannot be accidentally introduced] \label{appendix:theorem:nullpointer}
-If \judgement{\propenv{}}{\hastype{\v{}}{\t{}}}{\filterset{\thenprop{\prop{}}}{\elseprop{\prop{}}}}{\object{}}
+If \judgement{\propenv{}}{\v{}}{\t{}}{\filterset{\thenprop{\prop{}}}{\elseprop{\prop{}}}}{\object{}}
 and \notsubtypein{}{\Nil{}}{\t{}}
 then {\v{}} $\not=$ \nil{}.
 \begin{proof}

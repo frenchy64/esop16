@@ -128,7 +128,7 @@ We formalize our type system following~\citet{TF10}
 The typing judgment 
 $$
 {\judgement   {\propenv}
-              {\hastype {\e{}} {\t{}}}
+              {\e{}} {\t{}}
   {\filterset {\thenprop {\prop{}}}
               {\elseprop {\prop{}}}}
   {\object{}}}
@@ -137,7 +137,7 @@ says expression \e{} is of type \t{} in the
 proposition environment $\propenv{}$, with 
 `then' proposition {\thenprop {\prop{}}}, `else' proposition {\elseprop {\prop{}}}
 and object \object{}. We write 
-{\judgementtwo{\propenv}{\hastype {\e{}} {\t{}}} if we are only interested in the type.
+{\judgementtwo{\propenv}{\e{}} {\t{}} if we are only interested in the type.
 
 The syntax is given in \figref{main:figure:termsyntax}. Expressions include variables, values,
 application, abstractions, conditionals and let expressions.
@@ -190,7 +190,7 @@ $$
 We know {\propenv{}} = {\isprop{\UnionNilNum{}}{\x{}}}.
 The test expression uses T-App, 
 $$
-\judgement{\propenv{}}{\hastype{\appexp{\numberhuh{}}{\x{}}}{\Boolean}}{\filterset{\isprop{\Number}{\x{}}}{\notprop{\Number}{\x{}}}}{\emptyobject{}}
+\judgement{\propenv{}}{\appexp{\numberhuh{}}{\x{}}}{\Boolean}{\filterset{\isprop{\Number}{\x{}}}{\notprop{\Number}{\x{}}}}{\emptyobject{}}
 $$
 since \numberhuh{} has type
 {\ArrowOne{\x{}}{\Top}{\Boolean}
@@ -200,7 +200,7 @@ since \numberhuh{} has type
 Finally we check both branches using the extended proposition environment as specified by T-If.
 Going down the then branch, our new assumption {\isprop{\Number}{\x{}}} is crucial to check
 $$
-\judgement{{\propenv{}},{\isprop{\Number}{\x{}}}}{\hastype{\x{}}{\Number{}}}{\filterset{\notprop{\falsy{}}{\x{}}}{\isprop{\falsy{}}{\x{}}}}{\emptyobject{}}
+\judgement{{\propenv{}},{\isprop{\Number}{\x{}}}}{\x{}}{\Number{}}{\filterset{\notprop{\falsy{}}{\x{}}}{\isprop{\falsy{}}{\x{}}}}{\emptyobject{}}
 $$
 because we can now satisfy the premise of T-Local:
 $$
@@ -410,18 +410,18 @@ when checking the then branch.
 
 By T-Nil and subsumption we can propagate this  information to both propositions.
 $$
-\judgement{\isprop{\Number}{\x{}}}{\hastype{\nil{}}{\Nil{}}}{\filterset{\isprop{\Number}{\x{}}}{\isprop{\Number}{\x{}}}}{\emptyobject{}}
+\judgement{\isprop{\Number}{\x{}}}{\nil{}}{\Nil{}}{\filterset{\isprop{\Number}{\x{}}}{\isprop{\Number}{\x{}}}}{\emptyobject{}}
 $$
 Furthermore, using T-Error
 and subsumption we can conclude anything in the else branch.
 $$
-\judgement{\notprop{\Number}{\x{}}}{\hastype{\errorvalv{}}{\Bot}}{\filterset{\isprop{\Number}{\x{}}}{\isprop{\Number}{\x{}}}}{\emptyobject{}}
+\judgement{\notprop{\Number}{\x{}}}{\errorvalv{}}{\Bot}{\filterset{\isprop{\Number}{\x{}}}{\isprop{\Number}{\x{}}}}{\emptyobject{}}
 $$
 Using the above as premises to T-If we conclude that if the first
 expression in the \doliteral{} evaluates successfully, \isprop{\Number}{\x{}} must be true.
 $$
 \judgement{\isprop{\UnionNilNum}{\x{}}}
-          {\hastype{\ifexp{\appexp{\numberhuh{}}{\x{}}}{\nil{}}{\errorvalv{}}}{\Boolean}}
+          {\ifexp{\appexp{\numberhuh{}}{\x{}}}{\nil{}}{\errorvalv{}}}{\Boolean}
           {\filterset{\isprop{\Number}{\x{}}}{\isprop{\Number}{\x{}}}}{\emptyobject{}}
 $$
 We can now use \isprop{\Number}{\x{}} in the environment to check the second subexpression
@@ -544,7 +544,7 @@ an equivalent version of \egref{example:decleaf}.
 We do not specifically support \equivliteral{} in our calculus, 
 but on keyword arguments it works identically to \clj{isa?} which we model
 in \secref{sec:isaformal}.
-Intuitively, if {\judgement{\propenv{}}{\hastype{\e{}}{\t{}}}{\filterset{\thenprop{\prop{}}}{\elseprop{\prop{}}}}{\object{}}}
+Intuitively, if {\judgement{\propenv{}}{\e{}}{\t{}}{\filterset{\thenprop{\prop{}}}{\elseprop{\prop{}}}}{\object{}}}
 then \equivapp{\e{}}{\makekw{if}} has the true and false propositions
 $$
 {\replacefor{\filterset{\isprop{\Value{\makekw{if}}}{\x{}}}{\notprop{\Value{\makekw{if}}}{\x{}}}}{\object{}}{\x{}}}
@@ -554,11 +554,11 @@ where substitution reduces to \topprop{} if \object{} = \emptyobject{}.
 We start with proposition environment \propenv{} = {\isprop{\Expr{}}{m}}.
 Since {\Expr{}} is a union of HMaps, each with the entry \makekw{op}, we can use T-GetHMap.
 $$
-\judgement{\propenv{}}{\hastype{\getexp{m}{\makekw{op}}}{\Keyword}}{\filterset{\topprop{}}{\topprop{}}}{\path{\keype{\makekw{op}}}{m}}
+\judgement{\propenv{}}{\getexp{m}{\makekw{op}}}{\Keyword}{\filterset{\topprop{}}{\topprop{}}}{\path{\keype{\makekw{op}}}{m}}
 $$
 Using our intuitive definition of \equivliteral{} above, we know
 $$
-\judgement{\propenv{}}{\hastype{\equivapp{\getexp{m}{\makekw{op}}}{\makekw{if}}}{\Boolean}}{\filterset{\isprop{\Value{\makekw{if}}}{\path{\keype{\makekw{op}}}{m}}}{\notprop{\Value{\makekw{if}}}{\path{\keype{\makekw{op}}}{m}}}}{\emptyobject{}}
+\judgement{\propenv{}}{\equivapp{\getexp{m}{\makekw{op}}}{\makekw{if}}}{\Boolean}{\filterset{\isprop{\Value{\makekw{if}}}{\path{\keype{\makekw{op}}}{m}}}{\notprop{\Value{\makekw{if}}}{\path{\keype{\makekw{op}}}{m}}}}{\emptyobject{}}
 $$
 Going down the then branch gives us the extended environment
 \propenvp{} = {\isprop{\Expr{}}{m}},{\isprop{\Value{\makekw{if}}}{\path{\keype{\makekw{op}}}{m}}}.
@@ -768,11 +768,10 @@ For example, we can check the definition from our translation above of \egref{ex
 using T-DefMulti.
 $$
 \judgement{}%{\propenv{}}
-{\hastype
 {\createmultiexp 
       {\s{}}
       {\classconst{}}}
-  {\MultiFntype {\s{}}{\sp{}}}}{\filterset{\topprop{}}{\botprop{}}}{\emptyobject{}}
+  {\MultiFntype {\s{}}{\sp{}}}{\filterset{\topprop{}}{\botprop{}}}{\emptyobject{}}
 $$
 where \s{}  = {\ArrowOne {\x{}} {\Top{}} {\t{}} {\filterset {\topprop{}} {\topprop{}}} {\emptyobject{}}}
   and \sp{} = {\ArrowOne {\x{}} {\Top{}} {\Union{\Nil}{\Class}} {\filterset {\topprop{}} {\topprop{}}} {\path{\classpe{}}{\x{}}}}.
@@ -790,18 +789,16 @@ From the previous line we have \propenv{} = {\isprop{\MultiFntype {\s{}}{\sp{}}}
 so
 $$
 \judgement{\propenv{}}
-{\hastype
   {\extendmultiexp {prop} {\String}
                    {\abs {\x{}} {\Top{}} {\x{}}}}
-  {\MultiFntype {\s{}}{\sp{}}}}{\filterset{\topprop{}}{\botprop{}}}{\emptyobject{}}
+  {\MultiFntype {\s{}}{\sp{}}}{\filterset{\topprop{}}{\botprop{}}}{\emptyobject{}}
 $$
 We know \emph{prop} is a multimethod by \propenv{}, so now we check the body
 of this method.
 $$
 \judgement{\propenv{},{\isprop{\Top}{\x{}}},{\isprop{\String}{\x{}}}}
-{\hastype
   {\x{}}
-  {\String}}{\filterset{\topprop{}}{\botprop{}}}{\emptyobject{}}
+  {\String}{\filterset{\topprop{}}{\botprop{}}}{\emptyobject{}}
 $$
 %This is checked by T-Local since {\inpropenv{\propenv{},{\isprop{\Top}{\x{}}},{\isprop{\String}{\x{}}}}{\isprop{\String}{\x{}}}}.
 The new proposition {\isprop{\String}{\x{}}} is derived by 

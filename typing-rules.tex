@@ -26,14 +26,14 @@
 \infer [T-Clos]
 { \exists {\propenv{}}. \satisfies{\openv{}}{\propenv{}}
   \ \text{and}\ 
-\judgement {\propenv{}} {\hastype {\abs {\x{}} {\t{}} {\e{}}} {\s{}}}
+\judgement {\propenv{}} {\abs {\x{}} {\t{}} {\e{}}} {\s{}}
                  {\filterset {\thenprop {\prop{}}}
                              {\elseprop {\prop{}}}}
                  {\object{}}
               }
 { \judgement {}
-            {\hastype {\closure {\openv{}} {\abs {\x{}} {\t{}} {\e{}}}} 
-                      {\s{}}}
+            {\closure {\openv{}} {\abs {\x{}} {\t{}} {\e{}}}} 
+                      {\s{}}
              {\filterset {\thenprop {\prop{}}}
                          {\elseprop {\prop{}}}}
              {\object{}}}
@@ -72,15 +72,15 @@
 \TIsA{}
 
 \infer [T-Multi]
-{ \judgementtwo {} {\hastype {\v{}} {\t{}}}
+{ \judgementtwo {} {\v{}} {\t{}}
   \\
-  \overrightarrow{\judgementtwo{}{\hastype{\v{k}}{\Top{}}}}
+  \overrightarrow{\judgementtwo{}{\v{k}}{\Top{}}}
   \\
-  \overrightarrow{\judgementtwo{}{\hastype{\v{v}}{\s{}}}}
+  \overrightarrow{\judgementtwo{}{\v{v}}{\s{}}}
 }
 { \judgement {}
-  {\hastype {\multi {\v{}} {\curlymapvaloverright{\v{k}}{\v{v}}}}
-                      {\MultiFntype {\s{}} {\t{}}}}
+  {\multi {\v{}} {\curlymapvaloverright{\v{k}}{\v{v}}}}
+                      {\MultiFntype {\s{}} {\t{}}}
              {\filterset {\topprop{}} {\botprop{}}}
            {\emptyobject{}}}
 
@@ -114,13 +114,13 @@
 %}
 
 \infer [T-HMap]
-{ \overrightarrow{\judgementtwo {} {\hastype{\v{k}}{\Value \k{}}}}\\
-  \overrightarrow{\judgementtwo {} {\hastype{\v{v}}{\t{v}}}}\\
+{ \overrightarrow{\judgementtwo {} {\v{k}}{\Value \k{}}}\\
+  \overrightarrow{\judgementtwo {} {\v{v}}{\t{v}}}\\
   \mandatory{} = \mandatorysetoverright{\k{}}{\t{v}}
 }
 { \judgement {}
-             {\hastype {\curlymapvaloverright{\v{k}}{\v{v}}}
-                       {\HMapc {\mandatory{}}}}
+             {\curlymapvaloverright{\v{k}}{\v{v}}}
+                       {\HMapc {\mandatory{}}}
              {\filterset {\topprop{}} {\botprop{}}}
              {\emptyobject{}}}
 

@@ -25,15 +25,15 @@
                    \\
 
 \infer [M-Type]
-{ \judgement {} {\hastype {\openv{}({\path{\pathelem{}}{\x{}}})} {\t{}}}{\filterset{\thenprop{\prop{}}}{\elseprop{\prop{}}}}{\object{}}}
+{ \judgement {} {\openv{}({\path{\pathelem{}}{\x{}}})} {\t{}}{\filterset{\thenprop{\prop{}}}{\elseprop{\prop{}}}}{\object{}}}
 { \satisfies{\propenv{}}{\isprop{\t{}}{\path{\pathelem{}}{\x{}}}}
                    }
 
 \infer [M-NotType]
-{ \judgement {} {\hastype {\openv{}({\path{\pathelem{}}{\x{}}})} {\s{}}}{\filterset{\thenprop{\prop{}}}{\elseprop{\prop{}}}}{\object{}}
+{ \judgement {} {\openv{}({\path{\pathelem{}}{\x{}}})} {\s{}}{\filterset{\thenprop{\prop{}}}{\elseprop{\prop{}}}}{\object{}}
 \\\\
-\text{there is no}\ \v{}\ \text{such that}\ \judgement{}{\hastype{\v{}}{\t{}}}{\filterset{\thenprop{\prop{1}}}{\elseprop{\prop{1}}}}{\object{1}}
-\ \text{and}\ \judgement{}{\hastype{\v{}}{\s{}}}{\filterset{\thenprop{\prop{2}}}{\elseprop{\prop{2}}}}{\object{2}}
+\text{there is no}\ \v{}\ \text{such that}\ \judgement{}{\v{}}{\t{}}{\filterset{\thenprop{\prop{1}}}{\elseprop{\prop{1}}}}{\object{1}}
+\ \text{and}\ \judgement{}{\v{}}{\s{}}{\filterset{\thenprop{\prop{2}}}{\elseprop{\prop{2}}}}{\object{2}}
 }
 { \satisfies{\propenv{}}{\notprop{\t{}}{\path{\pathelem{}}{\x{}}}}
                    }
