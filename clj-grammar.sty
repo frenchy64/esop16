@@ -469,6 +469,17 @@
 \newcommand\javatotcalign[2]{\javatotcliteral\ma{(#1)}\ &=&\ #2}
 \newcommand\javatotcalignnil[2]{\javatotcliteral_{\nil{}}\ma{(#1)}\ &=&\ #2}
 
+% reflection resolution
+\newcommand\resolvenewliteral[0]{\ma{\metafnfont{ResolveNew}}}
+\newcommand\resolvenew[2]{\ma{\resolvenewliteral{}(#1, #2)}}
+\newcommand\resolveneweq[3]{\ma{\resolvenewliteral{}(#1, #2)\ =\ #3}}
+\newcommand\resolvefieldliteral[0]{\ma{\metafnfont{ResolveField}}}
+\newcommand\resolvefield[2]{\ma{\resolvenewliteral{}(#1, #2)}}
+\newcommand\resolvefieldeq[4]{\ma{\resolvenewliteral{}(#1, #2)\ =\ [#3, #4]}}
+\newcommand\resolvemethodliteral[0]{\ma{\metafnfont{ResolveMethod}}}
+\newcommand\resolvemethod[3]{\ma{\resolvenewliteral{}(#1, #2, [#3])}}
+\newcommand\resolvemethodeq[6]{\ma{\resolvenewliteral{}(#1, #2, [#3])\ =\ [#4, [#5], #6]}}
+
 % # Runtime semantics
 % ## Runtime class syntax
 \newmeta\classvaluemeta{I}
@@ -726,6 +737,27 @@
            }
          }
 
+\newcommand\TNew[0]{
+\infer [T-New]
+{ 
+  \overrightarrow{
+  \judgementtworewrite {\propenv{}}
+                    {\e{i}} {\t{i}}
+                    {\ep{i}}
+                  }
+                  \\
+  \resolveneweq{\class{}}
+               {\overrightarrow{\t{i}}}
+              {\overrightarrow{\classhint{i}}}
+           }
+{ \judgementrewrite {\propenv{}} {\newexp {\class{}} {\overrightarrow{\e{i}}}} {\t{}}
+             {\filterset {\topprop{}} {\botprop{}}}
+             {\emptyobject{}}
+             {\newstaticexp {\overrightarrow{\classhint{i}}} {\classhint{}} 
+                            {\class{}} {\overrightarrow{\ep{i}}}}
+             }
+         }
+
 \newcommand\TNewStatic[0]{
 \infer [T-NewStatic]
 { 
@@ -738,15 +770,34 @@
             {\t{}}
   \\
   \overrightarrow{
-  \judgementtwo {\propenv{}}
+  \judgementtworewrite {\propenv{}}
                     {\e{i}} {\t{i}}
+                    {\ep{i}}
                   }
            }
-{ \judgement {\propenv{}} {\newstaticexp {\overrightarrow{\classhint{i}}} {\classhint{}} 
+{ \judgementrewrite {\propenv{}} {\newstaticexp {\overrightarrow{\classhint{i}}} {\classhint{}} 
                                                           {\class{}} {\overrightarrow{\e{i}}}} {\t{}}
              {\filterset {\topprop{}} {\botprop{}}}
-             {\emptyobject}
+             {\emptyobject{}}
+             {\newstaticexp {\overrightarrow{\classhint{i}}} {\classhint{}} 
+                            {\class{}} {\overrightarrow{\ep{i}}}}
              }
+         }
+
+\newcommand\TField[0]{
+\infer [T-Field]
+{ \judgementtworewrite {\propenv{}} {\e{}} {\s{}} {\ep{}}
+                  \\
+  \resolvefieldeq{\s{}}
+                 {\fld{}}
+                 {\classhint{1}}
+                 {\classhint{2}}
+           }
+{ \judgementrewrite {\propenv{}} {\fieldexp {\fld{}} {\e{}}} {\t{}}
+             {\filterset {\topprop{}} {\topprop}}
+             {\emptyobject{}}
+             {\fieldstaticexp {\classhint{1}} {\classhint{2}} {\fld{}} {\ep{}}}
+         }
          }
 
 \newcommand\TFieldStatic[0]{
@@ -755,11 +806,40 @@
              \\
   \javatotcnil {\classhint{2}} {\t{}}
   \\
-  \judgementtwo {\propenv{}} {\e{}} {\s{}}
+  \judgementtworewrite {\propenv{}} {\e{}} {\s{}} {\ep{}}
            }
-{ \judgement {\propenv{}} {\fieldstaticexp {\classhint{1}} {\classhint{2}} {\fld{}} {\e{}}} {\t{}}
+{ \judgementrewrite {\propenv{}} {\fieldstaticexp {\classhint{1}} {\classhint{2}} {\fld{}} {\e{}}} {\t{}}
              {\filterset {\topprop{}} {\topprop}}
-             {\emptyobject{}}}
+             {\emptyobject{}}
+             {\fieldstaticexp {\classhint{1}} {\classhint{2}} {\fld{}} {\ep{}}}
+         }
+         }
+
+\newcommand\TMethod[0]{
+\infer [T-Method]
+{ 
+  \judgementtworewrite {\propenv{}} {\e{}} {\s{}} {\ep{}}
+             \\
+             \overrightarrow{
+  \judgementtworewrite {\propenv{}} {\e{i}} {\t{i}} {\ep{i}}
+                  }
+                  \\
+  \resolvemethodeq{\s{}}
+                  {\mth{}}
+                  {\overrightarrow{\t{i}}}
+                  {\classhint{1}} 
+                  {\overrightarrow {\classhint{i}}} 
+                  {\classhint{2}}
+           }
+{ \judgementrewrite {\propenv{}} {\methodexp {\mth{}} {\e{}} {\overrightarrow{\e{i}}}}
+             {\t{}}
+             {\filterset {\topprop{}} {\topprop{}}}
+             {\emptyobject{}}
+             {\methodstaticexp {\classhint{1}} 
+                               {\overrightarrow {\classhint{i}}} 
+                               {\classhint{2}}
+                               {\mth{}} {\ep{}} {\overrightarrow{\ep{i}}}}
+           }
          }
 
 \newcommand\TMethodStatic[0]{
@@ -771,19 +851,24 @@
              \\\\
              \javatotcnil {\classhint{2}} {\t{}}
              \\
-  \judgementtwo {\propenv{}} {\e{}} {\s{}}
+  \judgementtworewrite {\propenv{}} {\e{}} {\s{}} {\ep{}}
              \\
              \overrightarrow{
-  \judgementtwo {\propenv{}} {\e{i}} {\t{i}}
+  \judgementtworewrite {\propenv{}} {\e{i}} {\t{i}} {\ep{i}}
                   }
            }
-{ \judgement {\propenv{}} {\methodstaticexp {\classhint{1}} 
+{ \judgementrewrite {\propenv{}} {\methodstaticexp {\classhint{1}} 
                                                             {\overrightarrow {\classhint{i}}} 
                                                             {\classhint{2}}
                                                             {\mth{}} {\e{}} {\overrightarrow{\e{i}}}}
                                     {\t{}}
              {\filterset {\topprop{}} {\topprop{}}}
-             {\emptyobject{}}}
+             {\emptyobject{}}
+             {\methodstaticexp {\classhint{1}} 
+                               {\overrightarrow {\classhint{i}}} 
+                               {\classhint{2}}
+                               {\mth{}} {\ep{}} {\overrightarrow{\ep{i}}}}
+           }
          }
 
 \newcommand\TClass[0]{
