@@ -1360,11 +1360,11 @@ $$
          {\e{}}
        {\v{}}
          \\\\
-         \jvmfield{\fld{}}{\v{}} {\vp{}}
+         \getfieldjava{\classhint{1}} {\v{1}} {\fld{}} {\classhint{2}} {\v{}}
        }
 { \opsem {\openv{}}
-         {\fieldexp {\e{}} {\fld{}}}
-         {\vp{}}
+         {\fieldstaticexp {\classhint{1}} {\classhint{2}} {\fld{}} {\e{}}}
+         {\v{}}
    }
 }
 
@@ -1380,12 +1380,13 @@ $$
          {\v{a}}
        }
   \\\\
-  \jvmmethod  {mth} {\v{m}}
-                    {\overrightarrow{\v{a}}}
+  \invokejavamethod {\classhint{1}} {\v{m}} {mth}
+                    {\overrightarrow{\classhint{a}}} {\overrightarrow{\v{a}}}
+                    {\classhint{2}}
                     {\v{}}
 }
 {\opsem {\openv{}}
-        {\methodexp {mth} {\e{m}} {\overrightarrow{\e{a}}}}
+        {\methodstaticexp {\classhint{1}} {\overrightarrow{\classhint{a}}} {\classhint{2}} {mth} {\e{m}} {\overrightarrow{\e{a}}}}
         {\v{}}
       }
 }
@@ -1399,12 +1400,14 @@ $$
          {\v{i}}
        }
          \\\\
-         \jvmctor {\class{}}
+         \newjava {\classhint{1}}
+                  {\overrightarrow{\classhint{i}}}
                   {\overrightarrow{\v{i}}}
                   {\v{}}
        }
 { \opsem {\openv{}}
-         {\newexp {\class{}} {\overrightarrow{\e{i}}}}
+         {\newstaticexp {\overrightarrow{\classhint{i}}} {\classhint{1}} 
+                        {\class{}} {\overrightarrow{\e{i}}}}
          {\v{}}}
 }
 
