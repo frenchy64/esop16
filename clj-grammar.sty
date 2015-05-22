@@ -462,23 +462,28 @@
 \newcommand\replacefor[3]{\ma{#1 [#2 / #3]}}
 
 % Java type conversion functions
-\newcommand\javatotcliteral[0]{\ma{\metafnfont{Convert}}}
+\newcommand\javatotcliteral[0]{\ma{\metafnfont{JT}}}
 \newcommand\javatotcnilliteral[0]{\ma{\javatotcliteral_{\nil{}}}}
 \newcommand\javatotc[2]{\javatotcliteral\ma{(#1)}\ =\ #2}
 \newcommand\javatotcnil[2]{\ma{\javatotcnilliteral\ma{(#1)}\ =\ #2}}
 \newcommand\javatotcalign[2]{\javatotcliteral\ma{(#1)}\ &=&\ #2}
 \newcommand\javatotcalignnil[2]{\javatotcliteral_{\nil{}}\ma{(#1)}\ &=&\ #2}
 
+% TC type conversion functions
+\newcommand\tctojavaliteral[0]{\ma{\metafnfont{TJ}}}
+\newcommand\tctojava[2]{\tctojavaliteral\ma{(#1)}\ =\ #2}
+\newcommand\tctojavaalign[2]{\tctojavaliteral\ma{(#1)}\ &=&\ #2}
+
 % reflection resolution
 \newcommand\resolvenewliteral[0]{\ma{\metafnfont{ResolveNew}}}
 \newcommand\resolvenew[2]{\ma{\resolvenewliteral{}(#1, #2)}}
 \newcommand\resolveneweq[3]{\ma{\resolvenewliteral{}(#1, #2)\ =\ #3}}
 \newcommand\resolvefieldliteral[0]{\ma{\metafnfont{ResolveField}}}
-\newcommand\resolvefield[2]{\ma{\resolvenewliteral{}(#1, #2)}}
-\newcommand\resolvefieldeq[4]{\ma{\resolvenewliteral{}(#1, #2)\ =\ [#3, #4]}}
+\newcommand\resolvefield[2]{\ma{\resolvefieldliteral{}(#1, #2)}}
+\newcommand\resolvefieldeq[4]{\ma{\resolvefieldliteral{}(#1, #2)\ =\ [#3, #4]}}
 \newcommand\resolvemethodliteral[0]{\ma{\metafnfont{ResolveMethod}}}
-\newcommand\resolvemethod[3]{\ma{\resolvenewliteral{}(#1, #2, [#3])}}
-\newcommand\resolvemethodeq[6]{\ma{\resolvenewliteral{}(#1, #2, [#3])\ =\ [#4, [#5], #6]}}
+\newcommand\resolvemethod[2]{\ma{\resolvemethodliteral{}(#1, #2)}}
+\newcommand\resolvemethodeq[5]{\ma{\resolvemethodliteral{}(#1, #2)\ =\ [#3, [#4], #5]}}
 
 % # Runtime semantics
 % ## Runtime class syntax
@@ -739,16 +744,18 @@
 
 \newcommand\TNew[0]{
 \infer [T-New]
-{ 
+{ \ctorparams {\ct{}}{\class{}}{\overrightarrow{\classhint{i}}}
+  \\
+  \overrightarrow{\javatotc{\classhint{i}}{\t{i}}}
+  \\
+  \javatotc {\classhint{}}
+            {\t{}}
+  \\
   \overrightarrow{
   \judgementtworewrite {\propenv{}}
                     {\e{i}} {\t{i}}
                     {\ep{i}}
                   }
-                  \\
-  \resolveneweq{\class{}}
-               {\overrightarrow{\t{i}}}
-              {\overrightarrow{\classhint{i}}}
            }
 { \judgementrewrite {\propenv{}} {\newexp {\class{}} {\overrightarrow{\e{i}}}} {\t{}}
              {\filterset {\topprop{}} {\botprop{}}}
@@ -788,10 +795,11 @@
 \infer [T-Field]
 { \judgementtworewrite {\propenv{}} {\e{}} {\s{}} {\ep{}}
                   \\
-  \resolvefieldeq{\s{}}
-                 {\fld{}}
-                 {\classhint{1}}
-                 {\classhint{2}}
+  \tctojava{\s{}}{\classhint{1}}
+                  \\
+  \fieldtype {\ct{}} {\classhint{1}} {\fld{}} {\classhint{2}}
+                  \\
+  \javatotc{\classhint{2}}{\t{}}
            }
 { \judgementrewrite {\propenv{}} {\fieldexp {\fld{}} {\e{}}} {\t{}}
              {\filterset {\topprop{}} {\topprop}}
@@ -820,16 +828,15 @@
 { 
   \judgementtworewrite {\propenv{}} {\e{}} {\s{}} {\ep{}}
              \\
+  \tctojava{\s{}}{\classhint{1}}
+                  \\
+  \methodtype {\ct{}}{\classhint{}} {\mth{}} {\overrightarrow{\classhint{i}}}{\classhint{2}}
+                  \\
+                  \overrightarrow{\javatotc{\classhint{i}}{\t{i}}}
+                  \\
              \overrightarrow{
   \judgementtworewrite {\propenv{}} {\e{i}} {\t{i}} {\ep{i}}
                   }
-                  \\
-  \resolvemethodeq{\s{}}
-                  {\mth{}}
-                  {\overrightarrow{\t{i}}}
-                  {\classhint{1}} 
-                  {\overrightarrow {\classhint{i}}} 
-                  {\classhint{2}}
            }
 { \judgementrewrite {\propenv{}} {\methodexp {\mth{}} {\e{}} {\overrightarrow{\e{i}}}}
              {\t{}}
@@ -2265,6 +2272,14 @@ $$
 \javatotcalignnil {\Void{}} {\Nil}
 \\
 \javatotcalignnil {\class{}} {\Union {\Nil} {\class{}}}
+}
+
+\newcommand\converttctype[0]{
+\tctojavaalign {\class{}} {\class{}}
+\\
+\tctojavaalign {\Union {\Nil} {\class{}}} {\class{}}
+\\
+TODO
 }
 
 % convert Java types
