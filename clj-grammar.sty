@@ -828,15 +828,19 @@
 { 
   \judgementtworewrite {\propenv{}} {\e{}} {\s{}} {\ep{}}
              \\
+             \issubtypein{}{\s{}}{\Object{}}
+             \\
   \tctojava{\s{}}{\classhint{1}}
                   \\
-  \methodtype {\ct{}}{\classhint{}} {\mth{}} {\overrightarrow{\classhint{i}}}{\classhint{2}}
+  \methodtype {\ct{}}{\classhint{1}} {\mth{}} {\overrightarrow{\classhint{i}}}{\classhint{2}}
                   \\
                   \overrightarrow{\javatotc{\classhint{i}}{\t{i}}}
                   \\
              \overrightarrow{
   \judgementtworewrite {\propenv{}} {\e{i}} {\t{i}} {\ep{i}}
                   }
+                  \\
+                  \javatotcnil{\classhint{2}}{\t{}}
            }
 { \judgementrewrite {\propenv{}} {\methodexp {\mth{}} {\e{}} {\overrightarrow{\e{i}}}}
              {\t{}}
@@ -1393,7 +1397,7 @@ $$
 
 \newcommand\BNew[0]{
 \infer [B-New]
-{ 
+{
   \overrightarrow{
   \opsem {\openv{}}
          {\e{i}}
@@ -2098,7 +2102,7 @@ $$
 }
 
 \newcommand\soundnesslemmahypothesis[0]{
-If \judgement{\propenv{}}{\e{}}{\t{}}{\filterset{\thenprop{\prop{}}}{\elseprop{\prop{}}}}{\object{}},
+If \judgementrewrite{\propenv{}}{\ep{}}{\t{}}{\filterset{\thenprop{\prop{}}}{\elseprop{\prop{}}}}{\object{}}{\e{}},
 \satisfies{\openv{}}{\propenv{}}, 
 \isconsistent{\openv{}},
 and \opsem {\openv{}} {\e{}} {\a{}} 
@@ -2111,7 +2115,7 @@ and all of the following hold:
   \item either \object{} = \emptyobject{} or \inopenv {\openv{}} {\object{}} {\v{}},
   \item either {\istrueval{\v{}}} and {\satisfies{\openv{}}{\thenprop{\prop{}}}} or 
                {\isfalseval{\v{}}} and {\satisfies{\openv{}}{\elseprop{\prop{}}}},
-  \item \judgement{}{\v{}}{\t{}}{\filterset{\thenprop{\propp{}}}{\elseprop{\propp{}}}}{\objectp{}}
+  \item \judgementrewrite{}{\v{}}{\t{}}{\filterset{\thenprop{\propp{}}}{\elseprop{\propp{}}}}{\objectp{}}{\v{}}
         for some \thenprop{\propp{}}, \elseprop{\propp{}} and {\objectp{}}, and
   \item \consistentwith{\v{}}{\openv{}}, or
 \end{enumerate}
@@ -2122,9 +2126,9 @@ and all of the following hold:
 }
 
 \newcommand\soundnesstheorembody[1]{
-If \judgement{\propenv{}}{\e{}}{\t{}}{\filterset{\thenprop{\prop{}}}{\elseprop{\prop{}}}}{\object{}}
+If \judgementrewrite{\propenv{}}{\ep{}}{\t{}}{\filterset{\thenprop{\prop{}}}{\elseprop{\prop{}}}}{\object{}}{\e{}}
 and \opsem {\openv{}} {\e{}} {\v{}} 
-then \judgement{}{\v{}}{\t{}}{\filterset{\thenprop{\propp{}}}{\elseprop{\propp{}}}}{\objectp{}}
+then \judgementrewrite{}{\v{}}{\t{}}{\filterset{\thenprop{\propp{}}}{\elseprop{\propp{}}}}{\objectp{}}{\v{}}
         for some \thenprop{\propp{}}, \elseprop{\propp{}} and {\objectp{}}
       }
 
@@ -2148,7 +2152,7 @@ then \judgement{}{\v{}}{\t{}}{\filterset{\thenprop{\propp{}}}{\elseprop{\propp{}
 }
 
 \newcommand\wrongtheorembody[1]{
-  If {\judgement {} {\e{}} {\t{}} {\filterset {\thenprop{\prop{}}}{\elseprop{\prop{}}}} {\object{}}}
+  If {\judgementrewrite {} {\ep{}} {\t{}} {\filterset {\thenprop{\prop{}}}{\elseprop{\prop{}}}} {\object{}}{\e{}}}
   then \notopsem{}{\e{}}{\wrong{}}.
 }
 
