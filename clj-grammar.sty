@@ -794,12 +794,14 @@
 \newcommand\TField[0]{
 \infer [T-Field]
 { \judgementtworewrite {\propenv{}} {\e{}} {\s{}} {\ep{}}
+  \\
+  \issubtypein{}{\s{}}{\Object{}}
                   \\
   \tctojava{\s{}}{\classhint{1}}
                   \\
   \fieldtype {\ct{}} {\classhint{1}} {\fld{}} {\classhint{2}}
                   \\
-  \javatotc{\classhint{2}}{\t{}}
+  \javatotcnil{\classhint{2}}{\t{}}
            }
 { \judgementrewrite {\propenv{}} {\fieldexp {\fld{}} {\e{}}} {\t{}}
              {\filterset {\topprop{}} {\topprop}}
