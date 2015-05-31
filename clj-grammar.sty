@@ -321,6 +321,7 @@
 \newmeta\openvp{\rho'}
 \newcommand\inopenvnoeq[2]{\ma{#1 (#2)}}
 \newcommand\inopenv[3]{\ma{#1 (#2) = #3}}
+\newcommand\inopenvalign[3]{\ma{#1 (#2) &=& #3}}
 \newcommand\notinopenv[2]{\ma{#2 \not\in dom(#1)}}
 \newcommand\extendopenv[3]{\ma{#1[#2 \mapsto #3]}}
 \newcommand\opsem[3]{\ma{#1 \vdash #2 \Downarrow #3}}
@@ -464,7 +465,9 @@
 % Java type conversion functions
 \newcommand\javatotcliteral[0]{\ma{\metafnfont{JT}}}
 \newcommand\javatotcnilliteral[0]{\ma{\javatotcliteral_{\nil{}}}}
+\newcommand\javatotcexp[1]{\javatotcliteral\ma{(#1)}}
 \newcommand\javatotc[2]{\javatotcliteral\ma{(#1)}\ =\ #2}
+\newcommand\javatotcnilexp[1]{\ma{\javatotcnilliteral\ma{(#1)}}}
 \newcommand\javatotcnil[2]{\ma{\javatotcnilliteral\ma{(#1)}\ =\ #2}}
 \newcommand\javatotcalign[2]{\javatotcliteral\ma{(#1)}\ &=&\ #2}
 \newcommand\javatotcalignnil[2]{\javatotcliteral_{\nil{}}\ma{(#1)}\ &=&\ #2}
@@ -744,18 +747,18 @@
 
 \newcommand\TNew[0]{
 \infer [T-New]
-{ \ctorparams {\ct{}}{\class{}}{\overrightarrow{\classhint{i}}}
+{ \ctctorentry{\overrightarrow{\class{i}}} \in {\ctlookupctors{\ct{}}{\classhint{}}}
   \\
   \overrightarrow{\javatotc{\classhint{i}}{\t{i}}}
-  \\
-  \javatotc {\classhint{}}
-            {\t{}}
   \\
   \overrightarrow{
   \judgementtworewrite {\propenv{}}
                     {\e{i}} {\t{i}}
                     {\ep{i}}
                   }
+  \\
+  \javatotc {\classhint{}}
+            {\t{}}
            }
 { \judgementrewrite {\propenv{}} {\newexp {\class{}} {\overrightarrow{\e{i}}}} {\t{}}
              {\filterset {\topprop{}} {\botprop{}}}
@@ -799,7 +802,7 @@
                   \\
   \tctojava{\s{}}{\classhint{1}}
                   \\
-  \fieldtype {\ct{}} {\classhint{1}} {\fld{}} {\classhint{2}}
+                  \ctfldentry{\fld{}}{\classhint{2}} \in {\ctlookupfields{\ct{}}{\classhint{1}}}
                   \\
   \javatotcnil{\classhint{2}}{\t{}}
            }
@@ -834,7 +837,7 @@
              \\
   \tctojava{\s{}}{\classhint{1}}
                   \\
-  \methodtype {\ct{}}{\classhint{1}} {\mth{}} {\overrightarrow{\classhint{i}}}{\classhint{2}}
+                  \ctmthentry{\mth{}}{\overrightarrow{\classhint{i}}}{\classhint{2}} \in {\ctlookupmethods{\ct{}}{\classhint{1}}}
                   \\
                   \overrightarrow{\javatotc{\classhint{i}}{\t{i}}}
                   \\
@@ -2207,7 +2210,7 @@ then \judgementrewrite{}{\v{}}{\t{}}{\filterset{\thenprop{\propp{}}}{\elseprop{\
 \begin{definition} \label{#1:definition:consistentwith}
   \consistentwith{\v{}}{\openv{}}
   iff $\forall$ \closure{\openv{1}}{\abs{\x{}}{\s{}}{\e{}}} in \v{},
-  if \judgement{}{\closure{\openv{1}}{\abs{\x{}}{\s{}}{\e{}}}}{\t{}}{\filterset{\topprop{}}{\botprop{}}}{\emptyobject{}}
+  if \judgementselfrewrite{}{\closure{\openv{1}}{\abs{\x{}}{\s{}}{\e{}}}}{\t{}}{\filterset{\topprop{}}{\botprop{}}}{\emptyobject{}}
   and $\forall$ \objectp{} in \t{}, either 
   \objectp{} = \emptyobject{}, or 
   \objectp{} = {\path{\pathelemp{}}{\x{}}},
@@ -2248,8 +2251,8 @@ $$
   \ctorparamsalign 
       {\ct{}}
       {\classhint{}}
-      {\overrightarrow{\class{p{}}}}
-  & \text{if}\ \ctctorentry{\overrightarrow{\class{p{}}}} \in {\ctlookupctors{\ct{}}{\classhint{}}}
+      {\overrightarrow{\class{p}}}
+  & \text{if}\ \ctctorentry{\overrightarrow{\class{p}}} \in {\ctlookupctors{\ct{}}{\classhint{}}}
   \\
   \methodtypealign
   {\ct{}}
@@ -2284,11 +2287,8 @@ $$
 }
 
 \newcommand\converttctype[0]{
-\tctojavaalign {\class{}} {\class{}}
-\\
-\tctojavaalign {\Union {\Nil} {\class{}}} {\class{}}
-\\
-TODO
+\tctojavaalign {\t{}} {\class{}}
+& \text{if}\ {\issubtypein{}{\t{}}{\javatotcnilexp{\class{}}}}
 }
 
 % convert Java types

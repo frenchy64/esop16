@@ -86,9 +86,9 @@
 \begin{lemma} \label{appendix:lemma:goodobjects+ve}
   If \inpropenv{\propenv{}}{\isprop{\t{}}{\path{\pathelem{}}{\x{}}}},
   \satisfies{\openv{}}{\propenv{}}
-  and {\openv{}}({\path{\pathelem{}}{\x{}}}) = \v{}
+  and \inopenv{\openv{}}{\path{\pathelem{}}{\x{}}}{\v{}}
   then
-  \judgement{}{\v{}}{\t{}}{\filterset{\thenprop{\propp{}}}{\elseprop{\propp{}}}}{\objectp{}}
+  \judgementselfrewrite{}{\v{}}{\t{}}{\filterset{\thenprop{\propp{}}}{\elseprop{\propp{}}}}{\objectp{}}
   for some {\thenprop{\propp{}}}, {\elseprop{\propp{}}} and {\objectp{}}.
   \begin{proof}
     Corollary of lemma~\ref{appendix:lemma:satisfies}.
