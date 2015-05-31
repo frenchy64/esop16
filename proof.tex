@@ -1793,15 +1793,16 @@ so we know $\forall v \in \fv{\thenprop{\prop{}}} - \x{}$,
 \end{case}
 
 \begin{case}[T-AssocHMap]
+  \judgementtworewrite {\propenv{}} {\ep{m}} {\HMapgeneric {\mandatory{}} {\absent}} {\e{m}},
+  \judgementtworewrite {\propenv{}} {\ep{k}} {\Value{\k{}}}{\e{k}},
+  \judgementtworewrite {\propenv{}} {\ep{v}} {\t{}}{\e{v}},
+  {\k{}} $\not\in$ {\absent{}},
+  \ep{} = {\assocexp {\ep{m}} {\ep{k}} {\ep{v}}},
   \e{} = {\assocexp {\e{m}} {\e{k}} {\e{v}}},
   \t{} = ${\HMapgeneric {\extendmandatoryset {\mandatory{}}{\k{}}{\t{}}} {\absent}}$,
   \thenprop{\prop{}} = {\topprop{}},
   \elseprop{\prop{}} = {\botprop{}},
-  \object{} = \emptyobject,
-  \judgementtwo {\propenv{}} {\e{m}} {\HMapgeneric {\mandatory{}} {\absent}},
-  \judgementtwo {\propenv{}} {\e{k}} {\Value{\k{}}},
-  \judgementtwo {\propenv{}} {\e{v}} {\t{}},
-  {\k{}} $\not\in$ {\absent{}}
+  \object{} = \emptyobject{}
 
   \begin{itemize}
     \item[]
@@ -1829,15 +1830,20 @@ so we know $\forall v \in \fv{\thenprop{\prop{}}} - \x{}$,
   \end{itemize}
 \end{case}
 
-\begin{case}[T-If] \e{} = {\ifexp {\e1} {\e2} {\e3}},
-  \judgement {\propenv{}} {\e1} {\t{1}} {\filterset {\thenprop {\prop{1}}} {\elseprop {\prop{1}}}}
-                 {\object{1}},
-  \judgement {\propenv{}, {\thenprop {\prop{1}}}}
-                 {\e2} {\t{}} {\filterset {\thenprop {\prop{2}}} {\elseprop {\prop{2}}}}
-                 {\object{}},
-  \judgement {\propenv{}, {\elseprop {\prop{1}}}}
-                 {\e3} {\t{}} {\filterset {\thenprop {\prop{3}}} {\elseprop {\prop{3}}}}
-                 {\object{}},
+\begin{case}[T-If] 
+  \ep{} = {\ifexp {\ep1} {\ep2} {\ep3}},
+  \judgementrewrite {\propenv{}} {\ep1} {\t{1}} {\filterset {\thenprop {\prop{1}}} {\elseprop {\prop{1}}}}
+                 {\object{1}}
+                 {\e1},
+  \judgementrewrite {\propenv{}, {\thenprop {\prop{1}}}}
+                 {\ep2} {\t{}} {\filterset {\thenprop {\prop{2}}} {\elseprop {\prop{2}}}}
+                 {\object{}}
+                 {\e2},
+  \judgementrewrite {\propenv{}, {\elseprop {\prop{1}}}}
+                 {\ep3} {\t{}} {\filterset {\thenprop {\prop{3}}} {\elseprop {\prop{3}}}}
+                 {\object{}}
+                 {\e3},
+  \e{} = {\ifexp {\e1} {\e2} {\e3}},
   \thenprop{\prop{}} = {\orprop {\thenprop {\prop{2}}} {\thenprop {\prop{3}}}},
   \elseprop{\prop{}} = {\orprop {\elseprop {\prop{2}}} {\elseprop {\prop{3}}}}
 
@@ -1903,17 +1909,20 @@ so we know $\forall v \in \fv{\thenprop{\prop{}}} - \x{}$,
 \end{case}
 
 \begin{case}[T-Let]
-  \e{} = {\letexp {\x{}} {\e{1}} {\e{2}}},
-  \judgement {\propenv{}} {\e{1}} {\s{}} {\filterset {\thenprop {\prop{1}}} {\elseprop {\prop{1}}}}
-             {\object{1}},
+  \ep{} = {\letexp {\x{}} {\ep{1}} {\ep{2}}},
+  \judgementrewrite {\propenv{}} {\ep{1}} {\s{}} {\filterset {\thenprop {\prop{1}}} {\elseprop {\prop{1}}}}
+             {\object{1}}
+             {\ep{1}},
              \propp{} = {\impprop {\notprop {\falsy{}} {\x{}}} {\thenprop {\prop{1}}}},
              \proppp{} = {\impprop {\isprop {\falsy{}} {\x{}}} {\elseprop {\prop{1}}}},
-  \judgement
+  \judgementrewrite
        {\propenv{}, {\isprop {\s{}} {\x{}}},
          {\propp{}},
          {\proppp{}}}
-             {\e{2}} {\t{}} {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}}
+             {\ep{2}} {\t{}} {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}}
              {\object{}} 
+             {\e{2}},
+  \e{} = {\letexp {\x{}} {\e{1}} {\e{2}}}
 
 
   \begin{itemize}
@@ -1941,14 +1950,19 @@ so we know $\forall v \in \fv{\thenprop{\prop{}}} - \x{}$,
   \end{itemize}
 \end{case}
 
-\begin{case}[T-Clos] \e{} = {\closure {\openv{}} {\abs {\x{}} {\s{}} {\e{1}}}},
-  {\thenprop {\prop{}}}
+\begin{case}[T-Clos] 
+  \ep{} = {\closure {\openv{}} {\abs {\x{}} {\s{}} {\e{1}}}},
   $\exists {\propenvp{}}. \satisfies{\openv{}}{\propenvp{}}$
   \ \text{and}\ 
-\judgement {\propenvp{}} {\abs {\x{}} {\s{}} {\e{1}}} {\t{}}
-                 {\filterset {\thenprop {\prop{}}}
-                             {\elseprop {\prop{}}}}
-                 {\object{}}
+\judgementrewrite {\propenvp{}} {\abs {\x{}} {\s{}} {\e{1}}} {\t{}}
+                 {\filterset {\thenprop {\prop{f}}}
+                             {\elseprop {\prop{f}}}}
+                 {\object{f}}
+                 {\abs {\x{}} {\s{}} {\e{1}}},
+  \e{} = {\closure {\openv{}} {\abs {\x{}} {\s{}} {\e{1}}}},
+                 {\thenprop{\prop{}}} = \topprop{},
+                 {\elseprop{\prop{}}} = \botprop{},
+                 {\object{}} = \emptyobject{}
 
   \begin{itemize}
     \item[]
@@ -1979,14 +1993,16 @@ so we know $\forall v \in \fv{\thenprop{\prop{}}} - \x{}$,
   \end{itemize}
 \end{case}
 
-\begin{case}[T-Multi] \e{} = {\multi {\v{1}} {\curlymapvaloverright{\v{k}}{\v{v}}}},
+\begin{case}[T-Multi] 
+  \ep{} = {\multi {\v{1}} {\curlymapvaloverright{\v{k}}{\v{v}}}},
+  \judgementtworewrite {} {\v{1}} {\t{1}}{\v{1}},
+  \overr{\judgementtworewrite{}{\v{k}}{\Top{}}{\v{k}}},
+  \overr{\judgementtworewrite{}{\v{v}}{\s{}}{\v{v}}},
+  \e{} = {\multi {\v{1}} {\curlymapvaloverright{\v{k}}{\v{v}}}},
   \t{} = {\MultiFntype {\s{}} {\t{1}}},
   {\thenprop {\prop{}}} = {\topprop{}},
   {\elseprop{\prop{}}} = {\botprop{}},
   {\object{}} = {\emptyobject{}},
-  \judgementtwo {} {\v{1}} {\t{1}},
-  $\overrightarrow{\judgementtwo{}{\v{k}}{\Top{}}}$,
-  $\overrightarrow{\judgementtwo{}{\v{v}}{\s{}}}$
 
   \begin{itemize}
     \item[]
@@ -1998,24 +2014,22 @@ so we know $\forall v \in \fv{\thenprop{\prop{}}} - \x{}$,
 
 \end{case}
 
-\begin{case}[T-Abs] \e{} = {\abs {\x{}} {\s{}} {\e{1}}},
+\begin{case}[T-Abs] 
+  \ep{} = {\abs {\x{}} {\s{}} {\ep{1}}},
+{ \judgementrewrite {\propenv{}, {\isprop {\s{}} {\x{}}}}
+            {\ep{1}} {\t{}}
+             {\filterset {\thenprop {\prop{1}}}
+                         {\elseprop {\prop{1}}}}
+             {\object{1}}
+             {\e{1}}},
   \t{} = {\ArrowOne {\x{}} {\s{}}
                                                       {\t{1}}
                                                       {\filterset {\thenprop {\prop{1}}}
                                                                   {\elseprop {\prop{1}}}}
                                                       {\object{1}}},
-  {\thenprop{\prop{}}}= {\topprop{}},
-  {\elseprop{\prop{}}}= {\botprop{}},
-  {\object{}}= {\emptyobject{}},
-{ \judgement {\propenv{}, {\isprop {\s{}} {\x{}}}}
-            {\e{1}} {\t{}}
-             {\filterset {\thenprop {\prop{1}}}
-                         {\elseprop {\prop{1}}}}
-             {\object{1}}},
-\judgement {\propenv{}} {\abs {\x{}} {\s{}} {\e{1}}} {\t{}}
-                 {\filterset {\thenprop {\prop{}}}
-                             {\elseprop {\prop{}}}}
-                 {\object{}}
+  {\thenprop{\prop{}}} = {\topprop{}},
+  {\elseprop{\prop{}}} = {\botprop{}},
+  {\object{}} = {\emptyobject{}},
 
   \begin{itemize}
     \item[]
@@ -2033,6 +2047,7 @@ so we know $\forall v \in \fv{\thenprop{\prop{}}} - \x{}$,
 \end{case}
 
 \begin{case}[T-Error]
+  \ep{} = \errorval{\v{1}},
   \e{} = \errorval{\v{1}},
   \t{} = \Bot,
   \thenprop{\prop{}} = \botprop{}, \elseprop{\prop{}} = \botprop{}, \object{} = \emptyobject{}
@@ -2049,10 +2064,11 @@ so we know $\forall v \in \fv{\thenprop{\prop{}}} - \x{}$,
 \end{case}
 
 \begin{case}[T-Subsume]
-  \judgement {\propenv{}} {\e{}} {\tp{}}
+  \judgementrewrite {\propenv{}} {\e{}} {\tp{}}
              {\filterset {\thenprop {\propp{}}}
                          {\elseprop {\propp{}}}}
-             {\objectp{}},
+             {\objectp{}}
+             {\e{}},
 \inpropenv {\propenv{}, {\thenprop {\propp{}}}} {\thenprop {\prop{}}},
 \inpropenv {\propenv{}, {\elseprop {\propp{}}}} {\elseprop {\prop{}}},
 \inpropenv {} {\issubtype {\tp{}} {\t{}}},
