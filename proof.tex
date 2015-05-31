@@ -787,6 +787,25 @@ by noting \judgementtwo {} {\v{d}} {\t{d}},
 
   \begin{itemize}
     \item
+  \ep{} = {\appexp {\ep{1}} {\ep{2}}},
+    \item
+  \judgementrewrite {\propenv{}} {\ep{1}} {\ArrowOne {\x{}} {\s{}}
+                                                       {\t{f}}
+                                                       {\filterset {\thenprop {\prop{f}}}
+                                                                   {\elseprop {\prop{f}}}}
+                                                       {\object{f}}}
+                {\filterset {\thenprop {\prop{1}}}
+                            {\elseprop {\prop{1}}}}
+                {\object{1}}
+                {\e{1}},
+    \item
+  \judgementrewrite {\propenv{}}
+                 {\ep{2}} {\s{}}
+                 {\filterset {\thenprop {\prop{2}}}
+                             {\elseprop {\prop{2}}}}
+                 {\object{2}}
+                 {\e{2}},
+    \item
   \e{} = {\appexp {\e{1}} {\e{2}}},
     \item
   \t{} = {\replacefor {\t{f}}
@@ -806,21 +825,6 @@ by noting \judgementtwo {} {\v{d}} {\t{d}},
   \object{} = {\replacefor {\object{f}}
                            {\object{2}}
                            {\x{}}},
-    \item
-  \judgement {\propenv{}} {\e{1}} {\ArrowOne {\x{}} {\s{}}
-                                                       {\t{f}}
-                                                       {\filterset {\thenprop {\prop{f}}}
-                                                                   {\elseprop {\prop{f}}}}
-                                                       {\object{f}}}
-                {\filterset {\thenprop {\prop{1}}}
-                            {\elseprop {\prop{1}}}}
-                {\object{1}},
-    \item
-  \judgement {\propenv{}}
-                 {\e{2}} {\s{}}
-                 {\filterset {\thenprop {\prop{2}}}
-                             {\elseprop {\prop{2}}}}
-                 {\object{2}},
   \end{itemize}
 %                 IHe1 = $\forall{\openv{1}},
 %                               {\v{1}},
@@ -1251,16 +1255,20 @@ so we know $\forall v \in \fv{\thenprop{\prop{}}} - \x{}$,
 \end{itemize}
 \end{case}
 
-\begin{case}[T-IsA]\e{} = {\isaapp {\e{1}} {\e{2}}},
-  \t{} = {\Boolean{}},
-  \judgement {\propenv{}} {\e{1}} {\t{1}}
+\begin{case}[T-IsA]
+  \ep{} = {\isaapp {\ep{1}} {\ep{2}}},
+  \judgementrewrite {\propenv{}} {\ep{1}} {\t{1}}
              {\filterset {\thenprop {\prop{1}}}
                          {\elseprop {\prop{1}}}}
-                       {\object{1}},
-  \judgement {\propenv{}} {\e{2}} {\t{2}}
+                       {\object{1}}
+                       {\e{1}},
+  \judgementrewrite {\propenv{}} {\ep{2}} {\t{2}}
              {\filterset {\thenprop {\prop{2}}}
                          {\elseprop {\prop{2}}}}
-                       {\object{2}},
+                       {\object{2}}
+                       {\e{2}},
+  \e{} = {\isaapp {\e{1}} {\e{2}}},
+  \t{} = {\Boolean{}},
   \isacompare{\t{1}}{\object{1}}{\t{2}}{\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}},
   \object{} = \emptyobject{}
 
@@ -1570,18 +1578,20 @@ so we know $\forall v \in \fv{\thenprop{\prop{}}} - \x{}$,
 \end{case}
 
 \begin{case}[T-GetHMap]
+  \ep{} = {\getexp {\ep{m}} {\ep{k}}},
+  \judgementrewrite {\propenv{}} {\ep{m}} {\Unionsplice {\overrightarrow {\HMapgeneric {\mandatory{}} {\absent{}}}}}
+           {\filterset {\thenprop {\prop{m}}} {\elseprop {\prop{m}}}}
+           {\object{m}}
+           {\e{m}},
+  \judgementtworewrite {\propenv{}} {\ep{k}} {\Value {k}}{\e{k}},
+  \overr{\inmandatory{\k{}}{\t{i}}{\mandatory{}},}
   \e{} = {\getexp {\e{m}} {\e{k}}},
-  $\t{} = {\Unionsplice {\overrightarrow {\t{i}}}}$
+  \t{} = {\Unionsplice {\overrightarrow {\t{i}}}},
   \thenprop{\prop{}} = {\topprop{}},
   \elseprop{\prop{}} = {\topprop{}},
   \object{} = {\replacefor {\path {\keype{k}} {\x{}}}
                           {\object{m}}
-                          {\x{}}},
-  $\judgementtwo {\propenv{}} {\e{k}} {\Value {k}}$,
-  $\judgement {\propenv{}} {\e{m}} {\Unionsplice {\overrightarrow {\HMapgeneric {\mandatory{}} {\absent{}}}}}
-           {\filterset {\thenprop {\prop{m}}} {\elseprop {\prop{m}}}}
-           {\object{m}}$,
-  $\overrightarrow{\inmandatory{\k{}}{\t{i}}{\mandatory{}}}$
+                          {\x{}}}
 
 
   \begin{itemize}
