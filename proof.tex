@@ -155,6 +155,7 @@
 By induction on the derivation of the typing judgement.
 
 \begin{case}[T-True]
+  \ep{} = \true,
   \e{} = \true, \t{} = \True, \thenprop{\prop{}} = \topprop{}, \elseprop{\prop{}} = \botprop{}, \object{} = \emptyobject{}
 
   \begin{itemize}
@@ -171,7 +172,9 @@ By induction on the derivation of the typing judgement.
   \end{itemize}
 \end{case}
 
-\begin{case}[T-HMap] \e{} = {\curlymapvaloverright{\v{k}}{\v{v}}},
+\begin{case}[T-HMap] 
+  \ep{} = {\curlymapvaloverright{\v{k}}{\v{v}}},
+  \e{} = {\curlymapvaloverright{\v{k}}{\v{v}}},
   \t{} = {\HMapc {\mandatory{}}},
   \thenprop{\prop{}} = {\topprop{}},
   \elseprop{\prop{}} = {\botprop{}},
@@ -189,7 +192,9 @@ By induction on the derivation of the typing judgement.
   \end{itemize}
 \end{case}
 
-\begin{case}[T-Kw] \e{} = {\k{}},
+\begin{case}[T-Kw] 
+  \ep{} = {\k{}},
+  \e{} = {\k{}},
   \t{} = {\Value{\k{}}},
   \thenprop{\prop{}} = {\topprop{}},
   \elseprop{\prop{}} = {\botprop{}},
@@ -205,7 +210,9 @@ By induction on the derivation of the typing judgement.
 \end{case}
 
 \begin{case}[T-False]
-\e{} = \false, \t{} = \False, \thenprop{\prop{}} = \botprop{}, \elseprop{\prop{}} = \topprop{}, \object{} = \emptyobject{}
+\ep{} = \false, 
+\e{} = \false, 
+\t{} = \False, \thenprop{\prop{}} = \botprop{}, \elseprop{\prop{}} = \topprop{}, \object{} = \emptyobject{}
 
 \begin{itemize}
   \item[] 
@@ -221,7 +228,9 @@ Part 4 holds vacuously.
 \end{itemize}
 \end{case}
 
-\begin{case}[T-Class] \e{} = {\class{}},
+\begin{case}[T-Class] 
+  \ep{} = {\class{}},
+  \e{} = {\class{}},
   \t{} = {\Value{\class{}}},
   \thenprop{\prop{}} = {\topprop{}},
   \elseprop{\prop{}} = {\botprop{}},
@@ -236,7 +245,9 @@ Part 4 holds vacuously.
   \end{itemize}
 \end{case}
 
-\begin{case}[T-Instance] \e{} = {\classvalue{\classhint{}} {\overrightarrow {\classfieldpair{\fld{}} {\v{}}}}},
+\begin{case}[T-Instance] 
+  \ep{} = {\classvalue{\classhint{}} {\overrightarrow {\classfieldpair{\fld{}} {\v{}}}}},
+  \e{} = {\classvalue{\classhint{}} {\overrightarrow {\classfieldpair{\fld{}} {\v{}}}}},
   \t{} = {\class{}},
   \thenprop{\prop{}} = {\topprop{}},
   \elseprop{\prop{}} = {\botprop{}},
@@ -255,7 +266,9 @@ Part 4 holds vacuously.
 
 
 \begin{case}[T-Nil]
-\e{} = \nil, \t{} = \Nil, \thenprop{\prop{}} = \botprop{}, \elseprop{\prop{}} = \topprop{}, \object{} = \emptyobject{},
+\ep{} = \nil, 
+\e{} = \nil, 
+\t{} = \Nil, \thenprop{\prop{}} = \botprop{}, \elseprop{\prop{}} = \topprop{}, \object{} = \emptyobject{},
 
 \begin{itemize}
   \item[] 
@@ -270,7 +283,9 @@ Part 4 holds vacuously.
 \end{case}
 
 \begin{case}[T-Local]
-  \e{} = \x{}, \thenprop{\prop{}} = {\notprop {\falsy{}} {\x{}}},
+  \ep{} = \x{}, 
+  \e{} = \x{}, 
+  \thenprop{\prop{}} = {\notprop {\falsy{}} {\x{}}},
   \elseprop{\prop{}} = {\isprop {\falsy{}} {\x{}}},
 \object{} = \x{}, 
 \inpropenv{\propenv{}}{\isprop{\t{}}{\x{}}},
@@ -303,15 +318,18 @@ Part 4 holds vacuously.
 \end{case}
 
 \begin{case}[T-Do]
-\e{} = {\doexp {\e1} {\e2}},
-  \judgement {\propenv{}} 
-             {\e1} {\t1}
+\ep{} = {\doexp {\ep1} {\ep2}},
+  \judgementrewrite {\propenv{}} 
+             {\ep1} {\t1}
              {\filterset {\thenprop {\prop{1}}} {\elseprop {\prop1}}} 
-             {\object{1}},
-\judgement {\propenv{}, {\orprop {\thenprop {\prop{1}}} {\elseprop {\prop{1}}}}}
-           {\e{2}} {\t{}}
+             {\object{1}}
+             {\e1},
+\judgementrewrite {\propenv{}, {\orprop {\thenprop {\prop{1}}} {\elseprop {\prop{1}}}}}
+           {\ep{}} {\t{}}
            {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}} 
-           {\object{}},
+           {\object{}}
+           {\e{}},
+\e{} = {\doexp {\e1} {\e2}},
 
 \begin{itemize}
   \item[] \begin{subcase}[B-Do]
@@ -472,7 +490,7 @@ Part 3 relies on the semantics of \getfieldliteral (assumption~\ref{appendix:ass
 in B-Field, which returns a \emph{nilable} instance of \classhint{2},
 and \javatotcnil{\classhint{2}} {\t{}}.
 Notice \issubtypein{}{\s{}}{\Object{}} is required to guard from dereferencing \nil{},
-as {\classhint{1}} erases occurrences of \Nil{} in \s{} via  \tctojava{\s{}}{\classhint{1}},
+as {\classhint{1}} erases occurrences of \Nil{} in \s{} via  \tctojava{\s{}}{\classhint{1}}.
 \end{subcase}
   \item[]
 \begin{subcase}[BE-Field]
@@ -490,19 +508,21 @@ as {\classhint{1}} erases occurrences of \Nil{} in \s{} via  \tctojava{\s{}}{\cl
 \end{itemize}
 \end{case}
 
-\begin{case}[T-MethodStatic]
-  \e{} = ${\methodstaticexp {\classhint{1}} 
-                          {\overrightarrow {\classhint{i}}} 
+\begin{case}[T-Method]
+  \judgementtworewrite {\propenv{}} {\ep{}} {\s{}} {\e{}},
+             \issubtypein{}{\s{}}{\Object{}},
+  \tctojava{\s{}}{\classhint{1}},
+                  \inct{\ctmthentry{\mth{}}{\overrightarrow{\classhint{i}}}{\classhint{2}}}{\ctlookupmethods{\ct{}}{\classhint{1}}},
+                  \overr{\javatotc{\classhint{i}}{\t{i}}},
+             \overr{
+  \judgementtworewrite {\propenv{}} {\ep{i}} {\t{i}} {\e{i}}
+                  },
+                  \javatotcnil{\classhint{2}}{\t{}},
+  \e{} = {\methodstaticexp {\classhint{1}} 
+                          {\overr {\classhint{i}}} 
                           {\classhint{2}}
-                          {\mth{}} {\e{m}} {\overrightarrow{\e{a}}}}$,
-  \thenprop{\prop{}} = \topprop{}, \elseprop{\prop{}} = \topprop{}, \object{} = \emptyobject{},
-  $\overrightarrow{\javatotc {\classhint{i}} {\t{i}}}$,
-             \javatotc {\classhint{1}} {\class{}},
-             \javatotcnil {\classhint{2}} {\t{}},
-  \judgementtwo {\propenv{}} {\e{m}} {\class{}},
-             $\overrightarrow{
-  \judgementtwo {\propenv{}} {\e{a}} {\t{a}}
-                  }$
+                          {\mth{}} {\e{m}} {\overr{\e{a}}}},
+  \thenprop{\prop{}} = \topprop{}, \elseprop{\prop{}} = \topprop{}, \object{} = \emptyobject{}
 
 \begin{itemize}
   \item[]
@@ -521,12 +541,16 @@ as {\classhint{1}} erases occurrences of \Nil{} in \s{} via  \tctojava{\s{}}{\cl
 
 
 Part 1 is trivial as \object{} is always \emptyobject{}.
+
 Part 2 holds trivially, \v{} can be either a true or false value
 and both {\thenprop{\prop{}}} and {\elseprop{\prop{}}}
 are \topprop{}.
+
 Part 3 relies on the semantics of \invokejavamethodliteral (assumption~\ref{appendix:assumption:method})
 in B-Method, which returns a \emph{nilable} instance of \classhint{2},
 and \javatotcnil{\classhint{2}} {\t{}}.
+Notice \issubtypein{}{\s{}}{\Object{}} is required to guard from dereferencing \nil{},
+as {\classhint{1}} erases occurrences of \Nil{} in \s{} via  \tctojava{\s{}}{\classhint{1}}.
 \end{subcase}
 
   \item[]
