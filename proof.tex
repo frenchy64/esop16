@@ -1658,6 +1658,13 @@ so we know $\forall v \in \fv{\thenprop{\prop{}}} - \x{}$,
 \end{case}
 
 \begin{case}[T-GetHMapAbsent]
+  \ep{} = {\getexp {\ep{m}} {\ep{k}}},
+  \judgementtworewrite {\propenv{}} {\ep{k}} {\Value {k}} {\e{k}},
+  \judgementrewrite {\propenv{}} {\ep{m}} {\HMapgeneric {\mandatory{}} {\absent}}
+           {\filterset {\thenprop {\prop{m}}} {\elseprop {\prop{m}}}}
+           {\object{m}}
+           {\e{m}},
+  {\inabsent{\k{}}{\absent{}}},
   \e{} = {\getexp {\e{m}} {\e{k}}},
   \t{} = \Nil,
   \thenprop{\prop{}} = {\topprop{}},
@@ -1666,11 +1673,6 @@ so we know $\forall v \in \fv{\thenprop{\prop{}}} - \x{}$,
                {\path {\keype{k}} {\x{}}}
                           {\object{m}}
                           {\x{}}},
-  \judgementtwo {\propenv{}} {\e{k}} {\Value {k}},
-  \judgement {\propenv{}} {\e{m}} {\HMapgeneric {\mandatory{}} {\absent}}
-           {\filterset {\thenprop {\prop{m}}} {\elseprop {\prop{m}}}}
-           {\object{m}},
-  {\inabsent{\k{}}{\absent{}}}
 
 
   \begin{itemize}
