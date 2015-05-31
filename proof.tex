@@ -1672,7 +1672,7 @@ so we know $\forall v \in \fv{\thenprop{\prop{}}} - \x{}$,
   \object{} = {\replacefor
                {\path {\keype{k}} {\x{}}}
                           {\object{m}}
-                          {\x{}}},
+                          {\x{}}}
 
 
   \begin{itemize}
@@ -1738,6 +1738,14 @@ so we know $\forall v \in \fv{\thenprop{\prop{}}} - \x{}$,
 \end{case}
 
 \begin{case}[T-GetHMapPartialDefault]
+  \ep{} = {\getexp {\ep{m}} {\ep{k}}},
+  \judgementtworewrite {\propenv{}} {\ep{k}} {\Value {k}}{\e{k}},
+ \judgementrewrite {\propenv{}} {\ep{m}} {\HMapp {\mandatory{}} {\absent}}
+           {\filterset {\thenprop {\prop{m}}} {\elseprop {\prop{m}}}}
+           {\object{m}}
+           {\e{m}},
+             {\notinmandatory{\k{}}{\t{}}{\mandatory{}}},
+             {\notinabsent{\k{}}{\absent{}}},
   \e{} = {\getexp {\e{m}} {\e{k}}},
   \t{} = \Top,
   \thenprop{\prop{}} = {\topprop{}},
@@ -1745,13 +1753,7 @@ so we know $\forall v \in \fv{\thenprop{\prop{}}} - \x{}$,
   \object{} = {\replacefor
                {\path {\keype{k}} {\x{}}}
                           {\object{m}}
-                          {\x{}}},
-  \judgementtwo {\propenv{}} {\e{k}} {\Value {k}},
- \judgement {\propenv{}} {\e{m}} {\HMapp {\mandatory{}} {\absent}}
-           {\filterset {\thenprop {\prop{m}}} {\elseprop {\prop{m}}}}
-           {\object{m}},
-             ${\notinmandatory{\k{}}{\t{}}{\mandatory{}}}$,
-             {\notinabsent{\k{}}{\absent{}}}
+                          {\x{}}}
 
   \begin{itemize}
     \item[]

@@ -6,4 +6,7 @@
 *.blg
 code/demo/:
 _minted-small/
+_minted*
 *~
+minimal
+example.bib
