@@ -472,7 +472,7 @@ Part 3 relies on the semantics of \getfieldliteral (assumption~\ref{appendix:ass
 in B-Field, which returns a \emph{nilable} instance of \classhint{2},
 and \javatotcnil{\classhint{2}} {\t{}}.
 Notice \issubtypein{}{\s{}}{\Object{}} is required to guard from dereferencing \nil{},
-as \tctojava{\s{}}{\classhint{1}} erases occurrences of \Nil{} in \s{}.
+as {\classhint{1}} erases occurrences of \Nil{} in \s{} via  \tctojava{\s{}}{\classhint{1}},
 \end{subcase}
   \item[]
 \begin{subcase}[BE-Field]
