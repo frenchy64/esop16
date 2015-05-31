@@ -83,6 +83,8 @@
 \newcommand\ArrowOverright[5]{\ma{{\overrightarrow{\hastypesmall {#1} {#2}}} \xrightarrow[#5]{#4} #3}}
 % minus filters and object, implicitly tt | tt; empty
 \newcommand\ArrowTwo[3]{\ma{{\hastypesmall {#1} {#2}} \xrightarrow\ {#3}}}
+% easy math mode overrightarrow
+\newcommand\overr[1]{\ma{\overrightarrow{#1}}}
 
 \newcommand\getparent{getParent}
 \newcommand\getx{getX}
@@ -283,6 +285,7 @@
 \newmeta\ctmethod{m}
 \newmeta\ctfield{f}
 \newmeta\ctctor{c}
+\newcommand\inct[2]{\ma{#1 \in #2}}
 \newcommand\ctmethodsliteral[0]{\metafunctionfont{mth}}
 \newcommand\ctfieldsliteral[0]{\metafunctionfont{fld}}
 \newcommand\ctconstructorsliteral[0]{\metafunctionfont{ctr}}
@@ -747,7 +750,7 @@
 
 \newcommand\TNew[0]{
 \infer [T-New]
-{ \ctctorentry{\overrightarrow{\class{i}}} \in {\ctlookupctors{\ct{}}{\classhint{}}}
+{ \inct{\ctctorentry{\overrightarrow{\class{i}}}}{\ctlookupctors{\ct{}}{\classhint{}}}
   \\
   \overrightarrow{\javatotc{\classhint{i}}{\t{i}}}
   \\
@@ -802,7 +805,7 @@
                   \\
   \tctojava{\s{}}{\classhint{1}}
                   \\
-                  \ctfldentry{\fld{}}{\classhint{2}} \in {\ctlookupfields{\ct{}}{\classhint{1}}}
+                  \inct{\ctfldentry{\fld{}}{\classhint{2}}}{\ctlookupfields{\ct{}}{\classhint{1}}}
                   \\
   \javatotcnil{\classhint{2}}{\t{}}
            }

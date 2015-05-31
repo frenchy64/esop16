@@ -365,23 +365,22 @@ Parts 3 and 4 follow from the induction hypothesis on \e{2}.
 \end{itemize}
 \end{case}
 
-\begin{case}[T-NewStatic]
+\begin{case}[T-New]
+  \ep{} = {\newexp {\class{}} {\overrightarrow{\ep{i}}}},
+  \inct{\ctctorentry{\overr{\class{i}}}}{\ctlookupctors{\ct{}}{\classhint{}}},
+  \overr{\javatotc{\classhint{i}}{\t{i}}},
+  \overr{
+  \judgementtworewrite {\propenv{}}
+                    {\ep{i}} {\t{i}}
+                    {\e{i}}
+                  },
   \e{} = {\newstaticexp {\overrightarrow{\classhint{i}}} {\classhint{}} 
                                                           {\class{}} {\overrightarrow{\e{i}}}},
-  \object{} = \emptyobject{},
-\thenprop{\prop{}} = \topprop{},
-\elseprop{\prop{}} = \botprop{},
-   $\overrightarrow{
-\javatotc {\classhint{i}}
-          {\t{i}}
-          }$,
   \javatotc {\classhint{}}
             {\t{}},
-            $
-  \overrightarrow{
-  \judgementtwo {\propenv{}}
-                    {\e{i}} {\t{i}}
-                  }$
+  \object{} = \emptyobject{},
+  \thenprop{\prop{}} = \topprop{},
+  \elseprop{\prop{}} = \botprop{}
 
 \begin{itemize}
   \item[]
@@ -400,8 +399,9 @@ Parts 3 and 4 follow from the induction hypothesis on \e{2}.
 Part 1 follows \object{} = \emptyobject{}.
 
 Part 2 requires some explanation. The two false values in Typed Clojure
-cannot be constructed with \newliteral, so the only case is \v{} $\not=$ \false\ (or \nil)
+cannot be constructed with \newliteral{}, so the only case is \v{} $\not=$ \false\ (or \nil)
 where \thenprop{\prop{}} = \topprop{} so \satisfies{\openv{}}{\thenprop{\prop{}}}.
+\Void{} also lacks a constructor.
 
 Part 3 holds as B-New reduces to a \emph{non-nilable}
 instance of \class{} via \newjavaliteral (by assumption~\ref{appendix:assumption:new}), and \javatotc{\classhint{}}{\t{}}.
@@ -442,11 +442,17 @@ instance of \class{} via \newjavaliteral (by assumption~\ref{appendix:assumption
 \end{itemize}
 \end{case}
 
-\begin{case}[T-FieldStatic]
-  \e{} = {\fieldstaticexp {\classhint{1}} {\classhint{2}} {\fld{}} {\e{1}}},
-  \javatotc {\classhint{1}} {\class{}},
-  \javatotcnil {\classhint{2}} {\t{}},
-  \judgementtwo {\propenv{}} {\e{1}} {\class{}}
+\begin{case}[T-Field]
+  \ep{} = {\fieldexp {\fld{}} {\ep{1}}},
+  \judgementtworewrite {\propenv{}} {\ep{}} {\s{}} {\e{}},
+  \issubtypein{}{\s{}}{\Object{}},
+  \tctojava{\s{}}{\classhint{1}},
+  \inct{\ctfldentry{\fld{}}{\classhint{2}}}{\ctlookupfields{\ct{}}{\classhint{1}}},
+  \javatotcnil{\classhint{2}}{\t{}},
+  \e{} = {\fieldstaticexp {\classhint{1}} {\classhint{2}} {\fld{}} {\e{1}}}
+  \thenprop{\prop{}} = {\topprop{}},
+  \elseprop{\prop{}} = {\topprop{}},
+  \object{} = {\emptyobject{}}
 
 \begin{itemize}
   \item[]
@@ -457,12 +463,16 @@ instance of \class{} via \newjavaliteral (by assumption~\ref{appendix:assumption
 
 
 Part 1 is trivial as \object{} is always \emptyobject{}.
-Part 2 holds trivially, \v{} can be either a true or false value
+
+Part 2 holds trivially; \v{} can be either a true or false value
 and both {\thenprop{\prop{}}} and {\elseprop{\prop{}}}
 are \topprop{}.
+
 Part 3 relies on the semantics of \getfieldliteral (assumption~\ref{appendix:assumption:field})
 in B-Field, which returns a \emph{nilable} instance of \classhint{2},
 and \javatotcnil{\classhint{2}} {\t{}}.
+Notice \issubtypein{}{\s{}}{\Object{}} is required to guard from dereferencing \nil{},
+as \tctojava{\s{}}{\classhint{1}} erases occurrences of \Nil{} in \s{}.
 \end{subcase}
   \item[]
 \begin{subcase}[BE-Field]
