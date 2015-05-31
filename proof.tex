@@ -607,10 +607,7 @@ as {\classhint{1}} erases occurrences of \Nil{} in \s{} via  \tctojava{\s{}}{\cl
 \end{case}
 
 \begin{case}[T-DefMulti]
-  \e{} = {\createmultiexp {\s{}} {\e{d}}},
-  \t{} = {\MultiFntype {\s{}} {\t{d}}},
-  \thenprop{\prop{}} = {\topprop{}},
-  \elseprop{\prop{}} = {\botprop{}},
+  \ep{} = {\createmultiexp {\s{}} {\ep{d}}},
   \s{} = {\ArrowOne {\x{}} {\t{1}} {\t{2}}
                           {\filterset {\thenprop {\prop{1}}}
                                       {\elseprop {\prop{1}}}}
@@ -619,7 +616,12 @@ as {\classhint{1}} erases occurrences of \Nil{} in \s{} via  \tctojava{\s{}}{\cl
                           {\filterset {\thenprop {\prop{2}}}
                                       {\elseprop {\prop{2}}}}
                           {\object{2}}},
-  \judgementtwo {\propenv{}} {\e{d}} {\t{d}}
+\judgementtworewrite {\propenv{}} {\ep{}} {\sp{}} {\e{}},
+  \e{} = {\createmultiexp {\s{}} {\e{d}}},
+  \t{} = {\MultiFntype {\s{}} {\t{d}}},
+  \thenprop{\prop{}} = {\topprop{}},
+  \elseprop{\prop{}} = {\botprop{}},
+  \object{} = {\emptyobject{}}
 
 
 \begin{itemize}
@@ -650,17 +652,7 @@ and {\emptydisptable} vacuously satisfies the other premises of T-Multi, so we a
 
         \begin{enumerate}
           \item
-  \e{} = {\extendmultiexp {\e{m}} {\e{v}} {\e{f}}},
-          \item
-  \e{f} = {\abs {\x{}} {\t{1}} {\e{b}}},
-          \item
-  \t{} = {\MultiFntype {\t{m}} {\t{d}}},
-          \item
-  \thenprop{\prop{}} = {\topprop{}},
-          \item
-  \elseprop{\prop{}} = {\botprop{}},
-          \item
-  \object{} = {\emptyobject{}},
+  \ep{} = {\extendmultiexp {\ep{m}} {\ep{v}} {\ep{f}}},
           \item
   \t{m} = {\ArrowOne {\x{}} {\t{1}} {\s{}}
                      {\filterset {\thenprop {\prop{m}}}
@@ -672,18 +664,34 @@ and {\emptydisptable} vacuously satisfies the other premises of T-Multi, so we a
                                  {\elseprop {\prop{d}}}}
                      {\object{d}}},
           \item
-  \judgementtwo {\propenv{}} {\e{m}} {\MultiFntype {\t{m}} {\t{d}}},
+\judgementtworewrite {\propenv{}}
+                  {\ep{m}} {\MultiFntype {\t{m}} {\t{d}}}
+                  {\e{m}}
           \item
   \isacompare{\sp{}}{\object{d}}{\t{v}}{\filterset {\thenprop {\prop{i}}} {\elseprop {\prop{i}}}},
           \item
-  \judgementtwo {\propenv{}}
-               {\e{v}} {\t{v}},
+\judgementtworewrite {\propenv{}}
+           {\e{v}} {\t{v}}
+           {\e{v}}
           \item
-  \judgement {\propenv{}, {\isprop{\t{1}} {\x{}}}, {\thenprop {\prop{i}}}}
-           {\e{b}} {\s{}}
+  \judgementrewrite {\propenv{}, {\isprop{\t{1}} {\x{}}}, {\thenprop {\prop{i}}}}
+           {\ep{f}} {\s{}}
            {\filterset {\thenprop {\prop{m}}}
                        {\elseprop {\prop{m}}}}
            {\object{m}}
+           {\e{f}}
+          \item
+  \e{} = {\extendmultiexp {\e{m}} {\e{v}} {\e{f}}},
+          \item
+  \e{f} = {\abs {\x{}} {\t{1}} {\e{b}}},
+          \item
+  \t{} = {\MultiFntype {\t{m}} {\t{d}}},
+          \item
+  \thenprop{\prop{}} = {\topprop{}},
+          \item
+  \elseprop{\prop{}} = {\botprop{}},
+          \item
+  \object{} = {\emptyobject{}},
         \end{enumerate}
 
   \begin{itemize}
