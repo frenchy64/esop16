@@ -918,130 +918,129 @@ by noting \judgementtwo {} {\v{d}} {\t{d}},
          and also by inversion on \e{1} from T-Abs
          \begin{itemize}
            \item
-  { \judgement {\propenvc{}, {\isprop {\s{}} {\x{}}}}
-              {\e{b}} {\t{f}}
+  { \judgementrewrite {\propenvc{}, {\isprop {\s{}} {\x{}}}}
+              {\ep{b}} {\t{f}}
                {\filterset {\thenprop {\prop{f}}}
                            {\elseprop {\prop{f}}}}
-               {\object{f}}}.
-         \end{itemize}
-
-         To prove part 1, we consider cases on the form of \object{f}:
-
-         \begin{itemize}
-           \item if \object{f} = \emptyobject{}, then \object{} = \emptyobject{} by substitution,
-           \item if \object{f} = {\path {\pathelem{f}} {\x{}}}, 
-             we consider cases on the form of \object{2}:
-             \begin{itemize}
-               \item if \object{2} = \emptyobject{}, then \object{} = \emptyobject{},
-               \item otherwise \object{2} = {\path {\pathelem{2}} {\y{}}}, where,
-                 because
-                \object{} = {\replacefor {\path {\pathelem{f}} {\x{}}}
-                                         {\object{2}}
-                                         {\x{}}},
-                 by substitution
-                 \object{} = {\path {\pathelem{f}} {\object{2}}}.
-                 To prove \inopenv{\openv{}}{\object{}}{\v{}}
-                 we note 
-                 \inopenv {\extendopenv {\openv{c}} {\x{}} {\v{2}}}
-                          {\x{}}
-                          {\v{2}}
-                          and 
-                 \inopenv{\openv{}}{\object{2}}{\v{2}},
-                 which implies 
-                 \inopenvnoeq {\extendopenv {\openv{c}} {\x{}} {\v{2}}}{\x{}} = 
-                 \inopenvnoeq{\openv{}}{\object{2}},
-                 and by applying lemma~\ref{appendix:lemma:pathindependent}
-                 we can derive
-                 \inopenvnoeq{\openv{}}{\path{\pathelem{f}}{\object{2}}} =
-                 \inopenvnoeq{\extendopenv {\openv{c}} {\x{}} {\v{2}}}
-                             {\path {\pathelem{f}} {\x{}}}.
-                 By the induction hypothesis on {\e{b}}
-                 we know
-                 \inopenv {\extendopenv {\openv{c}} {\x{}} {\v{2}}}
-                          {\path {\pathelem{f}} {\x{}}}
-                          {\v{}}
-                 so we can conclude
-                 \inopenv{\openv{}}{\path{\pathelem{f}}{\object{2}}}{\v{}}.
-
-             \end{itemize}
-           \item otherwise \object{f} = {\path {\pathelem{f}} {\y{}}} where $\x{} \not= \y{}$,
-             and \object{} = \object{f} by substitution.
-             We note \consistentwith{\closure {\openv{c}} {\abs {\x{}} {\s{}} {\e{b}}}}{\openv{}} 
-             by the induction hypothesis on {\e{1}},
-             so 
-             \inopenv{\openv{c}}{\y{}}{\inopenvnoeq{\openv{}}{\y{}}},
-           and because {\x{}} $\not=$ {\y{}}
-            we also know
-             \inopenvnoeq{\extendopenv {\openv{c}} {\x{}} {\v{2}}}{\y{}} = 
-             \inopenvnoeq{\openv{}}{\y{}}.
-
-             We apply lemma~\ref{appendix:lemma:pathindependent} with this fact
-             to derive
-             \inopenvnoeq {\extendopenv {\openv{c}} {\x{}} {\v{2}}}
-                          {\path {\pathelem{f}} {\y{}}}
-                          = 
-             \inopenvnoeq{\openv{}}{\path{\pathelem{f}}{\y{}}},
-                      and since
-             \inopenv {\extendopenv {\openv{c}} {\x{}} {\v{2}}}
-                      {\path {\pathelem{f}} {\y{}}}{\v{}}
-                      by the induction hypothesis on \e{b}
-                      we can conclude 
-                      \inopenv{\openv{}}{\path{\pathelem{f}}{\object{2}}}{\v{}}.
+               {\object{f}}
+               {\e{b}}}.
          \end{itemize}
 
 
-         To prove part 2, we consider both cases:
-         \begin{itemize}
-           \item if \istrueval{\v{}} then \satisfies{\openv{}}{\thenprop{\prop{}}}.
-
-                              By the induction hypothesis on \e{b}
-                              we know
-              \satisfies{\extendopenv {\openv{c}} {\x{}} {\v{2}}}
-                        {\thenprop {\prop{f}}}.
-
-                        By the induction hypothesis on {\e{1}}
-                        we know
-\consistentwith{\closure {\openv{c}} {\abs {\x{}} {\s{}} {\e{b}}}}{\openv{}},
-so we know $\forall v \in \fv{\thenprop{\prop{}}} - \x{}$,
-                              {\inopenvnoeq{\openv{c}}{v}} = {\inopenvnoeq {\openv{}}{v}}.
-
-                              By the induction hypothesis on \e{2} we know {\inopenv {\openv{}}{\object{2}}{\v{2}}}
-                              and since {\inopenv {\extendopenv {\openv{c}} {\x{}} {\v{2}}}{\x{}}{\v{2}}}
-                              then 
-                            \inopenvnoeq{\extendopenv {\openv{c}} {\x{}} {\v{2}}}{\x{}} = \inopenvnoeq{\openv{}}{\object{2}}.
-
-                              Then with the premises
-                              \begin{enumerate}
-                                \item
-  {\thenprop {\prop{}}} =
-                 {\replacefor {\thenprop {\prop{f}}}
-                              {\object{2}}
-                              {\x{}}},
-                            \item
-                              \satisfies{\extendopenv {\openv{c}} {\x{}} {\v{2}}}{\thenprop {\prop{f}}},
-                            \item
-                              $\forall v \in \fv{\thenprop{\prop{}}} - \x{}$.
-                              {\inopenvnoeq{\extendopenv {\openv{c}} {\x{}} {\v{2}}}{v}} = {\inopenvnoeq {\openv{}}{v}},
-                            \item
-                              and
-                            \inopenvnoeq{\extendopenv {\openv{c}} {\x{}} {\v{2}}}{\x{}} = \inopenvnoeq{\openv{}}{\object{2}}
-                              \end{enumerate}
-                              we can apply
-                            lemma~\ref{appendix:lemma:substfilter},
-                            to derive \satisfies{\openv{}}{\thenprop{\prop{}}}
-                            and we are done.
-           \item if \isfalseval{\v{}} then \satisfies{\openv{}}{\elseprop{\prop{}}}.
-
-             Like above, but using {\elseprop{\prop{}}} for {\thenprop{\prop{}}} and 
-             {\elseprop{\prop{f}}} for {\thenprop{\prop{f}}}.
-         \end{itemize}
-
-         For part 3, we prove
-         \judgementrewrite{}{\v{}}{\t{}}{\filterset{\thenprop{\propp{}}}{\elseprop{\propp{}}}}{\objectp{}}{\v{}}
-        for some \thenprop{\propp{}}, \elseprop{\propp{}} and {\objectp{}}.
-
-          By inversion on \e{1} from T-Abs we know
-  \judgementtworewrite {\propenvc{},{\isprop{\s{}}{\x{}}}}{\ep{b}}{\t{f}}{\e{b}}.
+%         To prove part 1, we consider cases on the form of \object{f}:
+%
+%         \begin{itemize}
+%           \item if \object{f} = \emptyobject{}, then \object{} = \emptyobject{} by substitution,
+%           \item if \object{f} = {\path {\pathelem{f}} {\x{}}}, 
+%             we consider cases on the form of \object{2}:
+%             \begin{itemize}
+%               \item if \object{2} = \emptyobject{}, then \object{} = \emptyobject{},
+%               \item otherwise \object{2} = {\path {\pathelem{2}} {\y{}}}, where,
+%                 because
+%                \object{} = {\replacefor {\path {\pathelem{f}} {\x{}}}
+%                                         {\object{2}}
+%                                         {\x{}}},
+%                 by substitution
+%                 \object{} = {\path {\pathelem{f}} {\object{2}}}.
+%                 To prove \inopenv{\openv{}}{\object{}}{\v{}}
+%                 we note 
+%                 \inopenv {\extendopenv {\openv{c}} {\x{}} {\v{2}}}
+%                          {\x{}}
+%                          {\v{2}}
+%                          and 
+%                 \inopenv{\openv{}}{\object{2}}{\v{2}},
+%                 which implies 
+%                 \inopenvnoeq {\extendopenv {\openv{c}} {\x{}} {\v{2}}}{\x{}} = 
+%                 \inopenvnoeq{\openv{}}{\object{2}},
+%                 and by applying lemma~\ref{appendix:lemma:pathindependent}
+%                 we can derive
+%                 \inopenvnoeq{\openv{}}{\path{\pathelem{f}}{\object{2}}} =
+%                 \inopenvnoeq{\extendopenv {\openv{c}} {\x{}} {\v{2}}}
+%                             {\path {\pathelem{f}} {\x{}}}.
+%                 By the induction hypothesis on {\e{b}}
+%                 we know
+%                 \inopenv {\extendopenv {\openv{c}} {\x{}} {\v{2}}}
+%                          {\path {\pathelem{f}} {\x{}}}
+%                          {\v{}}
+%                 so we can conclude
+%                 \inopenv{\openv{}}{\path{\pathelem{f}}{\object{2}}}{\v{}}.
+%
+%             \end{itemize}
+%           \item otherwise \object{f} = {\path {\pathelem{f}} {\y{}}} where $\x{} \not= \y{}$,
+%             and \object{} = \object{f} by substitution.
+%             We note \consistentwith{\closure {\openv{c}} {\abs {\x{}} {\s{}} {\e{b}}}}{\openv{}} 
+%             by the induction hypothesis on {\e{1}},
+%             so 
+%             \inopenv{\openv{c}}{\y{}}{\inopenvnoeq{\openv{}}{\y{}}},
+%           and because {\x{}} $\not=$ {\y{}}
+%            we also know
+%             \inopenvnoeq{\extendopenv {\openv{c}} {\x{}} {\v{2}}}{\y{}} = 
+%             \inopenvnoeq{\openv{}}{\y{}}.
+%
+%             We apply lemma~\ref{appendix:lemma:pathindependent} with this fact
+%             to derive
+%             \inopenvnoeq {\extendopenv {\openv{c}} {\x{}} {\v{2}}}
+%                          {\path {\pathelem{f}} {\y{}}}
+%                          = 
+%             \inopenvnoeq{\openv{}}{\path{\pathelem{f}}{\y{}}},
+%                      and since
+%             \inopenv {\extendopenv {\openv{c}} {\x{}} {\v{2}}}
+%                      {\path {\pathelem{f}} {\y{}}}{\v{}}
+%                      by the induction hypothesis on \e{b}
+%                      we can conclude 
+%                      \inopenv{\openv{}}{\path{\pathelem{f}}{\object{2}}}{\v{}}.
+%         \end{itemize}
+%
+%
+%         To prove part 2, we consider both cases:
+%         \begin{itemize}
+%           \item if \istrueval{\v{}} then \satisfies{\openv{}}{\thenprop{\prop{}}}.
+%
+%                              By the induction hypothesis on \e{b}
+%                              we know
+%              \satisfies{\extendopenv {\openv{c}} {\x{}} {\v{2}}}
+%                        {\thenprop {\prop{f}}}.
+%
+%                        By the induction hypothesis on {\e{1}}
+%                        we know
+%\consistentwith{\closure {\openv{c}} {\abs {\x{}} {\s{}} {\e{b}}}}{\openv{}},
+%so we know $\forall v \in \fv{\thenprop{\prop{}}} - \x{}$,
+%                              {\inopenvnoeq{\openv{c}}{v}} = {\inopenvnoeq {\openv{}}{v}}.
+%
+%                              By the induction hypothesis on \e{2} we know {\inopenv {\openv{}}{\object{2}}{\v{2}}}
+%                              and since {\inopenv {\extendopenv {\openv{c}} {\x{}} {\v{2}}}{\x{}}{\v{2}}}
+%                              then 
+%                            \inopenvnoeq{\extendopenv {\openv{c}} {\x{}} {\v{2}}}{\x{}} = \inopenvnoeq{\openv{}}{\object{2}}.
+%
+%                              Then with the premises
+%                              \begin{enumerate}
+%                                \item
+%  {\thenprop {\prop{}}} =
+%                 {\replacefor {\thenprop {\prop{f}}}
+%                              {\object{2}}
+%                              {\x{}}},
+%                            \item
+%                              \satisfies{\extendopenv {\openv{c}} {\x{}} {\v{2}}}{\thenprop {\prop{f}}},
+%                            \item
+%                              $\forall v \in \fv{\thenprop{\prop{}}} - \x{}$.
+%                              {\inopenvnoeq{\extendopenv {\openv{c}} {\x{}} {\v{2}}}{v}} = {\inopenvnoeq {\openv{}}{v}},
+%                            \item
+%                              and
+%                            \inopenvnoeq{\extendopenv {\openv{c}} {\x{}} {\v{2}}}{\x{}} = \inopenvnoeq{\openv{}}{\object{2}}
+%                              \end{enumerate}
+%                              we can apply
+%                            lemma~\ref{appendix:lemma:substfilter},
+%                            to derive \satisfies{\openv{}}{\thenprop{\prop{}}}
+%                            and we are done.
+%           \item if \isfalseval{\v{}} then \satisfies{\openv{}}{\elseprop{\prop{}}}.
+%
+%             Like above, but using {\elseprop{\prop{}}} for {\thenprop{\prop{}}} and 
+%             {\elseprop{\prop{f}}} for {\thenprop{\prop{f}}}.
+%         \end{itemize}
+%
+%         For part 3, we prove
+%         \judgementrewrite{}{\v{}}{\t{}}{\filterset{\thenprop{\propp{}}}{\elseprop{\propp{}}}}{\objectp{}}{\v{}}
+%        for some \thenprop{\propp{}}, \elseprop{\propp{}} and {\objectp{}}.
 
           From 
           \begin{itemize}
@@ -1063,7 +1062,14 @@ so we know $\forall v \in \fv{\thenprop{\prop{}}} - \x{}$,
               \satisfies{\extendopenv {\openv{c}} {\x{}} {\v{2}}}{\propenvc{},{\isprop{\s{}}{\x{}}}}.
 
               We want to prove
-        \judgementtworewrite {\propenvc{}}{\replacefor{\ep{b}}{\v{2}}{\x{}}}{\replacefor{\t{f}}{\object{2}}{\x{}}}{\replacefor{\e{b}}{\v{2}}{\x{}}}, which can be justified by noting 
+        \judgementrewrite {\propenvc{}}
+                          {\replacefor{\ep{b}}{\v{2}}{\x{}}}
+                          {\replacefor{\t{f}}{\object{2}}{\x{}}}
+               {\replacefor{\filterset {\thenprop {\prop{f}}}
+                                       {\elseprop {\prop{f}}}}{\object{2}}{\x{}}}
+                          {\replacefor{\object{f}}{\object{2}}{\x{}}}
+                          {\replacefor{\e{b}}{\v{2}}{\x{}}}, 
+                          which can be justified by noting 
           \begin{itemize}
             \item
   \judgementtworewrite {\propenvc{},{\isprop{\s{}}{\x{}}}}{\ep{b}}{\t{f}}{\e{b}},
@@ -1090,10 +1096,27 @@ so we know $\forall v \in \fv{\thenprop{\prop{}}} - \x{}$,
   \t{} = {\replacefor {\t{f}}
                       {\object{2}}
                       {\x{}}},
+  {\thenprop {\prop{}}} = 
+                 {\replacefor {\thenprop {\prop{f}}}
+                              {\object{2}}
+                              {\x{}}},
+  {\elseprop {\prop{}}} = 
+                 {\replacefor {\elseprop {\prop{f}}}
+                              {\object{2}}
+                              {\x{}}},
+  \object{} = {\replacefor {\object{f}}
+                           {\object{2}}
+                           {\x{}}},
                     we can use
          \begin{itemize}
            \item
-        \judgementtworewrite {\propenvc{}}{\replacefor{\ep{b}}{\v{2}}{\x{}}}{\t{}}{\replacefor{\e{b}}{\v{2}}{\x{}}},
+        \judgementrewrite {\propenvc{}}
+                          {\replacefor{\ep{b}}{\v{2}}{\x{}}}
+                          {\replacefor{\t{f}}{\object{2}}{\x{}}}
+               {\replacefor{\filterset {\thenprop {\prop{f}}}
+                                       {\elseprop {\prop{f}}}}{\object{2}}{\x{}}}
+                          {\replacefor{\object{f}}{\object{2}}{\x{}}}
+                          {\replacefor{\e{b}}{\v{2}}{\x{}}}, 
            \item
               \satisfies{\openv{c}}{\propenvc{}}, and
            \item
@@ -1103,8 +1126,9 @@ so we know $\forall v \in \fv{\thenprop{\prop{}}} - \x{}$,
          {\replacefor{\e{b}}{\v{2}}{\x{}}}
          {\v{}}.
          \end{itemize}
-         to apply the induction hypothesis on {\replacefor{\ep{b}}{\v{2}}{\x{}}} and satisfy our goal
-         \judgementtworewrite{}{\v{}}{\t{}}{\v{}}.
+         to apply the induction hypothesis on {\replacefor{\ep{b}}{\v{2}}{\x{}}} and satisfy
+         all conditions.
+
 \end{subcase}
   \item[]
 \begin{subcase}[B-BetaMulti]
