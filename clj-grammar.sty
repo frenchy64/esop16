@@ -820,6 +820,8 @@
 \infer [T-FieldStatic]
 { \javatotc {\classhint{1}} {\s{}}
              \\
+  \issubtypein{}{\s{}}{\Object{}}
+  \\
   \javatotcnil {\classhint{2}} {\t{}}
   \\
   \judgementtworewrite {\propenv{}} {\e{}} {\s{}} {\ep{}}
@@ -867,7 +869,9 @@
   \overrightarrow{\javatotc {\classhint{i}} {\t{i}}}
              \\
              \javatotc {\classhint{1}} {\s{}}
-             \\\\
+             \\
+             \issubtypein{}{\s{}}{\Object{}}
+             \\
              \javatotcnil {\classhint{2}} {\t{}}
              \\
   \judgementtworewrite {\propenv{}} {\e{}} {\s{}} {\ep{}}

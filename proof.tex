@@ -462,6 +462,17 @@ instance of \class{} via \newjavaliteral (by assumption~\ref{appendix:assumption
 \end{itemize}
 \end{case}
 
+\begin{case}[T-NewStatic]
+  {\ep{}} = {\newstaticexp {\overrightarrow{\classhint{i}}} {\classhint{}}
+                                                          {\class{}} {\overrightarrow{\e{i}}}}
+
+  Non-reflective constructors cannot be written directly by the user, so we can assume
+  the class information attached to the syntax corresponds to an actual constructor by inversion
+  from T-New.
+
+  The rest of this case progresses like T-New.
+\end{case}
+
 \begin{case}[T-Field]
   \ep{} = {\fieldexp {\fld{}} {\ep{1}}},
   \judgementtworewrite {\propenv{}} {\ep{}} {\s{}} {\e{}},
@@ -508,6 +519,16 @@ as {\classhint{1}} erases occurrences of \Nil{} in \s{} via  \tctojava{\s{}}{\cl
 \end{subcase}
 
 \end{itemize}
+\end{case}
+
+\begin{case}[T-FieldStatic]
+  {\ep{}} = {\fieldstaticexp {\classhint{1}} {\classhint{2}} {\fld{}} {\e{1}}}
+
+  Non-reflective field lookups cannot be written directly by the user, so we can assume
+  the class information attached to the syntax corresponds to an actual field by inversion
+  from T-Field.
+
+  The rest of this case progresses like T-Field.
 \end{case}
 
 \begin{case}[T-Method]
@@ -606,6 +627,20 @@ as {\classhint{1}} erases occurrences of \Nil{} in \s{} via  \tctojava{\s{}}{\cl
 \end{subcase}
 \end{itemize}
 
+\end{case}
+
+\begin{case}[T-MethodStatic]
+  \ep{} = 
+  {\methodstaticexp {\classhint{1}} 
+        {\overrightarrow {\classhint{i}}} 
+        {\classhint{2}}
+        {\mth{}} {\e{1}} {\overrightarrow{\e{i}}}}
+
+  Non-reflective method invocations cannot be written directly by the user, so we can assume
+  the class information attached to the syntax corresponds to an actual method by inversion
+  from T-Method.
+
+  The rest of this case progresses like T-Method.
 \end{case}
 
 \begin{case}[T-DefMulti]
