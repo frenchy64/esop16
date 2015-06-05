@@ -1153,9 +1153,9 @@ by noting \judgementtwo {} {\v{d}} {\t{d}},
                           {\replacefor{\object{f}}{\object{2}}{\x{}}}
                           {\replacefor{\e{b}}{\v{2}}{\x{}}}, 
            \item
-              \satisfies{\openv{c}}{\propenvc{}}, and
+              \satisfies{\openv{c}}{\propenvc{}},
            \item
-\isconsistent{\openv{c}} (via induction hypothesis on {\ep{1}}),
+\isconsistent{\openv{c}} (via induction hypothesis on {\ep{1}}), and
            \item 
   \opsem {\openv{c}}
          {\replacefor{\e{b}}{\v{2}}{\x{}}}
@@ -1243,13 +1243,32 @@ by noting \judgementtwo {} {\v{d}} {\t{d}},
   {\judgementtwo{}{\v{g}}{\s{t}}}.
   \end{enumerate}
 
-  For part 1, we note
-  \begin{enumerate}[resume]
-    \item
-  \object{} = {\replacefor {\object{f}}
-                           {\object{2}}
-                           {\x{}}},
-  \end{enumerate}
+%  For part 1, we note
+%  \begin{enumerate}[resume]
+%    \item
+%  \object{} = {\replacefor {\object{f}}
+%                           {\object{2}}
+%                           {\x{}}},
+%  \end{enumerate}
+
+We want to prove 
+\begin{itemize}
+  \item
+{\judgementselfrewrite{\propenv{}}
+                          {\appexp {\v{g}} {\v{2}}}
+                          {\replacefor{\t{f}}{\object{2}}{\x{}}}
+               {\replacefor{\filterset {\thenprop {\prop{f}}}
+                                       {\elseprop {\prop{f}}}}{\object{2}}{\x{}}}
+                          {\replacefor{\object{f}}{\object{2}}{\x{}}}},
+  \item
+              \satisfies{\openv{}}{\propenv{}},
+           \item
+\isconsistent{\openv{}},
+           \item 
+  \opsem {\openv{}}
+         {\appexp {\v{g}} {\v{2}}}
+         {\v{}}.
+\end{itemize}
 
 \end{subcase}
   \item[]
