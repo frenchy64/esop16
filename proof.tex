@@ -188,6 +188,8 @@ By induction on the derivation of the typing judgement.
       \begin{subcase}[B-Val] \v{} = {\curlymapvaloverright{\v{k}}{\v{v}}}
 
         Similar to T-True.
+
+        Part 4 holds by the induction hypothese on {\overr{\v{k}}} and {\overr{\v{v}}}.
       \end{subcase}
   \end{itemize}
 \end{case}
@@ -259,7 +261,7 @@ Part 4 holds vacuously.
 
         Similar to T-True.
 
-        Part 4 holds by the induction hypothesis on ${\overrightarrow{\v{i}}}$.
+        Part 4 holds by the induction hypotheses on ${\overrightarrow{\v{i}}}$.
       \end{subcase}
   \end{itemize}
 \end{case}
@@ -990,7 +992,7 @@ by noting \judgementtwo {} {\v{d}} {\t{d}},
 
          To prove part 2, we consider both cases:
          \begin{itemize}
-           \item if \v{} $\not=$ \false\ (or \nil) then \satisfies{\openv{}}{\thenprop{\prop{}}}.
+           \item if \istrueval{\v{}} then \satisfies{\openv{}}{\thenprop{\prop{}}}.
 
                               By the induction hypothesis on \e{b}
                               we know
@@ -1028,25 +1030,81 @@ so we know $\forall v \in \fv{\thenprop{\prop{}}} - \x{}$,
                             lemma~\ref{appendix:lemma:substfilter},
                             to derive \satisfies{\openv{}}{\thenprop{\prop{}}}
                             and we are done.
-           \item if \v{} $=$ \false\ (or \nil) then \satisfies{\openv{}}{\elseprop{\prop{}}}.
+           \item if \isfalseval{\v{}} then \satisfies{\openv{}}{\elseprop{\prop{}}}.
 
              Like above, but using {\elseprop{\prop{}}} for {\thenprop{\prop{}}} and 
              {\elseprop{\prop{f}}} for {\thenprop{\prop{f}}}.
          \end{itemize}
 
-         For part 3 
-         \begin{itemize}
-           \item
-  \opsem{\openv{}}{\e{}}{\v{}},
-           \item
-  \opsem {\extendopenv {\openv{c}} {\x{}} {\v{2}}}
-         {\e{b}}
-         {\v{}},
-           \item
+         For part 3, we prove
+         \judgementrewrite{}{\v{}}{\t{}}{\filterset{\thenprop{\propp{}}}{\elseprop{\propp{}}}}{\objectp{}}{\v{}}
+        for some \thenprop{\propp{}}, \elseprop{\propp{}} and {\objectp{}}.
+
+          By inversion on \e{1} from T-Abs we know
+  \judgementtworewrite {\propenvc{},{\isprop{\s{}}{\x{}}}}{\ep{b}}{\t{f}}{\e{b}}.
+
+          From 
+          \begin{itemize}
+            \item
+              \satisfies{\openv{c}}{\propenvc{}},
+            \item
+  \judgementrewrite {\propenv{}}
+                 {\ep{2}} {\s{}}
+                 {\filterset {\thenprop {\prop{2}}}
+                             {\elseprop {\prop{2}}}}
+                 {\object{2}}
+                 {\e{2}} and 
+            \item
+  \opsem {\openv{}}
+         {\e{2}}
+         {\v{2}},
+     \end{itemize}
+              we know (by substitution)
+              \satisfies{\extendopenv {\openv{c}} {\x{}} {\v{2}}}{\propenvc{},{\isprop{\s{}}{\x{}}}}.
+
+              We want to prove
+        \judgementtworewrite {\propenvc{}}{\replacefor{\ep{b}}{\v{2}}{\x{}}}{\replacefor{\t{f}}{\object{2}}{\x{}}}{\replacefor{\e{b}}{\v{2}}{\x{}}}, which can be justified by noting 
+          \begin{itemize}
+            \item
+  \judgementtworewrite {\propenvc{},{\isprop{\s{}}{\x{}}}}{\ep{b}}{\t{f}}{\e{b}},
+            \item
+  \judgementrewrite {\propenv{}}
+                 {\ep{2}} {\s{}}
+                 {\filterset {\thenprop {\prop{2}}}
+                             {\elseprop {\prop{2}}}}
+                 {\object{2}}
+                 {\e{2}} and 
+            \item
+  \opsem {\openv{}}
+         {\e{2}}
+         {\v{2}}.
+     \end{itemize}
+
+     From the previous fact and \satisfies{\openv{c}}{\propenvc{}},
+              we know
+  \opsem {\openv{c}}
+         {\replacefor{\e{b}}{\v{2}}{\x{}}}
+         {\v{}}.
+
+                    Noting that 
   \t{} = {\replacefor {\t{f}}
                       {\object{2}}
                       {\x{}}},
+                    we can use
+         \begin{itemize}
+           \item
+        \judgementtworewrite {\propenvc{}}{\replacefor{\ep{b}}{\v{2}}{\x{}}}{\t{}}{\replacefor{\e{b}}{\v{2}}{\x{}}},
+           \item
+              \satisfies{\openv{c}}{\propenvc{}}, and
+           \item
+\isconsistent{\openv{c}} (via induction hypothesis on {\ep{1}}),
+           \item 
+  \opsem {\openv{c}}
+         {\replacefor{\e{b}}{\v{2}}{\x{}}}
+         {\v{}}.
          \end{itemize}
+         to apply the induction hypothesis on {\replacefor{\ep{b}}{\v{2}}{\x{}}} and satisfy our goal
+         \judgementtworewrite{}{\v{}}{\t{}}{\v{}}.
 \end{subcase}
   \item[]
 \begin{subcase}[B-BetaMulti]
