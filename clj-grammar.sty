@@ -2176,7 +2176,7 @@ then \judgementrewrite{}{\v{}}{\t{}}{\filterset{\thenprop{\propp{}}}{\elseprop{\
 
 \begin{proof}
   Corollary of lemma~\ref{#1:lemma:soundness}, since by lemma~\ref{#1:lemma:soundness}
-  when {\judgement {} {\e{}} {\t{}} {\filterset {\thenprop{\prop{}}}{\elseprop{\prop{}}}} {\object{}}}, 
+  when {\judgementrewrite {} {\ep{}} {\t{}} {\filterset {\thenprop{\prop{}}}{\elseprop{\prop{}}}} {\object{}}{\e{}}}, 
  either
     \opsem {} {\e{}} {\v{}} or
     \opsem {} {\e{}} {\errorvalv{}}, therefore \notopsem{}{\e{}}{\wrong{}}.
