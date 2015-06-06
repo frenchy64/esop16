@@ -152,16 +152,16 @@
 \begin{lemma} \label{appendix:lemma:soundness}
 {\soundnesslemmahypothesis}
 \begin{proof}
-By induction on the derivation of the typing judgement.
+By induction on the derivation of the operational semantics.
 
-\begin{case}[T-True]
-  \ep{} = \true,
-  \e{} = \true, \t{} = \True, \thenprop{\prop{}} = \topprop{}, \elseprop{\prop{}} = \botprop{}, \object{} = \emptyobject{}
+\begin{case}[B-Val]
 
   \begin{itemize}
     \item[] 
-      \begin{subcase}[B-Val]
-        \v{} = \true{}
+      \begin{subcase}[T-True]
+        \v{} = \true{},
+  \ep{} = \true,
+  \e{} = \true, \t{} = \True, \thenprop{\prop{}} = \topprop{}, \elseprop{\prop{}} = \botprop{}, \object{} = \emptyobject{}
 
         Proving part 1 is trivial: \object{} is \emptyobject. 
         To prove part 2, we note that \v{} = \true\ 
@@ -169,10 +169,8 @@ By induction on the derivation of the typing judgement.
         Part 3 holds as \e{} can only be reduced to itself via B-Val.
         Part 4 holds vacuously.
       \end{subcase}
-  \end{itemize}
-\end{case}
-
-\begin{case}[T-HMap] 
+    \item[]
+      \begin{subcase}[T-HMap] \v{} = {\curlymapvaloverright{\v{k}}{\v{v}}},
   \ep{} = {\curlymapvaloverright{\v{k}}{\v{v}}},
   \e{} = {\curlymapvaloverright{\v{k}}{\v{v}}},
   \t{} = {\HMapc {\mandatory{}}},
@@ -183,18 +181,12 @@ By induction on the derivation of the typing judgement.
   $\overrightarrow{\judgementtwo {} {\v{v}}{\t{v}}}$,
   \mandatory{} = \mandatorysetoverright{\k{}}{\t{v}}
 
-  \begin{itemize}
-    \item[]
-      \begin{subcase}[B-Val] \v{} = {\curlymapvaloverright{\v{k}}{\v{v}}}
-
         Similar to T-True.
 
         Part 4 holds by the induction hypothese on {\overr{\v{k}}} and {\overr{\v{v}}}.
       \end{subcase}
-  \end{itemize}
-\end{case}
-
-\begin{case}[T-Kw] 
+    \item[]
+      \begin{subcase}[T-Kw] \v{} = {\k{}},
   \ep{} = {\k{}},
   \e{} = {\k{}},
   \t{} = {\Value{\k{}}},
@@ -202,35 +194,22 @@ By induction on the derivation of the typing judgement.
   \elseprop{\prop{}} = {\botprop{}},
   \object{} = {\emptyobject{}}
 
-  \begin{itemize}
-    \item[]
-      \begin{subcase}[B-Val] \v{} = {\k{}}
-
         Similar to T-True.
       \end{subcase}
-  \end{itemize}
-\end{case}
-
-\begin{case}[T-False]
+  \item[] 
+    \begin{subcase}[T-False]
+      \v{} = \false{},
 \ep{} = \false, 
 \e{} = \false, 
 \t{} = \False, \thenprop{\prop{}} = \botprop{}, \elseprop{\prop{}} = \topprop{}, \object{} = \emptyobject{}
-
-\begin{itemize}
-  \item[] 
-    \begin{subcase}[B-Val]
-      \v{} = \false{}
 
 Proving part 1 is trivial: \object{} is \emptyobject. To prove part 2, we note that \v{} = \false\ 
 and \elseprop{\prop{}} = \topprop{}, so \satisfies{\openv{}}{\elseprop{\prop{}}} by M-Top. 
 Part 3 holds as \e{} can only be reduced to itself via B-Val.
 Part 4 holds vacuously.
 \end{subcase}
-
-\end{itemize}
-\end{case}
-
-\begin{case}[T-Class] 
+    \item[]
+      \begin{subcase}[T-Class] \v{} = {\class{}},
   \ep{} = {\class{}},
   \e{} = {\class{}},
   \t{} = {\Value{\class{}}},
@@ -238,16 +217,10 @@ Part 4 holds vacuously.
   \elseprop{\prop{}} = {\botprop{}},
   \object{} = {\emptyobject{}}
 
-  \begin{itemize}
-    \item[]
-      \begin{subcase}[B-Val] \v{} = {\class{}}
-
         Similar to T-True.
       \end{subcase}
-  \end{itemize}
-\end{case}
-
-\begin{case}[T-Instance] 
+    \item[]
+      \begin{subcase}[T-Instance] \v{} = {\classvalue{\classhint{}} {\overrightarrow {\classfieldpair{\fld{i}} {\v{i}}}}},
   \ep{} = {\classvalue{\classhint{}} {\overrightarrow {\classfieldpair{\fld{}} {\v{}}}}},
   \e{} = {\classvalue{\classhint{}} {\overrightarrow {\classfieldpair{\fld{}} {\v{}}}}},
   \t{} = {\class{}},
@@ -255,48 +228,39 @@ Part 4 holds vacuously.
   \elseprop{\prop{}} = {\botprop{}},
   \object{} = {\emptyobject{}}
 
-  \begin{itemize}
-    \item[]
-      \begin{subcase}[B-Val] \v{} = {\classvalue{\classhint{}} {\overrightarrow {\classfieldpair{\fld{i}} {\v{i}}}}}
-
         Similar to T-True.
 
         Part 4 holds by the induction hypotheses on ${\overrightarrow{\v{i}}}$.
       \end{subcase}
-  \end{itemize}
-\end{case}
-
-
-\begin{case}[T-Nil]
+  \item[] 
+    \begin{subcase}[T-Nil] 
+      \v{} = \nil{},
 \ep{} = \nil, 
 \e{} = \nil, 
 \t{} = \Nil, \thenprop{\prop{}} = \botprop{}, \elseprop{\prop{}} = \topprop{}, \object{} = \emptyobject{},
 
-\begin{itemize}
-  \item[] 
-    \begin{subcase}[B-Val] 
-      \v{} = \nil{}
-
       Similar to T-False.
 \end{subcase}
 
-\end{itemize}
 
+  \end{itemize}
 \end{case}
 
-\begin{case}[T-Local]
+
+
+\begin{case}[B-Local]
+{ \inopenv {\openv{}} {\x{}} {\v{}} },
+{ \opsem {\openv{}} {\x{}} {\v{}} }
+
+\begin{itemize}
+  \item[]
+\begin{subcase}[T-Local]
   \ep{} = \x{}, 
   \e{} = \x{}, 
   \thenprop{\prop{}} = {\notprop {\falsy{}} {\x{}}},
   \elseprop{\prop{}} = {\isprop {\falsy{}} {\x{}}},
 \object{} = \x{}, 
-\inpropenv{\propenv{}}{\isprop{\t{}}{\x{}}},
-
-\begin{itemize}
-  \item[]
-\begin{subcase}[B-Local]
-{ \inopenv {\openv{}} {\x{}} {\v{}} },
-{ \opsem {\openv{}} {\x{}} {\v{}} }
+\inpropenv{\propenv{}}{\isprop{\t{}}{\x{}}}
 
 Part 1 follows from \inopenv{\openv{}}{\x{}} {\v{}} by B-Local.
 
@@ -319,7 +283,12 @@ Part 4 holds vacuously.
 
 \end{case}
 
-\begin{case}[T-Do]
+\begin{case}[B-Do]
+  \opsem {\openv{}} {\e{1}} {\v{1}},
+  \opsem {\openv{}} {\e{2}} {\v{}}
+
+\begin{itemize}
+  \item[] \begin{subcase}[T-Do]
 \ep{} = {\doexp {\ep1} {\ep2}},
   \judgementrewrite {\propenv{}} 
              {\ep1} {\t1}
@@ -331,12 +300,7 @@ Part 4 holds vacuously.
            {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}} 
            {\object{}}
            {\e{}},
-\e{} = {\doexp {\e1} {\e2}},
-
-\begin{itemize}
-  \item[] \begin{subcase}[B-Do]
-  \opsem {\openv{}} {\e{1}} {\v{1}},
-  \opsem {\openv{}} {\e{2}} {\v{}}
+\e{} = {\doexp {\e1} {\e2}}
 
 For all parts we note 
     since {\e{1}} can be either a true or false value
@@ -366,26 +330,39 @@ to show if \v{} $\not=$ \false\ (or \nil) then
 
 Parts 3 and 4 follow from the induction hypothesis on \e{2}.
     \end{subcase}
-  \item[]
+\end{itemize}
+\end{case}
 
-\begin{subcase}[BE-Do1]
+\begin{case}[BE-Do1]
   \opsem {\openv{}} {\e{1}} {\errorval{\v{e}}},
   \opsem {\openv{}} {\e{}} {\errorval{\v{}}}
 
         Trivially reduces to an error.
-\end{subcase}
-  \item[]
-\begin{subcase}[BE-Do2]
+\end{case}
+
+\begin{case}[BE-Do2]
   \opsem {\openv{}} {\e{1}} {\v{1}},
   \opsem {\openv{}} {\e{2}} {\errorvalv{}},
   \opsem {\openv{}} {\e{}} {\errorvalv{}}
 
         As above.
-\end{subcase}
-\end{itemize}
 \end{case}
 
-\begin{case}[T-New]
+\begin{case}[B-New]
+  $
+  \overrightarrow{
+  \opsem {\openv{}}
+         {\e{i}}
+         {\v{i}}
+       }$,
+         $\newjava {\classhint{1}}
+                  {\overrightarrow{\classhint{i}}}
+                  {\overrightarrow{\v{i}}}
+                  {\v{}}$
+
+\begin{itemize}
+  \item[]
+\begin{subcase}[T-New]
   \ep{} = {\newexp {\class{}} {\overrightarrow{\ep{i}}}},
   \inct{\ctctorentry{\overr{\class{i}}}}{\ctlookupctors{\ct{}}{\classhint{}}},
   \overr{\javatotc{\classhint{i}}{\t{i}}},
@@ -402,20 +379,6 @@ Parts 3 and 4 follow from the induction hypothesis on \e{2}.
   \thenprop{\prop{}} = \topprop{},
   \elseprop{\prop{}} = \botprop{}
 
-\begin{itemize}
-  \item[]
-\begin{subcase}[B-New]
-  $
-  \overrightarrow{
-  \opsem {\openv{}}
-         {\e{i}}
-         {\v{i}}
-       }$,
-         $\newjava {\classhint{1}}
-                  {\overrightarrow{\classhint{i}}}
-                  {\overrightarrow{\v{i}}}
-                  {\v{}}$
-
 Part 1 follows \object{} = \emptyobject{}.
 
 Part 2 requires some explanation. The two false values in Typed Clojure
@@ -427,9 +390,21 @@ Part 3 holds as B-New reduces to a \emph{non-nilable}
 instance of \class{} via \newjavaliteral (by assumption~\ref{appendix:assumption:new}), and \javatotc{\classhint{}}{\t{}}.
 
 \end{subcase}
-  \item[]
+\item[]
+\begin{subcase}[T-NewStatic]
+  {\ep{}} = {\newstaticexp {\overrightarrow{\classhint{i}}} {\classhint{}}
+                                                          {\class{}} {\overrightarrow{\e{i}}}}
 
-\begin{subcase}[BE-New1] $\overrightarrow{
+  Non-reflective constructors cannot be written directly by the user, so we can assume
+  the class information attached to the syntax corresponds to an actual constructor by inversion
+  from T-New.
+
+  The rest of this case progresses like T-New.
+\end{subcase}
+\end{itemize}
+\end{case}
+
+\begin{case}[BE-New1] $\overrightarrow{
   \opsem {\openv{}}
          {\e{i-1}}
          {\v{i-1}}
@@ -441,10 +416,9 @@ instance of \class{} via \newjavaliteral (by assumption~\ref{appendix:assumption
 
         Trivially reduces to an error.
 
-\end{subcase}
-  \item[]
+\end{case}
 
-\begin{subcase}[BE-New2] 
+\begin{case}[BE-New2] 
   $\overrightarrow{
   \opsem {\openv{}}
          {\e{i}}
@@ -458,22 +432,16 @@ instance of \class{} via \newjavaliteral (by assumption~\ref{appendix:assumption
 
         As above.
 
-\end{subcase}
-\end{itemize}
 \end{case}
 
-\begin{case}[T-NewStatic]
-  {\ep{}} = {\newstaticexp {\overrightarrow{\classhint{i}}} {\classhint{}}
-                                                          {\class{}} {\overrightarrow{\e{i}}}}
+\begin{case}[B-Field]
+  \opsem {\openv{}}
+         {\e{1}} 
+         {\classvalue{\classhint{1}} {\classfieldpair{\fld{}} {\v{}}}}
 
-  Non-reflective constructors cannot be written directly by the user, so we can assume
-  the class information attached to the syntax corresponds to an actual constructor by inversion
-  from T-New.
-
-  The rest of this case progresses like T-New.
-\end{case}
-
-\begin{case}[T-Field]
+\begin{itemize}
+  \item[]
+\begin{subcase}[T-Field]
   \ep{} = {\fieldexp {\fld{}} {\ep{1}}},
   \judgementtworewrite {\propenv{}} {\ep{}} {\s{}} {\e{}},
   \issubtypein{}{\s{}}{\Object{}},
@@ -484,13 +452,6 @@ instance of \class{} via \newjavaliteral (by assumption~\ref{appendix:assumption
   \thenprop{\prop{}} = {\topprop{}},
   \elseprop{\prop{}} = {\topprop{}},
   \object{} = {\emptyobject{}}
-
-\begin{itemize}
-  \item[]
-\begin{subcase}[B-Field]
-  \opsem {\openv{}}
-         {\e{1}} 
-         {\classvalue{\classhint{1}} {\classfieldpair{\fld{}} {\v{}}}}
 
 
 Part 1 is trivial as \object{} is always \emptyobject{}.
@@ -506,7 +467,21 @@ Notice \issubtypein{}{\s{}}{\Object{}} is required to guard from dereferencing \
 as {\classhint{1}} erases occurrences of \Nil{} in \s{} via  \tctojava{\s{}}{\classhint{1}}.
 \end{subcase}
   \item[]
-\begin{subcase}[BE-Field]
+
+\begin{subcase}[T-FieldStatic]
+  {\ep{}} = {\fieldstaticexp {\classhint{1}} {\classhint{2}} {\fld{}} {\e{1}}}
+
+  Non-reflective field lookups cannot be written directly by the user, so we can assume
+  the class information attached to the syntax corresponds to an actual field by inversion
+  from T-Field.
+
+  The rest of this case progresses like T-Field.
+\end{subcase}
+
+\end{itemize}
+\end{case}
+
+\begin{case}[BE-Field]
   \opsem {\openv{}}
          {\e{1}} 
          {\errorvalv{}},
@@ -516,22 +491,24 @@ as {\classhint{1}} erases occurrences of \Nil{} in \s{} via  \tctojava{\s{}}{\cl
 
          Trivially reduces to an error.
 
-\end{subcase}
-
-\end{itemize}
 \end{case}
 
-\begin{case}[T-FieldStatic]
-  {\ep{}} = {\fieldstaticexp {\classhint{1}} {\classhint{2}} {\fld{}} {\e{1}}}
+\begin{case}[B-Method]
+  \opsem {\openv{}}
+         {\e{m}}
+         {\v{m}},
+  $\overrightarrow{
+  \opsem {\openv{}}
+         {\e{a}}
+         {\v{a}}}$,
+  \invokejavamethod {\classhint{1}} {\v{m}} {mth}
+                    {\overrightarrow{\classhint{a}}} {\overrightarrow{\v{a}}}
+                    {\classhint{2}}
+                    {\v{}}
 
-  Non-reflective field lookups cannot be written directly by the user, so we can assume
-  the class information attached to the syntax corresponds to an actual field by inversion
-  from T-Field.
-
-  The rest of this case progresses like T-Field.
-\end{case}
-
-\begin{case}[T-Method]
+\begin{itemize}
+  \item[]
+\begin{subcase}[T-Method]
   \judgementtworewrite {\propenv{}} {\ep{}} {\s{}} {\e{}},
              \issubtypein{}{\s{}}{\Object{}},
   \tctojava{\s{}}{\classhint{1}},
@@ -547,21 +524,6 @@ as {\classhint{1}} erases occurrences of \Nil{} in \s{} via  \tctojava{\s{}}{\cl
                           {\mth{}} {\e{m}} {\overr{\e{a}}}},
   \thenprop{\prop{}} = \topprop{}, \elseprop{\prop{}} = \topprop{}, \object{} = \emptyobject{}
 
-\begin{itemize}
-  \item[]
-\begin{subcase}[B-Method]
-  \opsem {\openv{}}
-         {\e{m}}
-         {\v{m}},
-  $\overrightarrow{
-  \opsem {\openv{}}
-         {\e{a}}
-         {\v{a}}}$,
-  \invokejavamethod {\classhint{1}} {\v{m}} {mth}
-                    {\overrightarrow{\classhint{a}}} {\overrightarrow{\v{a}}}
-                    {\classhint{2}}
-                    {\v{}}
-
 
 Part 1 is trivial as \object{} is always \emptyobject{}.
 
@@ -575,9 +537,27 @@ and \javatotcnil{\classhint{2}} {\t{}}.
 Notice \issubtypein{}{\s{}}{\Object{}} is required to guard from dereferencing \nil{},
 as {\classhint{1}} erases occurrences of \Nil{} in \s{} via  \tctojava{\s{}}{\classhint{1}}.
 \end{subcase}
+\item[]
+\begin{subcase}[T-MethodStatic]
+  \ep{} = 
+  {\methodstaticexp {\classhint{1}} 
+        {\overrightarrow {\classhint{i}}} 
+        {\classhint{2}}
+        {\mth{}} {\e{1}} {\overrightarrow{\e{i}}}}
 
-  \item[]
-\begin{subcase}[BE-Method1]
+  Non-reflective method invocations cannot be written directly by the user, so we can assume
+  the class information attached to the syntax corresponds to an actual method by inversion
+  from T-Method.
+
+  The rest of this case progresses like T-Method.
+\end{subcase}
+
+
+\end{itemize}
+
+\end{case}
+
+\begin{case}[BE-Method1]
   \opsem {\openv{}}
          {\e{m}}
          {\errorval{\v{}}},
@@ -586,9 +566,8 @@ as {\classhint{1}} erases occurrences of \Nil{} in \s{} via  \tctojava{\s{}}{\cl
          {\errorval{\v{}}}
 
          Trivially reduces to an error.
-\end{subcase}
-  \item[]
-\begin{subcase}[BE-Method2]
+\end{case}
+\begin{case}[BE-Method2]
   \opsem {\openv{}}
          {\e{m}}
          {\v{m}},
@@ -605,9 +584,8 @@ as {\classhint{1}} erases occurrences of \Nil{} in \s{} via  \tctojava{\s{}}{\cl
          {\errorval{\v{}}}
 
   As above.
-\end{subcase}
-  \item[]
-\begin{subcase}[BE-Method3]
+\end{case}
+\begin{case}[BE-Method3]
   \opsem {\openv{}}
          {\e{m}}
          {\v{m}},
@@ -624,26 +602,17 @@ as {\classhint{1}} erases occurrences of \Nil{} in \s{} via  \tctojava{\s{}}{\cl
 
   As above.
 
-\end{subcase}
-\end{itemize}
-
 \end{case}
 
-\begin{case}[T-MethodStatic]
-  \ep{} = 
-  {\methodstaticexp {\classhint{1}} 
-        {\overrightarrow {\classhint{i}}} 
-        {\classhint{2}}
-        {\mth{}} {\e{1}} {\overrightarrow{\e{i}}}}
+\begin{case}[B-DefMulti]
+  \v{} = {\multi {\v{d}} {\emptydisptable}},
+  \opsem {\openv{}} {\e{d}} {\v{d}}
 
-  Non-reflective method invocations cannot be written directly by the user, so we can assume
-  the class information attached to the syntax corresponds to an actual method by inversion
-  from T-Method.
 
-  The rest of this case progresses like T-Method.
-\end{case}
 
-\begin{case}[T-DefMulti]
+\begin{itemize}
+  \item[]
+\begin{subcase}[T-DefMulti]
   \ep{} = {\createmultiexp {\s{}} {\ep{d}}},
   \s{} = {\ArrowOne {\x{}} {\t{1}} {\t{2}}
                           {\filterset {\thenprop {\prop{1}}}
@@ -661,33 +630,54 @@ as {\classhint{1}} erases occurrences of \Nil{} in \s{} via  \tctojava{\s{}}{\cl
   \object{} = {\emptyobject{}}
 
 
-\begin{itemize}
-  \item[]
-\begin{subcase}[B-DefMulti]
-  \v{} = {\multi {\v{d}} {\emptydisptable}},
-  \opsem {\openv{}} {\e{d}} {\v{d}}
-
-
 Part 1 and 2 hold for the same reasons as T-True.
 For part 3 we show \judgementtwo{}{\multi {\v{d}} {\emptydisptable}}{\MultiFntype {\s{}} {\t{d}}}
 by T-Multi, since \judgementtwo {} {\v{d}} {\t{d}} by the inductive hypothesis on {\e{d}}
 and {\emptydisptable} vacuously satisfies the other premises of T-Multi, so we are done.
 
 \end{subcase}
-  \item[]
-\begin{subcase}[BE-DefMulti] \opsem {\openv{}} {\e{d}} {\errorvalv{}},
+\end{itemize}
+\end{case}
+
+\begin{case}[BE-DefMulti] \opsem {\openv{}} {\e{d}} {\errorvalv{}},
         \opsem {\openv{}} {\e{}} {\errorvalv{}}
 
         Trivially reduces to an error.
 
-\end{subcase}
-\end{itemize}
 \end{case}
 
-\begin{case}[T-DefMethod]
+\begin{case}[B-DefMethod]
+
         \ 
 
         \begin{enumerate}
+          \item
+       \v{} = {\multi {\v{d}} {\disptablep{}}},
+          \item
+        \opsem {\openv{}}
+               {\e{m}}
+               {\multi {\v{d}} {\disptable{}}},
+          \item
+  \opsem {\openv{}}
+         {\e{v}}
+         {\v{v}},
+          \item
+  \opsem {\openv{}}
+         {\e{f}}
+         {\v{f}},
+          \item
+         \disptablep{} = {\extenddisptable {\disptable{}} 
+                                {\v{v}}
+                                {\v{f}}}
+        \end{enumerate}
+
+  \begin{itemize}
+    \item[]
+      \begin{subcase}[T-DefMethod]
+        \ 
+        
+        \begin{enumerate}[resume]
+
           \item
   \ep{} = {\extendmultiexp {\ep{m}} {\ep{v}} {\ep{f}}},
           \item
@@ -731,32 +721,6 @@ and {\emptydisptable} vacuously satisfies the other premises of T-Multi, so we a
   \object{} = {\emptyobject{}},
         \end{enumerate}
 
-  \begin{itemize}
-    \item[]
-      \begin{subcase}[B-DefMethod]
-        \ 
-        
-        \begin{enumerate}[resume]
-          \item
-       \v{} = {\multi {\v{d}} {\disptablep{}}},
-          \item
-        \opsem {\openv{}}
-               {\e{m}}
-               {\multi {\v{d}} {\disptable{}}},
-          \item
-  \opsem {\openv{}}
-         {\e{v}}
-         {\v{v}},
-          \item
-  \opsem {\openv{}}
-         {\e{f}}
-         {\v{f}},
-          \item
-         \disptablep{} = {\extenddisptable {\disptable{}} 
-                                {\v{v}}
-                                {\v{f}}}
-        \end{enumerate}
-
                                 Part 1 and 2 hold for the same reasons as T-True, noting that the propositions
                                 and object agree with T-Multi.
 
@@ -771,8 +735,10 @@ by noting \judgementtwo {} {\v{d}} {\t{d}},
 
       \end{subcase}
 
-    \item[]
-      \begin{subcase}[BE-DefMethod1]
+  \end{itemize}
+\end{case}
+
+      \begin{case}[BE-DefMethod1]
         \opsem {\openv{}}
                {\e{m}}
                {\errorval{\v{}}},
@@ -782,9 +748,8 @@ by noting \judgementtwo {} {\v{d}} {\t{d}},
 
                 Trivially reduces to an error.
 
-      \end{subcase}
-    \item[]
-      \begin{subcase}[BE-DefMethod2]
+      \end{case}
+      \begin{case}[BE-DefMethod2]
         \opsem {\openv{}}
          {\e{m}}
          {\multi {\v{d}} {\disptable{}}},
@@ -795,10 +760,9 @@ by noting \judgementtwo {} {\v{d}} {\t{d}},
                   {\e{}}
                 {\errorval{\v{}}}
 
-                As above.
-      \end{subcase}
-    \item[]
-      \begin{subcase}[BE-DefMethod3]
+                Trivially reduces to an error.
+      \end{case}
+      \begin{case}[BE-DefMethod3]
         \opsem {\openv{}}
          {\e{m}}
          {\multi {\v{d}} {\disptable{}}},
@@ -812,14 +776,35 @@ by noting \judgementtwo {} {\v{d}} {\t{d}},
                   {\e{}}
                 {\errorval{\v{}}}
 
-                As above.
+                Trivially reduces to an error.
 
-      \end{subcase}
-  \end{itemize}
-\end{case}
+      \end{case}
 
       %TODO
-\begin{case}[T-App]
+\begin{case}[B-BetaClosure]
+  \ 
+
+  \begin{itemize}
+    \item
+  \opsem{\openv{}}{\e{}}{\v{}},
+    \item
+  \opsem {\openv{}}
+         {\e{1}}
+         {\closure {\openv{c}} {\abs {\x{}} {\s{}} {\e{b}}}},
+    \item
+  \opsem {\openv{}}
+         {\e{2}}
+         {\v{2}},
+    \item
+  \opsem {\extendopenv {\openv{c}} {\x{}} {\v{2}}}
+         {\e{b}}
+         {\v{}}
+     \end{itemize}
+
+
+\begin{itemize}
+  \item[]
+\begin{subcase}[T-App]
   \ 
 
   \begin{itemize}
@@ -863,77 +848,6 @@ by noting \judgementtwo {} {\v{d}} {\t{d}},
                            {\object{2}}
                            {\x{}}},
   \end{itemize}
-%                 IHe1 = $\forall{\openv{1}},
-%                               {\v{1}},
-%                               {\thenprop {\prop{1}}},
-%                               {\elseprop {\prop{1}}},
-%                               {\object{1}}.
-%                               {\judgement
-%                                 {\propenv{}}
-%                                 {\hastype
-%                                   {\e{1}}
-%                                   {\ArrowOne {\x{}} {\s{}}
-%                                     {\t{f}}
-%                                     {\filterset 
-%                                       {\thenprop {\prop{f}}}
-%                                       {\elseprop {\prop{f}}}}
-%                                     {\object{f}}}}
-%                                {\filterset {\thenprop {\prop{1}}}
-%                                            {\elseprop {\prop{1}}}}
-%                                {\object{1}}}
-%\Rightarrow
-%                                                       {\satisfies{\openv{1}}{\propenv{}}}
-%                                                       \Rightarrow
-%  \opsem {\openv{}}
-%         {\e{1}}
-%         {\v{1}}
-%         \Rightarrow
-%         (1: \object{1} = \emptyobject{} \vee \inopenv{\openv{1}}{\object{1}}{\v{1}})
-%         \wedge
-%       (2: (\v{1} \not= \false\ (or\ \nil) \wedge \satisfies{\openv{1}}{\thenprop{\prop{1}}})
-%          \vee
-%            (\v{1} = \false\ (or\ \nil) \wedge \satisfies{\openv{1}}{\elseprop{\prop{1}}}))
-%            \wedge
-%          (3: \exists {\thenprop{\propp{1}}},{\elseprop{\propp{1}}},{\objectp{1}}.
-%          \judgement{}{\hastype{\v{1}}{\ArrowOne {\x{}} {\s{}}
-%                                     {\t{f}}
-%                                     {\filterset 
-%                                       {\thenprop {\prop{f}}}
-%                                       {\elseprop {\prop{f}}}}
-%                                   {\object{f}}}}
-%                        {\filterset{\thenprop{\propp{1}}}{\elseprop{\propp{1}}}}
-%                      {\objectp{1}})
-%                                                       $
-
-
-
-
-
-
-
-
-
-\begin{itemize}
-  \item[]
-\begin{subcase}[B-BetaClosure]
-  \ 
-
-  \begin{itemize}
-    \item
-  \opsem{\openv{}}{\e{}}{\v{}},
-    \item
-  \opsem {\openv{}}
-         {\e{1}}
-         {\closure {\openv{c}} {\abs {\x{}} {\s{}} {\e{b}}}},
-    \item
-  \opsem {\openv{}}
-         {\e{2}}
-         {\v{2}},
-    \item
-  \opsem {\extendopenv {\openv{c}} {\x{}} {\v{2}}}
-         {\e{b}}
-         {\v{}}
-     \end{itemize}
 
          By inversion on \e{1} from T-Clos
          there is some environment {\propenvc{}} such that
@@ -960,7 +874,6 @@ by noting \judgementtwo {} {\v{d}} {\t{d}},
                {\object{f}}
                {\e{b}}}.
          \end{itemize}
-
 
 %         To prove part 1, we consider cases on the form of \object{f}:
 %
