@@ -469,7 +469,7 @@
 \newcommand\javatotcliteral[0]{\ma{\metafnfont{JT}}}
 \newcommand\javatotcnilliteral[0]{\ma{\javatotcliteral_{\nil{}}}}
 \newcommand\javatotcexp[1]{\javatotcliteral\ma{(#1)}}
-\newcommand\javatotc[2]{\javatotcliteral\ma{(#1)}\ =\ #2}
+\newcommand\javatotc[2]{\javatotcexp{#1}\ =\ #2}
 \newcommand\javatotcnilexp[1]{\ma{\javatotcnilliteral\ma{(#1)}}}
 \newcommand\javatotcnil[2]{\ma{\javatotcnilliteral\ma{(#1)}\ =\ #2}}
 \newcommand\javatotcalign[2]{\javatotcliteral\ma{(#1)}\ &=&\ #2}

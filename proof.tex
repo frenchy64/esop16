@@ -152,7 +152,15 @@
 \begin{lemma} \label{appendix:lemma:soundness}
 {\soundnesslemmahypothesis}
 \begin{proof}
-By induction on the derivation of the operational semantics.
+By induction and cases on the derivation of \opsem {\openv{}} {\e{}} {\a{}},
+and subcases on the penultimate rule of the derivation of
+\judgementrewrite{\propenv{}}{\ep{}}{\t{}}{\filterset{\thenprop{\prop{}}}{\elseprop{\prop{}}}}{\object{}}{\e{}}
+followed by T-Subsume as the final rule.
+
+% induction on the derivation of the evaluation semantics because we want to apply
+% the induction hypothesis to subderivations of the eval sem. If eg. used the typing
+% judgement, we couldn't use the induction hypothesis on applications of higher-order
+% functions, since the subderivation of T-Abs wouldn't be present.
 
 \begin{case}[B-Val]
 
@@ -160,23 +168,28 @@ By induction on the derivation of the operational semantics.
     \item[] 
       \begin{subcase}[T-True]
         \v{} = \true{},
-  \ep{} = \true,
-  \e{} = \true, \t{} = \True, \thenprop{\prop{}} = \topprop{}, \elseprop{\prop{}} = \botprop{}, \object{} = \emptyobject{}
+  \ep{} = \true{},
+  \e{} = \true{}, \issubtypein{}{\True}{\t{}}, \inpropenv{\topprop{}}{\thenprop{\prop{}}}, 
+  \inpropenv{\botprop{}}{\elseprop{\prop{}}}, \issubtypein{}{\emptyobject{}}{\object{}}
 
-        Proving part 1 is trivial: \object{} is \emptyobject. 
-        To prove part 2, we note that \v{} = \true\ 
-        and \thenprop{\prop{}} = \topprop{}, so \satisfies{\openv{}}{\thenprop{\prop{}}} by M-Top.
+        Proving part 1 is trivial: \object{} is a superobject of \emptyobject{}, which can only be \emptyobject{}.
+
+        To prove part 2, we note that \v{} = \true{}
+        and \inpropenv{\topprop{}}{\thenprop{\prop{}}},
+        so \satisfies{\openv{}}{\thenprop{\prop{}}} by M-Top.
+
         Part 3 holds as \e{} can only be reduced to itself via B-Val.
+
         Part 4 holds vacuously.
       \end{subcase}
     \item[]
       \begin{subcase}[T-HMap] \v{} = {\curlymapvaloverright{\v{k}}{\v{v}}},
   \ep{} = {\curlymapvaloverright{\v{k}}{\v{v}}},
   \e{} = {\curlymapvaloverright{\v{k}}{\v{v}}},
-  \t{} = {\HMapc {\mandatory{}}},
-  \thenprop{\prop{}} = {\topprop{}},
-  \elseprop{\prop{}} = {\botprop{}},
-  \object{} = {\emptyobject{}},
+  \issubtypein{}{\HMapc {\mandatory{}}}{\t{}},
+  \inpropenv{\topprop{}}{\thenprop{\prop{}}},
+  \inpropenv{\botprop{}}{\elseprop{\prop{}}},
+  \issubtypein{}{\emptyobject{}}{\object{}},
   $\overrightarrow{\judgementtwo {} {\v{k}}{\Value \k{}}}$,
   $\overrightarrow{\judgementtwo {} {\v{v}}{\t{v}}}$,
   \mandatory{} = \mandatorysetoverright{\k{}}{\t{v}}
@@ -189,10 +202,10 @@ By induction on the derivation of the operational semantics.
       \begin{subcase}[T-Kw] \v{} = {\k{}},
   \ep{} = {\k{}},
   \e{} = {\k{}},
-  \t{} = {\Value{\k{}}},
-  \thenprop{\prop{}} = {\topprop{}},
-  \elseprop{\prop{}} = {\botprop{}},
-  \object{} = {\emptyobject{}}
+  \issubtypein{}{\Value{\k{}}}{\t{}},
+  \inpropenv{\topprop{}}{\thenprop{\prop{}}},
+  \inpropenv{\botprop{}}{\elseprop{\prop{}}},
+  \issubtypein{}{\emptyobject{}}{\object{}}
 
         Similar to T-True.
       \end{subcase}
@@ -201,21 +214,28 @@ By induction on the derivation of the operational semantics.
       \v{} = \false{},
 \ep{} = \false, 
 \e{} = \false, 
-\t{} = \False, \thenprop{\prop{}} = \botprop{}, \elseprop{\prop{}} = \topprop{}, \object{} = \emptyobject{}
+\issubtypein{}{\False}{\t{}},
+\inpropenv{\botprop{}}{\thenprop{\prop{}}},
+\inpropenv{\topprop{}}{\elseprop{\prop{}}},
+\issubtypein{}{\emptyobject{}}{\object{}}
 
-Proving part 1 is trivial: \object{} is \emptyobject. To prove part 2, we note that \v{} = \false\ 
-and \elseprop{\prop{}} = \topprop{}, so \satisfies{\openv{}}{\elseprop{\prop{}}} by M-Top. 
+Proving part 1 is trivial: \object{} is a superobject of \emptyobject{}, which must be \emptyobject{}. 
+
+To prove part 2, we note that \v{} = \false{}
+and \inpropenv{\topprop{}}{\elseprop{\prop{}}}, so \satisfies{\openv{}}{\elseprop{\prop{}}} by M-Top. 
+
 Part 3 holds as \e{} can only be reduced to itself via B-Val.
+
 Part 4 holds vacuously.
 \end{subcase}
     \item[]
       \begin{subcase}[T-Class] \v{} = {\class{}},
   \ep{} = {\class{}},
   \e{} = {\class{}},
-  \t{} = {\Value{\class{}}},
-  \thenprop{\prop{}} = {\topprop{}},
-  \elseprop{\prop{}} = {\botprop{}},
-  \object{} = {\emptyobject{}}
+  \issubtypein{}{\Value{\class{}}}{\t{}},
+  \inpropenv{\topprop{}}{\thenprop{\prop{}}},
+  \inpropenv{\botprop{}}{\elseprop{\prop{}}},
+  \issubtypein{}{\emptyobject{}}{\object{}}
 
         Similar to T-True.
       \end{subcase}
@@ -223,10 +243,11 @@ Part 4 holds vacuously.
       \begin{subcase}[T-Instance] \v{} = {\classvalue{\classhint{}} {\overrightarrow {\classfieldpair{\fld{i}} {\v{i}}}}},
   \ep{} = {\classvalue{\classhint{}} {\overrightarrow {\classfieldpair{\fld{}} {\v{}}}}},
   \e{} = {\classvalue{\classhint{}} {\overrightarrow {\classfieldpair{\fld{}} {\v{}}}}},
-  \t{} = {\class{}},
-  \thenprop{\prop{}} = {\topprop{}},
-  \elseprop{\prop{}} = {\botprop{}},
-  \object{} = {\emptyobject{}}
+  \issubtypein{}{\class{}}{\t{}},
+  \inpropenv{\topprop{}}{\thenprop{\prop{}}},
+  \inpropenv{\botprop{}}{\elseprop{\prop{}}},
+  \issubtypein{}{\emptyobject{}}{\object{}}
+
 
         Similar to T-True.
 
@@ -237,7 +258,10 @@ Part 4 holds vacuously.
       \v{} = \nil{},
 \ep{} = \nil, 
 \e{} = \nil, 
-\t{} = \Nil, \thenprop{\prop{}} = \botprop{}, \elseprop{\prop{}} = \topprop{}, \object{} = \emptyobject{},
+\issubtypein{}{\Nil}{\t{}},
+\inpropenv{\botprop{}}{\thenprop{\prop{}}},
+\inpropenv{\topprop{}}{\elseprop{\prop{}}},
+\issubtypein{}{\emptyobject{}}{\object{}}
 
       Similar to T-False.
 \end{subcase}
@@ -249,20 +273,20 @@ Part 4 holds vacuously.
   \overr{\judgementtworewrite{}{\v{k}}{\Top{}}{\v{k}}},
   \overr{\judgementtworewrite{}{\v{v}}{\s{}}{\v{v}}},
   \e{} = {\multi {\v{1}} {\curlymapvaloverright{\v{k}}{\v{v}}}},
-  \t{} = {\MultiFntype {\s{}} {\t{1}}},
-  {\thenprop {\prop{}}} = {\topprop{}},
-  {\elseprop{\prop{}}} = {\botprop{}},
-  {\object{}} = {\emptyobject{}},
+  \issubtypein{}{\MultiFntype {\s{}} {\t{1}}}{\t{}},
+  \inpropenv{\topprop{}}{\thenprop{\prop{}}},
+  \inpropenv{\botprop{}}{\elseprop{\prop{}}},
+  \issubtypein{}{\emptyobject{}}{\object{}}
 
         Similar to T-True.
 \end{subcase}
 \item[]
 \begin{subcase}[T-Const]
   \e{} = {\const{}},
-  \t{} = {\constanttype{\const{}}},
-{\thenprop{\prop{}}} = {\topprop{}},
-{\elseprop{\prop{}}} = {\botprop{}},
-{\object{}} = {\emptyobject{}}
+  \issubtypein{}{\constanttype{\const{}}}{\t{}},
+  \inpropenv{\topprop{}}{\thenprop{\prop{}}},
+  \inpropenv{\botprop{}}{\elseprop{\prop{}}},
+  \issubobjin{}{\emptyobject{}}{\object{}}
 
         Parts 1, 2 and 3 hold for the same reasons as T-True. 
 \end{subcase}
@@ -282,25 +306,26 @@ Part 4 holds vacuously.
 \begin{subcase}[T-Local]
   \ep{} = \x{}, 
   \e{} = \x{}, 
-  \thenprop{\prop{}} = {\notprop {\falsy{}} {\x{}}},
-  \elseprop{\prop{}} = {\isprop {\falsy{}} {\x{}}},
-\object{} = \x{}, 
+  \inpropenv{\notprop {\falsy{}} {\x{}}}{\thenprop{\prop{}}},
+  \inpropenv{\isprop {\falsy{}} {\x{}}}{\elseprop{\prop{}}},
+\issubtypein{}{\x{}}{\object{}},
 \inpropenv{\propenv{}}{\isprop{\t{}}{\x{}}}
 
-Part 1 follows from \inopenv{\openv{}}{\x{}} {\v{}} by B-Local.
+Part 1 follows from \inopenv{\openv{}}{\object{}} {\v{}}, since either {\object{}} = \x{}
+and \inopenv{\openv{}}{\x{}} {\v{}} is a premise of B-Local, or {\object{}} = {\emptyobject{}} which also
+satisfies the goal.
 
-Part 2 considers two cases: if \v{} is not \false\ or \nil, then 
-\satisfies{\openv{}}{\notprop{\falsy}{\x{}}} holds by M-NotType; if \v{} is \false\ or \nil, then 
+Part 2 considers two cases: if \istrueval{\v{}}, then 
+\satisfies{\openv{}}{\notprop{\falsy}{\x{}}} holds by M-NotType; if \isfalseval{\v{}}, then 
 \satisfies{\openv{}}{\isprop{\falsy}{\x{}}} holds by M-Type.
 
 We prove part 3 by observing
-\inpropenv{\propenv{}}{\isprop{\t{}}{\x{}}}
-and
+\inpropenv{\propenv{}}{\isprop{\t{}}{\x{}}},
 \satisfies{\openv{}}{\propenv{}},
-so
-{ \inopenv {\openv{}} {\x{}} {\v{}} }
-by B-Local
-gives us the desired result.
+and
+\inopenv {\openv{}} {\x{}} {\v{}}
+(by B-Local)
+which gives us the desired result.
 
 Part 4 holds vacuously.
 \end{subcase}
@@ -347,10 +372,10 @@ or \inopenv {\openv{}} {\object{}} {\v{}}, since \e{} always
 evaluates to the result of \e{2}.
 
 For part 2 we use the induction hypothesis on \e{2}
-to show if \v{} $\not=$ \false\ (or \nil) then
+to show if \istrueval{\v{}} then
         {\satisfies{\openv{}}{\thenprop{\prop{}}}}
         or
-  if \v{} = \false\ (or \nil) then
+  if \isfalseval{\v{}} then
         {\satisfies{\openv{}}{\elseprop{\prop{}}}}.
 
 Parts 3 and 4 follow from the induction hypothesis on \e{2}.
@@ -398,11 +423,10 @@ Parts 3 and 4 follow from the induction hypothesis on \e{2}.
                   },
   \e{} = {\newstaticexp {\overrightarrow{\classhint{i}}} {\classhint{}} 
                                                           {\class{}} {\overrightarrow{\e{i}}}},
-  \javatotc {\classhint{}}
-            {\t{}},
-  \object{} = \emptyobject{},
-  \thenprop{\prop{}} = \topprop{},
-  \elseprop{\prop{}} = \botprop{}
+  \issubtypein{}{\javatotcexp{\classhint{}}}{\t{}},
+  \inpropenv{\topprop{}}{\thenprop{\prop{}}},
+  \inpropenv{\botprop{}}{\elseprop{\prop{}}},
+  \issubobjin{}{\emptyobject{}}{\object{}}
 
 Part 1 follows \object{} = \emptyobject{}.
 
@@ -412,7 +436,8 @@ where \thenprop{\prop{}} = \topprop{} so \satisfies{\openv{}}{\thenprop{\prop{}}
 \Void{} also lacks a constructor.
 
 Part 3 holds as B-New reduces to a \emph{non-nilable}
-instance of \class{} via \newjavaliteral (by assumption~\ref{appendix:assumption:new}), and \javatotc{\classhint{}}{\t{}}.
+instance of \class{} via \newjavaliteral (by assumption~\ref{appendix:assumption:new}), 
+and {\t{}} is a supertype of \javatotcexp{\classhint{}}.
 
 \end{subcase}
 \item[]
@@ -472,11 +497,11 @@ instance of \class{} via \newjavaliteral (by assumption~\ref{appendix:assumption
   \issubtypein{}{\s{}}{\Object{}},
   \tctojava{\s{}}{\classhint{1}},
   \inct{\ctfldentry{\fld{}}{\classhint{2}}}{\ctlookupfields{\ct{}}{\classhint{1}}},
-  \javatotcnil{\classhint{2}}{\t{}},
   \e{} = {\fieldstaticexp {\classhint{1}} {\classhint{2}} {\fld{}} {\e{1}}}
-  \thenprop{\prop{}} = {\topprop{}},
-  \elseprop{\prop{}} = {\topprop{}},
-  \object{} = {\emptyobject{}}
+  \issubtypein{}{\javatotcnilexp{\classhint{2}}}{\t{}},
+  \inpropenv{\topprop{}}{\thenprop{\prop{}}},
+  \inpropenv{\topprop{}}{\elseprop{\prop{}}},
+  \issubobjin{}{\emptyobject{}}{\object{}}
 
 
 Part 1 is trivial as \object{} is always \emptyobject{}.
@@ -487,7 +512,7 @@ are \topprop{}.
 
 Part 3 relies on the semantics of \getfieldliteral (assumption~\ref{appendix:assumption:field})
 in B-Field, which returns a \emph{nilable} instance of \classhint{2},
-and \javatotcnil{\classhint{2}} {\t{}}.
+and \t{} is a supertype of \javatotcnilexp{\classhint{2}}.
 Notice \issubtypein{}{\s{}}{\Object{}} is required to guard from dereferencing \nil{},
 as {\classhint{1}} erases occurrences of \Nil{} in \s{} via  \tctojava{\s{}}{\classhint{1}}.
 \end{subcase}
@@ -542,12 +567,14 @@ as {\classhint{1}} erases occurrences of \Nil{} in \s{} via  \tctojava{\s{}}{\cl
              \overr{
   \judgementtworewrite {\propenv{}} {\ep{i}} {\t{i}} {\e{i}}
                   },
-                  \javatotcnil{\classhint{2}}{\t{}},
   \e{} = {\methodstaticexp {\classhint{1}} 
                           {\overr {\classhint{i}}} 
                           {\classhint{2}}
                           {\mth{}} {\e{m}} {\overr{\e{a}}}},
-  \thenprop{\prop{}} = \topprop{}, \elseprop{\prop{}} = \topprop{}, \object{} = \emptyobject{}
+                        \issubtypein{}{\javatotcnilexp{\classhint{2}}}{\t{}},
+  \inpropenv{\topprop{}}{\thenprop{\prop{}}},
+  \inpropenv{\topprop{}}{\elseprop{\prop{}}},
+  \issubobjin{}{\emptyobject{}}{\object{}}
 
 
 Part 1 is trivial as \object{} is always \emptyobject{}.
@@ -558,7 +585,7 @@ are \topprop{}.
 
 Part 3 relies on the semantics of \invokejavamethodliteral (assumption~\ref{appendix:assumption:method})
 in B-Method, which returns a \emph{nilable} instance of \classhint{2},
-and \javatotcnil{\classhint{2}} {\t{}}.
+and \t{} is a supertype of \javatotcnil{\classhint{2}}.
 Notice \issubtypein{}{\s{}}{\Object{}} is required to guard from dereferencing \nil{},
 as {\classhint{1}} erases occurrences of \Nil{} in \s{} via  \tctojava{\s{}}{\classhint{1}}.
 \end{subcase}
@@ -1260,11 +1287,11 @@ by noting \judgementtwo {} {\v{d}} {\t{d}},
 \begin{case}[B-BetaMulti]
   \ 
 
-  \begin{enumerate}
+  \begin{itemize}
     \item
   \opsem {\openv{}}
          {\e{1}}
-         {\multi {\v{d}} {m}},
+         {\multi {\v{d}} {\disptable{}}},
     \item
   \opsem {\openv{}}
          {\e{2}}
@@ -1283,7 +1310,7 @@ by noting \judgementtwo {} {\v{d}} {\t{d}},
          {\appexp {\v{g}} {\v{2}}}
          {\v{}},
        \item {\disptable{}} = {\curlymapvaloverright{\v{k}}{\v{v}}}
-     \end{enumerate}
+     \end{itemize}
      \begin{itemize}
        \item[]
 \begin{subcase}[T-App]
@@ -1332,7 +1359,7 @@ by noting \judgementtwo {} {\v{d}} {\t{d}},
   \end{itemize}
 
      By inversion on \e{1} via T-Multi we know 
-     \begin{enumerate}[resume]
+     \begin{itemize}
        \item
          \judgement{\propenv{}}{\e{1}}{\MultiFntype{\s{t}}{\s{d}}}
                 {\filterset {\thenprop {\prop{1}}}
@@ -1358,27 +1385,31 @@ by noting \judgementtwo {} {\v{d}} {\t{d}},
   $\overrightarrow{\judgementtwo{}{\v{k}}{\Top{}}}$, and 
 \item
   $\overrightarrow{\judgementtwo{}{\v{v}}{\s{t}}}$.
-  \end{enumerate}
+  \end{itemize}
 
   By the inductive hypothesis on \e{2} we know 
-  \begin{enumerate}[resume]
+  \begin{itemize}
     \item \judgementtwo{\propenv{}}{\v{2}}{\s{}}, and
     \item \object{2} = \emptyobject{} or \inopenv{\openv{}}{\object{2}}{\v{2}}.
-  \end{enumerate}
+  \end{itemize}
 
   % TODO getmethod has changed to not include {\v{k}}. Need a lemma for the below.
   We know by the definition of \getmethodliteral that
-  \begin{enumerate}[resume]
+  \begin{itemize}
     \item $\{ \v{v} | {\roundpair{\v{k}}{\v{v}}} \in \disptable{} \text{ and } \isaopsem{\v{k}}{\v{e}} = {\true{}} \} = {\roundpair{\v{l}}{\v{g}}}$, so
     \item \isaopsem{\v{l}}{\v{e}} = {\true{}}
-  \end{enumerate}
+  \end{itemize}
 
   and because ${\v{g}} \in \{\overrightarrow{\v{v}}\}$
   that 
-  \begin{enumerate}[resume]
+  \begin{itemize}
     \item
   {\judgementtwo{}{\v{g}}{\s{t}}}.
-  \end{enumerate}
+  \end{itemize}
+
+  By inversion via B-DefMethod we can assume {\v{g}} = {\abs{\x{}}{\t{}}{\e{b}}}.
+
+  By inversion via B-BetaClosure we know {\v{}} = {\replacefor{\e{b}}{\v{2}}{\x{}}}.
 
 %  For part 1, we note
 %  \begin{enumerate}[resume]
@@ -1391,19 +1422,20 @@ by noting \judgementtwo {} {\v{d}} {\t{d}},
 We want to prove 
 \begin{itemize}
   \item
-{\judgementselfrewrite{\propenv{}}
-                          {\appexp {\v{g}} {\v{2}}}
+{\judgementrewrite{{\propenv{}},{\replacefor{\thenprop{\propp{}}}{\object{2}}{\x{}}}}
+  {\replacefor{\ep{b}}{\v{2}}{\x{}}}
                           {\replacefor{\t{f}}{\object{2}}{\x{}}}
                {\replacefor{\filterset {\thenprop {\prop{f}}}
                                        {\elseprop {\prop{f}}}}{\object{2}}{\x{}}}
-                          {\replacefor{\object{f}}{\object{2}}{\x{}}}},
+                          {\replacefor{\object{f}}{\object{2}}{\x{}}}
+                          {\replacefor{\e{b}}{\v{2}}{\x{}}}},
   \item
-              \satisfies{\openv{}}{\propenv{}},
+              \satisfies{\openv{}}{{\propenv{}},{\replacefor{\thenprop{\propp{}}}{\object{2}}{\x{}}}},
            \item
 \isconsistent{\openv{}},
            \item 
   \opsem {\openv{}}
-         {\appexp {\v{g}} {\v{2}}}
+  {\replacefor{\e{b}}{\v{2}}{\x{}}}
          {\v{}}.
 \end{itemize}
 \end{subcase}
@@ -1431,6 +1463,11 @@ We want to prove
   Reduces to an error.
 \end{case}
 \begin{case}[BE-BetaMulti2]
+  \ 
+
+  Reduces to an error.
+\end{case}
+\begin{case}[BE-Delta]
   \ 
 
   Reduces to an error.
