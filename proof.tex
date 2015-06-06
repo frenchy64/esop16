@@ -1079,112 +1079,6 @@ by noting \judgementtwo {} {\v{d}} {\t{d}},
 
 \end{subcase}
   \item[]
-\begin{subcase}[B-BetaMulti]
-  \ 
-
-  \begin{enumerate}
-    \item
-  \opsem {\openv{}}
-         {\e{1}}
-         {\multi {\v{d}} {m}},
-    \item
-  \opsem {\openv{}}
-         {\e{2}}
-         {\v{2}},
-    \item
-  \opsem {\openv{}}
-         {\appexp {\v{d}} {\v{2}}}
-         {\v{e}},
-    \item
-  \getmethod {\disptable{}}
-             {\v{e}}
-             {\v{l}}
-             {\v{g}},
-    \item
-  \opsem {\openv{}}
-         {\appexp {\v{g}} {\v{2}}}
-         {\v{}},
-       \item {\disptable{}} = {\curlymapvaloverright{\v{k}}{\v{v}}}
-     \end{enumerate}
-
-     By inversion on \e{1} via T-Multi we know 
-     \begin{enumerate}[resume]
-       \item
-         \judgement{\propenv{}}{\e{1}}{\MultiFntype{\s{t}}{\s{d}}}
-                {\filterset {\thenprop {\prop{1}}}
-                            {\elseprop {\prop{1}}}}
-                {\object{1}},
-           
-         \item \s{t} = {\ArrowOne {\x{}} {\s{}}
-                                                       {\t{f}}
-                                                       {\filterset {\thenprop {\prop{f}}}
-                                                                   {\elseprop {\prop{f}}}}
-                                                       {\object{f}}},
-         \item \s{d} = {\ArrowOne {\x{}} {\s{}}
-                                                       {\t{d}}
-                                                       {\filterset {\thenprop {\prop{d}}}
-                                                                   {\elseprop {\prop{d}}}}
-                                                       {\object{d}}},
-       \item
-         \judgement{}{\v{d}}{\s{d}}
-                {\filterset {\thenprop {\prop{3}}}
-                            {\elseprop {\prop{3}}}}
-                {\object{3}},
-              \item
-  $\overrightarrow{\judgementtwo{}{\v{k}}{\Top{}}}$, and 
-\item
-  $\overrightarrow{\judgementtwo{}{\v{v}}{\s{t}}}$.
-  \end{enumerate}
-
-  By the inductive hypothesis on \e{2} we know 
-  \begin{enumerate}[resume]
-    \item \judgementtwo{\propenv{}}{\v{2}}{\s{}}, and
-    \item \object{2} = \emptyobject{} or \inopenv{\openv{}}{\object{2}}{\v{2}}.
-  \end{enumerate}
-
-  % TODO getmethod has changed to not include {\v{k}}. Need a lemma for the below.
-  We know by the definition of \getmethodliteral that
-  \begin{enumerate}[resume]
-    \item $\{ \v{v} | {\roundpair{\v{k}}{\v{v}}} \in \disptable{} \text{ and } \isaopsem{\v{k}}{\v{e}} = {\true{}} \} = {\roundpair{\v{l}}{\v{g}}}$, so
-    \item \isaopsem{\v{l}}{\v{e}} = {\true{}}
-  \end{enumerate}
-
-  and because ${\v{g}} \in \{\overrightarrow{\v{v}}\}$
-  that 
-  \begin{enumerate}[resume]
-    \item
-  {\judgementtwo{}{\v{g}}{\s{t}}}.
-  \end{enumerate}
-
-%  For part 1, we note
-%  \begin{enumerate}[resume]
-%    \item
-%  \object{} = {\replacefor {\object{f}}
-%                           {\object{2}}
-%                           {\x{}}},
-%  \end{enumerate}
-
-We want to prove 
-\begin{itemize}
-  \item
-{\judgementselfrewrite{\propenv{}}
-                          {\appexp {\v{g}} {\v{2}}}
-                          {\replacefor{\t{f}}{\object{2}}{\x{}}}
-               {\replacefor{\filterset {\thenprop {\prop{f}}}
-                                       {\elseprop {\prop{f}}}}{\object{2}}{\x{}}}
-                          {\replacefor{\object{f}}{\object{2}}{\x{}}}},
-  \item
-              \satisfies{\openv{}}{\propenv{}},
-           \item
-\isconsistent{\openv{}},
-           \item 
-  \opsem {\openv{}}
-         {\appexp {\v{g}} {\v{2}}}
-         {\v{}}.
-\end{itemize}
-
-\end{subcase}
-  \item[]
 \begin{subcase}[B-Delta]
   \opsem {\openv{}} {\e{1}} {\const{}},
   \opsem {\openv{}} {\e{2}} {\v{2}},
@@ -1304,7 +1198,168 @@ We want to prove
 \end{itemize}
 \end{case}
 
-\begin{case}[T-IsA]
+\begin{case}[B-BetaMulti]
+  \ 
+
+  \begin{enumerate}
+    \item
+  \opsem {\openv{}}
+         {\e{1}}
+         {\multi {\v{d}} {m}},
+    \item
+  \opsem {\openv{}}
+         {\e{2}}
+         {\v{2}},
+    \item
+  \opsem {\openv{}}
+         {\appexp {\v{d}} {\v{2}}}
+         {\v{e}},
+    \item
+  \getmethod {\disptable{}}
+             {\v{e}}
+             {\v{l}}
+             {\v{g}},
+    \item
+  \opsem {\openv{}}
+         {\appexp {\v{g}} {\v{2}}}
+         {\v{}},
+       \item {\disptable{}} = {\curlymapvaloverright{\v{k}}{\v{v}}}
+     \end{enumerate}
+     \begin{itemize}
+       \item[]
+\begin{subcase}[T-App]
+  \ 
+
+  \begin{itemize}
+    \item
+  \ep{} = {\appexp {\ep{1}} {\ep{2}}},
+    \item
+  \judgementrewrite {\propenv{}} {\ep{1}} {\ArrowOne {\x{}} {\s{}}
+                                                       {\t{f}}
+                                                       {\filterset {\thenprop {\prop{f}}}
+                                                                   {\elseprop {\prop{f}}}}
+                                                       {\object{f}}}
+                {\filterset {\thenprop {\prop{1}}}
+                            {\elseprop {\prop{1}}}}
+                {\object{1}}
+                {\e{1}},
+    \item
+  \judgementrewrite {\propenv{}}
+                 {\ep{2}} {\s{}}
+                 {\filterset {\thenprop {\prop{2}}}
+                             {\elseprop {\prop{2}}}}
+                 {\object{2}}
+                 {\e{2}},
+    \item
+  \e{} = {\appexp {\e{1}} {\e{2}}},
+    \item
+  \t{} = {\replacefor {\t{f}}
+                      {\object{2}}
+                      {\x{}}},
+    \item
+  {\thenprop {\prop{}}} = 
+                 {\replacefor {\thenprop {\prop{f}}}
+                              {\object{2}}
+                              {\x{}}},
+    \item
+  {\elseprop {\prop{}}} = 
+                 {\replacefor {\elseprop {\prop{f}}}
+                              {\object{2}}
+                              {\x{}}},
+    \item
+  \object{} = {\replacefor {\object{f}}
+                           {\object{2}}
+                           {\x{}}},
+  \end{itemize}
+
+     By inversion on \e{1} via T-Multi we know 
+     \begin{enumerate}[resume]
+       \item
+         \judgement{\propenv{}}{\e{1}}{\MultiFntype{\s{t}}{\s{d}}}
+                {\filterset {\thenprop {\prop{1}}}
+                            {\elseprop {\prop{1}}}}
+                {\object{1}},
+           
+         \item \s{t} = {\ArrowOne {\x{}} {\s{}}
+                                                       {\t{f}}
+                                                       {\filterset {\thenprop {\prop{f}}}
+                                                                   {\elseprop {\prop{f}}}}
+                                                       {\object{f}}},
+         \item \s{d} = {\ArrowOne {\x{}} {\s{}}
+                                                       {\t{d}}
+                                                       {\filterset {\thenprop {\prop{d}}}
+                                                                   {\elseprop {\prop{d}}}}
+                                                       {\object{d}}},
+       \item
+         \judgement{}{\v{d}}{\s{d}}
+                {\filterset {\thenprop {\prop{3}}}
+                            {\elseprop {\prop{3}}}}
+                {\object{3}},
+              \item
+  $\overrightarrow{\judgementtwo{}{\v{k}}{\Top{}}}$, and 
+\item
+  $\overrightarrow{\judgementtwo{}{\v{v}}{\s{t}}}$.
+  \end{enumerate}
+
+  By the inductive hypothesis on \e{2} we know 
+  \begin{enumerate}[resume]
+    \item \judgementtwo{\propenv{}}{\v{2}}{\s{}}, and
+    \item \object{2} = \emptyobject{} or \inopenv{\openv{}}{\object{2}}{\v{2}}.
+  \end{enumerate}
+
+  % TODO getmethod has changed to not include {\v{k}}. Need a lemma for the below.
+  We know by the definition of \getmethodliteral that
+  \begin{enumerate}[resume]
+    \item $\{ \v{v} | {\roundpair{\v{k}}{\v{v}}} \in \disptable{} \text{ and } \isaopsem{\v{k}}{\v{e}} = {\true{}} \} = {\roundpair{\v{l}}{\v{g}}}$, so
+    \item \isaopsem{\v{l}}{\v{e}} = {\true{}}
+  \end{enumerate}
+
+  and because ${\v{g}} \in \{\overrightarrow{\v{v}}\}$
+  that 
+  \begin{enumerate}[resume]
+    \item
+  {\judgementtwo{}{\v{g}}{\s{t}}}.
+  \end{enumerate}
+
+%  For part 1, we note
+%  \begin{enumerate}[resume]
+%    \item
+%  \object{} = {\replacefor {\object{f}}
+%                           {\object{2}}
+%                           {\x{}}},
+%  \end{enumerate}
+
+We want to prove 
+\begin{itemize}
+  \item
+{\judgementselfrewrite{\propenv{}}
+                          {\appexp {\v{g}} {\v{2}}}
+                          {\replacefor{\t{f}}{\object{2}}{\x{}}}
+               {\replacefor{\filterset {\thenprop {\prop{f}}}
+                                       {\elseprop {\prop{f}}}}{\object{2}}{\x{}}}
+                          {\replacefor{\object{f}}{\object{2}}{\x{}}}},
+  \item
+              \satisfies{\openv{}}{\propenv{}},
+           \item
+\isconsistent{\openv{}},
+           \item 
+  \opsem {\openv{}}
+         {\appexp {\v{g}} {\v{2}}}
+         {\v{}}.
+\end{itemize}
+\end{subcase}
+     \end{itemize}
+\end{case}
+
+\begin{case}[B-IsA]
+        \opsem {\openv{}} {\e{1}} {\v{1}},
+        \opsem {\openv{}} {\e{2}} {\v{2}},
+        \isaopsem{\v{1}}{\v{2}} = {\v{}}
+
+
+  \begin{itemize}
+    \item[]
+      \begin{subcase}[T-IsA]
   \ep{} = {\isaapp {\ep{1}} {\ep{2}}},
   \judgementrewrite {\propenv{}} {\ep{1}} {\t{1}}
              {\filterset {\thenprop {\prop{1}}}
@@ -1320,13 +1375,6 @@ We want to prove
   \t{} = {\Boolean{}},
   \isacompare{\t{1}}{\object{1}}{\t{2}}{\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}},
   \object{} = \emptyobject{}
-
-  \begin{itemize}
-    \item[]
-      \begin{subcase}[B-IsA]
-        \opsem {\openv{}} {\e{1}} {\v{1}},
-        \opsem {\openv{}} {\e{2}} {\v{2}},
-        \isaopsem{\v{1}}{\v{2}} = {\v{}}
 
         Part 1 holds trivially with \object{} = \emptyobject{}.
 
@@ -1610,23 +1658,31 @@ We want to prove
         \judgementtwo{\propenv{}}{\false}{\t{}}
         we are done.
       \end{subcase}
-    \item[]
-      \begin{subcase}[BE-IsA1]
+  \end{itemize}
+\end{case}
+
+      \begin{case}[BE-IsA1]
         \opsem {\openv{}} {\e{1}} {\errorvalv{}}
 
         Trivially reduces to an error.
-      \end{subcase}
-    \item[]
-      \begin{subcase}[BE-IsA2]
+      \end{case}
+      \begin{case}[BE-IsA2]
        \opsem {\openv{}} {\e{1}} {\v{1}},
        \opsem {\openv{}} {\e{2}} {\errorvalv{}}
 
         Trivially reduces to an error.
-      \end{subcase}
-  \end{itemize}
-\end{case}
+      \end{case}
 
-\begin{case}[T-GetHMap]
+\begin{case}[B-Get]
+      $\opsem {\openv{}} {\e{m}}{\v{m}}$,
+        $\v{m} = {\curlymap{\overrightarrow{({\v{a}}\ {\v{b}})}}}$,
+         \opsem {\openv{}} {\e{k}} {\k{}},
+         $\keyinmap{\k{}}{\curlymap{\overrightarrow{({\v{a}}\ {\v{b}})}}}$,
+         \getmap{\curlymap{\overrightarrow{({\v{a}}\ {\v{b}})}}} {\k{}} = {\v{}}
+
+  \begin{itemize}
+    \item[]
+      \begin{subcase}[T-GetHMap]
   \ep{} = {\getexp {\ep{m}} {\ep{k}}},
   \judgementrewrite {\propenv{}} {\ep{m}} {\Unionsplice {\overrightarrow {\HMapgeneric {\mandatory{}} {\absent{}}}}}
            {\filterset {\thenprop {\prop{m}}} {\elseprop {\prop{m}}}}
@@ -1642,15 +1698,6 @@ We want to prove
                           {\object{m}}
                           {\x{}}}
 
-
-  \begin{itemize}
-    \item[]
-      \begin{subcase}[B-Get]
-      $\opsem {\openv{}} {\e{m}}{\v{m}}$,
-        $\v{m} = {\curlymap{\overrightarrow{({\v{a}}\ {\v{b}})}}}$,
-         \opsem {\openv{}} {\e{k}} {\k{}},
-         $\keyinmap{\k{}}{\curlymap{\overrightarrow{({\v{a}}\ {\v{b}})}}}$,
-         \getmap{\curlymap{\overrightarrow{({\v{a}}\ {\v{b}})}}} {\k{}} = {\v{}}
 
          To prove part 1 we consider two cases on the form of \object{m}: 
          \begin{itemize}
@@ -1686,27 +1733,7 @@ We want to prove
 
       \end{subcase}
     \item[]
-      \begin{subcase}[B-GetMissing]
-        \v{} = \nil,
-        $\opsem {\openv{}}
-        {\e{m}} {\curlymap{\overrightarrow{({\v{a}}\ {\v{b}})}}}$,
-       \opsem {\openv{}} {\e{k}} {\k{}},
-       \keynotinmap{\k{}}{\curlymap{\overrightarrow{({\v{a}}\ {\v{b}})}}}
-
-       Unreachable subcase because 
-       \keynotinmap{\k{}}{\curlymap{\overrightarrow{({\v{a}}\ {\v{b}})}}}
-       contradicts ${\inmandatory{\k{}}{\t{}}{\mandatory{}}}$.
-      \end{subcase}
-    \item[]
-      \begin{subcase}[BE-Get1]
-      \end{subcase}
-    \item[]
-      \begin{subcase}[BE-Get2]
-      \end{subcase}
-  \end{itemize}
-\end{case}
-
-\begin{case}[T-GetHMapAbsent]
+      \begin{subcase}[T-GetHMapAbsent]
   \ep{} = {\getexp {\ep{m}} {\ep{k}}},
   \judgementtworewrite {\propenv{}} {\ep{k}} {\Value {k}} {\e{k}},
   \judgementrewrite {\propenv{}} {\ep{m}} {\HMapgeneric {\mandatory{}} {\absent}}
@@ -1723,29 +1750,82 @@ We want to prove
                           {\object{m}}
                           {\x{}}}
 
-
-  \begin{itemize}
-    \item[]
-      \begin{subcase}[B-Get]
-        $\opsem {\openv{}}
-        {\e{m}} {\curlymap{\overrightarrow{({\v{a}}\ {\v{b}})}}}$
-        ,
-         \opsem {\openv{}} {\e{k}} {\k{}},
-         $\keyinmap{\k{}}{\curlymap{\overrightarrow{({\v{a}}\ {\v{b}})}}}$,
-         \getmap{\curlymap{\overrightarrow{({\v{a}}\ {\v{b}})}}} {\k{}} = {\v{}}
-
        Unreachable subcase because 
          $\keyinmap{\k{}}{\curlymap{\overrightarrow{({\v{a}}\ {\v{b}})}}}$,
          contradicts
                 {\inabsent{\k{}}{\absent{}}}.
       \end{subcase}
     \item[]
-      \begin{subcase}[B-GetMissing]
+      \begin{subcase}[T-GetHMapPartialDefault]
+  \ep{} = {\getexp {\ep{m}} {\ep{k}}},
+  \judgementtworewrite {\propenv{}} {\ep{k}} {\Value {k}}{\e{k}},
+ \judgementrewrite {\propenv{}} {\ep{m}} {\HMapp {\mandatory{}} {\absent}}
+           {\filterset {\thenprop {\prop{m}}} {\elseprop {\prop{m}}}}
+           {\object{m}}
+           {\e{m}},
+             {\notinmandatory{\k{}}{\t{}}{\mandatory{}}},
+             {\notinabsent{\k{}}{\absent{}}},
+  \e{} = {\getexp {\e{m}} {\e{k}}},
+  \t{} = \Top,
+  \thenprop{\prop{}} = {\topprop{}},
+  \elseprop{\prop{}} = {\topprop{}},
+  \object{} = {\replacefor
+               {\path {\keype{k}} {\x{}}}
+                          {\object{m}}
+                          {\x{}}}
+
+         Parts 1 and 2 are the same as the B-Get subcase.
+         Part 3 is trivial as \t{} = \Top.
+      \end{subcase}
+  \end{itemize}
+\end{case}
+
+\begin{case}[B-GetMissing]
         \v{} = \nil,
         $\opsem {\openv{}}
         {\e{m}} {\curlymap{\overrightarrow{({\v{a}}\ {\v{b}})}}}$,
        \opsem {\openv{}} {\e{k}} {\k{}},
        \keynotinmap{\k{}}{\curlymap{\overrightarrow{({\v{a}}\ {\v{b}})}}}
+
+  \begin{itemize}
+    \item[]
+      \begin{subcase}[T-GetHMap]
+  \ep{} = {\getexp {\ep{m}} {\ep{k}}},
+  \judgementrewrite {\propenv{}} {\ep{m}} {\Unionsplice {\overrightarrow {\HMapgeneric {\mandatory{}} {\absent{}}}}}
+           {\filterset {\thenprop {\prop{m}}} {\elseprop {\prop{m}}}}
+           {\object{m}}
+           {\e{m}},
+  \judgementtworewrite {\propenv{}} {\ep{k}} {\Value {k}}{\e{k}},
+  \overr{\inmandatory{\k{}}{\t{i}}{\mandatory{}},}
+  \e{} = {\getexp {\e{m}} {\e{k}}},
+  \t{} = {\Unionsplice {\overrightarrow {\t{i}}}},
+  \thenprop{\prop{}} = {\topprop{}},
+  \elseprop{\prop{}} = {\topprop{}},
+  \object{} = {\replacefor {\path {\keype{k}} {\x{}}}
+                          {\object{m}}
+                          {\x{}}}
+
+       Unreachable subcase because 
+       \keynotinmap{\k{}}{\curlymap{\overrightarrow{({\v{a}}\ {\v{b}})}}}
+       contradicts ${\inmandatory{\k{}}{\t{}}{\mandatory{}}}$.
+      \end{subcase}
+    \item[]
+      \begin{subcase}[T-GetHMapAbsent]
+  \ep{} = {\getexp {\ep{m}} {\ep{k}}},
+  \judgementtworewrite {\propenv{}} {\ep{k}} {\Value {k}} {\e{k}},
+  \judgementrewrite {\propenv{}} {\ep{m}} {\HMapgeneric {\mandatory{}} {\absent}}
+           {\filterset {\thenprop {\prop{m}}} {\elseprop {\prop{m}}}}
+           {\object{m}}
+           {\e{m}},
+  {\inabsent{\k{}}{\absent{}}},
+  \e{} = {\getexp {\e{m}} {\e{k}}},
+  \t{} = \Nil,
+  \thenprop{\prop{}} = {\topprop{}},
+  \elseprop{\prop{}} = {\topprop{}},
+  \object{} = {\replacefor
+               {\path {\keype{k}} {\x{}}}
+                          {\object{m}}
+                          {\x{}}}
 
          To prove part 1 we consider two cases on the form of \object{m}: 
          \begin{itemize}
@@ -1778,15 +1858,7 @@ We want to prove
          tell us {\v{}} must be of type {\t{}}.
       \end{subcase}
     \item[]
-      \begin{subcase}[BE-Get1]
-      \end{subcase}
-    \item[]
-      \begin{subcase}[BE-Get2]
-      \end{subcase}
-  \end{itemize}
-\end{case}
-
-\begin{case}[T-GetHMapPartialDefault]
+      \begin{subcase}[T-GetHMapPartialDefault]
   \ep{} = {\getexp {\ep{m}} {\ep{k}}},
   \judgementtworewrite {\propenv{}} {\ep{k}} {\Value {k}}{\e{k}},
  \judgementrewrite {\propenv{}} {\ep{m}} {\HMapp {\mandatory{}} {\absent}}
@@ -1804,41 +1876,22 @@ We want to prove
                           {\object{m}}
                           {\x{}}}
 
-  \begin{itemize}
-    \item[]
-      \begin{subcase}[B-Get]
-        $\opsem {\openv{}}
-        {\e{m}} {\curlymap{\overrightarrow{({\v{a}}\ {\v{b}})}}}$
-        ,
-         \opsem {\openv{}}
-                 {\e{k}} {\k{}},
-         $\keyinmap{\k{}}{\curlymap{\overrightarrow{({\v{a}}\ {\v{b}})}}}$,
-         \getmap{\curlymap{\overrightarrow{({\v{a}}\ {\v{b}})}}} {\k{}} = {\v{}}
-
-         Parts 1 and 2 are the same as the B-Get subcase of T-GetHMap.
-         Part 3 is trivial as \t{} = \Top.
-
-
-      \end{subcase}
-    \item[]
-      \begin{subcase}[B-GetMissing]
-        \v{} = \nil,
-        $\opsem {\openv{}}
-        {\e{m}} {\curlymap{\overrightarrow{({\v{a}}\ {\v{b}})}}}$,
-       \opsem {\openv{}} {\e{k}} {\k{}},
-       \keynotinmap{\k{}}{\curlymap{\overrightarrow{({\v{a}}\ {\v{b}})}}}
-
          Parts 1 and 2 are the same as the B-GetMissing subcase of T-GetHMapAbsent.
          Part 3 is trivial as \t{} = \Top.
-
-      \end{subcase}
-    \item[]
-      \begin{subcase}[BE-Get1]
-      \end{subcase}
-    \item[]
-      \begin{subcase}[BE-Get2]
       \end{subcase}
   \end{itemize}
+\end{case}
+
+\begin{case}[BE-Get1]
+  \ 
+
+  Unreachable.
+\end{case}
+
+\begin{case}[BE-Get2]
+  \ 
+
+  Unreachable.
 \end{case}
 
 \begin{case}[T-AssocHMap]
