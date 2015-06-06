@@ -241,6 +241,31 @@ Part 4 holds vacuously.
 
       Similar to T-False.
 \end{subcase}
+\item[]
+\begin{subcase}[T-Multi] 
+  \v{} = {\multi {\v{1}} {\curlymapvaloverright{\v{k}}{\v{v}}}}
+  \ep{} = {\multi {\v{1}} {\curlymapvaloverright{\v{k}}{\v{v}}}},
+  \judgementtworewrite {} {\v{1}} {\t{1}}{\v{1}},
+  \overr{\judgementtworewrite{}{\v{k}}{\Top{}}{\v{k}}},
+  \overr{\judgementtworewrite{}{\v{v}}{\s{}}{\v{v}}},
+  \e{} = {\multi {\v{1}} {\curlymapvaloverright{\v{k}}{\v{v}}}},
+  \t{} = {\MultiFntype {\s{}} {\t{1}}},
+  {\thenprop {\prop{}}} = {\topprop{}},
+  {\elseprop{\prop{}}} = {\botprop{}},
+  {\object{}} = {\emptyobject{}},
+
+        Similar to T-True.
+\end{subcase}
+\item[]
+\begin{subcase}[T-Const]
+  \e{} = {\const{}},
+  \t{} = {\constanttype{\const{}}},
+{\thenprop{\prop{}}} = {\topprop{}},
+{\elseprop{\prop{}}} = {\botprop{}},
+{\object{}} = {\emptyobject{}}
+
+        Parts 1, 2 and 3 hold for the same reasons as T-True. 
+\end{subcase}
 
 
   \end{itemize}
@@ -1078,11 +1103,60 @@ by noting \judgementtwo {} {\v{d}} {\t{d}},
          all conditions.
 
 \end{subcase}
-  \item[]
-\begin{subcase}[B-Delta]
+\end{itemize}
+\end{case}
+
+\begin{case}[B-Delta]
   \opsem {\openv{}} {\e{1}} {\const{}},
   \opsem {\openv{}} {\e{2}} {\v{2}},
   \constantopsem{\const{}}{\v{2}} = \v{}
+
+\begin{itemize}
+  \item[]
+\begin{subcase}[T-App]
+  \ 
+
+  \begin{itemize}
+    \item
+  \ep{} = {\appexp {\ep{1}} {\ep{2}}},
+    \item
+  \judgementrewrite {\propenv{}} {\ep{1}} {\ArrowOne {\x{}} {\s{}}
+                                                       {\t{f}}
+                                                       {\filterset {\thenprop {\prop{f}}}
+                                                                   {\elseprop {\prop{f}}}}
+                                                       {\object{f}}}
+                {\filterset {\thenprop {\prop{1}}}
+                            {\elseprop {\prop{1}}}}
+                {\object{1}}
+                {\e{1}},
+    \item
+  \judgementrewrite {\propenv{}}
+                 {\ep{2}} {\s{}}
+                 {\filterset {\thenprop {\prop{2}}}
+                             {\elseprop {\prop{2}}}}
+                 {\object{2}}
+                 {\e{2}},
+    \item
+  \e{} = {\appexp {\e{1}} {\e{2}}},
+    \item
+  \t{} = {\replacefor {\t{f}}
+                      {\object{2}}
+                      {\x{}}},
+    \item
+  {\thenprop {\prop{}}} = 
+                 {\replacefor {\thenprop {\prop{f}}}
+                              {\object{2}}
+                              {\x{}}},
+    \item
+  {\elseprop {\prop{}}} = 
+                 {\replacefor {\elseprop {\prop{f}}}
+                              {\object{2}}
+                              {\x{}}},
+    \item
+  \object{} = {\replacefor {\object{f}}
+                           {\object{2}}
+                           {\x{}}},
+  \end{itemize}
 
   % TODO do I need to prove anything about the argument in the definition
   % of the constant being under \s{}?
@@ -1179,21 +1253,6 @@ by noting \judgementtwo {} {\v{d}} {\t{d}},
     %  \end{subcase}
   \end{itemize}
 
-\end{subcase}
-  \item[]
-\begin{subcase}[BE-Beta1]
-\end{subcase}
-  \item[]
-\begin{subcase}[BE-Beta2]
-\end{subcase}
-  \item[]
-\begin{subcase}[BE-BetaClosure]
-\end{subcase}
-  \item[]
-\begin{subcase}[BE-BetaMulti1]
-\end{subcase}
-  \item[]
-\begin{subcase}[BE-BetaMulti2]
 \end{subcase}
 \end{itemize}
 \end{case}
@@ -1349,6 +1408,32 @@ We want to prove
 \end{itemize}
 \end{subcase}
      \end{itemize}
+\end{case}
+
+\begin{case}[BE-Beta1]
+  \ 
+
+  Reduces to an error.
+\end{case}
+\begin{case}[BE-Beta2]
+  \ 
+
+  Reduces to an error.
+\end{case}
+\begin{case}[BE-BetaClosure]
+  \ 
+
+  Reduces to an error.
+\end{case}
+\begin{case}[BE-BetaMulti1]
+  \ 
+
+  Reduces to an error.
+\end{case}
+\begin{case}[BE-BetaMulti2]
+  \ 
+
+  Reduces to an error.
 \end{case}
 
 \begin{case}[B-IsA]
@@ -1885,16 +1970,27 @@ We want to prove
 \begin{case}[BE-Get1]
   \ 
 
-  Unreachable.
+  Reduces to an error.
 \end{case}
 
 \begin{case}[BE-Get2]
   \ 
 
-  Unreachable.
+  Reduces to an error.
 \end{case}
 
-\begin{case}[T-AssocHMap]
+\begin{case}[B-Assoc]
+        \v{} = 
+        {\extendmap{\curlymap{\overrightarrow{({\v{a}}\ {\v{b}})}}}
+                {\k{}}{\v{v}}},
+        \opsem {\openv{}}
+        {\e{m}} {\curlymap{\overrightarrow{({\v{a}}\ {\v{b}})}}},
+        \opsem {\openv{}} {\e{k}} {\k{}},
+        \opsem {\openv{}} {\e{v}} {\v{v}}
+
+  \begin{itemize}
+    \item[]
+      \begin{subcase}[T-AssocHMap]
   \judgementtworewrite {\propenv{}} {\ep{m}} {\HMapgeneric {\mandatory{}} {\absent}} {\e{m}},
   \judgementtworewrite {\propenv{}} {\ep{k}} {\Value{\k{}}}{\e{k}},
   \judgementtworewrite {\propenv{}} {\ep{v}} {\t{}}{\e{v}},
@@ -1906,33 +2002,39 @@ We want to prove
   \elseprop{\prop{}} = {\botprop{}},
   \object{} = \emptyobject{}
 
-  \begin{itemize}
-    \item[]
-      \begin{subcase}[B-Assoc]
-        \v{} = 
-        {\extendmap{\curlymap{\overrightarrow{({\v{a}}\ {\v{b}})}}}
-                {\k{}}{\v{v}}},
-        \opsem {\openv{}}
-        {\e{m}} {\curlymap{\overrightarrow{({\v{a}}\ {\v{b}})}}},
-        \opsem {\openv{}} {\e{k}} {\k{}},
-        \opsem {\openv{}} {\e{v}} {\v{v}}
-
         Parts 1 and 2 hold for the same reasons as T-True.
         %TODO part 3
-      \end{subcase}
-    \item[]
-      \begin{subcase}[BE-Assoc1]
-      \end{subcase}
-    \item[]
-      \begin{subcase}[BE-Assoc2]
-      \end{subcase}
-    \item[]
-      \begin{subcase}[BE-Assoc3]
       \end{subcase}
   \end{itemize}
 \end{case}
 
-\begin{case}[T-If] 
+\begin{case}[BE-Assoc1]
+  \ 
+
+  Reduces to an error.
+\end{case}
+
+\begin{case}[BE-Assoc2]
+  \ 
+
+  Reduces to an error.
+\end{case}
+
+\begin{case}[BE-Assoc3]
+  \ 
+
+  Reduces to an error.
+\end{case}
+
+\begin{case}[B-IfFalse]
+        \opsem {\openv{}} {\e{1}} {\false}
+        \ \ \text{or}\ \ 
+        \opsem {\openv{}} {\e{1}} {\nil},
+        \opsem {\openv{}} {\e{3}} {\v{}}
+
+  \begin{itemize}
+    \item[]
+      \begin{subcase}[T-If]
   \ep{} = {\ifexp {\ep1} {\ep2} {\ep3}},
   \judgementrewrite {\propenv{}} {\ep1} {\t{1}} {\filterset {\thenprop {\prop{1}}} {\elseprop {\prop{1}}}}
                  {\object{1}}
@@ -1949,53 +2051,16 @@ We want to prove
   \thenprop{\prop{}} = {\orprop {\thenprop {\prop{2}}} {\thenprop {\prop{3}}}},
   \elseprop{\prop{}} = {\orprop {\elseprop {\prop{2}}} {\elseprop {\prop{3}}}}
 
-  \begin{itemize}
-    \item[]
-      \begin{subcase}[B-IfTrue]
-        \opsem {\openv{}} {\e{1}} {\v{1}},
-              ${\v{1}} \not= {\false}$,
-              ${\v{1}} \not= {\nil}$,
-              \opsem {\openv{}} {\e{2}} {\v{}}
-
-              For part 1, either \object{} = \emptyobject{}, or \e{} evaluates to the
-              result of \e{2}.
-
-              To prove part 2, we consider two cases:
-              \begin{itemize}
-                \item if \v{} = \false\ (or \nil)
-                  then \e{2} evaluates to a false value so {\satisfies{\openv{}}{\elseprop {\prop{2}}}}, and thus
-                  {\satisfies{\openv{}}{\orprop {\elseprop {\prop{2}}} {\elseprop {\prop{3}}}}} by M-Or, 
-                \item otherwise
-                  ${\v{}} \not= {\false}$ and
-                  ${\v{}} \not= {\nil}$,
-                  so \e{2} evaluates to a true value so {\satisfies{\openv{}}{\thenprop {\prop{2}}}}, and thus
-                  {\satisfies{\openv{}}{\orprop {\thenprop {\prop{2}}} {\thenprop {\prop{3}}}}} by M-Or.
-              \end{itemize}
-
-              Part 3 is trivial as
-              \opsem {\openv{}} {\e{2}} {\v{}}
-              and {\judgementtwo{}{\v{}}{\t{}}} by the induction hypothesis on {\e{2}}.
-
-
-      \end{subcase}
-    \item[]
-      \begin{subcase}[B-IfFalse]
-        \opsem {\openv{}} {\e{1}} {\false}
-        \ \ \text{or}\ \ 
-        \opsem {\openv{}} {\e{1}} {\nil},
-        \opsem {\openv{}} {\e{3}} {\v{}}
-
               For part 1, either \object{} = \emptyobject{}, or \e{} evaluates to the
               result of \e{3}.
 
               To prove part 2, we consider two cases:
               \begin{itemize}
-                \item if \v{} = \false\ (or \nil)
+                \item if \isfalseval{\v{}}
                   then \e{3} evaluates to a false value so {\satisfies{\openv{}}{\elseprop {\prop{3}}}}, and thus
                   {\satisfies{\openv{}}{\orprop {\elseprop {\prop{2}}} {\elseprop {\prop{3}}}}} by M-Or, 
                 \item otherwise
-                  ${\v{}} \not= {\false}$ and
-                  ${\v{}} \not= {\nil}$,
+                  \istrueval{\v{}},
                   so \e{3} evaluates to a true value so {\satisfies{\openv{}}{\thenprop {\prop{3}}}}, and thus
                   {\satisfies{\openv{}}{\orprop {\thenprop {\prop{2}}} {\thenprop {\prop{3}}}}} by M-Or.
               \end{itemize}
@@ -2004,13 +2069,83 @@ We want to prove
               \opsem {\openv{}} {\e{3}} {\v{}}
               and {\judgementtwo{}{\v{}}{\t{}}} by the induction hypothesis on {\e{3}}.
       \end{subcase}
+  \end{itemize}
+\end{case}
+
+\begin{case}[B-IfTrue]
+        \opsem {\openv{}} {\e{1}} {\v{1}},
+              ${\v{1}} \not= {\false}$,
+              ${\v{1}} \not= {\nil}$,
+              \opsem {\openv{}} {\e{2}} {\v{}}
+
+  \begin{itemize}
     \item[]
-      \begin{subcase}[BE-If]
+      \begin{subcase}[T-If]
+  \ep{} = {\ifexp {\ep1} {\ep2} {\ep3}},
+  \judgementrewrite {\propenv{}} {\ep1} {\t{1}} {\filterset {\thenprop {\prop{1}}} {\elseprop {\prop{1}}}}
+                 {\object{1}}
+                 {\e1},
+  \judgementrewrite {\propenv{}, {\thenprop {\prop{1}}}}
+                 {\ep2} {\t{}} {\filterset {\thenprop {\prop{2}}} {\elseprop {\prop{2}}}}
+                 {\object{}}
+                 {\e2},
+  \judgementrewrite {\propenv{}, {\elseprop {\prop{1}}}}
+                 {\ep3} {\t{}} {\filterset {\thenprop {\prop{3}}} {\elseprop {\prop{3}}}}
+                 {\object{}}
+                 {\e3},
+  \e{} = {\ifexp {\e1} {\e2} {\e3}},
+  \thenprop{\prop{}} = {\orprop {\thenprop {\prop{2}}} {\thenprop {\prop{3}}}},
+  \elseprop{\prop{}} = {\orprop {\elseprop {\prop{2}}} {\elseprop {\prop{3}}}}
+
+              For part 1, either \object{} = \emptyobject{}, or \e{} evaluates to the
+              result of \e{2}.
+
+              To prove part 2, we consider two cases:
+              \begin{itemize}
+                \item if \isfalseval{\v{}}
+                  then \e{2} evaluates to a false value so {\satisfies{\openv{}}{\elseprop {\prop{2}}}}, and thus
+                  {\satisfies{\openv{}}{\orprop {\elseprop {\prop{2}}} {\elseprop {\prop{3}}}}} by M-Or, 
+                \item otherwise
+                  \istrueval{\v{}},
+                  so \e{2} evaluates to a true value so {\satisfies{\openv{}}{\thenprop {\prop{2}}}}, and thus
+                  {\satisfies{\openv{}}{\orprop {\thenprop {\prop{2}}} {\thenprop {\prop{3}}}}} by M-Or.
+              \end{itemize}
+
+              Part 3 is trivial as
+              \opsem {\openv{}} {\e{2}} {\v{}}
+              and {\judgementtwo{}{\v{}}{\t{}}} by the induction hypothesis on {\e{2}}.
+
       \end{subcase}
   \end{itemize}
 \end{case}
 
-\begin{case}[T-Let]
+\begin{case}[BE-If]
+  \ 
+
+  Reduces to an error.
+\end{case}
+
+\begin{case}[BE-IfFalse]
+  \ 
+
+  Reduces to an error.
+\end{case}
+
+\begin{case}[BE-IfTrue]
+  \ 
+
+  Reduces to an error.
+\end{case}
+
+\begin{case}[B-Let]
+  \e{} = {\letexp {\x{}} {\e{1}} {\e{2}}}
+        \opsem {\openv{}} {\e{1}} {\v{1}},
+        \opsem {\extendopenv{\openv{}}{\x{}}{\v{1}}} {\e{2}} {\v{}}
+
+
+  \begin{itemize}
+    \item[]
+      \begin{subcase}[T-Let]
   \ep{} = {\letexp {\x{}} {\ep{1}} {\ep{2}}},
   \judgementrewrite {\propenv{}} {\ep{1}} {\s{}} {\filterset {\thenprop {\prop{1}}} {\elseprop {\prop{1}}}}
              {\object{1}}
@@ -2023,15 +2158,7 @@ We want to prove
          {\proppp{}}}
              {\ep{2}} {\t{}} {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}}
              {\object{}} 
-             {\e{2}},
-  \e{} = {\letexp {\x{}} {\e{1}} {\e{2}}}
-
-
-  \begin{itemize}
-    \item[]
-      \begin{subcase}[B-Let]
-        \opsem {\openv{}} {\e{1}} {\v{1}},
-        \opsem {\extendopenv{\openv{}}{\x{}}{\v{1}}} {\e{2}} {\v{}}
+             {\e{2}}
 
         For all the following cases (with a reminder that \x{} is fresh)
         we apply the induction hypothesis on \e{2}. We justify this by noting
@@ -2046,13 +2173,21 @@ We want to prove
 
         We prove parts 1, 2 and 3 by directly using the induction hypothesis on \e{2}.
       \end{subcase}
-    \item[]
-      \begin{subcase}[BE-Let]
-      \end{subcase}
   \end{itemize}
 \end{case}
 
-\begin{case}[T-Clos] 
+\begin{case}[BE-Let]
+  \ 
+  
+  Reduces to an error.
+\end{case}
+
+\begin{case}[B-Abs] 
+        \v{} = {\closure {\openv{}} {\abs {\x{}} {\s{}} {\e{1}}}}
+
+  \begin{itemize}
+    \item[]
+      \begin{subcase}[T-Clos]
   \ep{} = {\closure {\openv{}} {\abs {\x{}} {\s{}} {\e{1}}}},
   $\exists {\propenvp{}}. \satisfies{\openv{}}{\propenvp{}}$
   \ \text{and}\ 
@@ -2065,10 +2200,6 @@ We want to prove
                  {\thenprop{\prop{}}} = \topprop{},
                  {\elseprop{\prop{}}} = \botprop{},
                  {\object{}} = \emptyobject{}
-
-  \begin{itemize}
-    \item[]
-      \begin{subcase}[B-Abs] \v{} = {\closure {\openv{}} {\abs {\x{}} {\s{}} {\e{1}}}}
 
         We assume some \propenvp{}, such that
         \begin{itemize}
@@ -2095,28 +2226,16 @@ We want to prove
   \end{itemize}
 \end{case}
 
-\begin{case}[T-Multi] 
-  \ep{} = {\multi {\v{1}} {\curlymapvaloverright{\v{k}}{\v{v}}}},
-  \judgementtworewrite {} {\v{1}} {\t{1}}{\v{1}},
-  \overr{\judgementtworewrite{}{\v{k}}{\Top{}}{\v{k}}},
-  \overr{\judgementtworewrite{}{\v{v}}{\s{}}{\v{v}}},
-  \e{} = {\multi {\v{1}} {\curlymapvaloverright{\v{k}}{\v{v}}}},
-  \t{} = {\MultiFntype {\s{}} {\t{1}}},
-  {\thenprop {\prop{}}} = {\topprop{}},
-  {\elseprop{\prop{}}} = {\botprop{}},
-  {\object{}} = {\emptyobject{}},
+\begin{case}[B-Abs]
+        \v{} = ${\closure {\openv{}} {\abs {\x{}} {\s{}} {\e{1}}}}$,
+          { \opsem {\openv{}}
+                   {\abs {\x{}} {\t{}} {\e{1}}}
+                   {\closure {\openv{}} {\abs {\x{}} {\s{}} {\e{1}}}}}
 
   \begin{itemize}
     \item[]
-      \begin{subcase}[B-Val] \v{} = {\multi {\v{1}} {\curlymapvaloverright{\v{k}}{\v{v}}}}
-
-        Similar to T-True.
-      \end{subcase}
-  \end{itemize}
-
-\end{case}
-
-\begin{case}[T-Abs] 
+      %TODO
+      \begin{subcase}[T-Abs]
   \ep{} = {\abs {\x{}} {\s{}} {\ep{1}}},
 { \judgementrewrite {\propenv{}, {\isprop {\s{}} {\x{}}}}
             {\ep{1}} {\t{}}
@@ -2131,16 +2250,7 @@ We want to prove
                                                       {\object{1}}},
   {\thenprop{\prop{}}} = {\topprop{}},
   {\elseprop{\prop{}}} = {\botprop{}},
-  {\object{}} = {\emptyobject{}},
-
-  \begin{itemize}
-    \item[]
-      %TODO
-      \begin{subcase}[B-Abs]
-        \v{} = ${\closure {\openv{}} {\abs {\x{}} {\s{}} {\e{1}}}}$,
-          { \opsem {\openv{}}
-                   {\abs {\x{}} {\t{}} {\e{1}}}
-                   {\closure {\openv{}} {\abs {\x{}} {\s{}} {\e{1}}}}}
+  {\object{}} = {\emptyobject{}}
 
         Parts 1 and 2 hold for the same reasons as T-True.
         Part 3 holds directly via T-Clos, since \v{} must be a closure.
@@ -2148,23 +2258,24 @@ We want to prove
   \end{itemize}
 \end{case}
 
-\begin{case}[T-Error]
-  \ep{} = \errorval{\v{1}},
-  \e{} = \errorval{\v{1}},
-  \t{} = \Bot,
-  \thenprop{\prop{}} = \botprop{}, \elseprop{\prop{}} = \botprop{}, \object{} = \emptyobject{}
+\begin{case}[BE-Error]
+        \opsem {\openv{}} {\e{}} {\errorval{\v{1}}}
 
 
   \begin{itemize}
     \item[]
-      \begin{subcase}[BE-Error] 
-        \opsem {\openv{}} {\e{}} {\errorval{\v{1}}}
+      \begin{subcase}[T-Error] 
+  \ep{} = \errorval{\v{1}},
+  \e{} = \errorval{\v{1}},
+  \t{} = \Bot,
+  \thenprop{\prop{}} = \botprop{}, \elseprop{\prop{}} = \botprop{}, \object{} = \emptyobject{}
 
         Trivially reduces to an error.
       \end{subcase}
   \end{itemize}
 \end{case}
 
+% TODO distribute the T-Subsume rule?
 \begin{case}[T-Subsume]
   \judgementrewrite {\propenv{}} {\ep{}} {\tp{}}
              {\filterset {\thenprop {\propp{}}}
@@ -2189,20 +2300,6 @@ the then and else propositions of \e{} are
 Part 3 holds because \e{} is of type \tp{} and 
 \inpropenv {} {\issubtype {\tp{}} {\t{}}}.
 
-\end{case}
-
-\begin{case}[T-Const]\e{} = {\const{}},
-  \t{} = {\constanttype{\const{}}},
-{\thenprop{\prop{}}} = {\topprop{}},
-{\elseprop{\prop{}}} = {\botprop{}},
-{\object{}} = {\emptyobject{}}
-
-  \begin{itemize}
-    \item[] 
-      \begin{subcase}[B-Val]
-        Parts 1, 2 and 3 hold for the same reasons as T-True. 
-      \end{subcase}
-  \end{itemize}
 \end{case}
 
 \end{proof}
