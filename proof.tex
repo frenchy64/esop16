@@ -676,10 +676,10 @@ as {\classhint{1}} erases occurrences of \Nil{} in \s{} via  \tctojava{\s{}}{\cl
                           {\object{2}}},
 \judgementtworewrite {\propenv{}} {\ep{}} {\sp{}} {\e{}},
   \e{} = {\createmultiexp {\s{}} {\e{d}}},
-  \t{} = {\MultiFntype {\s{}} {\t{d}}},
-  \thenprop{\prop{}} = {\topprop{}},
-  \elseprop{\prop{}} = {\botprop{}},
-  \object{} = {\emptyobject{}}
+  \issubtypein{}{\MultiFntype {\s{}} {\t{d}}}{\t{}},
+  \inpropenv{\topprop{}}{\thenprop{\prop{}}},
+  \inpropenv{\botprop{}}{\elseprop{\prop{}}},
+  \issubobjin{}{\emptyobject{}}{\object{}}
 
 
 Part 1 and 2 hold for the same reasons as T-True.
@@ -763,14 +763,14 @@ and {\emptydisptable} vacuously satisfies the other premises of T-Multi, so we a
   \e{} = {\extendmultiexp {\e{m}} {\e{v}} {\e{f}}},
           \item
   \e{f} = {\abs {\x{}} {\t{1}} {\e{b}}},
-          \item
-  \t{} = {\MultiFntype {\t{m}} {\t{d}}},
-          \item
-  \thenprop{\prop{}} = {\topprop{}},
-          \item
-  \elseprop{\prop{}} = {\botprop{}},
-          \item
-  \object{} = {\emptyobject{}},
+\item
+  \issubtypein{}{\MultiFntype {\t{m}} {\t{d}}}{\t{}},
+\item
+  \inpropenv{\topprop{}}{\thenprop{\prop{}}},
+\item
+  \inpropenv{\botprop{}}{\elseprop{\prop{}}},
+\item
+  \issubobjin{}{\emptyobject{}}{\object{}}
         \end{enumerate}
 
                                 Part 1 and 2 hold for the same reasons as T-True, noting that the propositions
@@ -882,23 +882,13 @@ by noting \judgementtwo {} {\v{d}} {\t{d}},
     \item
   \e{} = {\appexp {\e{1}} {\e{2}}},
     \item
-  \t{} = {\replacefor {\t{f}}
-                      {\object{2}}
-                      {\x{}}},
+      \issubtypein{}  {\replacefor {\t{f}} {\object{2}} {\x{}}}{\t{}},
     \item
-  {\thenprop {\prop{}}} = 
-                 {\replacefor {\thenprop {\prop{f}}}
-                              {\object{2}}
-                              {\x{}}},
+      \inpropenv{\replacefor {\thenprop {\prop{f}}} {\object{2}} {\x{}}} {\thenprop {\prop{}}},
     \item
-  {\elseprop {\prop{}}} = 
-                 {\replacefor {\elseprop {\prop{f}}}
-                              {\object{2}}
-                              {\x{}}},
+      \inpropenv{\replacefor {\elseprop {\prop{f}}} {\object{2}} {\x{}}} {\elseprop {\prop{}}},
     \item
-  \object{} = {\replacefor {\object{f}}
-                           {\object{2}}
-                           {\x{}}},
+      \issubobjin{}{\replacefor {\object{f}} {\object{2}} {\x{}}} {\object{}}
   \end{itemize}
 
          By inversion on \e{1} from T-Clos
@@ -926,121 +916,6 @@ by noting \judgementtwo {} {\v{d}} {\t{d}},
                {\object{f}}
                {\e{b}}}.
          \end{itemize}
-
-%         To prove part 1, we consider cases on the form of \object{f}:
-%
-%         \begin{itemize}
-%           \item if \object{f} = \emptyobject{}, then \object{} = \emptyobject{} by substitution,
-%           \item if \object{f} = {\path {\pathelem{f}} {\x{}}}, 
-%             we consider cases on the form of \object{2}:
-%             \begin{itemize}
-%               \item if \object{2} = \emptyobject{}, then \object{} = \emptyobject{},
-%               \item otherwise \object{2} = {\path {\pathelem{2}} {\y{}}}, where,
-%                 because
-%                \object{} = {\replacefor {\path {\pathelem{f}} {\x{}}}
-%                                         {\object{2}}
-%                                         {\x{}}},
-%                 by substitution
-%                 \object{} = {\path {\pathelem{f}} {\object{2}}}.
-%                 To prove \inopenv{\openv{}}{\object{}}{\v{}}
-%                 we note 
-%                 \inopenv {\extendopenv {\openv{c}} {\x{}} {\v{2}}}
-%                          {\x{}}
-%                          {\v{2}}
-%                          and 
-%                 \inopenv{\openv{}}{\object{2}}{\v{2}},
-%                 which implies 
-%                 \inopenvnoeq {\extendopenv {\openv{c}} {\x{}} {\v{2}}}{\x{}} = 
-%                 \inopenvnoeq{\openv{}}{\object{2}},
-%                 and by applying lemma~\ref{appendix:lemma:pathindependent}
-%                 we can derive
-%                 \inopenvnoeq{\openv{}}{\path{\pathelem{f}}{\object{2}}} =
-%                 \inopenvnoeq{\extendopenv {\openv{c}} {\x{}} {\v{2}}}
-%                             {\path {\pathelem{f}} {\x{}}}.
-%                 By the induction hypothesis on {\e{b}}
-%                 we know
-%                 \inopenv {\extendopenv {\openv{c}} {\x{}} {\v{2}}}
-%                          {\path {\pathelem{f}} {\x{}}}
-%                          {\v{}}
-%                 so we can conclude
-%                 \inopenv{\openv{}}{\path{\pathelem{f}}{\object{2}}}{\v{}}.
-%
-%             \end{itemize}
-%           \item otherwise \object{f} = {\path {\pathelem{f}} {\y{}}} where $\x{} \not= \y{}$,
-%             and \object{} = \object{f} by substitution.
-%             We note \consistentwith{\closure {\openv{c}} {\abs {\x{}} {\s{}} {\e{b}}}}{\openv{}} 
-%             by the induction hypothesis on {\e{1}},
-%             so 
-%             \inopenv{\openv{c}}{\y{}}{\inopenvnoeq{\openv{}}{\y{}}},
-%           and because {\x{}} $\not=$ {\y{}}
-%            we also know
-%             \inopenvnoeq{\extendopenv {\openv{c}} {\x{}} {\v{2}}}{\y{}} = 
-%             \inopenvnoeq{\openv{}}{\y{}}.
-%
-%             We apply lemma~\ref{appendix:lemma:pathindependent} with this fact
-%             to derive
-%             \inopenvnoeq {\extendopenv {\openv{c}} {\x{}} {\v{2}}}
-%                          {\path {\pathelem{f}} {\y{}}}
-%                          = 
-%             \inopenvnoeq{\openv{}}{\path{\pathelem{f}}{\y{}}},
-%                      and since
-%             \inopenv {\extendopenv {\openv{c}} {\x{}} {\v{2}}}
-%                      {\path {\pathelem{f}} {\y{}}}{\v{}}
-%                      by the induction hypothesis on \e{b}
-%                      we can conclude 
-%                      \inopenv{\openv{}}{\path{\pathelem{f}}{\object{2}}}{\v{}}.
-%         \end{itemize}
-%
-%
-%         To prove part 2, we consider both cases:
-%         \begin{itemize}
-%           \item if \istrueval{\v{}} then \satisfies{\openv{}}{\thenprop{\prop{}}}.
-%
-%                              By the induction hypothesis on \e{b}
-%                              we know
-%              \satisfies{\extendopenv {\openv{c}} {\x{}} {\v{2}}}
-%                        {\thenprop {\prop{f}}}.
-%
-%                        By the induction hypothesis on {\e{1}}
-%                        we know
-%\consistentwith{\closure {\openv{c}} {\abs {\x{}} {\s{}} {\e{b}}}}{\openv{}},
-%so we know $\forall v \in \fv{\thenprop{\prop{}}} - \x{}$,
-%                              {\inopenvnoeq{\openv{c}}{v}} = {\inopenvnoeq {\openv{}}{v}}.
-%
-%                              By the induction hypothesis on \e{2} we know {\inopenv {\openv{}}{\object{2}}{\v{2}}}
-%                              and since {\inopenv {\extendopenv {\openv{c}} {\x{}} {\v{2}}}{\x{}}{\v{2}}}
-%                              then 
-%                            \inopenvnoeq{\extendopenv {\openv{c}} {\x{}} {\v{2}}}{\x{}} = \inopenvnoeq{\openv{}}{\object{2}}.
-%
-%                              Then with the premises
-%                              \begin{enumerate}
-%                                \item
-%  {\thenprop {\prop{}}} =
-%                 {\replacefor {\thenprop {\prop{f}}}
-%                              {\object{2}}
-%                              {\x{}}},
-%                            \item
-%                              \satisfies{\extendopenv {\openv{c}} {\x{}} {\v{2}}}{\thenprop {\prop{f}}},
-%                            \item
-%                              $\forall v \in \fv{\thenprop{\prop{}}} - \x{}$.
-%                              {\inopenvnoeq{\extendopenv {\openv{c}} {\x{}} {\v{2}}}{v}} = {\inopenvnoeq {\openv{}}{v}},
-%                            \item
-%                              and
-%                            \inopenvnoeq{\extendopenv {\openv{c}} {\x{}} {\v{2}}}{\x{}} = \inopenvnoeq{\openv{}}{\object{2}}
-%                              \end{enumerate}
-%                              we can apply
-%                            lemma~\ref{appendix:lemma:substfilter},
-%                            to derive \satisfies{\openv{}}{\thenprop{\prop{}}}
-%                            and we are done.
-%           \item if \isfalseval{\v{}} then \satisfies{\openv{}}{\elseprop{\prop{}}}.
-%
-%             Like above, but using {\elseprop{\prop{}}} for {\thenprop{\prop{}}} and 
-%             {\elseprop{\prop{f}}} for {\thenprop{\prop{f}}}.
-%         \end{itemize}
-%
-%         For part 3, we prove
-%         \judgementrewrite{}{\v{}}{\t{}}{\filterset{\thenprop{\propp{}}}{\elseprop{\propp{}}}}{\objectp{}}{\v{}}
-%        for some \thenprop{\propp{}}, \elseprop{\propp{}} and {\objectp{}}.
 
           From 
           \begin{itemize}
@@ -1093,20 +968,11 @@ by noting \judgementtwo {} {\v{d}} {\t{d}},
          {\v{}}.
 
                     Noting that 
-  \t{} = {\replacefor {\t{f}}
-                      {\object{2}}
-                      {\x{}}},
-  {\thenprop {\prop{}}} = 
-                 {\replacefor {\thenprop {\prop{f}}}
-                              {\object{2}}
-                              {\x{}}},
-  {\elseprop {\prop{}}} = 
-                 {\replacefor {\elseprop {\prop{f}}}
-                              {\object{2}}
-                              {\x{}}},
-  \object{} = {\replacefor {\object{f}}
-                           {\object{2}}
-                           {\x{}}},
+      \issubtypein{}  {\replacefor {\t{f}} {\object{2}} {\x{}}}{\t{}},
+      \inpropenv{\replacefor {\thenprop {\prop{f}}} {\object{2}} {\x{}}} {\thenprop {\prop{}}},
+      \inpropenv{\replacefor {\elseprop {\prop{f}}} {\object{2}} {\x{}}} {\elseprop {\prop{}}}
+      and
+      \issubobjin{}{\replacefor {\object{f}} {\object{2}} {\x{}}} {\object{}},
                     we can use
          \begin{itemize}
            \item
@@ -1166,23 +1032,13 @@ by noting \judgementtwo {} {\v{d}} {\t{d}},
     \item
   \e{} = {\appexp {\e{1}} {\e{2}}},
     \item
-  \t{} = {\replacefor {\t{f}}
-                      {\object{2}}
-                      {\x{}}},
+      \issubtypein{}  {\replacefor {\t{f}} {\object{2}} {\x{}}}{\t{}},
     \item
-  {\thenprop {\prop{}}} = 
-                 {\replacefor {\thenprop {\prop{f}}}
-                              {\object{2}}
-                              {\x{}}},
+      \inpropenv{\replacefor {\thenprop {\prop{f}}} {\object{2}} {\x{}}} {\thenprop {\prop{}}},
     \item
-  {\elseprop {\prop{}}} = 
-                 {\replacefor {\elseprop {\prop{f}}}
-                              {\object{2}}
-                              {\x{}}},
+      \inpropenv{\replacefor {\elseprop {\prop{f}}} {\object{2}} {\x{}}} {\elseprop {\prop{}}},
     \item
-  \object{} = {\replacefor {\object{f}}
-                           {\object{2}}
-                           {\x{}}},
+      \issubobjin{}{\replacefor {\object{f}} {\object{2}} {\x{}}} {\object{}}
   \end{itemize}
 
   % TODO do I need to prove anything about the argument in the definition
@@ -1191,17 +1047,17 @@ by noting \judgementtwo {} {\v{d}} {\t{d}},
   Prove by cases on \const{}.
   \begin{itemize}
     \item[] \begin{subcase}[\const{} = \classconst]
-    ${\ArrowOne {\x{}} {\s{}}
+        \issubtypein{}
+  {\ArrowOne {\x{}} {\Top{}}
+                                      {\Union{\Nil}{\Class}}
+                                      {\filterset {\topprop{}}
+                                                  {\topprop{}}}
+                                      {\path {\classpe{}} {\x{}}}}
+    {\ArrowOne {\x{}} {\s{}}
                                                        {\t{f}}
                                                        {\filterset {\thenprop {\prop{f}}}
                                                                    {\elseprop {\prop{f}}}}
-                                                       {\object{f}}}$
-                                                       =
-  ${\ArrowOne {\x{}} {\Top{}}
-                                      {\Union{\nil{}}{\Class{}}}
-                                      {\filterset {\topprop{}}
-                                                  {\topprop{}}}
-                                      {\path {\classpe{}} {\x{}}}}$
+                                                       {\object{f}}}
 
     Prove by cases on \v{2}.
 
@@ -1209,20 +1065,28 @@ by noting \judgementtwo {} {\v{d}} {\t{d}},
           \item[] \begin{subcase}[\v{2} = \classvalue{\class{}} {\overrightarrow {\classfieldpair{\fld{i}} {\v{i}}}}]
                     \v{} = \class{}
 
-                    To prove part 1, note \object{} = {\replacefor {\object{f}}{\object{2}}{\x{}}} 
-                    and \object{f} = {\path {\classpe{}} {\x{}}}.
-                    There are two cases defined by substitution: if \object{2} = \emptyobject{} then \object{} = \emptyobject{}
-                    and we are done,
-                    or if \object{2} = {\path {\pathelem{}} {\xp{}}} then \object{} = 
-                    {\path {\classpe{}}{\object{2}}},
-                    by the induction hypothesis on \e{2} \inopenv {\openv{}} {\object{2}} {\v{2}}
-                    and by the definition of path translation
+                    To prove part 1,
+                    note
+                    \issubobjin{}{\replacefor {\object{f}} {\object{2}} {\x{}}} {\object{}},
+                    and \issubobjin{}{\path {\classpe{}} {\x{}}}{\object{f}}.
+                    Then either \object{} = \emptyobject{} and we are done,
+                    or \object{} = {\path {\classpe{}}{\object{2}}} and
+                    by the induction hypothesis on \e{2} we know \inopenv {\openv{}} {\object{2}} {\v{2}}
+                    and by the definition of path translation we know
                     {\openv{}}({\path {\classpe{}} {\object{2}}}) = {\appexp {\classconst{}} {{\openv{}}(\object{2})}},
                     which evaluates to \v{}.
 
-                    Part 2 is trivial since both propositions are \topprop{} by substitution.
+                    Part 2 is trivial since both propositions can only be \topprop{}.
                     
-                    Part 3 holds because {\judgementtwo{}{\v{2}}{\Class{}}}.
+                    Part 3 holds because 
+                    \v{} = \class{},
+                    \issubtypein{}{\Union{\Nil}{\Class}}{\replacefor {\t{f}} {\object{2}} {\x{}}}
+                    and
+                    \issubtypein{}{\replacefor {\t{f}} {\object{2}} {\x{}}}{\t{}},
+                    so
+                    {\judgementtwo{}{\v{}}{\t{}}}
+                    since
+                    {\judgementtwo{}{\class{}}{\Union{\Nil}{\Class}}}.
                   \end{subcase}
           \item[] \begin{subcase}[\v{2} = \class{}] \v{} = \Class{}
 
@@ -1255,7 +1119,8 @@ by noting \judgementtwo {} {\v{d}} {\t{d}},
           \item[] \begin{subcase}[\v{2} = {\nil{}}] \v{} = \nil{}
 
              Parts 1 and 2 as above.
-                    Part 3 holds because {\judgementtwo{}{\v{2}}{\Nil}}.
+                    Part 3 holds because \v{} = \nil{}
+                    and {\judgementtwo{}{\nil{}}{\Union{\Nil}{\Class}}}.
                   \end{subcase}
         \end{itemize}
       \end{subcase}
@@ -1339,23 +1204,13 @@ by noting \judgementtwo {} {\v{d}} {\t{d}},
     \item
   \e{} = {\appexp {\e{1}} {\e{2}}},
     \item
-  \t{} = {\replacefor {\t{f}}
-                      {\object{2}}
-                      {\x{}}},
+      \issubtypein{}  {\replacefor {\t{f}} {\object{2}} {\x{}}}{\t{}},
     \item
-  {\thenprop {\prop{}}} = 
-                 {\replacefor {\thenprop {\prop{f}}}
-                              {\object{2}}
-                              {\x{}}},
+      \inpropenv{\replacefor {\thenprop {\prop{f}}} {\object{2}} {\x{}}} {\thenprop {\prop{}}},
     \item
-  {\elseprop {\prop{}}} = 
-                 {\replacefor {\elseprop {\prop{f}}}
-                              {\object{2}}
-                              {\x{}}},
+      \inpropenv{\replacefor {\elseprop {\prop{f}}} {\object{2}} {\x{}}} {\elseprop {\prop{}}},
     \item
-  \object{} = {\replacefor {\object{f}}
-                           {\object{2}}
-                           {\x{}}},
+      \issubobjin{}{\replacefor {\object{f}} {\object{2}} {\x{}}} {\object{}},
   \end{itemize}
 
      By inversion on \e{1} via T-Multi we know 
@@ -1494,9 +1349,11 @@ We want to prove
                        {\object{2}}
                        {\e{2}},
   \e{} = {\isaapp {\e{1}} {\e{2}}},
-  \t{} = {\Boolean{}},
-  \isacompare{\t{1}}{\object{1}}{\t{2}}{\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}},
-  \object{} = \emptyobject{}
+  \issubtypein{}{\Boolean}{\t{}},
+  \isacompare{\t{1}}{\object{1}}{\t{2}}{\filterset {\thenprop {\propp{}}} {\elseprop {\propp{}}}},
+  \inpropenv{\thenprop {\propp{}}}{\thenprop {\prop{}}},
+  \inpropenv{\elseprop {\propp{}}}{\elseprop {\prop{}}},
+  \issubobjin{}{\emptyobject{}}{\object{}}
 
         Part 1 holds trivially with \object{} = \emptyobject{}.
 
@@ -1531,7 +1388,7 @@ We want to prove
 
                     \object{1} = {\path{\classpe{}}{\path{\pathelem{}}{\x{}}}},
                     \t{2} = {\Value{\class{}}},
-                    \thenprop{\prop{}} = {\isprop{\class{}} {\path{\pathelem{}}{\x{}}}}
+                    \inpropenv{\isprop{\class{}} {\path{\pathelem{}}{\x{}}}}{\thenprop{\prop{}}}
 
                     Unreachable by inversion on the typing relation, since \t{2} = {\Value{\class{}}},
                     yet \v{2} \notequal\ {\class{}}.
@@ -1561,9 +1418,9 @@ We want to prove
 
                     \t{2} = {\Value{\singletonmeta{}}}, 
                     {\singletonmeta{}} \notequal \class{},
-                    \thenprop{\prop{}} = {\replacefor{\isprop{\Value{\singletonmeta{}}} {\x{}}}
+                    \inpropenv{\replacefor{\isprop{\Value{\singletonmeta{}}} {\x{}}}
                                            {\object{1}}
-                                           {\x{}}}
+                                           {\x{}}}{\thenprop{\prop{}}}
                     %\elseprop{\prop{}} = {\replacefor{\notprop{\Value{\singletonmeta{}}} {\x{}}}
                     %                       {\object{1}}
                     %                       {\x{}}}
@@ -1581,8 +1438,8 @@ We want to prove
                     we derive
                     {\satisfies{\openv{}}{\topprop{}}} with M-Top.
 
-                    Otherwise \object{1} = \path{\pathelem{}}{\x{}} and \thenprop{\prop{}} =
-                    {\isprop{\Value{\singletonmeta{}}}{\path{\pathelem{}}{\x{}}}},
+                    Otherwise \object{1} = \path{\pathelem{}}{\x{}} and 
+                    \inpropenv{\isprop{\Value{\singletonmeta{}}}{\path{\pathelem{}}{\x{}}}}{\thenprop{\prop{}}},
                     and since
                     \judgementtwo {} {\v{1}} {\Value{\singletonmeta{}}}
                     then
@@ -1621,7 +1478,7 @@ We want to prove
 
                     \object{1} = {\path{\classpe{}}{\path{\pathelem{}}{\x{}}}},
                     \t{2} = {\Value{\class{2}}},
-                    \thenprop{\prop{}} = {\isprop{\class{2}} {\path{\pathelem{}}{\x{}}}}
+                    \inpropenv{\isprop{\class{2}} {\path{\pathelem{}}{\x{}}}}{\thenprop{\prop{}}}
 
                     By inversion on the typing relation, since \classpe{} is the last path element of \object{1}
                     then \opsem{\openv{}}{\appexp{\classconst{}}{\openv{}({\path{\pathelem{}}{\x{}}})}}{\v{1}}.
@@ -1653,9 +1510,9 @@ We want to prove
 
                     \t{2} = {\Value{\singletonmeta{}}}, 
                     {\singletonmeta{}} \notequal \class{},
-                    \thenprop{\prop{}} = {\replacefor{\isprop{\Value{\singletonmeta{}}} {\x{}}}
+                    \inpropenv{\replacefor{\isprop{\Value{\singletonmeta{}}} {\x{}}}
                                            {\object{1}}
-                                           {\x{}}}
+                                           {\x{}}}{\thenprop{\prop{}}}
 
                     Unreachable case since 
                     \t{2} = {\Value{\singletonmeta{}}} where 
@@ -1692,7 +1549,7 @@ We want to prove
 
                     \object{1} = {\path{\classpe{}}{\path{\pathelem{}}{\x{}}}},
                     \t{2} = {\Value{\class{}}},
-                    \elseprop{\prop{}} = {\notprop{\class{}} {\path{\pathelem{}}{\x{}}}}
+                    \inpropenv{\notprop{\class{}} {\path{\pathelem{}}{\x{}}}}{\elseprop{\prop{}}}
 
                     By inversion on the typing relation, since \classpe{} is the last path element of \object{1}
                     then \opsem{\openv{}}{\appexp{\classconst{}}{\openv{}({\path{\pathelem{}}{\x{}}})}}{\v{1}}.
@@ -1736,9 +1593,9 @@ We want to prove
                     %\thenprop{\prop{}} = {\replacefor{\isprop{\Value{\singletonmeta{}}} {\x{}}}
                     %                       {\object{1}}
                     %                       {\x{}}}
-                    \elseprop{\prop{}} = {\replacefor{\notprop{\Value{\singletonmeta{}}} {\x{}}}
+                    \inpropenv{\replacefor{\notprop{\Value{\singletonmeta{}}} {\x{}}}
                                            {\object{1}}
-                                           {\x{}}}
+                                           {\x{}}}{\elseprop{\prop{}}}
 
                     Since \t{2} = {\Value{\singletonmeta{}}} where {\singletonmeta{}} \notequal \class{},
                     by inversion on the typing judgement 
@@ -1749,8 +1606,8 @@ We want to prove
                     we derive
                     {\satisfies{\openv{}}{\topprop{}}} with M-Top.
 
-                    Otherwise \object{1} = \path{\pathelem{}}{\x{}} and \elseprop{\prop{}} =
-                    {\notprop{\Value{\singletonmeta{}}}{\path{\pathelem{}}{\x{}}}}.
+                    Otherwise \object{1} = \path{\pathelem{}}{\x{}} and 
+                    \inpropenv{\notprop{\Value{\singletonmeta{}}}{\path{\pathelem{}}{\x{}}}}{\elseprop{\prop{}}}.
                     Noting that \v{1} \notequal\ \v{2},
                     we know \judgementtwo{}{\openv{}({\path{\pathelem{}}{\x{}}})}{\s{}}
                     where \s{} \notequal\ {\Value{\singletonmeta{}}},
@@ -1813,12 +1670,13 @@ We want to prove
   \judgementtworewrite {\propenv{}} {\ep{k}} {\Value {k}}{\e{k}},
   \overr{\inmandatory{\k{}}{\t{i}}{\mandatory{}},}
   \e{} = {\getexp {\e{m}} {\e{k}}},
-  \t{} = {\Unionsplice {\overrightarrow {\t{i}}}},
+  \issubtypein{}{\Unionsplice {\overrightarrow {\t{i}}}}{\t{}} ,
   \thenprop{\prop{}} = {\topprop{}},
   \elseprop{\prop{}} = {\topprop{}},
-  \object{} = {\replacefor {\path {\keype{k}} {\x{}}}
+  \issubobjin{}{\replacefor {\path {\keype{k}} {\x{}}}
                           {\object{m}}
                           {\x{}}}
+                        {\object{}}
 
 
          To prove part 1 we consider two cases on the form of \object{m}: 
@@ -1828,7 +1686,7 @@ We want to prove
          then \object{} = \emptyobject{} by substitution, which gives the desired result;
            \item
          if \object{m} = {\path {\pathelem{m}} {\x{m}}}
-         then \object{} = {\path {\keype{k}} {\object{m}}} by substitution.
+         then \issubobjin{}{\path {\keype{k}} {\object{m}}}{\object{}} by substitution.
          We note by the definition of path translation
          {\openv{}}({\path {\keype{k}} {\object{m}}}) =
          {\getexp {{\openv{}}(\object{m})}{\k{}}}
@@ -1864,13 +1722,14 @@ We want to prove
            {\e{m}},
   {\inabsent{\k{}}{\absent{}}},
   \e{} = {\getexp {\e{m}} {\e{k}}},
-  \t{} = \Nil,
+  \issubtypein{}{\Nil}{\t{}},
   \thenprop{\prop{}} = {\topprop{}},
   \elseprop{\prop{}} = {\topprop{}},
-  \object{} = {\replacefor
+  \issubobjin{}{\replacefor
                {\path {\keype{k}} {\x{}}}
                           {\object{m}}
                           {\x{}}}
+                        {\object{}}
 
        Unreachable subcase because 
          $\keyinmap{\k{}}{\curlymap{\overrightarrow{({\v{a}}\ {\v{b}})}}}$,
@@ -1891,10 +1750,10 @@ We want to prove
   \t{} = \Top,
   \thenprop{\prop{}} = {\topprop{}},
   \elseprop{\prop{}} = {\topprop{}},
-  \object{} = {\replacefor
+  \issubobjin{}{\replacefor
                {\path {\keype{k}} {\x{}}}
                           {\object{m}}
-                          {\x{}}}
+                          {\x{}}}{\object{}}
 
          Parts 1 and 2 are the same as the B-Get subcase.
          Part 3 is trivial as \t{} = \Top.
@@ -1920,12 +1779,12 @@ We want to prove
   \judgementtworewrite {\propenv{}} {\ep{k}} {\Value {k}}{\e{k}},
   \overr{\inmandatory{\k{}}{\t{i}}{\mandatory{}},}
   \e{} = {\getexp {\e{m}} {\e{k}}},
-  \t{} = {\Unionsplice {\overrightarrow {\t{i}}}},
+  \issubtypein{}{\Unionsplice {\overrightarrow {\t{i}}}}{\t{}},
   \thenprop{\prop{}} = {\topprop{}},
   \elseprop{\prop{}} = {\topprop{}},
-  \object{} = {\replacefor {\path {\keype{k}} {\x{}}}
+  \issubobjin{}{\replacefor {\path {\keype{k}} {\x{}}}
                           {\object{m}}
-                          {\x{}}}
+                          {\x{}}}{\object{}}
 
        Unreachable subcase because 
        \keynotinmap{\k{}}{\curlymap{\overrightarrow{({\v{a}}\ {\v{b}})}}}
@@ -1941,13 +1800,13 @@ We want to prove
            {\e{m}},
   {\inabsent{\k{}}{\absent{}}},
   \e{} = {\getexp {\e{m}} {\e{k}}},
-  \t{} = \Nil,
+  \issubtypein{}{\Nil}{\t{}},
   \thenprop{\prop{}} = {\topprop{}},
   \elseprop{\prop{}} = {\topprop{}},
-  \object{} = {\replacefor
+  \issubobjin{}{\replacefor
                {\path {\keype{k}} {\x{}}}
                           {\object{m}}
-                          {\x{}}}
+                          {\x{}}}{\object{}}
 
          To prove part 1 we consider two cases on the form of \object{m}: 
          \begin{itemize}
@@ -1956,7 +1815,7 @@ We want to prove
          then \object{} = \emptyobject{} by substitution, which gives the desired result;
            \item
          if \object{m} = {\path {\pathelem{m}} {\x{m}}}
-         then \object{} = {\path {\keype{k}} {\object{m}}} by substitution.
+         then \issubobjin{}{\path {\keype{k}} {\object{m}}}{\object{}} by substitution.
          We note by the definition of path translation
          {\openv{}}({\path {\keype{k}} {\object{m}}}) =
          {\getexp {{\openv{}}(\object{m})}{\k{}}}
@@ -1971,6 +1830,7 @@ We want to prove
          
          Part 2 holds trivially as \thenprop{\prop{}} = {\topprop{}}
          and \elseprop{\prop{}} = {\topprop{}}.
+
          To prove part 3 we note that \e{m} has type {\HMapgeneric {\mandatory{}} {\absent{}}}
          where {\inabsent{\k{}}{\absent{}}}, and
          the premises of B-GetMissing
@@ -1993,10 +1853,10 @@ We want to prove
   \t{} = \Top,
   \thenprop{\prop{}} = {\topprop{}},
   \elseprop{\prop{}} = {\topprop{}},
-  \object{} = {\replacefor
+  \issubobjin{}{\replacefor
                {\path {\keype{k}} {\x{}}}
                           {\object{m}}
-                          {\x{}}}
+                          {\x{}}}{\object{}}
 
          Parts 1 and 2 are the same as the B-GetMissing subcase of T-GetHMapAbsent.
          Part 3 is trivial as \t{} = \Top.
@@ -2034,7 +1894,7 @@ We want to prove
   {\k{}} $\not\in$ {\absent{}},
   \ep{} = {\assocexp {\ep{m}} {\ep{k}} {\ep{v}}},
   \e{} = {\assocexp {\e{m}} {\e{k}} {\e{v}}},
-  \t{} = ${\HMapgeneric {\extendmandatoryset {\mandatory{}}{\k{}}{\t{}}} {\absent}}$,
+  \issubtypein{}{\HMapgeneric {\extendmandatoryset {\mandatory{}}{\k{}}{\t{}}} {\absent}}{\t{}},
   \thenprop{\prop{}} = {\topprop{}},
   \elseprop{\prop{}} = {\botprop{}},
   \object{} = \emptyobject{}
@@ -2085,8 +1945,8 @@ We want to prove
                  {\object{}}
                  {\e3},
   \e{} = {\ifexp {\e1} {\e2} {\e3}},
-  \thenprop{\prop{}} = {\orprop {\thenprop {\prop{2}}} {\thenprop {\prop{3}}}},
-  \elseprop{\prop{}} = {\orprop {\elseprop {\prop{2}}} {\elseprop {\prop{3}}}}
+  \inpropenv{\orprop {\thenprop {\prop{2}}} {\thenprop {\prop{3}}}}{\thenprop{\prop{}}},
+  \inpropenv{\orprop {\elseprop {\prop{2}}} {\elseprop {\prop{3}}}}{\elseprop{\prop{}}}
 
               For part 1, either \object{} = \emptyobject{}, or \e{} evaluates to the
               result of \e{3}.
@@ -2131,8 +1991,8 @@ We want to prove
                  {\object{}}
                  {\e3},
   \e{} = {\ifexp {\e1} {\e2} {\e3}},
-  \thenprop{\prop{}} = {\orprop {\thenprop {\prop{2}}} {\thenprop {\prop{3}}}},
-  \elseprop{\prop{}} = {\orprop {\elseprop {\prop{2}}} {\elseprop {\prop{3}}}}
+  \inpropenv{\orprop {\thenprop {\prop{2}}} {\thenprop {\prop{3}}}}{\thenprop{\prop{}}},
+  \inpropenv{\orprop {\elseprop {\prop{2}}} {\elseprop {\prop{3}}}}{\elseprop{\prop{}}}
 
               For part 1, either \object{} = \emptyobject{}, or \e{} evaluates to the
               result of \e{2}.
@@ -2280,14 +2140,16 @@ We want to prove
                          {\elseprop {\prop{1}}}}
              {\object{1}}
              {\e{1}}},
-  \t{} = {\ArrowOne {\x{}} {\s{}}
-                                                      {\t{1}}
-                                                      {\filterset {\thenprop {\prop{1}}}
-                                                                  {\elseprop {\prop{1}}}}
-                                                      {\object{1}}},
-  {\thenprop{\prop{}}} = {\topprop{}},
-  {\elseprop{\prop{}}} = {\botprop{}},
-  {\object{}} = {\emptyobject{}}
+           \issubtypein{}
+           {\ArrowOne {\x{}} {\s{}}
+                      {\t{1}}
+                      {\filterset {\thenprop {\prop{1}}}
+                                  {\elseprop {\prop{1}}}}
+                      {\object{1}}}
+          {\t{}},
+          \inpropenv{\topprop{}}{\thenprop{\prop{}}},
+          \inpropenv{\botprop{}}{\elseprop{\prop{}}},
+          {\object{}} = {\emptyobject{}}
 
         Parts 1 and 2 hold for the same reasons as T-True.
         Part 3 holds directly via T-Clos, since \v{} must be a closure.
@@ -2310,33 +2172,6 @@ We want to prove
         Trivially reduces to an error.
       \end{subcase}
   \end{itemize}
-\end{case}
-
-% TODO distribute the T-Subsume rule?
-\begin{case}[T-Subsume]
-  \judgementrewrite {\propenv{}} {\ep{}} {\tp{}}
-             {\filterset {\thenprop {\propp{}}}
-                         {\elseprop {\propp{}}}}
-             {\objectp{}}
-             {\e{}},
-\inpropenv {\propenv{}, {\thenprop {\propp{}}}} {\thenprop {\prop{}}},
-\inpropenv {\propenv{}, {\elseprop {\propp{}}}} {\elseprop {\prop{}}},
-\inpropenv {} {\issubtype {\tp{}} {\t{}}},
-\inpropenv {} {\issubtype {\objectp{}} {\object{}}}
-
-Part 1 holds because \objectp{} is the object of \e{}
-and \inpropenv {} {\issubtype {\objectp{}} {\object{}}}.
-Part 2 holds because 
-the then and else propositions of \e{} are
-{\thenprop {\propp{}}} and 
-{\elseprop {\propp{}}} respectively, so
-{\thenprop {\prop{}}} and
-{\elseprop {\prop{}}} are also respectively as 
-\inpropenv {\propenv{}, {\thenprop {\propp{}}}} {\thenprop {\prop{}}} and
-\inpropenv {\propenv{}, {\elseprop {\propp{}}}} {\elseprop {\prop{}}}.
-Part 3 holds because \e{} is of type \tp{} and 
-\inpropenv {} {\issubtype {\tp{}} {\t{}}}.
-
 \end{case}
 
 \end{proof}
