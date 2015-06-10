@@ -152,6 +152,7 @@
 \newcommand\secref[1]{Section~\ref{#1}}
 \newcommand\figref[1]{Figure~\ref{#1}}
 \newcommand\egref[1]{Example~\ref{#1}}
+\newcommand\lemref[1]{Lemma~\ref{#1}}
 
 % terms
 \newmeta\x{x}                   % not sure if \x is reserved...
@@ -196,6 +197,7 @@
 \newcommand\curlymapvaloverrightnoarrow[2]{\ma{\{{\overrightarrow{\mapvalentrynoarrow{#1}{#2}}}\}}}
 \newcommand\extendmap[3]{\ma{#1[#2 \mapsto #3]}}
 \newcommand\getmap[2]{\ma{#1[#2]}}
+\newcommand\entryinmap[2]{\ma{{#1} \in {#2}}}
 \newcommand\keyinmap[2]{\ma{{#1} \in dom({#2})}}
 \newcommand\keynotinmap[2]{\ma{{#1} \not\in dom({#2})}}
 \newcommand\comb[2]{\ma{(#1\ #2)}}
@@ -538,6 +540,40 @@
 \newcommand\isfalseval[1]{\ma{\metafunctionfont{FalseVal}(#1)}}
 
 \newmeta\definedreduction{\alpha}
+
+% Joshua Dunfield stuff
+%
+% ``Judgment boxes'' that should precede a mathpar, so the reader
+% can instantly see which judgment is being defined by the rules.
+%
+% The first argument is the judgment form.
+% The second argument tells the reader how to interpret the judgment.
+% I don't mean *what* the judgment is, but literally how to *say* it:
+% If you're defining \Gamma \entails e : \tau, don't write
+%
+%   \judgbox{\Gamma \entails e : \tau}{Typing}
+%
+% Instead, write
+%
+%   \judgbox{\Gamma \entails e : \tau}
+%           {Under context $\Gamma$, expression $e$ has type $\tau$}
+%
+% This tells the reader what the judgment is supposed to mean.  It's also
+% an opportunity to remind the reader what your metavariables (like $e$)
+% stand for.  The reader doesn't know your system as well as you do,
+% and will lose track of all the kinds of animals you have in your zoo.
+%
+% For less familiar judgments than typing, this is even more important.
+% 
+
+\newcommand{\textgraybox}[1]{\boxed{#1}}
+
+\newcommand{\judgboxfontsize}[1]{\large #1}
+
+\newcommand{\judgbox}[2]{%
+      {\raggedright \textgraybox{\judgboxfontsize{\ensuremath{#1}}}\!\begin{tabular}[c]{l} #2 \end{tabular} %
+      \\[-2.1ex] %
+}}
 
 % Common typing rules
 \newcommand\TLocal[0]{
@@ -1306,9 +1342,9 @@ $$
              \ \ \ \ \ \ \ \ 
              \text{where } {\overrightarrow{\v{fs}}} = 
                 \{ \v{f} | 
-                    {\roundpair{\v{v}}{\v{f}}} \in \disptable{} 
+                    {\mapvalentry{\v{k}}{\v{f}}} \in \disptable{} 
                   \text{ and } 
-                \isaopsem{\v{v}}{\v{e}} = {\true{}} \}
+                \isaopsem{\v{e}}{\v{k}} = {\true{}} \}
              \\
   \getmethoderr {\disptable{}}
              {\v{e}}

@@ -1,32 +1,32 @@
 \begin{figure*}
 \begin{mathpar}
 \infer [M-Or]
-{ \satisfies{\propenv{}}{\prop{1}}\ \text{or}\  \satisfies{\propenv{}}{\prop{2}}}
-{ \satisfies{\propenv{}}{\orprop{\prop{1}}{\prop{2}}}
+{ \satisfies{\openv{}}{\prop{1}}\ \text{or}\  \satisfies{\openv{}}{\prop{2}}}
+{ \satisfies{\openv{}}{\orprop{\prop{1}}{\prop{2}}}
                    }
 
 \infer [M-Imp]
-{ \satisfies{\propenv{}}{\prop{1}}\ \text{implies}\ \satisfies{\propenv{}}{\prop{2}}}
-{ \satisfies{\propenv{}}{\impprop{\prop{1}}{\prop{2}}}
+{ \satisfies{\openv{}}{\prop{1}}\ \text{implies}\ \satisfies{\openv{}}{\prop{2}}}
+{ \satisfies{\openv{}}{\impprop{\prop{1}}{\prop{2}}}
                    }
 
 \infer [M-And]
-{ \satisfies{\propenv{}}{\prop{1}}
-\\ \satisfies{\propenv{}}{\prop{2}}}
-{ \satisfies{\propenv{}}{\andprop{\prop{1}}{\prop{2}}}
+{ \satisfies{\openv{}}{\prop{1}}
+\\ \satisfies{\openv{}}{\prop{2}}}
+{ \satisfies{\openv{}}{\andprop{\prop{1}}{\prop{2}}}
                    }
 
 
 \infer [M-Top]
 {}
-{ \satisfies{\propenv{}}{\topprop{}}
+{ \satisfies{\openv{}}{\topprop{}}
                    }
 
                    \\
 
 \infer [M-Type]
 { \judgement {} {\openv{}({\path{\pathelem{}}{\x{}}})} {\t{}}{\filterset{\thenprop{\prop{}}}{\elseprop{\prop{}}}}{\object{}}}
-{ \satisfies{\propenv{}}{\isprop{\t{}}{\path{\pathelem{}}{\x{}}}}
+{ \satisfies{\openv{}}{\isprop{\t{}}{\path{\pathelem{}}{\x{}}}}
                    }
 
 \infer [M-NotType]
@@ -35,7 +35,7 @@
 \text{there is no}\ \v{}\ \text{such that}\ \judgement{}{\v{}}{\t{}}{\filterset{\thenprop{\prop{1}}}{\elseprop{\prop{1}}}}{\object{1}}
 \ \text{and}\ \judgement{}{\v{}}{\s{}}{\filterset{\thenprop{\prop{2}}}{\elseprop{\prop{2}}}}{\object{2}}
 }
-{ \satisfies{\propenv{}}{\notprop{\t{}}{\path{\pathelem{}}{\x{}}}}
+{ \satisfies{\openv{}}{\notprop{\t{}}{\path{\pathelem{}}{\x{}}}}
                    }
 \end{mathpar}
 \caption{Satisfaction Relation}
