@@ -933,7 +933,7 @@
 \newcommand\TClass[0]{
 \infer [T-Class]
 {}
-{ \judgement {\propenv{}} {\class{}}{\ValueClass}{\filterset{\topprop{}}{\botprop{}}}{\emptyobject{}}}
+{ \judgementselfrewrite {\propenv{}} {\class{}}{\ValueClass}{\filterset{\topprop{}}{\botprop{}}}{\emptyobject{}}}
          }
 
 \newcommand\TDefMulti[0]{
@@ -991,14 +991,16 @@
                        {\elseprop {\prop{}}}}
            {\object{}}
            {\ep{b}}
+           \\
+           {\ep{}} =
+             {\extendmultiexp {\ep{m}} {\ep{v}} 
+               {\abs {\x{}} {\t{}} {\ep{b}}}}
 }
 { \judgementrewrite {\propenv{}} {\extendmultiexp {\e{m}} {\e{v}} 
                                                             {\abs {\x{}} {\t{}} {\e{b}}}}
                                            {\MultiFntype {\t{m}} {\t{d}}}
              {\filterset {\topprop{}} {\botprop{}}}
-             {\emptyobject{}}
-             {\extendmultiexp {\ep{m}} {\ep{v}} 
-               {\abs {\x{}} {\t{}} {\ep{b}}}}
+             {\emptyobject{}}{\ep{}}
 }
 }
 
@@ -1034,13 +1036,15 @@
   \judgementtworewrite {\propenv{}} {\e{v}} {\t{}} {\ep{v}}
   \\
   {\k{}} \not\in {\absent{}}
+  \\
+  {\ep{}} = {\assocexp {\ep{}} {\ep{k}} {\ep{v}}}
 }
 { \judgementrewrite {\propenv{}} 
              {\assocexp {\e{}} {\e{k}} {\e{v}}}
                        {\HMapgeneric {\extendmandatoryset {\mandatory{}}{\k{}}{\t{}}} {\absent}}
              {\filterset {\topprop{}} {\botprop{}}}
              {\emptyobject{}}
-             {\assocexp {\ep{}} {\ep{k}} {\ep{v}}}
+             {\ep{}}
 }
          }
 
@@ -2206,6 +2210,8 @@ then \judgementrewrite{}{\v{}}{\t{}}{\filterset{\thenprop{\propp{}}}{\elseprop{\
 
 \newcommand\wrongtheoremnoproof[1]{
 \begin{theorem}[Well-typed programs don't go wrong] \label{#1:theorem:wrongnoproof}
+  \ 
+
 \wrongtheorembody{#1}
 \end{theorem}
 }

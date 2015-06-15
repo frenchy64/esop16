@@ -127,17 +127,25 @@ We formalize our type system following~\citet{TF10}
 (with differences highlighted in $\trdiff{\text{blue}}$).
 The typing judgment 
 $$
+{\judgementrewrite   {\propenv}
+              {\e{}} {\t{}}
+  {\filterset {\thenprop {\prop{}}}
+              {\elseprop {\prop{}}}}
+  {\object{}}
+  {\ep{}}}
+$$
+says expression \e{} is of type \t{} in the 
+proposition environment $\propenv{}$, with 
+`then' proposition {\thenprop {\prop{}}}, `else' proposition {\elseprop {\prop{}}}
+and object \object{}, and rewrites to \ep{}. We write 
+{\judgementtworewrite{\propenv}{\e{}} {\t{}}{\ep{}} if we are only interested in the type
+  or
 {\judgement   {\propenv}
               {\e{}} {\t{}}
   {\filterset {\thenprop {\prop{}}}
               {\elseprop {\prop{}}}}
   {\object{}}}
-$$
-says expression \e{} is of type \t{} in the 
-proposition environment $\propenv{}$, with 
-`then' proposition {\thenprop {\prop{}}}, `else' proposition {\elseprop {\prop{}}}
-and object \object{}. We write 
-{\judgementtwo{\propenv}{\e{}} {\t{}} if we are only interested in the type.
+for expressions that rewrite to itself.
 
 The syntax is given in \figref{main:figure:termsyntax}. Expressions include variables, values,
 application, abstractions, conditionals and let expressions.
