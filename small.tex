@@ -1,3 +1,5 @@
+% rubber: set arguments --shell-escape
+% arara: pdflatex: {shell: true}
 %-----------------------------------------------------------------------------
 %
 %               Template for sigplanconf LaTeX Class
@@ -73,7 +75,7 @@
 
 \title{Practical Optional Types for Clojure}
 
-\authorinfo{Author}{Institution}{Email}
+\authorinfo{}{}{\vspace*{-2mm}}
 %\authorinfo{Ambrose Bonnaire-Sergeant}
 %           {Indiana University}
 %           {abonnair@indiana.edu}
@@ -88,30 +90,41 @@
 
 \begin{abstract}
 Typed Clojure is an optional type system for Clojure, a dynamic
-language in the Lisp family that targets the JVM. Typed Clojure's type
-system build on the design of Typed Racket, repurposing in particular
+language in the Lisp family that targets the JVM. Typed Clojure
+enables Clojure programmers to gain greater confidence in the
+correctness of their code via static type checking while remaining in
+the Clojure world, and has acquired significant adoption in the
+Clojure community. Typed Clojure's type
+system repurposes Typed Racket's
 \emph{occurrence typing}, an approach to statically reasoning about
-predicate tests. However, in adapting the type system to Clojure,
-changes and extensions are required to accommodate  additional
-language features and  idioms used by Clojure programmers.
+predicate tests, and also includes several new type system features to
+handle existing Clojure idioms.
 
 In this paper, we describe Typed Clojure and present these type system
-extensions, focusing on three features widely used in Clojure. First, Java
+extensions, focusing on three features widely used in Clojure. 
+%
+ First, multimethods provide extensible
+operations, and their Clojure semantics turns out to have a surprising
+synergy with the underlying occurrence typing framework.
+%
+Second, Java
 interoperability is central to Clojure's mission but introduces
 challenges such as ubiquitous \texttt{null}; Typed Clojure handles
 Java interoperability while ensuring the absence of null-pointer
-exceptions in typed programs. Second, Clojure programmers
+exceptions in typed programs. 
+%
+Third, Clojure programmers
 idiomatically use immutable dictionaries for data structures; Typed
-Clojure handles this in the type system with multiple forms of
-heterogeneous dictionary types. Third, multimethods provide extensible
-operations, and their Clojure semantics turns out to have a surprising
-synergy with the underlying occurrence typing framework.
+Clojure handles this with multiple forms of
+heterogeneous dictionary types.
+%
 
 We provide a formal model of the Typed Clojure type system
 incorporating these and other features, with a proof of
 soundness. Additionally, Typed Clojure is now in use by numerous
 corporations and developers working with Clojure, and we report on 
-experience with the system and its lessons for the future.
+a quantiative analysis of the use of the features described in this
+paper in two substantial code bases.
 
 
 %% Clojure is a dynamically typed language hosted on the Java 

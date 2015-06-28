@@ -1,3 +1,7 @@
+fast:
+	pdflatex -shell-escape small.tex 
+
+
 all:
 	pdflatex -shell-escape small.tex 
 	bibtex small
