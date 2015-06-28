@@ -20,9 +20,7 @@
 { \inpropenv {\propenv{}} {\andprop {\prop{1}}{\prop{2}}}}
 
 \infer [L-AndE]
-{ \inpropenv {\propenv{}, {\prop{1}}} {\prop{}}
-  \ \text{or}\ 
-  \inpropenv {\propenv{}, {\prop{2}}} {\prop{}}}
+{ \inpropenv {\propenv{}, {\prop{1}}, {\prop{2}}} {\prop{}} }
 { \inpropenv {\propenv{}, {\andprop {\prop{1}}{\prop{2}}}} {\prop{}}}
 
 \infer [L-ImplI]
