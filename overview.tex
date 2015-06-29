@@ -27,10 +27,10 @@ interoperability comes at the cost of pervasive \java{null}, which
 leads to the possibility of null pointer exceptions---a drawback we
 address in Typed Clojure.
 
-\subsection{Clojure Syntax}
+\paragraph{Clojure Syntax}
 
 We describe new syntax as they appear in each example, but
-we also include the essential basics of Clojure syntax.
+begin with include the essential basics of Clojure syntax.
 
 \clj{nil} is exactly Java's \java{null}.
 Parentheses indicate \emph{applications}, brackets
@@ -44,7 +44,9 @@ and a colon prefixed symbol like \clj{:a} is a \emph{keyword}.
 
 \emph{Commas} are always \emph{whitespace}.
 
-\subsection{Typed Racket and occurrence typing}
+\subsection{Type System Basics}
+
+\marginpar{STH: Add an example that doesn't do anything interesting}
 
 \citet{TF10}
 presented Typed Racket with occurrence typing,
