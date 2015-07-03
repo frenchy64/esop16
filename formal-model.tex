@@ -368,6 +368,33 @@ Subtyping for untagged unions is standard.
 \subsection{Reasoning about Exceptional Control Flow}
 \label{sec:doformal}
 
+Along with conditional control flow,
+Clojure programmers rely on \emph{exceptions}
+to assert type-related invariants.
+
+\begin{exmp}
+\inputminted[firstline=13,lastline=15]{clojure}{code/demo/src/demo/do.clj}
+\label{example:doexception}
+\end{exmp}
+
+The fully expanded increment function in~\egref{example:doexception}
+guards its final call with a number check, preventing
+a possible null-pointer exception.
+Without this check, the type system would reject the program.
+
+To check this example,
+occurrence typing 
+automatically
+assumes
+\clj{x} is a number when checking the second \clj{do} subexpression
+based on the first subexpression.
+\footnote{See \url{https://github.com/typedclojure/examples}
+  for full examples.}
+We model this formally %(section~\ref{sec:doformal}) 
+and prove
+null-pointer exceptions are impossible in typed code (section~\ref{sec:metatheory}).
+
+
 We extend our model with sequencing expressions and errors, where {\errorvalv{}}
 models the result of calling Clojure's \clj{throw} special form
 with some \clj{Throwable}.

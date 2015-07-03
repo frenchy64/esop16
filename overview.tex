@@ -27,112 +27,138 @@ interoperability comes at the cost of pervasive \java{null}, which
 leads to the possibility of null pointer exceptions---a drawback we
 address in Typed Clojure.
 
-\paragraph{Clojure Syntax}
+%\paragraph{Clojure Syntax}
+%
+%We describe new syntax as they appear in each example, but
+%begin with include the essential basics of Clojure syntax.
+%
+%\clj{nil} is exactly Java's \java{null}.
+%Parentheses indicate \emph{applications}, brackets
+%delimit
+%\emph{vectors}, braces
+%delimit
+%\emph{hash-maps}
+%and double quotes delimit \emph{Java strings}.
+%\emph{Symbols} begin with an alphabetic character,
+%and a colon prefixed symbol like \clj{:a} is a \emph{keyword}.
+%
+%\emph{Commas} are always \emph{whitespace}.
 
-We describe new syntax as they appear in each example, but
-begin with include the essential basics of Clojure syntax.
+\subsection{Typed Clojure Introduction}
 
-\clj{nil} is exactly Java's \java{null}.
-Parentheses indicate \emph{applications}, brackets
-delimit
-\emph{vectors}, braces
-delimit
-\emph{hash-maps}
-and double quotes delimit \emph{Java strings}.
-\emph{Symbols} begin with an alphabetic character,
-and a colon prefixed symbol like \clj{:a} is a \emph{keyword}.
+Here is a simple program in Typed Clojure.
 
-\emph{Commas} are always \emph{whitespace}.
+We define a global variable \clj{greet} as a one-argument function
+taking and returning a string.
 
-\subsection{Type System Basics}
+\begin{minted}{clj}
+(ann  greet [Str -> Str])
+(defn greet [n]
+  (str "Hello, " n "!"))
+(greet "Grace") ; :- Str
+;=> "Hello, Grace!"
+(greet nil)    ; Type Error:
+               ;   Expected Str, given nil
+\end{minted}
 
-\marginpar{STH: Add an example that doesn't do anything interesting}
+The function may take strings, but providing \clj{nil} (Clojure's name for Java's \emph{null})
+is a static type error --- \clj{nil} is not a string in Typed Clojure.
 
-\citet{TF10}
-presented Typed Racket with occurrence typing,
-a technique for deriving type information from conditional control flow.
-They introduced the concept of occurrence typing 
-with the following example.
+\paragraph{Unions} We can make the annotation more permissive with \emph{ad-hoc unions}
+to allow \clj{nil}.
 
-\inputminted[firstline=3]{racket}{code/tr/example1.rkt}
+\begin{minted}{clj}
+(ann  greet-nil [(U nil Str) -> Str])
+(defn greet-nil [n]
+  (str "Hello" (when n (str ", " n)) "!"))
+(greet-nil "Donald") ; :- Str
+;=> "Hello, Donald!"
+(greet-nil nil)    ; :- Str
+;=> "Hello!"
+\end{minted}
 
-This function takes a value that is either \emph{\#f} % mintinline really hates #
-or a number, represented by an \emph{untagged} union type.
-The `then' branch has an implicit invariant
-that \rkt{x} is a number, which is automatically inferred with occurrence typing
-and type checked without further annotations.
+All Clojure values are true, except \clj{nil} and \clj{false}, so the
+comma is only added when the argument is non-nil.
 
-We chose to build on the ideas and implementation
-of Typed Racket to implement a type system targeting Clojure for several reasons.
-Initially, the similarities between Racket and Clojure drew us to
-investigate the effectiveness of repurposing occurrence typing
-for a Clojure type system---both languages share a Lisp heritage,
-similar standard functions 
-(for instance \clj{map}
-in both languages is variable-arity)
-and idioms.
-While Typed Racket is gradually typed and has sophisticated
-dynamic semantics for cross-language interaction, we 
-chose to first implement
-the static semantics
-with the hope to extend Typed Clojure to be gradually typed at a future date.
-Finally,
-Typed Racket's combination of bidirectional checking
-and occurrence typing presents a successful model for 
-type checking dynamically typed programs without compromising
-soundness, which is appealing over success typing~\cite{Lindahl:2006:PTI}
-which cannot prove strong properties about programs
-and soft typing~\cite{CF91}
-which has proved too complicated in practice.
+\paragraph{Flow analysis} Typed Clojure uses occurrence typing to
+model type-based control flow.
 
-Here is the above program in Typed Clojure.
-\begin{exmp}
-\inputminted[firstline=5]{clojure}{code/demo/src/demo/eg1.clj}
-\label{example:conditionalflow}
-\end{exmp}
+\begin{minted}{clj}
+(ann  greetings [Str (U nil Int) -> Str])
+(defn greetings [n i]
+  (str "Hello, "
+       (when i
+         (apply str (repeat i (str "hello, "))))
+       n "!"))
+(greetings "Donald" 2)  ; :- Str
+;=> "Hello, hello, hello, Donald!"
+(greetings "Grace" nil) ; :- Str
+;=> "Hello, Grace!"
+\end{minted}
 
-The \clj{fn} macro (provided by core.typed) supports optional annotations by 
-adding
-\clj{:-} and a type after a parameter
-position
-or binding vector 
-to annotate parameter types
-and return types respectively.
-\clj{number?} is
-a Java \java{instanceof} test of \clj{java.lang.Number}.
-As in Typed Racket, \clj{U} creates an \emph{untagged union} type, which can take
-any number of types.
+Providing \clj{repeat} with a nilable first argument is disallowed,
+but the \clj{when} expression ensures it can only be passed an integer.
 
-Typed Clojure can already check all of the examples in~\citet{TF10}---the 
-rest of this section describes the extensions necessary
-to check Clojure code.
-
-\subsection{Exceptional control flow}
-
-Along with conditional control flow,
-Clojure programmers rely on \emph{exceptions}
-to assert type-related invariants.
-
-\begin{exmp}
-\inputminted[firstline=13,lastline=15]{clojure}{code/demo/src/demo/do.clj}
-\label{example:doexception}
-\end{exmp}
-
-The fully expanded increment function in~\egref{example:doexception}
-guards its final call with a number check, preventing
-a possible null-pointer exception.
-Without this check, the type system would reject the program.
-
-To check this example,
-occurrence typing 
-automatically
-assumes
-\clj{x} is a number when checking the second \clj{do} subexpression
-based on the first subexpression.
-\footnote{See \url{https://github.com/typedclojure/examples}
-  for full examples.}
-We model this formally (section~\ref{sec:doformal}) and prove
-null-pointer exceptions are impossible in typed code (section~\ref{sec:metatheory}).
+%\subsection{Type System Basics}
+%
+%\citet{TF10}
+%presented Typed Racket with occurrence typing,
+%a technique for deriving type information from conditional control flow.
+%They introduced the concept of occurrence typing 
+%with the following example.
+%
+%\inputminted[firstline=3]{racket}{code/tr/example1.rkt}
+%
+%This function takes a value that is either \emph{\#f} % mintinline really hates #
+%or a number, represented by an \emph{untagged} union type.
+%The `then' branch has an implicit invariant
+%that \rkt{x} is a number, which is automatically inferred with occurrence typing
+%and type checked without further annotations.
+%
+%We chose to build on the ideas and implementation
+%of Typed Racket to implement a type system targeting Clojure for several reasons.
+%Initially, the similarities between Racket and Clojure drew us to
+%investigate the effectiveness of repurposing occurrence typing
+%for a Clojure type system---both languages share a Lisp heritage,
+%similar standard functions 
+%(for instance \clj{map}
+%in both languages is variable-arity)
+%and idioms.
+%While Typed Racket is gradually typed and has sophisticated
+%dynamic semantics for cross-language interaction, we 
+%chose to first implement
+%the static semantics
+%with the hope to extend Typed Clojure to be gradually typed at a future date.
+%Finally,
+%Typed Racket's combination of bidirectional checking
+%and occurrence typing presents a successful model for 
+%type checking dynamically typed programs without compromising
+%soundness, which is appealing over success typing~\cite{Lindahl:2006:PTI}
+%which cannot prove strong properties about programs
+%and soft typing~\cite{CF91}
+%which has proved too complicated in practice.
+%
+%Here is the above program in Typed Clojure.
+%\begin{exmp}
+%\inputminted[firstline=5]{clojure}{code/demo/src/demo/eg1.clj}
+%\label{example:conditionalflow}
+%\end{exmp}
+%
+%The \clj{fn} macro (provided by core.typed) supports optional annotations by 
+%adding
+%\clj{:-} and a type after a parameter
+%position
+%or binding vector 
+%to annotate parameter types
+%and return types respectively.
+%\clj{number?} is
+%a Java \java{instanceof} test of \clj{java.lang.Number}.
+%As in Typed Racket, \clj{U} creates an \emph{untagged union} type, which can take
+%any number of types.
+%
+%Typed Clojure can already check all of the examples in~\citet{TF10}---the 
+%rest of this section describes the extensions necessary
+%to check Clojure code.
 
 \subsection{Heterogeneous hash-maps}
 
@@ -144,13 +170,12 @@ HMap types model the most common usages of keyword maps.
 \label{example:decleaf}
 \end{exmp}
 
-The \clj{defn} macro defines a top-level function, with syntax like the typed \clj{fn}.
-The function \clj{an-exp} is verified to return an \clj{Expr}.
-
-The \clj{defalias} macro defines a type abbreviation which can reference itself recursively.
-Here \clj{defalias} defines \clj{Expr}
+%The \clj{defn} macro defines a top-level function, with syntax like the typed \clj{fn}.
+%The function \clj{an-exp} is verified to return an \clj{Expr}.
+%
+Here \clj{defalias} defines \clj{Expr}, a type abbreviation
 that describes the structure of a recursively-defined AST as a union of HMaps.
-A quoted keyword in a type, such as \clj{':if}, is a singleton type that contains just the keyword.
+A quoted keyword in a type --- \clj{':if} --- is a singleton type that contains just the keyword.
 A type that is a quoted map like \clj{'{:op ':if}} is a
 HMap type with a fixed number of keyword entries of the specified types
 known to be \emph{present},
