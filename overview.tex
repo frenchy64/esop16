@@ -44,7 +44,7 @@ address in Typed Clojure.
 %
 %\emph{Commas} are always \emph{whitespace}.
 
-\subsection{Typed Clojure Introduction}
+\subsection{Typed Clojure}
 
 Here is a simple program in Typed Clojure.
 
@@ -57,12 +57,16 @@ taking and returning a string.
   (str "Hello, " n "!"))
 (greet "Grace") ; :- Str
 ;=> "Hello, Grace!"
-(greet nil)    ; Type Error:
-               ;   Expected Str, given nil
 \end{minted}
 
-The function may take strings, but providing \clj{nil} (Clojure's name for Java's \emph{null})
+The function may take strings, but providing \clj{nil} (Clojure's name for Java's \java{null})
 is a static type error --- \clj{nil} is not a string in Typed Clojure.
+
+\begin{minted}{clj}
+(greet nil)    ; Type Error:
+               ;   Expected Str, given nil
+               ; in: nil
+\end{minted}
 
 \paragraph{Unions} We can make the annotation more permissive with \emph{ad-hoc unions}
 to allow \clj{nil}.
@@ -73,15 +77,17 @@ to allow \clj{nil}.
   (str "Hello" (when n (str ", " n)) "!"))
 (greet-nil "Donald") ; :- Str
 ;=> "Hello, Donald!"
-(greet-nil nil)    ; :- Str
+(greet-nil nil)      ; :- Str
 ;=> "Hello!"
 \end{minted}
 
-All Clojure values are true, except \clj{nil} and \clj{false}, so the
+All Clojure values are true except \clj{nil} and \clj{false}, so the
 comma is only added when the argument is non-nil.
 
 \paragraph{Flow analysis} Typed Clojure uses occurrence typing to
 model type-based control flow.
+In \clj{greetings}, a \clj{when} expression ensures \clj{repeat}
+is never passed a \clj{nil} argument.
 
 \begin{minted}{clj}
 (ann  greetings [Str (U nil Int) -> Str])
@@ -96,8 +102,21 @@ model type-based control flow.
 ;=> "Hello, Grace!"
 \end{minted}
 
-Providing \clj{repeat} with a nilable first argument is disallowed,
-but the \clj{when} expression ensures it can only be passed an integer.
+Removing the \clj{when} expression is a static type error
+--- \clj{repeat} cannot be passed \clj{nil}.
+
+\begin{minted}{clj}
+(ann  greetings-bad [Str (U nil Int) -> Str])
+(defn greetings-bad [n i]
+  (str "Hello, "
+       (apply str (repeat i (str "hello, ")))
+       ; Type Error:
+       ;   Expected Num, given (U nil Num).
+       ; in: i
+       n "!"))
+\end{minted}
+
+
 
 %\subsection{Type System Basics}
 %
@@ -159,6 +178,229 @@ but the \clj{when} expression ensures it can only be passed an integer.
 %Typed Clojure can already check all of the examples in~\citet{TF10}---the 
 %rest of this section describes the extensions necessary
 %to check Clojure code.
+
+
+\subsection{Java interoperability}
+\label{sec:overviewjavainterop}
+
+Clojure supports interoperability with Java, including the ability to
+call constructors, invoke methods, and access fields.
+
+\begin{minted}{clj}
+  (.getParent (new File "a/b"))  ; :- (U nil Str)
+  ;=> "a"
+\end{minted}
+
+If a specific constructor, method, or field cannot be found based on the
+static types of its arguments, a type error is thrown.
+
+\begin{minted}{clj}
+  (fn [f] 
+    (.getParent f)
+    ; Type error:
+    ;   Unresolved host interop: getParent
+    )
+\end{minted}
+
+Function arguments default to \clj{Any}, the most permissive type. Ascribing
+a parameter type helps Typed Clojure find a specific method.
+
+%Calls to Java methods and fields have prefix notation
+%like \clj{(.method target args*)} and \clj{(.field target)} respectively,
+%with method and field names prefixed with a dot and methods taking some number of arguments.
+
+\begin{exmp}
+\inputminted[firstline=6,lastline=8]{clojure}{code/demo/src/demo/parent3.clj}
+\end{exmp}
+
+%\begin{exmp}
+%\inputminted[firstline=18,lastline=19]{clojure}{code/demo/src/demo/parent3.clj}
+%\end{exmp}
+
+The conditional guards from dereferencing \clj{nil}, and as before
+removing it is a static type error.
+
+\begin{minted}{clj}
+(defn parent-bad-in [f :- (U nil File)]
+  (.getParent f)
+  ; Type error:
+  ;   Cannot call instance method 
+  ;   java.io.File/getParent on type 
+  ;   (U nil File).
+  )
+\end{minted}
+
+Any Java method returning a reference can also return \java{null} ---
+Typed Clojure rejects programs that assume otherwise.
+
+\begin{minted}{clj}
+(defn parent-bad-out [f :- File] :- Str
+  (.getParent f)
+  ; Type error:
+  ;   Expected Str, given (U nil Str).
+  ; in: (.getParent f)
+  )
+\end{minted}
+
+%Typed Clojure and Java treat \java{null} differently.
+%In Clojure, where it is known as \clj{nil}, Typed Clojure assigns it an explicit type
+%called \clj{nil}. In Java \java{null} is implicitly a member of any reference type.
+%This means the Java static type \java{String} is equivalent to
+%\clj{(U nil String)} in Typed Clojure.
+%
+%Reference types in Java are nullable, so to guarantee a method call does not
+%leak \java{null} into a Typed Clojure program we
+%must assume methods can return \clj{nil}.
+
+In contrast, JVM invariants guarantee constructors return a non-null reference.\footnote{\url{http://docs.oracle.com/javase/specs/jls/se7/html/jls-15.html#jls-15.9.4}}
+
+\begin{exmp}
+\inputminted[firstline=15,lastline=16]{clojure}{code/demo/src/demo/parent3.clj}
+\end{exmp}
+
+By default Typed Clojure conservatively assumes method and constructor arguments to be \emph{non-nullable},
+but can be configured globally for particular non-target positions if needed.
+
+\subsection{Multimethod}
+
+A \emph{multimethod} is a kind of extensible function. It consists of
+a \emph{dispatching function}, given with \clj{defmulti}, and a collection of \emph{methods} associated with
+\emph{dispatch values}, each installed via \clj{defmethod}.
+
+Recall the multimethod in figure~\ref{fig:ex1}. 
+
+\begin{minted}{clj}
+(ann pname [(U File String) -> (U nil String)])
+(defmulti pname class)
+(defmethod pname String [s] (pname (new File s)))
+(defmethod pname File [f] (.getName f))
+\end{minted}
+
+Its dispatching function is
+\clj{class}, with two methods associated with dispatch values \clj{java.lang.String} and \clj{java.io.File}
+respectively.
+
+When called, the dispatching function is applied to the provided arguments to
+yield a \emph{dispatching value}.
+The \clj{isa?} function is then used to compare the current dispatching value to each method's dispatch value.
+An unambiguous match leads to the corresponding method being applied to the arguments,
+giving the final result.
+
+The following Typed Clojure program is semantically identical to figure~\ref{fig:ex1}.
+
+\begin{minted}{clj}
+(ann pname [(U Str File) -> (U nil Str)])
+(defn pname [x]
+  (let [dfn  class ; dispatching function
+        dval (dfn x)] ; dispatching value
+    (cond
+      (and (isa? dval String)       ; if
+           (not (isa? dval File))) 
+      (pname (new File x))          ; then
+
+      (and (not (isa? dval String)) ; else if
+           (isa? dval File))       
+      (.getName x)                  ; then
+      :else (throw (Exception. "No match")))))
+\end{minted}
+
+The \clj{isa?} predicate 
+is a subclassing check for classes, otherwise
+an equality check.
+
+\begin{minted}{clojure}
+  (isa? :a :a) ;=> true
+  (isa? :a :b) ;=> false
+  (isa? String Object) ;=> true
+  (isa? Object String) ;=> false
+\end{minted}
+
+\subsection{Multimethods}
+
+\label{sec:multioverview}
+
+%A multimethod in Clojure is a function with a \emph{dispatch
+%function} and a \emph{dispatch table} of methods. Multimethods are created with {\clj{defmulti}}.
+%\inputminted[firstline=5,lastline=6]{clojure}{code/demo/src/demo/rep.clj}
+%The multimethod \clj{path} has type \clj{[Any -> (U nil String)]}, an initially empty \emph{dispatch table}
+%and \emph{dispatch function} \clj{class}, a function that
+%returns the class of its argument or \clj{nil} if passed \clj{nil}.
+%
+%We can use {\clj{defmethod}} to install a method to \clj{path}.
+%\inputminted[firstline=7,lastline=7]{clojure}{code/demo/src/demo/rep.clj}
+%Now the dispatch table maps
+%the \emph{dispatch value} \clj{String} to the function
+%\clj{(fn [x] x)}. 
+%We add another method
+%which maps
+%\clj{File} to the function
+%\clj{(fn [x] (.getPath x))}
+%in the dispatch table.
+%\inputminted[firstline=8,lastline=8]{clojure}{code/demo/src/demo/rep.clj}
+%
+%After installing both methods, the call 
+%$$
+%\clj{(path (new File "dir/a"))}
+%$$
+%dispatches to the second method we installed because
+%$$
+%\clj{(isa? (class "dir/a") String)}
+%$$
+%is true, and finally returns 
+%$$
+%\clj{((fn [x] (.getPath x)) "dir/a")}.
+%$$
+
+We include the above sequence of definitions as \egref{example:rep}.
+
+\begin{Code}
+\begin{exmp}
+\inputminted[firstline=5,lastline=10]{clojure}{code/demo/src/demo/rep.clj}
+\label{example:rep}
+\end{exmp}
+\end{Code}
+
+Typed Clojure does not predict if a runtime dispatch will be successful---\clj{(path :a)} 
+type checks because \clj{:a} agrees with the parameter type \clj{Any},
+but throws an error at runtime.
+
+\paragraph{HMap dispatch} The flexibility of \clj{isa?} is key to the generality of multimethods. 
+In \egref{example:incmap} we
+dispatch on the \clj{:op} key 
+of our HMap AST \clj{Expr}.
+Since keywords are functions that look themselves up in their argument, we simply
+use \clj{:op} as the dispatch function.
+
+\begin{exmp}
+\inputminted[firstline=5,lastline=18]{clojure}{code/demo/src/demo/eg5.clj}
+\label{example:incmap}
+\end{exmp}
+
+The function \clj{inc-leaf} is like \egref{example:decmap} except the nodes are incremented.
+The reasoning is similar, except we only consider one branch (the current method) by
+locally considering the current \emph{dispatch value} and reasoning about how it relates
+to the \emph{dispatch function}.
+For example, 
+in the \clj{:do} method we learn the \clj{:op} key is a \clj{:do}, which
+narrows our argument type to the \clj{:do} Expr, and similarly for the \clj{:if}
+and \clj{:const} methods.
+
+\paragraph{Multiple dispatch} \clj{isa?} is special with vectors---vectors of the
+same length recursively call \clj{isa?} on the elements pairwise.
+\begin{minted}{clojure}
+  (isa? [Keyword Keyword] [Object Object]) ;=> true
+\end{minted}
+
+\egref{example:multidispatch}
+simulates multiple dispatch by dispatching on
+a vector containing the class of both arguments. \clj{open}
+takes two arguments which can be strings or files and returns
+a new file that concatenates their paths.
+
+We call three different \clj{File} constructors, each known at compile-time
+via type hints.
+Multiple dispatch follows the same kind of reasoning as \egref{example:incmap},
+except we update multiple bindings simultaneously.
 
 \subsection{Heterogeneous hash-maps}
 
@@ -249,144 +491,6 @@ Line 12 we strike out \clj{:do} because \clj{(= (:op m) :do)} is false,
 so we are left with \clj{m} being a \clj{:const} Expr.
 
 Section~\ref{sec:formalpaths} discusses how this automatic reasoning is achieved.
-
-\subsection{Java interoperability}
-\label{sec:overviewjavainterop}
-
-Clojure supports interoperability with Java, including the ability to
-call constructors, methods and access fields.
-
-\begin{minted}{clj}
-  (fn [f] (.getParent f))
-\end{minted}
-
-Calls to Java methods and fields have prefix notation
-like \clj{(.method target args*)} and \clj{(.field target)} respectively,
-with method and field names prefixed with a dot and methods taking some number of arguments.
-
-\begin{exmp}
-\inputminted[firstline=18,lastline=19]{clojure}{code/demo/src/demo/parent3.clj}
-\end{exmp}
-
-Typed Clojure and Java treat \java{null} differently.
-In Clojure, where it is known as \clj{nil}, Typed Clojure assigns it an explicit type
-called \clj{nil}. In Java \java{null} is implicitly a member of any reference type.
-This means the Java static type \java{String} is equivalent to
-\clj{(U nil String)} in Typed Clojure.
-
-Reference types in Java are nullable, so to guarantee a method call does not
-leak \java{null} into a Typed Clojure program we
-must assume methods can return \clj{nil}.
-
-\begin{exmp}
-\inputminted[firstline=6,lastline=8]{clojure}{code/demo/src/demo/parent3.clj}
-\end{exmp}
-
-In contrast, JVM invariants guarantee that  constructors cannot return \java{null},
-so we are safe to assume constructors are non-nullable.
-
-\begin{exmp}
-\inputminted[firstline=15,lastline=16]{clojure}{code/demo/src/demo/parent3.clj}
-\end{exmp}
-
-By default Typed Clojure conservatively assumes method and constructor arguments to be \emph{non-nullable},
-but can be configured globally for particular positions if needed.
-
-\subsection{Multimethods}
-
-\label{sec:multioverview}
-
-A multimethod in Clojure is a function with a \emph{dispatch
-function} and a \emph{dispatch table} of methods. Multimethods are created with {\clj{defmulti}}.
-\inputminted[firstline=5,lastline=6]{clojure}{code/demo/src/demo/rep.clj}
-The multimethod \clj{path} has type \clj{[Any -> (U nil String)]}, an initially empty \emph{dispatch table}
-and \emph{dispatch function} \clj{class}, a function that
-returns the class of its argument or \clj{nil} if passed \clj{nil}.
-
-We can use {\clj{defmethod}} to install a method to \clj{path}.
-\inputminted[firstline=7,lastline=7]{clojure}{code/demo/src/demo/rep.clj}
-Now the dispatch table maps
-the \emph{dispatch value} \clj{String} to the function
-\clj{(fn [x] x)}. 
-We add another method
-which maps
-\clj{File} to the function
-\clj{(fn [x] (.getPath x))}
-in the dispatch table.
-\inputminted[firstline=8,lastline=8]{clojure}{code/demo/src/demo/rep.clj}
-
-After installing both methods, the call 
-$$
-\clj{(path (new File "dir/a"))}
-$$
-dispatches to the second method we installed because
-$$
-\clj{(isa? (class "dir/a") String)}
-$$
-is true, and finally returns 
-$$
-\clj{((fn [x] (.getPath x)) "dir/a")}.
-$$
-
-The \clj{isa?} function first tries an equality check
-on its arguments, then if that fails
-and both arguments are classes a subclassing
-check is returned.
-\begin{minted}{clojure}
-  (isa? :a :a) ;=> true
-  (isa? Keyword Object) ;=> true
-\end{minted}
-
-We include the above sequence of definitions as \egref{example:rep}.
-
-\begin{Code}
-\begin{exmp}
-\inputminted[firstline=5,lastline=10]{clojure}{code/demo/src/demo/rep.clj}
-\label{example:rep}
-\end{exmp}
-\end{Code}
-
-Typed Clojure does not predict if a runtime dispatch will be successful---\clj{(path :a)} 
-type checks because \clj{:a} agrees with the parameter type \clj{Any},
-but throws an error at runtime.
-
-\paragraph{HMap dispatch} The flexibility of \clj{isa?} is key to the generality of multimethods. 
-In \egref{example:incmap} we
-dispatch on the \clj{:op} key 
-of our HMap AST \clj{Expr}.
-Since keywords are functions that look themselves up in their argument, we simply
-use \clj{:op} as the dispatch function.
-
-\begin{exmp}
-\inputminted[firstline=5,lastline=18]{clojure}{code/demo/src/demo/eg5.clj}
-\label{example:incmap}
-\end{exmp}
-
-\clj{inc-leaf} is like \egref{example:decmap} except the nodes are incremented.
-The reasoning is similar, except we only consider one branch (the current method) by
-locally considering the current \emph{dispatch value} and reasoning about how it relates
-to the \emph{dispatch function}.
-For example, 
-in the \clj{:do} method we learn the \clj{:op} key is a \clj{:do}, which
-narrows our argument type to the \clj{:do} Expr, and similarly for the \clj{:if}
-and \clj{:const} methods.
-
-\paragraph{Multiple dispatch} \clj{isa?} is special with vectors---vectors of the
-same length recursively call \clj{isa?} on the elements pairwise.
-\begin{minted}{clojure}
-  (isa? [Keyword Keyword] [Object Object]) ;=> true
-\end{minted}
-
-\egref{example:multidispatch}
-simulates multiple dispatch by dispatching on
-a vector containing the class of both arguments. \clj{open}
-takes two arguments which can be strings or files and returns
-a new file that concatenates their paths.
-
-We call three different \clj{File} constructors, each known at compile-time
-via type hints.
-Multiple dispatch follows the same kind of reasoning as \egref{example:incmap},
-except we update multiple bindings simultaneously.
 
 \subsection{Final example}
 

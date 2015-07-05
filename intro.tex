@@ -56,7 +56,7 @@ Furthermore, Typed Racket's \emph{occurrence typing} has proved
 necessary for type checking realistic Clojure programs.
 
 \begin{figure}[t!]
-\inputminted[firstline=5,lastline=12]{clojure}{code/demo/src/demo/ex-intro.clj}
+\inputminted[firstline=5]{clojure}{code/demo/src/demo/ex-intro.clj}
 \caption{A simple Typed Clojure program}
 \label{fig:ex1}
 \end{figure}
@@ -87,12 +87,15 @@ appropriately. Notably, Typed Clojure avoids conflating Java's
 absence of null-pointer exceptions.
 
 A simple example of these features in combination is given in
-figure~\ref{fig:ex1}. Here, the \texttt{tostr} multimethod dispatches
+figure~\ref{fig:ex1}. Here, the \texttt{pname} multimethod dispatches
 on the \texttt{class} of the argument---when it is a \texttt{String},
 the first method implementation is called, for a Java \texttt{File}, the
-second. The method for \texttt{File} uses Java interoperation to call
-the \texttt{.getPath} method, and Typed Clojure uses the type
-information to help determine which JVM method call to construct.
+second. The method for \texttt{String} uses Java interoperation
+to call a \texttt{File} constructor, returning a non-nil \texttt{File} instance---the 
+method for \texttt{File} invokes
+the \texttt{.getName} method with a non-nil target, returning a nilable
+type. Typed Clojure uses type information to resolve JVM method or constructor overloads,
+avoiding expensive runtime reflective calls.
 
 Finally, when not working with existing Java classes and objects, the
 most common Clojure data structure is the dictionary, a
@@ -100,7 +103,7 @@ high-performance immutable table which Clojure programmers repurpose
 for all manner of data types. Simply treating them as uniformly-typed
 key-value mappings would be entirely insufficient for existing
 programs and programming styles. Instead, Typed Clojure provides a
-flexible \textbf{heterogenous maps}, in which mandatory, optional, and
+flexible \textbf{heterogenous map} type, in which mandatory, optional, and
 absent keys can be specified. 
 
 
