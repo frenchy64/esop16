@@ -63,9 +63,10 @@ The function may take strings, but providing \clj{nil} (Clojure's name for Java'
 is a static type error --- \clj{nil} is not a string in Typed Clojure.
 
 \begin{minted}{clj}
-(greet nil)    ; Type Error:
-               ;   Expected Str, given nil
-               ; in: nil
+(greet 
+  nil ; Type Error:
+      ;   Expected Str, given nil
+  )
 \end{minted}
 
 \paragraph{Unions} We can make the annotation more permissive with \emph{ad-hoc unions}
@@ -93,8 +94,8 @@ is never passed a \clj{nil} argument.
 (ann  greetings [Str (U nil Int) -> Str])
 (defn greetings [n i]
   (str "Hello, "
-       (when i
-         (apply str (repeat i (str "hello, "))))
+       (when i  ; when i is a non-nil integer
+         (apply str (repeat i "hello, ")))
        n "!"))
 (greetings "Donald" 2)  ; :- Str
 ;=> "Hello, hello, hello, Donald!"
@@ -109,10 +110,11 @@ Removing the \clj{when} expression is a static type error
 (ann  greetings-bad [Str (U nil Int) -> Str])
 (defn greetings-bad [n i]
   (str "Hello, "
-       (apply str (repeat i (str "hello, ")))
-       ; Type Error:
-       ;   Expected Num, given (U nil Num).
-       ; in: i
+       (apply str 
+         (repeat 
+           i ; Type Error:
+             ;   Expected Int, given (U nil Int).
+           "hello, "))
        n "!"))
 \end{minted}
 
@@ -196,9 +198,8 @@ static types of its arguments, a type error is thrown.
 
 \begin{minted}{clj}
   (fn [f] 
-    (.getParent f)
-    ; Type error:
-    ;   Unresolved host interop: getParent
+    (.getParent f) ; Type Error:
+                   ;   Unresolved interop: getParent
     )
 \end{minted}
 
@@ -222,11 +223,10 @@ removing it is a static type error.
 
 \begin{minted}{clj}
 (defn parent-bad-in [f :- (U nil File)]
-  (.getParent f)
-  ; Type error:
-  ;   Cannot call instance method 
-  ;   java.io.File/getParent on type 
-  ;   (U nil File).
+  (.getParent f) ; Type Error:
+                 ;   Cannot call instance method 
+                 ;   java.io.File/getParent on type 
+                 ;   (U nil File).
   )
 \end{minted}
 
@@ -235,10 +235,8 @@ Typed Clojure rejects programs that assume otherwise.
 
 \begin{minted}{clj}
 (defn parent-bad-out [f :- File] :- Str
-  (.getParent f)
-  ; Type error:
-  ;   Expected Str, given (U nil Str).
-  ; in: (.getParent f)
+  (.getParent f) ; Type Error:
+                 ;   Expected Str, given (U nil Str).
   )
 \end{minted}
 
@@ -261,13 +259,18 @@ In contrast, JVM invariants guarantee constructors return a non-null reference.\
 By default Typed Clojure conservatively assumes method and constructor arguments to be \emph{non-nullable},
 but can be configured globally for particular non-target positions if needed.
 
-\subsection{Multimethod}
+\subsection{Multimethods}
 
-A \emph{multimethod} is a kind of extensible function. It consists of
-a \emph{dispatching function}, given with \clj{defmulti}, and a collection of \emph{methods} associated with
-\emph{dispatch values}, each installed via \clj{defmethod}.
+\label{sec:multioverview}
 
-Recall the multimethod in figure~\ref{fig:ex1}. 
+A \emph{multimethod} is a kind of extensible function. It combines
+a \emph{dispatch function} with one or more \emph{methods}.
+When invoked, the arguments are first supplied to the dispatch function, yielding
+a \emph{dispatch value}. A method is then chosen
+based on the dispatch value---this method is applied to the arguments
+to finally return a value for the entire expression.
+
+Recall the multimethod in figure~\ref{fig:ex1}, duplicated below.
 
 \begin{minted}{clj}
 (ann pname [(U File String) -> (U nil String)])
@@ -276,49 +279,86 @@ Recall the multimethod in figure~\ref{fig:ex1}.
 (defmethod pname File [f] (.getName f))
 \end{minted}
 
-Its dispatching function is
-\clj{class}, with two methods associated with dispatch values \clj{java.lang.String} and \clj{java.io.File}
-respectively.
+%Its dispatching function is
+%\clj{class}, with two methods associated with dispatch values \clj{java.lang.String} and \clj{java.io.File}
+%respectively.
 
-When called, the dispatching function is applied to the provided arguments to
-yield a \emph{dispatching value}.
-The \clj{isa?} function is then used to compare the current dispatching value to each method's dispatch value.
-An unambiguous match leads to the corresponding method being applied to the arguments,
-giving the final result.
+The dispatch function \clj{class}---associated at multimethod creation with \clj{defmulti}---dictates 
+whether the \clj{String} or \clj{File} method is chosen---both installed via \clj{defmethod}.
 
-The following Typed Clojure program is semantically identical to figure~\ref{fig:ex1}.
-
-\begin{minted}{clj}
-(ann pname [(U Str File) -> (U nil Str)])
-(defn pname [x]
-  (let [dfn  class ; dispatching function
-        dval (dfn x)] ; dispatching value
-    (cond
-      (and (isa? dval String)       ; if
-           (not (isa? dval File))) 
-      (pname (new File x))          ; then
-
-      (and (not (isa? dval String)) ; else if
-           (isa? dval File))       
-      (.getName x)                  ; then
-      :else (throw (Exception. "No match")))))
-\end{minted}
-
-The \clj{isa?} predicate 
-is a subclassing check for classes, otherwise
-an equality check.
+The multimethod dispatch rules involve
+\clj{isa?}, a hybrid predicate which includes a subclassing check for classes and
+an equality check for most other values.
 
 \begin{minted}{clojure}
-  (isa? :a :a) ;=> true
-  (isa? :a :b) ;=> false
   (isa? String Object) ;=> true
   (isa? Object String) ;=> false
+  ; keywords are interned symbols with a : prefix
+  (isa? :a :a) ;=> true
+  (isa? :a :b) ;=> false
 \end{minted}
 
-\subsection{Multimethods}
+The current dispatch value and---in turn---each method's associated dispatch value
+is supplied to \clj{isa?}. If exactly one method returns true, it is chosen.
 
-\label{sec:multioverview}
+To demonstrate,
+  \clj{(pname "STAINS/JELLY")}
+chooses the \clj{String} method because
+\clj{(isa? (class "STAINS/JELLY") String)}
+is true and
+\clj{(isa? (class "STAINS/JELLY") File)}
+is false. Then the \clj{String} method body
+\clj{(pname (new File "STAINS/JELLY"))}
+chooses the \clj{File} method for opposite reasons,
+resulting in 
+\begin{minted}{clojure}
+(.getName (new File "STAINS/JELLY"))  ; :- (U nil Str)
+;=> "JELLY"
+\end{minted}
 
+%The following Typed Clojure program is semantically identical to figure~\ref{fig:ex1}.
+%
+%\begin{minted}{clj}
+%(ann pname [(U Str File) -> (U nil Str)])
+%(defn pname [x]
+%  ; dispatch value calculated by applying dispatch
+%  ; function `class` to argument `x`.
+%  (cond
+%    ; if (class x) subclasses String, but not File
+%    (and (isa? (class x) String)
+%         (not (isa? (class x) File)))
+%    ; then choose the String method
+%    (pname (new File x))
+%
+%    ; else if (class x) subclasses File, but not String
+%    (and (isa? (class x) File)         
+%         (not (isa? (class x) String)))
+%    ; then choose the File method
+%    (.getName x)
+%    :else (throw (Exception. "No match"))))
+%\end{minted}
+%
+%An unambiguous match leads to the corresponding method being applied to the arguments,
+%giving the final result.
+
+Dispatching on a non-class value is common, as well as specifying
+a \clj{:default} method for when no methods are matched.
+
+\begin{minted}{clojure}
+(ann hi [Kw -> Str])
+(defmulti hi identity)
+(defmethod hi :en [_] "hello")
+(defmethod hi :fr [_] "bonjour")
+(defmethod hi :default [_] "um...")
+
+(str (hi :en) " " (hi :fr)) ;=> "hello bonjour"
+(hi :bocce)   ;=> "um..."
+\end{minted}
+
+The \clj{hi} multimethod dispatches on its arguments via the identity function.
+
+%\subsection{Multimethods}
+%
 %A multimethod in Clojure is a function with a \emph{dispatch
 %function} and a \emph{dispatch table} of methods. Multimethods are created with {\clj{defmulti}}.
 %\inputminted[firstline=5,lastline=6]{clojure}{code/demo/src/demo/rep.clj}
@@ -351,18 +391,223 @@ an equality check.
 %\clj{((fn [x] (.getPath x)) "dir/a")}.
 %$$
 
-We include the above sequence of definitions as \egref{example:rep}.
+%We include the above sequence of definitions as \egref{example:rep}.
+%
+%\begin{Code}
+%\begin{exmp}
+%\inputminted[firstline=5,lastline=10]{clojure}{code/demo/src/demo/rep.clj}
+%\label{example:rep}
+%\end{exmp}
+%\end{Code}
+%
+%Typed Clojure does not predict if a runtime dispatch will be successful---\clj{(path :a)} 
+%type checks because \clj{:a} agrees with the parameter type \clj{Any},
+%but throws an error at runtime.
 
-\begin{Code}
-\begin{exmp}
-\inputminted[firstline=5,lastline=10]{clojure}{code/demo/src/demo/rep.clj}
-\label{example:rep}
-\end{exmp}
-\end{Code}
+%\paragraph{Multiple dispatch} \clj{isa?} is special with vectors---vectors of the
+%same length recursively call \clj{isa?} on the elements pairwise.
+%\begin{minted}{clojure}
+%  (isa? [Keyword Keyword] [Object Object]) ;=> true
+%\end{minted}
+%
+%\inputminted[firstline=6,lastline=23]{clojure}{code/demo/src/demo/eg7.clj}
+%
+%\egref{example:multidispatch}
+%simulates multiple dispatch by dispatching on
+%a vector containing the class of both arguments. \clj{open}
+%takes two arguments which can be strings or files and returns
+%a new file that concatenates their paths.
+%
+%We call three different \clj{File} constructors, each known at compile-time
+%via type hints.
+%Multiple dispatch follows the same kind of reasoning as \egref{example:incmap},
+%except we update multiple bindings simultaneously.
 
-Typed Clojure does not predict if a runtime dispatch will be successful---\clj{(path :a)} 
-type checks because \clj{:a} agrees with the parameter type \clj{Any},
-but throws an error at runtime.
+\subsection{Heterogeneous hash-maps}
+
+Immutable hash-maps with keyword keys play a major role in Clojure programming.
+
+\begin{minted}{clojure}
+(def breakfast {:en "waffles" :fr "croissants"})
+
+breakfast ; :- (HMap :mandatory {:en Str :fr Str}
+          ;          :complete? true)
+
+(get breakfast :en)    ; :- Str
+;=> "waffles"
+; keywords are functions that look themselves up
+(:fr breakfast)        ; :- Str
+;=> "croissants"
+(:bocce breakfast) ; :- nil
+;=> nil
+\end{minted}
+
+HMap types model the most common usages of keyword maps.
+The inferred type for \clj{breakfast} holds two kinds of information---the known entries \clj{:en}
+and \clj{:fr} have string values (in \clj{:mandatory}) and that 
+every other key is absent (in \clj{:complete?}).
+
+HMap's default to being partially specified. The HMap shorthand annotating
+\clj{lunch}---below---forgets 
+information about absent keys, only providing \clj{:mandatory}
+information.
+
+\begin{minted}{clojure}
+(ann lunch '{:en Str :fr Str})
+(def lunch {:en "muffin" :fr "baguette"})
+
+(:en lunch)    ; :- Str
+;=> "muffin"
+(:fr lunch)    ; :- Str
+;=> "baguette"
+; Unknown lookups are now less accurate
+(:bocce lunch) ; :- Any
+;=> nil
+\end{minted}
+
+\paragraph{HMaps in Practice} The next example is extracted from a production system at CircleCI,
+a company with a large production Typed Clojure system
+(section~\ref{sec:casestudy} presents a case study).
+
+\begin{minted}{clojure}
+(defalias RawKeyPair
+  "Unencrypted keypair -- extra keys disallowed"
+  (HMap :mandatory {:public-key RawKey,
+                    :private-key RawKey},
+        :complete? true))
+
+(defalias EncKeyPair
+  "Encrypted keypair -- extra keys disallowed"
+  (HMap :mandatory {:public-key RawKey,
+                    :enc-private-key EncKey},
+        :complete? true))
+
+(ann enc-keypair [RawKeyPair -> EncKeyPair])
+(defn enc-keypair "Encrypt an unencrypted keypair"
+  [{pk :private-key :as kp}] ; original map is kp
+  (assoc 
+    ; remove unencrypted private key
+    (dissoc kp :private-key)
+    ; add encrypted private key
+    :enc-private-key (encrypt pk)))
+\end{minted}
+%\begin{exmp}
+%\inputminted[firstline=10,lastline=22]{clojure}{code/demo/src/demo/key.clj}
+%\label{example:circleci}
+%\end{exmp}
+Fully specified HMap's are used to
+statically enforce the private key is not accidentally left in a supposedly
+encrypted keypair, 
+
+\begin{minted}{clojure}
+(ann enc-keypair-bad [RawKeyPair -> EncKeyPair])
+(defn enc-keypair-bad
+  [{pk :private-key :as kp}]
+  (assoc kp :enc-private-key (encrypt pk)))
+\end{minted}
+
+%\clj{enc-keypair} takes an unencrypted keypair and returns an encrypted keypair by
+%dissociating the raw \clj{:private-key} entry with \clj{dissoc}
+%and associating an encrypted private key
+%as \clj{:enc-private-key} on an immutable map with \clj{assoc}.
+%The expression \clj{(:private-key kp)} shows that keywords are also 
+%functions that look themselves up in a map returning the associated value or \nil{} if the key is missing.
+%Since \clj{EncKeyPair} is \clj{:complete?}, Typed Clojure enforces the return type
+%does not contain an entry \clj{:private-key}, and would complain if the \clj{dissoc}
+%operation forgot to remove it.
+
+%\egref{example:absentkeys}
+%is like \egref{example:circleci}
+%except the \clj{:absent-keys} HMap option is used
+%instead of \clj{:complete?},
+%which takes a \emph{set literal} of keywords that do not appear in the map, written 
+%with \emph{\#}-prefixed braces.
+%The syntax \clj{(fn [{pkey :private-key, :as kp}] ...)}
+%aliases \clj{kp} to the first argument and \clj{pkey} to \clj{(:private-key m)}
+%in the function body.
+%
+%\begin{exmp}
+%\inputminted[firstline=10,lastline=21]{clojure}{code/demo/src/demo/key2.clj}
+%\label{example:absentkeys}
+%\end{exmp}
+%
+%Since this example enforces that \clj{:private-key} must not appear
+%in a \clj{EncKeyPair}
+%Typed Clojure would still complain if we forgot to \clj{dissoc} \clj{:private-key}
+%from the return value.
+%Now, however we could stash the raw private key in another entry
+%like \clj{:secret-key} which is not mentioned by the partial HMap \clj{EncKeyPair}
+%without Typed Clojure noticing.
+
+%\paragraph{Branching on HMaps} Finally, testing on HMap properties
+%allows us to refine its type down branches. \clj{dec-map} takes an
+%\clj{Expr}, traverses to its nodes and decrements their values by \clj{dec}, then
+%builds the \clj{Expr} back up with the decremented nodes.
+%
+%\begin{exmp}
+%\inputminted[linenos,firstnumber=1,firstline=15,lastline=27]{clojure}{code/demo/src/demo/hmap.clj}
+%\label{example:decmap}
+%\end{exmp}
+%
+%If we go down the then branch (line 4), since \clj{(= (:op m) :if)} is true
+%we remove
+%the \clj{:do} and \clj{:const}
+%Expr's from the type of \clj{m} (because their respective \clj{:op} entries disagrees with \clj{(= (:op m) :if)})
+%and we are left with an \clj{:if} Expr.
+%On line 8,
+%we instead strike out the \clj{:if} Expr since it contradicts \clj{(= (:op m) :if)} being false. 
+%Line 9 know we can
+%remove the \clj{:const} Expr from the type of \clj{m} because it contradicts \clj{(= (:op m) :do)} being true,
+%and we know \clj{m} is a \clj{:do} Expr.
+%Line 12 we strike out \clj{:do} because \clj{(= (:op m) :do)} is false,
+%so we are left with \clj{m} being a \clj{:const} Expr.
+%
+%Section~\ref{sec:formalpaths} discusses how this automatic reasoning is achieved.
+
+
+Partially specified HMap's with a common dispatch key
+combine naturally with ad-hoc unions.
+
+\begin{minted}{clojure}
+(defalias Order   ; define type abbreviation
+  "A meal order, tracking dessert quantities."
+  (U '{:Meal ':lunch ; keyword singleton type
+       :desserts Num}
+     '{:Meal ':dinner :desserts Num}
+     '{:Meal ':combo :meal1 Order :meal2 Order}))
+
+(ann desserts [Order -> Int])
+(defmulti desserts "Number of desserts per order."
+          :Meal)  ; dispatch on :Meal entry
+; map destructuring backwards, d is :desserts entry
+(defmethod desserts :lunch [{d :desserts}] d)
+(defmethod desserts :dinner [{d :desserts}] d)
+(defmethod desserts :combo [{m1 :meal1 m2 :meal2]
+  (+ (desserts m1) (desserts m2)))
+
+(cutlery {:Meal :combo 
+          :meal1 {:Meal :lunch :desserts 1}
+          :meal2 {:Meal :dinner :desserts 2}})
+;=> 3
+\end{minted}
+
+%\begin{exmp}
+%\inputminted[firstline=6,lastline=13]{clojure}{code/demo/src/demo/hmap.clj}
+%\label{example:decleaf}
+%\end{exmp}
+%
+%The \clj{defn} macro defines a top-level function, with syntax like the typed \clj{fn}.
+%The function \clj{an-exp} is verified to return an \clj{Expr}.
+%
+%Here \clj{defalias} defines \clj{Expr}, a type abbreviation
+%that describes the structure of a recursively-defined AST as a union of HMaps.
+%Keyword singleton types are quoted---\clj{':lunch}.
+%A type that is a quoted map like \clj{'{:op ':if}} is a
+%HMap type with a fixed number of keyword entries of the specified types
+%known to be \emph{present},
+%zero entries known to absolutely be \emph{absent},
+%and an infinite number of \emph{unknown} entries entries.
+%Since only keyword keys are allowed, they do not require quoting.
 
 \paragraph{HMap dispatch} The flexibility of \clj{isa?} is key to the generality of multimethods. 
 In \egref{example:incmap} we
@@ -385,112 +630,6 @@ in the \clj{:do} method we learn the \clj{:op} key is a \clj{:do}, which
 narrows our argument type to the \clj{:do} Expr, and similarly for the \clj{:if}
 and \clj{:const} methods.
 
-\paragraph{Multiple dispatch} \clj{isa?} is special with vectors---vectors of the
-same length recursively call \clj{isa?} on the elements pairwise.
-\begin{minted}{clojure}
-  (isa? [Keyword Keyword] [Object Object]) ;=> true
-\end{minted}
-
-\egref{example:multidispatch}
-simulates multiple dispatch by dispatching on
-a vector containing the class of both arguments. \clj{open}
-takes two arguments which can be strings or files and returns
-a new file that concatenates their paths.
-
-We call three different \clj{File} constructors, each known at compile-time
-via type hints.
-Multiple dispatch follows the same kind of reasoning as \egref{example:incmap},
-except we update multiple bindings simultaneously.
-
-\subsection{Heterogeneous hash-maps}
-
-Hash-maps with keyword keys play a major role in Clojure programming.
-HMap types model the most common usages of keyword maps.
-
-\begin{exmp}
-\inputminted[firstline=6,lastline=13]{clojure}{code/demo/src/demo/hmap.clj}
-\label{example:decleaf}
-\end{exmp}
-
-%The \clj{defn} macro defines a top-level function, with syntax like the typed \clj{fn}.
-%The function \clj{an-exp} is verified to return an \clj{Expr}.
-%
-Here \clj{defalias} defines \clj{Expr}, a type abbreviation
-that describes the structure of a recursively-defined AST as a union of HMaps.
-A quoted keyword in a type --- \clj{':if} --- is a singleton type that contains just the keyword.
-A type that is a quoted map like \clj{'{:op ':if}} is a
-HMap type with a fixed number of keyword entries of the specified types
-known to be \emph{present},
-zero entries known to absolutely be \emph{absent},
-and an infinite number of \emph{unknown} entries entries.
-Since only keyword keys are allowed, they do not require quoting.
-
-\paragraph{HMaps in Practice} The next example is extracted from a production system at CircleCI,
-a company with a large production Typed Clojure system
-(section~\ref{sec:casestudy} presents a case study).
-
-\begin{exmp}
-\inputminted[firstline=10,lastline=22]{clojure}{code/demo/src/demo/key.clj}
-\label{example:circleci}
-\end{exmp}
-
-\clj{enc-keypair} takes an unencrypted keypair and returns an encrypted keypair by
-dissociating the raw \clj{:private-key} entry with \clj{dissoc}
-and associating an encrypted private key
-as \clj{:enc-private-key} on an immutable map with \clj{assoc}.
-The expression \clj{(:private-key kp)} shows that keywords are also 
-functions that look themselves up in a map returning the associated value or \nil{} if the key is missing.
-Since \clj{EncKeyPair} is \clj{:complete?}, Typed Clojure enforces the return type
-does not contain an entry \clj{:private-key}, and would complain if the \clj{dissoc}
-operation forgot to remove it.
-
-\egref{example:absentkeys}
-is like \egref{example:circleci}
-except the \clj{:absent-keys} HMap option is used
-instead of \clj{:complete?},
-which takes a \emph{set literal} of keywords that do not appear in the map, written 
-with \emph{\#}-prefixed braces.
-The syntax \clj{(fn [{pkey :private-key, :as kp}] ...)}
-aliases \clj{kp} to the first argument and \clj{pkey} to \clj{(:private-key m)}
-in the function body.
-
-\begin{exmp}
-\inputminted[firstline=10,lastline=21]{clojure}{code/demo/src/demo/key2.clj}
-\label{example:absentkeys}
-\end{exmp}
-
-Since this example enforces that \clj{:private-key} must not appear
-in a \clj{EncKeyPair}
-Typed Clojure would still complain if we forgot to \clj{dissoc} \clj{:private-key}
-from the return value.
-Now, however we could stash the raw private key in another entry
-like \clj{:secret-key} which is not mentioned by the partial HMap \clj{EncKeyPair}
-without Typed Clojure noticing.
-
-\paragraph{Branching on HMaps} Finally, testing on HMap properties
-allows us to refine its type down branches. \clj{dec-map} takes an
-\clj{Expr}, traverses to its nodes and decrements their values by \clj{dec}, then
-builds the \clj{Expr} back up with the decremented nodes.
-
-\begin{exmp}
-\inputminted[linenos,firstnumber=1,firstline=15,lastline=27]{clojure}{code/demo/src/demo/hmap.clj}
-\label{example:decmap}
-\end{exmp}
-
-If we go down the then branch (line 4), since \clj{(= (:op m) :if)} is true
-we remove
-the \clj{:do} and \clj{:const}
-Expr's from the type of \clj{m} (because their respective \clj{:op} entries disagrees with \clj{(= (:op m) :if)})
-and we are left with an \clj{:if} Expr.
-On line 8,
-we instead strike out the \clj{:if} Expr since it contradicts \clj{(= (:op m) :if)} being false. 
-Line 9 know we can
-remove the \clj{:const} Expr from the type of \clj{m} because it contradicts \clj{(= (:op m) :do)} being true,
-and we know \clj{m} is a \clj{:do} Expr.
-Line 12 we strike out \clj{:do} because \clj{(= (:op m) :do)} is false,
-so we are left with \clj{m} being a \clj{:const} Expr.
-
-Section~\ref{sec:formalpaths} discusses how this automatic reasoning is achieved.
 
 \subsection{Final example}
 

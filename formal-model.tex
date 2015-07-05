@@ -140,12 +140,12 @@ proposition environment $\propenv{}$, with
 and object \object{}, and rewrites to \ep{}. We write 
 {\judgementtworewrite{\propenv}{\e{}} {\t{}}{\ep{}} if we are only interested in the type
   or
-{\judgement   {\propenv}
+{\judgementselfrewrite   {\propenv}
               {\e{}} {\t{}}
   {\filterset {\thenprop {\prop{}}}
               {\elseprop {\prop{}}}}
   {\object{}}}
-for expressions that rewrite to itself.
+for expressions that rewrite to themselves.
 
 The syntax is given in \figref{main:figure:termsyntax}. Expressions include variables, values,
 application, abstractions, conditionals and let expressions.

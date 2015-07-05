@@ -2,7 +2,7 @@
   (:import (java.io File))
   (:require [clojure.core.typed :refer [ann Any U Str defalias]]))
 
-; a function annotation. 
+; a function annotation for `pname` multimethod.
 ; Input: non-nil (null) File or String, via union
 ; Ouput: nilable String
 (ann pname [(U File String) -> (U nil String)])
@@ -10,7 +10,7 @@
 (defmethod pname String [s] ; String implementation
   (pname (new File s))) ; JVM constructors non-nil
 (defmethod pname File [f] ; File implementation
-  (.getName f)) ; JVM method target `f` must be 
+  (.getName f)) ; JVM method target `f` verified
                 ; non-nil, but return is nilable
 (pname "lschemer/STAINS/JELLY") ; :- (U nil Str)
 ;=> "JELLY"
