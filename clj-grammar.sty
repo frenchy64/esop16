@@ -272,7 +272,8 @@
 \newcommand\inc[0]{\emph{inc}}
 
 % differences from TR
-\newcommand\trdiff[1]{\mathbin{\textcolor{blue}{#1}}}
+%\newcommand\trdiff[1]{\mathbin{\textcolor{blue}{#1}}}
+\newcommand\trdiff[1]{#1}
 
 % update function
 \newcommand\metafunctionfont[1]{{\mathsf{#1}}}
@@ -584,11 +585,13 @@
 \newcommand\TLocal[0]{
 \infer [T-Local]
 { \inpropenv {\propenv{}} {\isprop {\t{}} {\x{}}}
-  \\\\
-  \s{} = {\falsydiff} }
+  %\\\\
+  %\s{} = {\falsydiff} 
+}
 { \judgementselfrewrite {\propenv{}} 
             {\x{}} {\t{}}
-            {\filterset {{\notprop {\s{}} {\x{}}}} {{\isprop {\s{}} {\x{}}}}}
+            %{\filterset {{\notprop {\s{}} {\x{}}}} {{\isprop {\s{}} {\x{}}}}}
+            {\filterset {{\notprop {\falsy{}} {\x{}}}} {{\isprop {\falsy{}} {\x{}}}}}
             {\x{}}
            }
                  }
@@ -680,6 +683,7 @@
 
              }
 
+% WARNING: this is copied in formal-model.tex, no idea why this macro won't work there.
 \newcommand\TLet[0]{
 \infer [T-Let]
 { \judgementrewrite {\propenv{}} {\e{1}} {\s{}} {\filterset {\thenprop {\prop{1}}} {\elseprop {\prop{1}}}}
@@ -1166,6 +1170,7 @@
                 &\mbox{Objects} \\
   \pathelem{}   &::=& \overrightarrow{\pesyntax{}}
                 &\mbox{Paths} \\
+  \pathelemsyntax\\
               }
 
 \newcommand\classliteralallsyntax[0]{
@@ -1771,7 +1776,7 @@ $$
 
 \newcommand\disptablesyntax[0]{
  \disptable{}   &::=& \{ \overrightarrow{\v{} \mapsto \v{}} \}
-               &\mbox{Multimethod dispatch table}
+               &\mbox{Dispatch tables}
              }
              % NOTE copied into multimethod syntax figure
 \newcommand\multimethodexpsyntax[0]{
