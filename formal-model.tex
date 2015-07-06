@@ -5,12 +5,119 @@
 Now that we have demonstrated the core features Typed Clojure
 provides, we link them together in a formal model called
 \lambdatc{}.
-Our presentation will start with a review of
-occurrence typing~\cite{TF10}.
-Then for the rest of the section we incrementally add each
+
+Building on occurrence typing,
+we incrementally add each
 novel feature of Typed Clojure to the formalism,
-interleaving presentation of syntax, typing rules, operational semantics
+interleaving presentation of syntax, typing rules, operational semantics,
 and subtyping.
+
+\subsection{Occurrence typing}
+
+Our presentation will start with a review of
+occurrence typing~\cite{TF10}, the foundation of \lambdatc{}.
+
+\paragraph{Logical formulas over type environments}
+Standard type systems use type environments to track lexical type information.
+Introducing a lexically scoped variable $x$ is a matter of associating 
+associating $x$ with its type $\Number$ (a number) in the type environment.
+Correspondingly, checking the type of a variable is a simple map lookup.
+$$
+\begin{array}{lr}
+\judgementtwo{\x{} \mapsto \Number}{\appexp{\inc{}}{\x{}}}{\Number}
+&
+\infer [LC-Local]
+{ {\propenv{}}(\x{}) = {\t{}}
+}
+{ \judgementtwo {\propenv{}} 
+            {\x{}} {\t{}}
+           }
+\end{array}
+$$
+
+Occurrence typing takes a different approach.
+The same information is conveyed by \emph{logical formulas}.
+The logical statement {\isprop{\Number{}}{\x{}}} says the value
+obtained via $x$ is of type \Number{}. We now must \emph{prove}
+a variable's type via a \emph{logical system}.
+$$
+\begin{array}{lr}
+\judgementtwo{\isprop{\Number{}}{\x{}}}{\appexp{\inc{}}{\x{}}}{\Number}
+&
+\infer [T-LocalProve]
+{ \inpropenv {\propenv{}} {\isprop {\t{}} {\x{}}}}
+{ \judgementtwo {\propenv{}} 
+            {\x{}} {\t{}}
+           }
+\end{array}
+$$
+The proof system judgment { \inpropenv {\propenv{}} {\isprop {\t{}} {\x{}}}}
+says, under logical assumptions {\propenv{}}, variable \x{} is of type \t{}.
+
+\paragraph{Symbolic representations}
+As we saw in \secref{sec:overview},
+occurrence typing is capable of reasoning
+about deeply nested expressions.
+For each expression, the type system assigns a symbolic representation
+with respect to the current lexical environment.
+
+$x$ is represented as $x$; $\appexpone{\ccclass{\appexp{\makekw{lunch}}{m}}}$ as ${\path{\classpe{}}{\path{\keype{\makekw{lunch}}}{m}}}$;
+$42$ has no representation, called \emptyobject{}.
+
+This symbolic representation called the \emph{object}---\emptyobject{} is the
+\emph{empty object}.
+
+%The particular part of the runtime environment we reference in a
+%type proposition is called the \emph{object}.
+%The typing judgment relates an object to every expression in the language.
+%An object is either \emph{empty}, written \emptyobject{}, 
+%which says 
+%this expression is not known to evaluate to a particular part
+%  of the current runtime environment, or a 
+%variable with some \emph{path}, written \path{\pathelem{}}{\x{}},
+%that exactly indicates how the value of this
+%expression can be derived from the current runtime environment.
+%Type propositions can only reference non-empty objects.
+
+\paragraph{Logical statements about objects}
+So far we have seen logical statements about the simplest object, a variable---{\isprop{\t{}}{\x{}}},
+saying variable \x{} is of type \t{}.
+We extend logical statements to reason about \emph{arbitrary} non-empty 
+objects. 
+
+To illustrate, recall \egref{example:desserts-on-meal}.
+We know the parameter $o$ is of type $\Order$
+by the annotation on $desserts$---written
+\begin{equation}
+\qquad {\isprop{\Order}{o}}
+\end{equation}
+as a logical statement.
+
+In checking the ${\makekw{combo}}$ method, we also assume
+${\appexp{\makekw{Meal}}{o}}$ is ${\makekw{combo}}$,
+based on multimethod dispatch rules. This is written
+\begin{equation}
+  \qquad {\isprop{\Value{\makekw{combo}}}{\path{\keype{\makekw{Meal}}}{o}}}
+\end{equation}
+and pronounced ``the ${\makekw{Meal}}$ path of variable $o$ is of type
+{\Value{\makekw{combo}}}'', a keyword singleton type.
+
+\paragraph{Logical system in action} Using our two facts, T-LocalProve demands
+we must solve for \t{} in
+$$
+{ \inpropenv 
+  {{\isprop{\Order}{o}},
+    {\isprop{\Value{\makekw{combo}}}{\path{\keype{\makekw{Meal}}}{o}}}}
+  {\isprop {\t{}} {o}}}
+$$
+Now the purpose of a logical representation can be conveyed---we rely on the logical
+system to combine pieces of type information to deduce more accurate types for lexical
+bindings.
+
+% TODO introduction rules for logical statements
+\paragraph{}
+
+\paragraph{Extended to propositional logic}
 
 The first insight about occurrence typing is that
 logical formulas
@@ -24,19 +131,6 @@ and {\notprop{\Nil{}}{\x{}}}.
 The other propositions are standard logical connectives: implications, conjunctions,
 disjunctions, and the trivial (\topprop{}) and impossible (\botprop{}) propositions
 (\figref{main:figure:termsyntax}).
-
-
-The particular part of the runtime environment we reference in a
-type proposition is called the \emph{object}.
-The typing judgment relates an object to every expression in the language.
-An object is either \emph{empty}, written \emptyobject{}, 
-which says 
-this expression is not known to evaluate to a particular part
-  of the current runtime environment, or a 
-variable with some \emph{path}, written \path{\pathelem{}}{\x{}},
-that exactly indicates how the value of this
-expression can be derived from the current runtime environment.
-Type propositions can only reference non-empty objects.
 
 The second insight is that we can replace the traditional 
 representation of a
@@ -67,18 +161,19 @@ programming idioms from
 dynamic languages
 using implicit type-based reasoning based on the result of
 conditional tests.
-For instance, \egref{example:conditionalflow}
-only utilizes \clj{x} once
+For instance,
+\egref{example:parent-if}
+only utilizes \clj{f} once
 the programmer is convinced it is safe to do so based whether
-\clj{(number? x)}
-is 
+\clj{f}
+is
 true or false. 
 To express this in the type system, every expression 
 is described by two propositions: a `then' proposition
 for when it reduces to a true value, and an `else' proposition
-when it reduces to a false value---for \clj{(number? x)}
-the then proposition is {\isprop{\NumberFull}{\x{}}} and 
-the else proposition is {\notprop{\NumberFull}{\x{}}}.
+when it reduces to a false value---for \clj{f}
+the then proposition is {\notprop{\falsy}{f}} and 
+the else proposition is {\isprop{\falsy}{f}}.
 %\ref{main:figure:typingrules}
 
 \begin{figure}
@@ -190,23 +285,19 @@ Using this rule, the type system can then appeal to L-Update to refine the type
 assigned to \x{}.
 
 We are now equipped to type check
-\egref{example:conditionalflow}, starting at body:
+\egref{example:parent-if}:
 $$
-\clj{... (if (number? x) (inc x) 0) ...}
+\clj{(if f (.getParent f) nil)}
 $$
 
-We know {\propenv{}} = {\isprop{\UnionNilNum{}}{\x{}}}.
-The test expression uses T-App, 
+With {\propenv{}} = {\isprop{\UnionNilFile{}}{f}},
 $$
-\judgement{\propenv{}}{\appexp{\numberhuh{}}{\x{}}}{\Boolean}{\filterset{\isprop{\Number}{\x{}}}{\notprop{\Number}{\x{}}}}{\emptyobject{}}
+\judgement{\propenv{}}{f}{\UnionNilFile{}}{\localfilterset{f}}{f}
 $$
-since \numberhuh{} has type
-{\ArrowOne{\x{}}{\Top}{\Boolean}
-        {\filterset{\isprop{\Number}{\x{}}}{\notprop{\Number}{\x{}}}}{\emptyobject{}}}
-      and \x{} has object \x{}.
+via T-Local.
 
-Finally we check both branches using the extended proposition environment as specified by T-If.
-Going down the then branch, our new assumption {\isprop{\Number}{\x{}}} is crucial to check
+Checking the then branch involves extending
+the proposition environment with {\notprop{\falsy}{f}}
 $$
 \judgement{{\propenv{}},{\isprop{\Number}{\x{}}}}{\x{}}{\Number{}}{\filterset{\notprop{\falsy{}}{\x{}}}{\isprop{\falsy{}}{\x{}}}}{\emptyobject{}}
 $$
@@ -365,114 +456,114 @@ Subtyping for untagged unions is standard.
   \label{main:figure:subtyping}
 \end{figure}
 
-\subsection{Reasoning about Exceptional Control Flow}
-\label{sec:doformal}
-
-Along with conditional control flow,
-Clojure programmers rely on \emph{exceptions}
-to assert type-related invariants.
-
-\begin{exmp}
-\inputminted[firstline=13,lastline=15]{clojure}{code/demo/src/demo/do.clj}
-\label{example:doexception}
-\end{exmp}
-
-The fully expanded increment function in~\egref{example:doexception}
-guards its final call with a number check, preventing
-a possible null-pointer exception.
-Without this check, the type system would reject the program.
-
-To check this example,
-occurrence typing 
-automatically
-assumes
-\clj{x} is a number when checking the second \clj{do} subexpression
-based on the first subexpression.
-\footnote{See \url{https://github.com/typedclojure/examples}
-  for full examples.}
-We model this formally %(section~\ref{sec:doformal}) 
-and prove
-null-pointer exceptions are impossible in typed code (section~\ref{sec:metatheory}).
-
-
-We extend our model with sequencing expressions and errors, where {\errorvalv{}}
-models the result of calling Clojure's \clj{throw} special form
-with some \clj{Throwable}.
-
-\smallskip
-$
-\begin{altgrammar}
-  \e{} &::=& \ldots \alt {\errorvalv{}} \alt {\doexp {\e{}} {\e{}}} &\mbox{Expressions} 
-\end{altgrammar}
-$
-
-\smallskip
+%\subsection{Reasoning about Exceptional Control Flow}
+%\label{sec:doformal}
 %
-%B-Do simply evaluates its arguments sequentially and returns the right argument.
-%Since errors are not values, we define error propagation semantics
-%like BE-Do1 (figure~\ref{appendix:figure:errorstuck} for the full rules).
+%Along with conditional control flow,
+%Clojure programmers rely on \emph{exceptions}
+%to assert type-related invariants.
+%
+%\begin{exmp}
+%\inputminted[firstline=13,lastline=15]{clojure}{code/demo/src/demo/do.clj}
+%\label{example:doexception}
+%\end{exmp}
+%
+%The fully expanded increment function in~\egref{example:doexception}
+%guards its final call with a number check, preventing
+%a possible null-pointer exception.
+%Without this check, the type system would reject the program.
+%
+%To check this example,
+%occurrence typing 
+%automatically
+%assumes
+%\clj{x} is a number when checking the second \clj{do} subexpression
+%based on the first subexpression.
+%\footnote{See \url{https://github.com/typedclojure/examples}
+%  for full examples.}
+%We model this formally %(section~\ref{sec:doformal}) 
+%and prove
+%null-pointer exceptions are impossible in typed code (section~\ref{sec:metatheory}).
+%
+%
+%We extend our model with sequencing expressions and errors, where {\errorvalv{}}
+%models the result of calling Clojure's \clj{throw} special form
+%with some \clj{Throwable}.
+%
+%\smallskip
+%$
+%\begin{altgrammar}
+%  \e{} &::=& \ldots \alt {\errorvalv{}} \alt {\doexp {\e{}} {\e{}}} &\mbox{Expressions} 
+%\end{altgrammar}
+%$
+%
+%\smallskip
+%%
+%%B-Do simply evaluates its arguments sequentially and returns the right argument.
+%%Since errors are not values, we define error propagation semantics
+%%like BE-Do1 (figure~\ref{appendix:figure:errorstuck} for the full rules).
+%%
+%%\begin{mathpar}
+%%    {\BDo}
+%%
+%%\infer [BE-Error]
+%%{}
+%%{ \opsem {\openv{}} 
+%%         {\errorvalv{}}
+%%         {\errorvalv{}}}
+%%
+%%\infer [BE-Do1]
+%%{ \opsem {\openv{}} {\e{1}} {\errorvalv{}} }
+%%{ \opsem {\openv{}} {\doexp{\e{1}}{\e{}}} {\errorvalv{}}}
+%%\end{mathpar}
+%
+%Our main insight is as follows: 
+%if the first subexpression in a sequence reduces to a value, then it is either true or false.
+%If we learn some proposition in both cases then we can use that proposition as an assumption to check the second subexpression.
+%T-Do formalizes this intuition.
 %
 %\begin{mathpar}
-%    {\BDo}
-%
-%\infer [BE-Error]
-%{}
-%{ \opsem {\openv{}} 
-%         {\errorvalv{}}
-%         {\errorvalv{}}}
-%
-%\infer [BE-Do1]
-%{ \opsem {\openv{}} {\e{1}} {\errorvalv{}} }
-%{ \opsem {\openv{}} {\doexp{\e{1}}{\e{}}} {\errorvalv{}}}
+%    {\TDo}  
 %\end{mathpar}
-
-Our main insight is as follows: 
-if the first subexpression in a sequence reduces to a value, then it is either true or false.
-If we learn some proposition in both cases then we can use that proposition as an assumption to check the second subexpression.
-T-Do formalizes this intuition.
-
-\begin{mathpar}
-    {\TDo}  
-\end{mathpar}
-
-The introduction of errors, 
-which do not evaluate to either
-a true or false value,
-makes our insight interesting.
-
-\begin{mathpar}
-    {\TError}
-\end{mathpar}
-
-Recall \egref{example:doexception}.
-\begin{minted}{clojure}
-...
-  (do (if (number? x) nil (throw (new Exception)))
-      (inc x)) 
-...
-\end{minted}
-
-As before, checking \appexp{\numberhuh{}}{\x{}} allows us to use the proposition \isprop{\Number}{\x{}}
-when checking the then branch.
-
-By T-Nil and subsumption we can propagate this  information to both propositions.
-$$
-\judgement{\isprop{\Number}{\x{}}}{\nil{}}{\Nil{}}{\filterset{\isprop{\Number}{\x{}}}{\isprop{\Number}{\x{}}}}{\emptyobject{}}
-$$
-Furthermore, using T-Error
-and subsumption we can conclude anything in the else branch.
-$$
-\judgement{\notprop{\Number}{\x{}}}{\errorvalv{}}{\Bot}{\filterset{\isprop{\Number}{\x{}}}{\isprop{\Number}{\x{}}}}{\emptyobject{}}
-$$
-Using the above as premises to T-If we conclude that if the first
-expression in the \doliteral{} evaluates successfully, \isprop{\Number}{\x{}} must be true.
-$$
-\judgement{\isprop{\UnionNilNum}{\x{}}}
-          {\ifexp{\appexp{\numberhuh{}}{\x{}}}{\nil{}}{\errorvalv{}}}{\Boolean}
-          {\filterset{\isprop{\Number}{\x{}}}{\isprop{\Number}{\x{}}}}{\emptyobject{}}
-$$
-We can now use \isprop{\Number}{\x{}} in the environment to check the second subexpression
-{\appexp{\inc{}}{\x{}}}, completing the example.
+%
+%The introduction of errors, 
+%which do not evaluate to either
+%a true or false value,
+%makes our insight interesting.
+%
+%\begin{mathpar}
+%    {\TError}
+%\end{mathpar}
+%
+%Recall \egref{example:doexception}.
+%\begin{minted}{clojure}
+%...
+%  (do (if (number? x) nil (throw (new Exception)))
+%      (inc x)) 
+%...
+%\end{minted}
+%
+%As before, checking \appexp{\numberhuh{}}{\x{}} allows us to use the proposition \isprop{\Number}{\x{}}
+%when checking the then branch.
+%
+%By T-Nil and subsumption we can propagate this  information to both propositions.
+%$$
+%\judgement{\isprop{\Number}{\x{}}}{\nil{}}{\Nil{}}{\filterset{\isprop{\Number}{\x{}}}{\isprop{\Number}{\x{}}}}{\emptyobject{}}
+%$$
+%Furthermore, using T-Error
+%and subsumption we can conclude anything in the else branch.
+%$$
+%\judgement{\notprop{\Number}{\x{}}}{\errorvalv{}}{\Bot}{\filterset{\isprop{\Number}{\x{}}}{\isprop{\Number}{\x{}}}}{\emptyobject{}}
+%$$
+%Using the above as premises to T-If we conclude that if the first
+%expression in the \doliteral{} evaluates successfully, \isprop{\Number}{\x{}} must be true.
+%$$
+%\judgement{\isprop{\UnionNilNum}{\x{}}}
+%          {\ifexp{\appexp{\numberhuh{}}{\x{}}}{\nil{}}{\errorvalv{}}}{\Boolean}
+%          {\filterset{\isprop{\Number}{\x{}}}{\isprop{\Number}{\x{}}}}{\emptyobject{}}
+%$$
+%We can now use \isprop{\Number}{\x{}} in the environment to check the second subexpression
+%{\appexp{\inc{}}{\x{}}}, completing the example.
 
 \subsection{Precise Types for Heterogeneous maps}
 \label{sec:hmapformal}
@@ -648,7 +739,9 @@ which we introduce in \secref{sec:isaformal}.
   $$
   \begin{altgrammar}
     \e{} &::=& \ldots   
-            \alt \reflectiveexpsyntax{} &\mbox{Expressions}\\
+                      {\fieldexp {\fld{}} {\e{}}}
+                      \alt {\methodexp {\mth{}} {\e{}} {\overrightarrow{\e{}}}}&\mbox{Expressions}\\
+                      &\alt& {\newexp {\class{}} {\overrightarrow{\e{}}}}\\
      &\alt& \mininonreflectiveexpsyntax{}
     \\
 

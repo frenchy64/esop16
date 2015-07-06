@@ -65,12 +65,14 @@
 \newbfop\Class{Class}
 \newbfop\Object{Object}
 \newbfop\Expr{Expr}
+\newbfop\Order{Order}
 \newcommand\MultiFntype[2]{(\PMulti #1\ #2)}
 \newcommand\proctype[2]{(#1 \to #2)}
 \newcommand\EmptyUnion[0]{\ma{(\Uliteral)}}
 \newcommand\Unionsplice[1]{(\ma{\Uliteral\ #1})}
 \newcommand\Union[2]{(\ma{\Uliteral\ #1\ #2})}
 \newcommand\UnionNilNum[0]{\ma{\Union{\Nil}{\Number}}}
+\newcommand\UnionNilFile[0]{\ma{\Union{\Nil}{\File}}}
 \newcommand\In[1]{(\ma{\Iliteral\ #1})}
 \newcommand\ArrayTwo[2]{(\ma{\ArrayTwoLiteral\ #1\ #2})}
 \newcommand\Array[1]{(\ArrayLiteral #1)}
@@ -206,6 +208,7 @@
 \newcommand\doexp[2]{\ma{(\doliteral{}\ #1\ #2)}}
 \newcommand\letexp[3]{\ma{(\letliteral{}\ [\ma{#1\ #2}]\ #3)}}
 \newcommand\appexp[2]{\ma{(#1\ #2)}}
+\newcommand\appexpone[1]{\ma{(#1)}}
 \newcommand\apptwoexp[3]{\ma{(#1\ #2\ #3)}}
 \newcommand\throwexp[1]{\ma{(\throwliteral{}\ #1)}}
 \newcommand\newexp[2]{\ma{(\newliteral{}\ #1\ #2)}}
@@ -437,6 +440,7 @@
 \newcommand\filtersetparen[2]{\ma{(\filterset{#1}{#2})}}
 \newcommand\thenprop[1]{\ma{{#1}_+}}
 \newcommand\elseprop[1]{\ma{{#1}_-}}
+\newcommand\localfilterset[1]{\ma{\filterset{\notprop{\falsy}{#1}}}{\isprop{\falsy}{#1}}}
 
 % polarities
 \newmeta\polaritymeta{pol}

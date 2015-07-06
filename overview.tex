@@ -223,7 +223,12 @@ a parameter type helps Typed Clojure find a specific method.
 %with method and field names prefixed with a dot and methods taking some number of arguments.
 
 \begin{exmp}
-\inputminted[firstline=6,lastline=8]{clojure}{code/demo/src/demo/parent3.clj}
+\begin{minted}{clojure}
+(ann parent [(U nil File) -> (U nil Str)])
+(defn parent [f]
+  (if f (.getParent f) nil))
+\end{minted}
+\label{example:parent-if}
 \end{exmp}
 
 %\begin{exmp}
@@ -469,12 +474,10 @@ as the primary way to structure data.
 \end{minted}
 
 HMap types model the most common usages of keyword maps.
-
 \begin{minted}{clojure}
 breakfast ; :- (HMap :mandatory {:en Str :fr Str}
           ;          :complete? true)
 \end{minted}
-
 The inferred type for \clj{breakfast} holds two kinds of information---the known entries \clj{:en}
 and \clj{:fr} have string values (expressed as a \clj{:mandatory} entry) and that 
 every other key is absent (by \clj{:complete?} being \clj{true}).
@@ -648,6 +651,7 @@ type.
 It's natural to dispatch on the \clj{class} of an instance---it's similarly
 natural to dispatch on a known entry like \clj{:Meal}.
 
+\begin{exmp}
 \begin{minted}{clojure}
 (ann desserts [Order -> Int])
 (defmulti desserts "Total desserts per order."
@@ -663,6 +667,8 @@ natural to dispatch on a known entry like \clj{:Meal}.
            :meal2 {:Meal :dinner :desserts 2}})
 ;=> 3
 \end{minted}
+\label{example:desserts-on-meal}
+\end{exmp}
 
 The \clj{:combo} method is verified to only structurally recur
 on \clj{Order}s. This is achieved because we learn the argument--- \clj{o} ---must % em dash needs space here, looks weird
