@@ -355,7 +355,7 @@ a \clj{:default} method for when no methods are matched.
 (hi :bocce)   ;=> "um..."
 \end{minted}
 
-The \clj{hi} multimethod dispatches on its arguments via the identity function.
+The \clj{hi} multimethod dispatches on its argument via the identity function.
 
 %\subsection{Multimethods}
 %
@@ -444,18 +444,18 @@ breakfast ; :- (HMap :mandatory {:en Str :fr Str}
 
 HMap types model the most common usages of keyword maps.
 The inferred type for \clj{breakfast} holds two kinds of information---the known entries \clj{:en}
-and \clj{:fr} have string values (in \clj{:mandatory}) and that 
-every other key is absent (in \clj{:complete?}).
+and \clj{:fr} have string values (expressed as a \clj{:mandatory} entry) and that 
+every other key is absent (by \clj{:complete?} being \clj{true}).
 
-HMap's default to being partially specified. The HMap shorthand annotating
-\clj{lunch}---below---forgets 
+HMap's default to being partially specified---\clj{:complete?} defaults to \clj{false}. The HMap shorthand 
+\clj{'{:en Str :fr Str}}
+forgets 
 information about absent keys, only providing \clj{:mandatory}
 information.
 
 \begin{minted}{clojure}
 (ann lunch '{:en Str :fr Str})
 (def lunch {:en "muffin" :fr "baguette"})
-
 (:en lunch)    ; :- Str
 ;=> "muffin"
 (:fr lunch)    ; :- Str
@@ -465,7 +465,7 @@ information.
 ;=> nil
 \end{minted}
 
-\paragraph{HMaps in Practice} The next example is extracted from a production system at CircleCI,
+\paragraph{HMaps in practice} The next example is extracted from a production system at CircleCI,
 a company with a large production Typed Clojure system
 (section~\ref{sec:casestudy} presents a case study).
 
@@ -495,16 +495,26 @@ a company with a large production Typed Clojure system
 %\inputminted[firstline=10,lastline=22]{clojure}{code/demo/src/demo/key.clj}
 %\label{example:circleci}
 %\end{exmp}
-Fully specified HMap's are used to
+Fully specified HMap's
 statically enforce the private key is not accidentally left in a supposedly
-encrypted keypair, 
+encrypted keypair.
 
 \begin{minted}{clojure}
 (ann enc-keypair-bad [RawKeyPair -> EncKeyPair])
 (defn enc-keypair-bad
   [{pk :private-key :as kp}]
-  (assoc kp :enc-private-key (encrypt pk)))
+  (assoc kp :enc-private-key (encrypt pk))
+  ; Type Error:
+  ;   Expected EncKeyPair, given 
+  ;   (HMap :mandatory {:enc-private-key EncKey
+  ;                     :private-key RawKey
+  ;                     :public-key RawKey}
+  ;         :complete? true)
+  )
 \end{minted}
+
+The extra \clj{:private-key} entry disagrees with \clj{EncKeyPair}, so a type error
+is given.
 
 %\clj{enc-keypair} takes an unencrypted keypair and returns an encrypted keypair by
 %dissociating the raw \clj{:private-key} entry with \clj{dissoc}
@@ -564,32 +574,137 @@ encrypted keypair,
 %
 %Section~\ref{sec:formalpaths} discusses how this automatic reasoning is achieved.
 
+\subsection{HMaps and multimethods, joined at the hip}
 
-Partially specified HMap's with a common dispatch key
+Since HMaps are the primary way of specifying the structure of data in Clojure,
+and multimethods are the primary tool for dispatching on data, they are inevitably
+linked.
+There are infinite ways of both structuring and dispatching on data, so there is no
+hope predicting them all, or even manually covering useful a subset.
+
+Thankfully, occurrence typing is both extensible \emph{and} compositional.
+By extending occurrence typing with
+a handful of rules based on HMaps and other functions, 
+we can automatically cover almost all the common cases---as well others
+that compose simple rules in arbitrary ways.
+
+Futhermore, no special attention is needed for multimethod dispatch---the primitive branching
+mechanism is still the humble \clj{if} conditional. Only a small number of rules are needed
+to encode the \clj{isa?}-based dispatch, themselves made of small, simple pieces.
+In practice, this means all conditional-based control flow understood by occurrence typing
+also extends to the context of multimethod dispatch, and vice-versa.
+
+We first demonstrate a very common, simple dispatch style,
+then move on to deeper structural dispatching where occurrence typing's
+compositionality shines.
+
+\paragraph{HMaps and unions} Partially specified HMap's with a common dispatch key
 combine naturally with ad-hoc unions.
+An \clj{Order} is one of three kinds of HMaps.
 
 \begin{minted}{clojure}
 (defalias Order   ; define type abbreviation
   "A meal order, tracking dessert quantities."
   (U '{:Meal ':lunch ; keyword singleton type
-       :desserts Num}
-     '{:Meal ':dinner :desserts Num}
+       :desserts Int}
+     '{:Meal ':dinner :desserts Int}
      '{:Meal ':combo :meal1 Order :meal2 Order}))
+\end{minted}
 
+The \clj{:Meal} entry is common to each HMap, always mapped to a known keyword singleton
+type.
+It's natural to dispatch on the \clj{class} of an instance---it's similarly
+natural to dispatch on a known entry like \clj{:Meal}.
+
+\begin{minted}{clojure}
 (ann desserts [Order -> Int])
 (defmulti desserts "Number of desserts per order."
           :Meal)  ; dispatch on :Meal entry
 ; map destructuring backwards, d is :desserts entry
 (defmethod desserts :lunch [{d :desserts}] d)
 (defmethod desserts :dinner [{d :desserts}] d)
-(defmethod desserts :combo [{m1 :meal1 m2 :meal2]
+(defmethod desserts :combo [{m1 :meal1 m2 :meal2}]
   (+ (desserts m1) (desserts m2)))
 
-(cutlery {:Meal :combo 
-          :meal1 {:Meal :lunch :desserts 1}
-          :meal2 {:Meal :dinner :desserts 2}})
+(desserts {:Meal :combo 
+           :meal1 {:Meal :lunch :desserts 1}
+           :meal2 {:Meal :dinner :desserts 2}})
 ;=> 3
 \end{minted}
+
+The \clj{:combo} method is verified to only structurally recur
+on \clj{Order}s. This is achieved because we learn the argument
+must be at least of type
+\clj{'{:Meal :combo}}
+since
+\clj{(isa? (:Meal o) :combo)}
+must be true. This eliminates possibility of \clj{:lunch} and \clj{:dinner}
+orders, deducing
+\begin{minted}{clojure}
+'{:Meal ':combo :meal1 Order :meal2 Order}
+\end{minted}
+as the argument type, which can safely structurally recur.
+
+
+\paragraph{Arbitrary dispatch}
+An equally valid dispatch mechanism for \clj{desserts}
+would be on the \clj{class} of the \clj{:desserts} key.
+We have already seen dispatch on \clj{class} and on keywords
+in isolation---occurrence typing automatically understands
+control flow that combines its simple building blocks.
+
+
+\begin{minted}{clojure}
+(ann desserts' [Order -> Int])
+(defmulti desserts' 
+          (fn [o :- Order] (class (:desserts o))))
+(defmethod desserts' Long [{d :desserts}] d)
+(defmethod desserts' nil [{m1 :meal1 m2 :meal2}]
+  (+ (desserts' m1) (desserts' m2)))
+
+(desserts' {:Meal :combo 
+            :meal1 {:Meal :lunch :desserts 1}
+            :meal2 {:Meal :dinner :desserts 2}})
+;=> 3
+\end{minted}
+
+In the \clj{Long} method, Typed Clojure learns that
+its argument is at least of type \clj{'{:desserts Long}}---since
+\begin{minted}{clojure}
+(isa? (class (:desserts o)) Long)
+\end{minted}
+must be true.
+
+Combined with the knowledge that it is also an
+\clj{Order}, we can eliminate the possibility of
+a \clj{:combo} meal, and infer the type
+\begin{minted}{clojure}
+(U '{:Meal ':lunch :desserts Int}
+   '{:Meal ':dinner :desserts Int})
+\end{minted}
+Looking up \clj{:desserts} on this type returns an \clj{Int}.
+
+In the \clj{nil} method, we know
+\begin{minted}{clojure}
+(isa? (class (:desserts o)) nil)
+\end{minted}
+is true---which implies \clj{(class (:desserts o))} is \clj{nil}.
+
+Since lookups on missing keys return \clj{nil}, there are
+now two possibilities:
+\begin{itemize}
+  \item either \clj{o} has a \clj{:desserts} entry to \clj{nil}, or
+  \item \clj{o} is missing a \clj{:desserts} entry.
+\end{itemize}
+In a type, we learn \clj{o} is at least
+\begin{minted}{clojure}
+(U '{:desserts nil}
+   ; :absent-keys, a set of known absent entries
+   (HMap :absent-keys #{:desserts}))
+\end{minted}
+
+This is enough to infer \clj{o} is a \clj{:combo} meal, thus verifying both
+structural recursions.
 
 %\begin{exmp}
 %\inputminted[firstline=6,lastline=13]{clojure}{code/demo/src/demo/hmap.clj}
@@ -609,51 +724,51 @@ combine naturally with ad-hoc unions.
 %and an infinite number of \emph{unknown} entries entries.
 %Since only keyword keys are allowed, they do not require quoting.
 
-\paragraph{HMap dispatch} The flexibility of \clj{isa?} is key to the generality of multimethods. 
-In \egref{example:incmap} we
-dispatch on the \clj{:op} key 
-of our HMap AST \clj{Expr}.
-Since keywords are functions that look themselves up in their argument, we simply
-use \clj{:op} as the dispatch function.
-
-\begin{exmp}
-\inputminted[firstline=5,lastline=18]{clojure}{code/demo/src/demo/eg5.clj}
-\label{example:incmap}
-\end{exmp}
-
-The function \clj{inc-leaf} is like \egref{example:decmap} except the nodes are incremented.
-The reasoning is similar, except we only consider one branch (the current method) by
-locally considering the current \emph{dispatch value} and reasoning about how it relates
-to the \emph{dispatch function}.
-For example, 
-in the \clj{:do} method we learn the \clj{:op} key is a \clj{:do}, which
-narrows our argument type to the \clj{:do} Expr, and similarly for the \clj{:if}
-and \clj{:const} methods.
-
-
-\subsection{Final example}
-
-\egref{example:final}
-combines everything we will cover for the rest of the paper:
-multimethod dispatch, reflection resolution via type hints, Java method
-and constructor calls, conditional and exceptional flow reasoning,
-and HMaps. 
-
-
-\begin{figure}
-\begin{exmp}
-\inputminted[firstline=6,lastline=23]{clojure}{code/demo/src/demo/eg7.clj}
-\label{example:multidispatch}
-\end{exmp}
-\begin{exmp}
-\inputminted[firstline=6,lastline=20]{clojure}{code/demo/src/demo/eg8.clj}
-\label{example:final}
-\end{exmp}
-\caption{Multimethod Examples}
-\end{figure}
-
-We dispatch on \clj{:p} to distinguish the two cases of \clj{FSM}---for example on \clj{:F}
-we know the \clj{:file} is a file.
-The body of the first method uses type hints to resolve reflection
-and conditional control flow to prove null-pointer exceptions are impossible.
-The second method is similar except it uses exceptional control flow.
+%\paragraph{HMap dispatch} The flexibility of \clj{isa?} is key to the generality of multimethods. 
+%In \egref{example:incmap} we
+%dispatch on the \clj{:op} key 
+%of our HMap AST \clj{Expr}.
+%Since keywords are functions that look themselves up in their argument, we simply
+%use \clj{:op} as the dispatch function.
+%
+%\begin{exmp}
+%\inputminted[firstline=5,lastline=18]{clojure}{code/demo/src/demo/eg5.clj}
+%\label{example:incmap}
+%\end{exmp}
+%
+%The function \clj{inc-leaf} is like \egref{example:decmap} except the nodes are incremented.
+%The reasoning is similar, except we only consider one branch (the current method) by
+%locally considering the current \emph{dispatch value} and reasoning about how it relates
+%to the \emph{dispatch function}.
+%For example, 
+%in the \clj{:do} method we learn the \clj{:op} key is a \clj{:do}, which
+%narrows our argument type to the \clj{:do} Expr, and similarly for the \clj{:if}
+%and \clj{:const} methods.
+%
+%
+%\subsection{Final example}
+%
+%\egref{example:final}
+%combines everything we will cover for the rest of the paper:
+%multimethod dispatch, reflection resolution via type hints, Java method
+%and constructor calls, conditional and exceptional flow reasoning,
+%and HMaps. 
+%
+%
+%\begin{figure}
+%\begin{exmp}
+%\inputminted[firstline=6,lastline=23]{clojure}{code/demo/src/demo/eg7.clj}
+%\label{example:multidispatch}
+%\end{exmp}
+%\begin{exmp}
+%\inputminted[firstline=6,lastline=20]{clojure}{code/demo/src/demo/eg8.clj}
+%\label{example:final}
+%\end{exmp}
+%\caption{Multimethod Examples}
+%\end{figure}
+%
+%We dispatch on \clj{:p} to distinguish the two cases of \clj{FSM}---for example on \clj{:F}
+%we know the \clj{:file} is a file.
+%The body of the first method uses type hints to resolve reflection
+%and conditional control flow to prove null-pointer exceptions are impossible.
+%The second method is similar except it uses exceptional control flow.
