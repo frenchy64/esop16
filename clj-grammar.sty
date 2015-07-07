@@ -70,6 +70,7 @@
 \newcommand\proctype[2]{(#1 \to #2)}
 \newcommand\EmptyUnion[0]{\ma{(\Uliteral)}}
 \newcommand\Unionsplice[1]{(\ma{\Uliteral\ #1})}
+\newcommand\Unionsplicenospace[1]{(\ma{\Uliteral #1})}
 \newcommand\Union[2]{(\ma{\Uliteral\ #1\ #2})}
 \newcommand\UnionNilNum[0]{\ma{\Union{\Nil}{\Number}}}
 \newcommand\UnionNilFile[0]{\ma{\Union{\Nil}{\File}}}
@@ -88,7 +89,7 @@
 % easy math mode overrightarrow
 \newcommand\overr[1]{\ma{\overrightarrow{#1}}}
 
-\newcommand\getparent{getParent}
+\newcommand\getparent{\operatorfont{getParent}}
 \newcommand\getx{getX}
 \newcommand\coretyped{\texttt{core.typed}\xspace}
 \newcommand\All[2]{(\ma{\Allliteral\ [#1]\ #2})}
@@ -100,7 +101,8 @@
 \newcommand\ValueBool[0]{(\ma{\Valueliteral \bool{}})}
 \newcommand\ValueClass[0]{(\ma{\Valueliteral \class{}})}
 \newcommand\ValueKw[0]{(\ma{\Valueliteral \k{}})}
-\newmeta\singletonmeta{s}
+\newcommand\ValueStr[0]{(\ma{\Valueliteral \str{}})}
+\newmeta\singletonmeta{l}
 \newbfop\Top{\ma{\top}}
 \newbfop\Bottom{\ma{\bot}}
 \newbfop\Bot{\ma{\bot}}
@@ -151,6 +153,7 @@
 \newcommand\Instance[1]{(\ma{\Instanceliteral\ #1})}
 \newcommand\HVec[1]{[{#1}]}
 \newcommand\makekw[1]{\ma{\metafunctionfont{\mathbin{:}#1}}}
+\newcommand\makestr[1]{\ma{``#1"}}
 \newcommand\secref[1]{Section~\ref{#1}}
 \newcommand\figref[1]{Figure~\ref{#1}}
 \newcommand\egref[1]{Example~\ref{#1}}
@@ -167,6 +170,7 @@
 \newmeta\classp{C{'}}
 \newmeta\protocol{P}
 \newmeta\k{k}
+\newmeta\str{s}
 \newmeta\num{n}
 \newmeta\bool{b}
 \newcommand\operatorfont[1]{\ma{{\mathsf{#1}}}}
@@ -211,14 +215,14 @@
 \newcommand\appexpone[1]{\ma{(#1)}}
 \newcommand\apptwoexp[3]{\ma{(#1\ #2\ #3)}}
 \newcommand\throwexp[1]{\ma{(\throwliteral{}\ #1)}}
-\newcommand\newexp[2]{\ma{(\newliteral{}\ #1\ #2)}}
+\newcommand\newexp[2]{\ma{(\newliteral{}\ #1 #2)}}
 % deleted 2nd argument which is just the same as #3
 \newcommand\newstaticexp[4]{\ma{({\newliteral}_{[#1]}\ #3\ #4)}}
 \newcommand\dotliteral[0]{{\operatorfont{.}}}
 \newcommand\fieldexp[2]{\ma{(\dotliteral\ #2\ #1)}}
 \newcommand\fieldstaticexp[4]{\ma{(\dotliteral\ #4\ {#3}^{#1}_{#2})}}
-\newcommand\methodexp[3]{\ma{(\dotliteral\ #2\ (#1\ #3))}}
-\newcommand\methodstaticexp[6]{\ma{(\dotliteral\ #5\ ({#4}^{#1}_{[[#2], #3]}\ #6))}}
+\newcommand\methodexp[3]{\ma{(\dotliteral\ #2\ (#1 #3))}}
+\newcommand\methodstaticexp[6]{\ma{(\dotliteral\ #5\ ({#4}^{#1}_{[[#2], #3]} #6))}}
 \newcommand\createmultiexp[2]{\ma{(\defmultiliteral{}\ #1\ #2)}}
 \newcommand\defmultiexp[2]{(\ma{\defmultiliteral{}\ #1\ #2})}
 \newcommand\defmethodexp[4]{(\ma{\defmethodliteral{}\ #1\ #2\ [#3]\ #4})}
@@ -243,9 +247,10 @@
 \newbfop\Character{java.lang.Character}
 \newmeta\pvoid{void}
 \newbfop\Void{Void}
-\newbfop\File{File}
+\newbfop\File{F}
 \newbfop\Point{Point}
-\newbfop\String{String}
+\newbfop\String{S}
+\newbfop\StringFull{String}
 \newmeta\mth{mth}
 \newmeta\fld{fld}
 
@@ -292,9 +297,9 @@
 \newmeta\ctfield{f}
 \newmeta\ctctor{c}
 \newcommand\inct[2]{\ma{#1 \in #2}}
-\newcommand\ctmethodsliteral[0]{\metafunctionfont{mth}}
-\newcommand\ctfieldsliteral[0]{\metafunctionfont{fld}}
-\newcommand\ctconstructorsliteral[0]{\metafunctionfont{ctr}}
+\newcommand\ctmethodsliteral[0]{\metafunctionfont{m}}
+\newcommand\ctfieldsliteral[0]{\metafunctionfont{f}}
+\newcommand\ctconstructorsliteral[0]{\metafunctionfont{c}}
 \newcommand\ctmthentry[3]{\ma{#1 \mapsto [[#2], #3]}}
 \newcommand\ctfldentry[2]{\ma{#1 \mapsto #2}}
 \newcommand\ctctorentry[1]{\ma{[#1]}}
@@ -797,7 +802,7 @@
 \infer [T-New]
 { \inct{\ctctorentry{\overrightarrow{\class{i}}}}{\ctlookupctors{\ct{}}{\classhint{}}}
   \\
-  \overrightarrow{\javatotc{\classhint{i}}{\t{i}}}
+  \overrightarrow{\javatotcnil{\classhint{i}}{\t{i}}}
   \\
   \overrightarrow{
   \judgementtworewrite {\propenv{}}
@@ -889,7 +894,7 @@
                   \\
                   \inct{\ctmthentry{\mth{}}{\overrightarrow{\classhint{i}}}{\classhint{2}}}{\ctlookupmethods{\ct{}}{\classhint{1}}}
                   \\
-                  \overrightarrow{\javatotc{\classhint{i}}{\t{i}}}
+                  \overrightarrow{\javatotcnil{\classhint{i}}{\t{i}}}
                   \\
              \overrightarrow{
   \judgementtworewrite {\propenv{}} {\e{i}} {\t{i}} {\ep{i}}
@@ -987,12 +992,12 @@
 \judgementtworewrite {\propenv{}}
                   {\e{m}} {\MultiFntype {\t{m}} {\t{d}}}
                   {\ep{m}}
-\\
-  \isacompare{\sp{}}{\objectp{}}{\t{v}}{\filterset {\thenprop {\proppp{}}} {\elseprop {\proppp{}}}}
 \\\\
 \judgementtworewrite {\propenv{}}
            {\e{v}} {\t{v}}
            {\ep{v}}
+\\
+  \isacompare{\sp{}}{\objectp{}}{\t{v}}{\filterset {\thenprop {\proppp{}}} {\elseprop {\proppp{}}}}
            \\
 \judgementrewrite {\propenv{}, {\isprop{\t{}} {\x{}}}, {\thenprop {\proppp{}}}}
            {\e{b}} {\s{}}
@@ -1122,6 +1127,16 @@
                           {\x{}}}
                         {\getexp {\ep{}} {\ep{k}}}
                         }
+}
+
+\newcommand\TStr[0]{
+\infer [T-Str]
+{}
+{ \judgementselfrewrite {\propenv{}} 
+      {\str{}} {\String}
+      {\filterset {\topprop{}}{\botprop{}}}
+      {\emptyobject{}} 
+    }
 }
 
 \newcommand\TKw[0]{
@@ -1601,6 +1616,15 @@ $$
   {\Class{}}}
 }
 
+\newcommand\SSStr[0]{
+\infer [S-SStr]
+{}
+{\issubtypein {}
+  {\ValueStr}
+  {\String{}}}
+}
+
+
 \newcommand\SSBool[0]{
 \infer [S-SBool]
 {}
@@ -1661,6 +1685,7 @@ $$
 \end{array}
 
 \begin{array}{l}
+%\SSStr{}\\\\ % no string singletons
 \SSBool{}\\\\
 \SSKw{}
 \end{array}

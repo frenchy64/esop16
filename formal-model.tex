@@ -126,12 +126,12 @@ $$
   {\propenv{}}
   {\isprop {\t{}} {o}}}
 $$
+The logical system deduces \t{} as being a {\makekw{combo}} meal.
 
 Now the purpose of a logical representation can be conveyed---we rely on the logical
 system to combine pieces of type information to deduce more accurate types for lexical
 bindings.
 
-% TODO introduction rules for logical statements
 \paragraph{Extension to propositional logic}
 The kinds of logical statements are extended to \emph{propositional logic}.
 \figref{main:figure:termsyntax} describes the syntax we will use for the rest of the paper.
@@ -204,16 +204,22 @@ application, abstractions, conditionals, and let expressions.
 All binding forms introduce fresh variables.
 Values include booleans, \nil{}, class literals, keywords, 
 numbers,
-constants and closures. 
-Value environments map local bindings to values.
+constants, and strings. Lexical closures {\closure {\openv{}} {\abs {\x{}} {\t{}} {\e{}}}}
+close over functions with value environments \openv{}, which map bindings to values.
 
 Types include the top type, \emph{untagged} unions, functions, singleton types
-and class instances. 
-We abbreviate \Booleanlong{} as \Boolean{}, \Keywordlong{} as \Keyword{}
-and \NumberFull{} and \Number{}.
-The type \Value{\Keyword} is inhabited by the class literal \Keyword{} and \clj{:a} is of type \Keyword{}.
-We abbreviate \EmptyUnion{} as \Bot{}, {\ValueNil} as \Nil{}, 
-{\ValueTrue} as \True and {\ValueFalse} as {\False}.
+and class instances.
+We abbreviate 
+\Booleanlong{} to \Boolean{}, 
+\Keywordlong{} to \Keyword{},
+\NumberFull{}  to \Number{}, and 
+\StringFull{}  to \String{}.
+The type \Value{\Keyword} is inhabited by the class literal \Keyword{} and \makekw{a} is of type \Keyword{}.
+We abbreviate 
+\EmptyUnion{}     to \Bot{}, 
+{\ValueNil}       to \Nil{}, 
+{\ValueTrue}      to \True, and
+{\ValueFalse} to {\False}.
 Function types contain \emph{latent} (terminology from~\cite{Lucassen88polymorphiceffect}) propositions, object, and return type,
 which may refer to the function argument.
 %Latent means they are relevant when the function is applied rather than evaluated.
@@ -299,6 +305,7 @@ $$
   \v{} &::=&          \singletonmeta{}
                       \alt {\num{}}
                       \alt {\const{}}
+                      \alt {\str{}}
                       \alt {\closure {\openv{}} {\abs {\x{}} {\t{}} {\e{}}}}
                 &\mbox{Values} \\
                 \constantssyntax{}\\
@@ -346,7 +353,7 @@ $$
 $$
 The object \x{} is in scope in the latent propositions \thenprop{\prop{}} and
 \elseprop{\prop{}}, latent object \object{}, and latent type \t{}. These are substituted with the
-actual argument object with the application rule for functions.
+actual argument object---\objectp{}---with the application rule for functions.
 $$
     {\TApp}
 $$
@@ -405,6 +412,7 @@ $$
     \end{array}
     \begin{array}{c}
       {\TSubsume}\\\\
+      {\TStr}\\\\
       {\TNil}\\\\
       {\TFalse}
     \end{array}
@@ -469,7 +477,6 @@ which states that \e{} evaluates to answer \definedreduction{} in environment
 \openv{}. We chose to omit the core rules (see \figref{appendix:figure:opsem})
 however a notable difference is \nil{} is a false value, which affects the
 semantics of \ifliteral{}:
-
 \begin{mathpar}
     \BIfTrue{}
 
@@ -730,9 +737,9 @@ The dynamic semantics are given in \figref{main:figure:primitivesem}.
   \end{altgrammar}
   $$
   \begin{mathpar}
-    {\TNew}
+    {\TField}
 
-    {\TMethod}
+    %{\TMethod}
 
     %{\TInstance}
   \end{mathpar}
@@ -765,21 +772,71 @@ overloading or Java Generics.
 
 We extend the syntax in \figref{main:figure:javatyping} with Java field lookups and calls to
 methods and constructors. 
-We model the syntax after the `dot' special
-form to prevent ambiguity---field accesses are written \fieldexp{\fld{}}{\e{}},
+To prevent ambiguity between zero-argument methods and fields, field accesses are written \fieldexp{\fld{}}{\e{}},
 and method calls are written $\methodexp{\mth{}}{\e{}}{\overrightarrow{es}}$.
 %and \clj{(new class es*)} is $\newexp{\class{}}{\overrightarrow{es}}$.
 
-The rule for unresolved fields ensures the target has
-the correct static type, then returns a nilable type corresponding the Java type
-after rewriting to a non-reflective field access.
+\egref{example:getparent-direct-constructor}, copied here,
 $$
-    {\TField}
+\clj{(.getParent (new File "a/b"))}
 $$
+is written
+\begin{equation}  \label{eq:unresolved}
+  \qquad {\methodexp {\getparent{}} {\newexp {\File{}} {\makestr{a/b}}} {}}
+\end{equation}
 
-The rules T-Method and T-New work similarly (\figref{main:figure:javatyping}), varying
-in the choice of nilability in the conversion function---methods
-can return nil but constructors cannot. Void also does not have a constructor.
+But both the constructor and method are unresolved.
+We introduce \emph{non-reflective} expressions for specifying exact Java overloads.
+\begin{equation} \label{eq:resolved}
+\qquad {\methodstaticexp {\File} {} {\String} {\getparent{}} {\newstaticexp {\String} {\File{}} {\File{}} {\makestr{a/b}}} {}}
+\end{equation}
+From the left, the one-argument constructor for \File takes a \String, and the 
+\getparent{} method of
+\File{} takes zero arguments
+and
+returns a \String.
+
+We now walk through the conversion from unresolved expression~\ref{eq:unresolved} to 
+resolved expression~\ref{eq:resolved}.
+
+The T-New typing rule checks and rewrites constructors.
+$$
+    {\TNew}
+$$
+To check
+{\newexp {\File{}} {\makestr{a/b}}}
+we first resolve the constructor overload in the class table---there is at most one
+to simplify presentation.
+With \classhint{1} = \String,
+we convert to a nilable type the argument with \t{1} = \Union{\Nil}{\String}
+and type check {\makestr{a/b}} against \t{1}.
+Typed Clojure defaults to allowing non-nilable arguments, but this
+can be overridden, so we model the more general case.
+% which erases nil
+The return Java type \File is converted to a non-nil
+Typed Clojure type \t{} = \File for the return type,
+and the proposition set says constructors can never be false---constructors
+can never produce the internal boolean value that Clojure uses for \false{}, or \nil{}.
+Finally, the constructor rewrites to {\newstaticexp {\String} {\File{}} {\File{}} {\makestr{a/b}}}.
+
+The T-Method rule checks unresolved methods.
+$$
+    {\TMethod}
+$$
+To check {\methodexp {\getparent{}} {\newstaticexp {\String} {\File{}} {\File{}} {\makestr{a/b}}} {}},
+we verify the target type \s{} = \File is non-nil before erasing \Nil
+by converting to a Java type \classhint{1} = \File.
+The specific overload is chosen from the class table based on \classhint{1}---there is at most one.
+Then {\newstaticexp {\String} {\File{}} {\File{}} {\makestr{a/b}}}
+is checked against a nilable conversion of \classhint{1}, \t{1} = \Union{\Nil}{\File},
+which succeeds by the previous rule.
+The nilable return type \t{} = \Union{\Nil}{\String} is given, and---finally---the 
+entire expression rewrites to expression \ref{eq:resolved}.
+%
+%We allow arguments to constructors and methods to be nilable, but not method
+%and field targets.
+
+The T-Field rule is included in \figref{main:figure:javatyping}, and is like T-Method, but without arguments.
 
 The evaluation rules B-Field, B-New and B-Method (\figref{main:figure:javatyping}) simply evaluate their
 arguments and call the relevant JVM operation, which we do not model---\secref{sec:metatheory}
@@ -876,8 +933,8 @@ rules that rewrite to reflective calls.
 We now consider the \isaliteral{} operation, a core part of the dispatch mechanism for multimethods. 
 Recalling the examples in \secref{sec:multioverview},
 \isaliteral{} is
-a subclassing test for classes, otherwise an equality test---we do not model
-the semantics for vectors.
+a subclassing test for classes, otherwise an equality test.
+%---we do not model the semantics for vectors
 
 The key component of the T-IsA rule is the \isacompareliteral{} 
 metafunction
@@ -918,9 +975,9 @@ $$
 \end{altgrammar}
 $$
   \begin{mathpar}
-    \TDefMulti{}
+    %\TDefMulti{}
 
-    \TDefMethod{}
+    %\TDefMethod{}
   \end{mathpar}
   \begin{mathpar}
     \isapropsfigure{}
@@ -945,80 +1002,170 @@ $$
 \label{main:figure:mmsyntax}
 \end{figure}
 
-To ease presentation, we present \emph{immutable}
-multimethods, with syntax and semantics given in \figref{main:figure:mmsyntax}. 
-\defmethodliteral{} returns a new extended multimethod
-without changing the original multimethod. \egref{example:rep} is now written
+We use \emph{immutable}
+multimethods without default methods to ease presentation.
+%Syntax and semantics are given in \figref{main:figure:mmsyntax}. 
+%Multimethods can error if no matching method is chosen (rules in the supplemental material).
+Below is the translation of \egref{example:hi-multimethod} to \lambdatc{}.
 \begin{minted}{clojure}
-(let [path (defmulti [Any -> (U nil String)] class)]
-  (let [path (defmethod path String [x] x)]
-    (let [path (defmethod path File [^File x] 
-                 (.getPath x))]
-      (path (File. "dir/a"))))) ;=> "dir/a"
+(ann hi [Kw -> Str])
+(defmulti hi identity)
+(defmethod hi :en [_] "hello")
+(defmethod hi :fr [_] "bonjour")
+(hi :en) ;=> "hello"
 \end{minted}
+\begin{listing}
+$\letexp{hi_0} {\createmultiexp {\ArrowOne{\x{}}{\Keyword}{\String}{\filterset{\topprop{}}{\topprop{}}}{\emptyobject{}}} {\abs{\x{}}{\Keyword}{\x{}}}}
+  {\\\text{\quad}
+    \letexp{hi_1} {\extendmultiexp {hi_0} {\makekw{en}} {\abs {\x{}} {\Keyword} {\makestr{hello}}}}
+      {\\\text{\quad\quad}
+        \letexp{hi_2} {\extendmultiexp {hi_1} {\makekw{fr}} {\abs {\x{}} {\Keyword} {\makestr{bonjour}}}}
+        {\\\text{\quad\quad\quad
+          \appexp{hi_2}{\makekw{en}}}}}}
+$
+\end{listing}
 
-The type {\MultiFntype {\s{}} {\sp{}}} characterizes multimethods with \emph{interface type}
-{\s{}} and \emph{dispatch function type} {\sp{}}.
-The expression {\createmultiexp {\s{}} {\e{}}} defines a multimethod
-with interface type \s{} and dispatch function \e{}.
-The expression {\extendmultiexp {\e{m}} {\e{v}}{\e{f}}}
-extends multimethod \e{m} and to map
-dispatch value {\e{v}} to {\e{f}} in an extended dispatch table.
-The value {\multi {\v{}} {\disptable{}}} is the runtime value of a multimethod
-with dispatch function {\v{}} and dispatch table {\disptable{}}.
+For convenience, examples in this section are flattened when they are really nested
+let bindings. We also elide trivial latent propositions and objects.
+The following is an abbreviation of the previous expression.
+\begin{lstlisting}
+${\createmultiexp {\ArrowTwo{\x{}}{\Keyword}{\String}} {\abs{\x{}}{\Keyword}{\x{}}}}$
+${\extendmultiexp {hi} {\makekw{en}} {\abs {\x{}} {\Keyword} {\makestr{hello}}}}$
+${\extendmultiexp {hi} {\makekw{fr}} {\abs {\x{}} {\Keyword} {\makestr{bonjour}}}}$
+$\appexp{hi}{\makekw{en}}$
+\end{lstlisting}
 
-The T-DefMulti rule ensures that the type of the dispatch function
-has at least as permissive a parameter type
-as the interface type.
+%\defmethodliteral{} returns a new extended multimethod
+%without changing the original multimethod. 
 %
-For example, we can check the definition from our translation above of \egref{example:rep}
-using T-DefMulti.
-$$
-\judgement{}%{\propenv{}}
-{\createmultiexp 
-      {\s{}}
-      {\classconst{}}}
-  {\MultiFntype {\s{}}{\sp{}}}{\filterset{\topprop{}}{\botprop{}}}{\emptyobject{}}
-$$
-where \s{}  = {\ArrowOne {\x{}} {\Top{}} {\t{}} {\filterset {\topprop{}} {\topprop{}}} {\emptyobject{}}}
-  and \sp{} = {\ArrowOne {\x{}} {\Top{}} {\Union{\Nil}{\Class}} {\filterset {\topprop{}} {\topprop{}}} {\path{\classpe{}}{\x{}}}}.
-  Since the parameter types agree, this is well-typed.
+%\begin{minted}{clojure}
+%(let [hi (defmulti [Kw -> Str] identity)]
+%  (let [hi (defmethod hi :en [_] "hello")]
+%    (let [hi (defmethod hi :fr [_] "bonjour")]
+%      (hi :en))) ;=> "hello"
+%\end{minted}
 
-The T-DefMethod rule is carefully constructed to ensure we have a syntactic
-lambda expression as the right-most subexpression.
-This way we can manually check the body of the lambda under an extended
-environment as sketched in \egref{example:incmap}.
-We use \isacompareliteral{} to compute the proposition for this method,
-since \isaliteral{} is used at runtime in multimethod dispatch.
+\paragraph{How to check}
+We now walk through type checking the expression
+\begin{equation}  \label{eq:hi-defmulti}
+{\createmultiexp {\ArrowTwo{\x{}}{\Keyword}{\String}} {\abs{\x{}}{\Keyword}{\x{}}}}
+\end{equation}
 
-We continue with the next line of the translation of \egref{example:rep}.
-From the previous line we have \propenv{} = {\isprop{\MultiFntype {\s{}}{\sp{}}}{path}},
-so
+The expression {\createmultiexp {\s{}} {\e{}}} creates a multimethod with \emph{interface type} \s{}, and dispatch function \e{}
+of type \sp{},
+producing a value of type
+{\MultiFntype {\s{}} {\sp{}}}. % with interface type {\s{}} and dispatch function type {\sp{}}.
+The typing rule for \defmultiliteral{} simply checks the dispatch function, and
+verifies both the interface and dispatch type's domain agree.
 $$
-\judgement{\propenv{}}
-  {\extendmultiexp {prop} {\String}
-                   {\abs {\x{}} {\Top{}} {\x{}}}}
-  {\MultiFntype {\s{}}{\sp{}}}{\filterset{\topprop{}}{\botprop{}}}{\emptyobject{}}
+    \TDefMulti{}
 $$
-We know \emph{prop} is a multimethod by \propenv{}, so now we check the body
-of this method.
+Expression~\ref{eq:hi-defmulti} checks with \t{} = \Keyword, interface type \s{} = {\ArrowTwo{\x{}}{\Keyword}{\String}},
+dispatch function type \sp{} = {\ArrowOne{\x{}}{\Keyword}{\Keyword}{\filterset{\topprop{}}{\topprop{}}}{\x{}}}, and overall type
 $$
-\judgement{\propenv{},{\isprop{\Top}{\x{}}},{\isprop{\String}{\x{}}}}
-  {\x{}}
-  {\String}{\filterset{\topprop{}}{\botprop{}}}{\emptyobject{}}
+{\MultiFntype {\ArrowTwo{\x{}}{\Keyword}{\String}}
+              {\ArrowOne{\x{}}{\Keyword}{\Keyword}{\filterset{\topprop{}}{\topprop{}}}{\x{}}}}
 $$
-%This is checked by T-Local since {\inpropenv{\propenv{},{\isprop{\Top}{\x{}}},{\isprop{\String}{\x{}}}}{\isprop{\String}{\x{}}}}.
-The new proposition {\isprop{\String}{\x{}}} is derived by 
+
+Next, we walk through checking
+\begin{equation}  \label{eq:hi-defmethoden}
+{\extendmultiexp {hi} {\makekw{en}} {\abs {\x{}} {\Keyword} {\makestr{hello}}}}
+\end{equation}
+
+The expression 
+{\extendmultiexp {\e{m}} {\e{v}} {\e{f}}} creates a new multimethod
+that extends multimethod \e{m}'s dispatch table, mapping dispatch value
+\e{v} to method \e{f}. The typing rule for \defmethodliteral{}
+checks \e{m} is a multimethod with dispatch function type \t{d},
+then calculates the extra information we know based on the current
+dispatch value {\thenprop{\proppp{}}}, which is assumed when checking the method
+body.
 $$
-  \isacompare{\Top{}}{\path{\classpe{}}{\x{}}}{\Value{\File{}}}
-             {\filterset{\isprop{\String}{\x{}}}
-                        {\notprop{\String}{\x{}}}}.
+    \TDefMethod{}
 $$
+Expression~\ref{eq:hi-defmethoden} checks with \e{m} being of type
+$$
+{\MultiFntype {\ArrowTwo{\x{}}{\Keyword}{\String}}
+              {\ArrowOne{\x{}}{\Keyword}{\Keyword}{\filterset{\topprop{}}{\topprop{}}}{\x{}}}}
+$$
+with \objectp{} = {\x{}} and \t{v} = \Value{\makekw{en}}. Then {\thenprop{\proppp{}}} = 
+{\isprop {\Value{\makekw{en}}}{\x{}}} by
+$$
+\isacompare{}{\x{}}{\Value{\makekw{en}}}
+{\filterset {\isprop {\Value{\makekw{en}}}{\x{}}}{\notprop{\Value{\makekw{en}}}{\x{}}}}
+$$
+Since \t{} = \Keyword{}, we check the method body like so
+$$
+\judgement{{\isprop{\Keyword}{\x{}}},{\isprop {\Value{\makekw{en}}}{\x{}}}}
+  {\makestr{hello}}
+  {\String}{\filterset{\topprop{}}{\topprop{}}}{\emptyobject{}}
+$$
+Finally from the interface type \t{m}, we know \thenprop{\prop{}} = \elseprop{\prop{}} = \topprop{},
+and \object{} = \emptyobject{}, which also agrees with the method body, above.
+
+
+%The expression {\createmultiexp {\s{}} {\e{}}} 
+%defines a multimethod
+%with interface type \s{} and dispatch function \e{}.
+%The expression {\extendmultiexp {\e{m}} {\e{v}}{\e{f}}}
+%extends multimethod \e{m} and to map
+%dispatch value {\e{v}} to {\e{f}} in an extended dispatch table.
+%The value {\multi {\v{}} {\disptable{}}} is the runtime value of a multimethod
+%with dispatch function {\v{}} and dispatch table {\disptable{}}.
 %
-The body of the \clj{let} is checked by T-App because
-{\MultiFntype {\s{}}{\sp{}}} is a subtype of its interface type {\s{}}.
+%The T-DefMulti rule ensures that the type of the dispatch function
+%has at least as permissive a parameter type
+%as the interface type.
+%
+%For example, we can check the definition from our translation above of \egref{example:rep}
+%using T-DefMulti.
+%$$
+%\judgement{}%{\propenv{}}
+%{\createmultiexp 
+%      {\s{}}
+%      {\classconst{}}}
+%  {\MultiFntype {\s{}}{\sp{}}}{\filterset{\topprop{}}{\botprop{}}}{\emptyobject{}}
+%$$
+%where \s{}  = {\ArrowOne {\x{}} {\Top{}} {\t{}} {\filterset {\topprop{}} {\topprop{}}} {\emptyobject{}}}
+%  and \sp{} = {\ArrowOne {\x{}} {\Top{}} {\Union{\Nil}{\Class}} {\filterset {\topprop{}} {\topprop{}}} {\path{\classpe{}}{\x{}}}}.
+%  Since the parameter types agree, this is well-typed.
+%
+%The T-DefMethod rule requires a syntactic lambda expression as the method.
+%This way we can manually check the body of the lambda under an extended
+%environment as sketched in \egref{example:incmap}.
+%We use \isacompareliteral{} to compute the proposition for this method,
+%since \isaliteral{} is used at runtime in multimethod dispatch.
+%
+%We continue with the next line of the translation of \egref{example:rep}.
+%From the previous line we have \propenv{} = {\isprop{\MultiFntype {\s{}}{\sp{}}}{path}},
+%so
+%$$
+%\judgement{\propenv{}}
+%  {\extendmultiexp {prop} {\String}
+%                   {\abs {\x{}} {\Top{}} {\x{}}}}
+%  {\MultiFntype {\s{}}{\sp{}}}{\filterset{\topprop{}}{\botprop{}}}{\emptyobject{}}
+%$$
+%We know \emph{prop} is a multimethod by \propenv{}, so now we check the body
+%of this method.
+%$$
+%\judgement{\propenv{},{\isprop{\Top}{\x{}}},{\isprop{\String}{\x{}}}}
+%  {\x{}}
+%  {\String}{\filterset{\topprop{}}{\botprop{}}}{\emptyobject{}}
+%$$
+%%This is checked by T-Local since {\inpropenv{\propenv{},{\isprop{\Top}{\x{}}},{\isprop{\String}{\x{}}}}{\isprop{\String}{\x{}}}}.
+%The new proposition {\isprop{\String}{\x{}}} is derived by 
+%$$
+%  \isacompare{\Top{}}{\path{\classpe{}}{\x{}}}{\Value{\File{}}}
+%             {\filterset{\isprop{\String}{\x{}}}
+%                        {\notprop{\String}{\x{}}}}.
+%$$
+%%
+%The body of the \clj{let} is checked by T-App because
+%{\MultiFntype {\s{}}{\sp{}}} is a subtype of its interface type {\s{}}.
 
-Multimethod definition semantics are straightforward.
+\paragraph{Semantics}
+Multimethod definition semantics are straightforward, and are given 
+in \figref{main:figure:mmsyntax}. 
 B-DefMulti creates a multimethod with the given dispatch function and an empty dispatch table.
 B-DefMethod produces a new multimethod with an extended dispatch table.
 B-BetaMulti invokes the dispatch function with the evaluated argument to obtain the dispatch value,
@@ -1104,8 +1251,18 @@ Lookups on unions of HMaps are only supported in T-GetHMap,
 for cases like \egref{example:desserts-on-meal}
 where every element in the union
 contains the key we are looking up.
-The objects in the T-Get rules are more complicated than those in T-Local---the 
-next section discusses this in detail.
+The object {\replacefor {\path {\keype{k}} {\x{}}} {\object{}} {\x{}}}
+is a symbolic representation for a keyword lookup of $k$ in \object{}.
+The substitution for {\x{}} handles the case where \object{} is empty.
+$$
+\begin{array}{rcl}
+{\replacefor {\path {\keype{k}} {\x{}}} {\y{}} {\x{}}} &=& {\path {\keype{k}} {\y{}}} \\
+{\replacefor {\path {\keype{k}} {\x{}}} {\emptyobject{}} {\x{}}} &=& \emptyobject{}
+\end{array}
+$$
+
+%The objects in the T-Get rules are more complicated than those in T-Local---the 
+%next section discusses this in detail.
 Finally T-AssocHMap extends an HMap with a mandatory entry while preserving completeness
 and absent entries, and enforcing ${\k{}} \not\in {\absent{}}$ to prevent badly
 formed types.
@@ -1113,6 +1270,8 @@ formed types.
 The semantics for \getliteral{} and \assocliteral{} are straightforward.
 If the entry is missing, B-GetMissing produces \nil{}.
 
+\subsection{Multimethods and Java}
+\subsection{Multimethods and HMaps}
 
 \begin{figure*}
   $$

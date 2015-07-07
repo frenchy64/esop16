@@ -523,6 +523,9 @@ followed by T-Subsume as the final rule.
 
         Similar to T-True.
       \end{subcase}
+      \begin{subcase}[T-Str]
+        Similar to T-Kw.
+      \end{subcase}
   \item[] 
     \begin{subcase}[T-False]
       \v{} = \false{},
@@ -729,7 +732,7 @@ Parts 3 and 4 follow from the induction hypothesis on \e{2}.
 \begin{subcase}[T-New]
   \ep{} = {\newexp {\class{}} {\overrightarrow{\ep{i}}}},
   \inct{\ctctorentry{\overr{\class{i}}}}{\ctlookupctors{\ct{}}{\classhint{}}},
-  \overr{\javatotc{\classhint{i}}{\t{i}}},
+  \overr{\javatotcnil{\classhint{i}}{\t{i}}},
   \overr{
   \judgementtworewrite {\propenv{}}
                     {\ep{i}} {\t{i}}
@@ -877,7 +880,7 @@ as {\classhint{1}} erases occurrences of \Nil{} in \s{} via  \tctojava{\s{}}{\cl
              \issubtypein{}{\s{}}{\Object{}},
   \tctojava{\s{}}{\classhint{1}},
                   \inct{\ctmthentry{\mth{}}{\overrightarrow{\classhint{i}}}{\classhint{2}}}{\ctlookupmethods{\ct{}}{\classhint{1}}},
-                  \overr{\javatotc{\classhint{i}}{\t{i}}},
+                  \overr{\javatotcnil{\classhint{i}}{\t{i}}},
              \overr{
   \judgementtworewrite {\propenv{}} {\ep{i}} {\t{i}} {\e{i}}
                   },

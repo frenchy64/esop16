@@ -198,10 +198,13 @@ call constructors, invoke methods, and access fields.
 The following Typed Clojure program constructs a new \clj{File}
 instance and calls the \clj{getParent} method on the result.
 
+\begin{exmp}
 \begin{minted}{clj}
   (.getParent (new File "a/b"))  ; :- (U nil Str)
   ;=> "a"
 \end{minted}
+\label{example:getparent-direct-constructor}
+\end{exmp}
 
 Typed Clojure helps the Clojure compiler avoid expensive reflective 
 calls,
@@ -286,6 +289,7 @@ a \emph{dispatch function} with one or more \emph{methods}.
 \paragraph{Value-based dispatch}
 Here is a simple multimethod.
 
+\begin{exmp}
 \begin{minted}{clojure}
 (ann hi [Kw -> Str]) ; interface type for `hi`
 (defmulti hi identity) ; dispatch function `identity`
@@ -293,6 +297,8 @@ Here is a simple multimethod.
 (defmethod hi :fr [_] "bonjour") ; method for `:fr`
 (defmethod hi :default [_] "um...") ; default method
 \end{minted}
+\label{example:hi-multimethod}
+\end{exmp}
 
 When invoked, the arguments are first supplied to the dispatch function---\clj{identity}---yielding
 a \emph{dispatch value}. A method is then chosen
