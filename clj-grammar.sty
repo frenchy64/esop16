@@ -248,6 +248,7 @@
 \newmeta\pvoid{void}
 \newbfop\Void{Void}
 \newbfop\File{F}
+\newbfop\FileFull{File}
 \newbfop\Point{Point}
 \newbfop\String{S}
 \newbfop\StringFull{String}
@@ -1332,20 +1333,20 @@
 { \opsem {\openv{}}
          {\e{}}
          {\multi {\v{d}} {\disptable{}}}
-         \\\\
+         \\
   \opsem {\openv{}}
          {\ep{}}
          {\vp{}}
-         \\\\
+         \\
   \opsem {\openv{}}
          {\appexp {\v{d}} {\vp{}}}
          {\v{e}}
-         \\\\
+         \\
   \getmethod {\disptable{}}
              {\v{e}}
              {\v{k}}
              {\v{f}}
-         \\\\
+         \\
   \opsem {\openv{}}
          {\appexp {\v{f}} {\vp{}}}
          {\v{}}
@@ -1569,6 +1570,29 @@ $$
 { \issubtypein {} {\t{}} {\t{}}}
 }
 
+\newcommand\SPMultiFn[0]{
+\infer [S-PMultiFn]
+{ \issubtypein {}
+  {\s{t}}
+  {\ArrowOne {\x{}} {\s{}} {\t{}}
+                                  {\filterset {\thenprop {\prop{}}}
+                                              {\elseprop {\prop{}}}}
+                                      {\object{}}}
+                                      \\
+  \issubtypein {}
+  {\s{d}}
+  {\ArrowOne {\x{}} {\s{}} {\tp{}}
+                                  {\filterset {\thenprop {\propp{}}}
+                                              {\elseprop {\propp{}}}}
+                                      {\objectp{}}}
+}
+{ \issubtypein {} {\MultiFntype{\s{t}}{\s{d}}}
+                  {\ArrowOne {\x{}} {\s{}} {\t{}}
+                             {\filterset {\thenprop {\prop{}}}
+                                         {\elseprop {\prop{}}}}
+                             {\object{}}}}
+}
+
 \newcommand\STop[0]{
 \infer [S-Top]
 {}
@@ -1720,26 +1744,26 @@ $$
 }
 
 \newcommand\Multisubtyping[0]{
-\infer [S-PMultiFn]
-{ \issubtypein {}
-  {\s{t}}
-  {\ArrowOne {\x{}} {\s{}} {\t{}}
-                                  {\filterset {\thenprop {\prop{}}}
-                                              {\elseprop {\prop{}}}}
-                                      {\object{}}}
-                                      \\\\
-  \issubtypein {}
-  {\s{d}}
-  {\ArrowOne {\x{}} {\s{}} {\tp{}}
-                                  {\filterset {\thenprop {\propp{}}}
-                                              {\elseprop {\propp{}}}}
-                                      {\objectp{}}}
-}
-{ \issubtypein {} {\MultiFntype{\s{t}}{\s{d}}}
-                  {\ArrowOne {\x{}} {\s{}} {\t{}}
-                             {\filterset {\thenprop {\prop{}}}
-                                         {\elseprop {\prop{}}}}
-                             {\object{}}}}
+%\infer [S-PMultiFn]
+%{ \issubtypein {}
+%  {\s{t}}
+%  {\ArrowOne {\x{}} {\s{}} {\t{}}
+%                                  {\filterset {\thenprop {\prop{}}}
+%                                              {\elseprop {\prop{}}}}
+%                                      {\object{}}}
+%                                      \\\\
+%  \issubtypein {}
+%  {\s{d}}
+%  {\ArrowOne {\x{}} {\s{}} {\tp{}}
+%                                  {\filterset {\thenprop {\propp{}}}
+%                                              {\elseprop {\propp{}}}}
+%                                      {\objectp{}}}
+%}
+%{ \issubtypein {} {\MultiFntype{\s{t}}{\s{d}}}
+%                  {\ArrowOne {\x{}} {\s{}} {\t{}}
+%                             {\filterset {\thenprop {\prop{}}}
+%                                         {\elseprop {\prop{}}}}
+%                             {\object{}}}}
 \infer [S-PMulti]
 { \issubtypein {} {\s{}} {\sp{}}
   \\

@@ -74,7 +74,7 @@ This symbolic representation is called the expression's \emph{object}.
 \emptyobject{} is the
 \emph{empty object}. Non-empty objects \path{\pathelem{}}{\x{}} consist of a symbol \x{} and a \emph{path} \pathelem{},
 which is a possibly-empty sequence of \emph{path elements} applied right-to-left.
-Path elements are {\classpe{}} and {\keype{k}}, representing a call to \classconst{} and
+This paper uses two path elements---{\classpe{}} and {\keype{k}}---representing a call to \classconst{} and
 a keyword lookup on $k$ respectively.
 
 
@@ -162,15 +162,17 @@ disjunctions, and the trivial (\topprop{}) and impossible (\botprop{}) propositi
 %the type \NumberFull{}, we use the proposition {\isprop{\NumberFull}{\x{}}}.
 
 \paragraph{`Then' and `else' propositions} Along with an object, each expression carries two
-propositions---a `then' proposition that can be assumed if the expression evaluates to a
-true value, and an `else' proposition for evaluating to a false value.
+propositions---a `then' and an `else' proposition,
+that can be assumed if the expression evaluates to a
+true value and a false value respectively.
 
 For example, the `then' proposition for the expression $o$ is $\notprop{\falsy{}}{o}$.
 This says if the expression $o$ evaluates to a true value, then $o$ is neither
-of type \False or \Nil. Naturally, the `else' proposition $\isprop{\falsy{}}{o}$
+of type \False or \Nil. Naturally, the `else' proposition $\isprop{\falsy{}}{o}$---which
+is true when $o$ is a false value---
 says $o$ is either \False or \Nil.
 
-Together, both propositions are called a \emph{proposition set}.
+The pair of propositions are called a \emph{proposition set}, written {\filterset{\thenprop{\prop{}}}{\elseprop{\prop{}}}}.
 
 \paragraph{The full judgment}
 
@@ -199,7 +201,7 @@ and object \object{}. We write
   {\object{}}}
 for expressions that rewrite to themselves.
 
-The syntax is given in \figref{main:figure:termsyntax}. Expressions include variables, values,
+\paragraph{Expressions} The syntax is given in \figref{main:figure:termsyntax}. Expressions include variables, values,
 application, abstractions, conditionals, and let expressions.
 All binding forms introduce fresh variables.
 Values include booleans, \nil{}, class literals, keywords, 
@@ -207,19 +209,25 @@ numbers,
 constants, and strings. Lexical closures {\closure {\openv{}} {\abs {\x{}} {\t{}} {\e{}}}}
 close over functions with value environments \openv{}, which map bindings to values.
 
-Types include the top type, \emph{untagged} unions, functions, singleton types
+\paragraph{Types} Types include the top type, \emph{untagged} unions, functions, singleton types
 and class instances.
-We abbreviate 
+We abbreviate the classes
 \Booleanlong{} to \Boolean{}, 
 \Keywordlong{} to \Keyword{},
-\NumberFull{}  to \Number{}, and 
-\StringFull{}  to \String{}.
-The type \Value{\Keyword} is inhabited by the class literal \Keyword{} and \makekw{a} is of type \Keyword{}.
-We abbreviate 
+\NumberFull{}  to \Number{},
+\StringFull{}  to \String{}, and 
+\FileFull{}  to \File{}.
+We also abbreviate the types
 \EmptyUnion{}     to \Bot{}, 
 {\ValueNil}       to \Nil{}, 
 {\ValueTrue}      to \True, and
 {\ValueFalse} to {\False}.
+
+The difference between the types
+\Value{\Keyword} and \Keyword{} is subtle.
+The former is inhabited by the class literal \Keyword{} and the result of 
+\appexp{\classconst{}}{\makekw{a}}---the latter by keywords like \makekw{a}.
+
 Function types contain \emph{latent} (terminology from~\cite{Lucassen88polymorphiceffect}) propositions, object, and return type,
 which may refer to the function argument.
 %Latent means they are relevant when the function is applied rather than evaluated.
@@ -799,6 +807,7 @@ returns a \String.
 We now walk through the conversion from unresolved expression~\ref{eq:unresolved} to 
 resolved expression~\ref{eq:resolved}.
 
+\paragraph{Constructors} First we check and convert {\newexp {\File{}} {\makestr{a/b}}} to {\newstaticexp {\String} {\File{}} {\File{}} {\makestr{a/b}}}
 The T-New typing rule checks and rewrites constructors.
 $$
     {\TNew}
@@ -819,6 +828,9 @@ and the proposition set says constructors can never be false---constructors
 can never produce the internal boolean value that Clojure uses for \false{}, or \nil{}.
 Finally, the constructor rewrites to {\newstaticexp {\String} {\File{}} {\File{}} {\makestr{a/b}}}.
 
+\paragraph{Methods} Next we convert {\methodexp {\getparent{}} {\newstaticexp {\String} {\File{}} {\File{}} {\makestr{a/b}}} {}}
+to
+{\methodstaticexp {\File} {} {\String} {\getparent{}} {\newstaticexp {\String} {\File{}} {\File{}} {\makestr{a/b}}} {}}.
 The T-Method rule checks unresolved methods.
 $$
     {\TMethod}
@@ -988,7 +1000,7 @@ $$
   \begin{mathpar}
     \BDefMethod{}
     \BDefMulti{}
-    \BBetaMulti{}
+    %\BBetaMulti{}
   \end{mathpar}
   \getmethodfigure{}
 $$
@@ -1163,17 +1175,31 @@ and \object{} = \emptyobject{}, which also agrees with the method body, above.
 %The body of the \clj{let} is checked by T-App because
 %{\MultiFntype {\s{}}{\sp{}}} is a subtype of its interface type {\s{}}.
 
+\paragraph{Subtyping}
+Multimethods are also functions, which is encoded via the following subtyping rule.
+$$
+\SPMultiFn{}
+$$
+This rule says a multimethod can be upcast to its interface type. This means
+multimethod call sites can be handled by T-App via T-Subsume. Other rules are given in
+in \figref{main:figure:mmsyntax}. 
+
 \paragraph{Semantics}
-Multimethod definition semantics are straightforward, and are given 
+Multimethod definition semantics are also given 
 in \figref{main:figure:mmsyntax}. 
 B-DefMulti creates a multimethod with the given dispatch function and an empty dispatch table.
 B-DefMethod produces a new multimethod with an extended dispatch table.
-B-BetaMulti invokes the dispatch function with the evaluated argument to obtain the dispatch value,
-and uses \getmethodliteral{} (which models Clojure's \clj{get-method}) 
-to extract the appropriate method. The call to \getmethodliteral{} only returns a value
-if there is \emph{exactly one} method such that the corresponding dispatch value
-is compatible, using \isaopsemliteral{}, with the result of the dispatch function.
-Finally we return the result of applying the extracted method and the original argument.
+
+The overall dispatch mechanism is summarised by B-BetaMulti.
+$$
+    \BBetaMulti{}
+$$
+First the dispatch function \v{d} is applied to the argument \vp{} to obtain
+the dispatch value \v{e}.
+Based on \v{e},
+the \getmethodliteral{} metafunction (\figref{main:figure:mmsyntax})
+extracts a method \v{f} from the method table {\disptable{}}
+and applies it to the original argument for the final result.
 
 \subsection{Precise Types for Heterogeneous maps}
 \label{sec:hmapformal}
