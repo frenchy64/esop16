@@ -1,7 +1,7 @@
 \section{Experience}
 \label{sec:experience}
 
-Typed Clojure is implemented as a Clojure library named \coretyped{}.
+Typed Clojure is implemented as a Clojure library---\coretyped{}.
 In contrast to Racket, Clojure does not provide extension
 points to the macroexpander. To satisfy our goals of providing
 Typed Clojure as a library that works with the latest version of the Clojure
@@ -17,8 +17,9 @@ On the negative side, programmers must remember to type check their namespaces,
 though since type checking is a function call away, it is easily integrated as editor
 shortcuts or continuous integration.
 Also, programs cannot depend on the static semantics of Typed Clojure, meaning that
-type-based optimisation is impossible. If this were not the case, we could dispose of type-hints
-altogether, and simply use static types to resolve reflection.
+type-based optimisation is impossible. 
+%If this were not the case, we could dispose of type-hints
+%altogether, and simply use static types to resolve reflection.
 
 %\subsection{Let-aliasing}
 %
@@ -100,8 +101,8 @@ applying the function to the atom's current value and the extra arguments.
 
 \subsection{Limitations}
 \smallsection{Java Arrays}
-Java arrays are known to be statically unsound. \citet{Bra98} 
-summarises the approach taken to regain runtime soundness, which involves
+Java arrays are known to be statically unsound.
+\citet{Bra98} summarises the approach taken to regain runtime soundness, which involves
 checking array writes at runtime.
 
 Typed Clojure implements an experimental partial solution, making arrays \emph{bivariant},
@@ -125,7 +126,7 @@ Gradual typing ensures sound interoperability between typed and untyped code by 
 invariants of the type system via run-time contracts.
 Currently, interactions between typed and untyped Clojure code are unchecked
 which can violate the expectations of Typed Clojure. We hope to add support
-for gradually typing in the future.
+for gradual typing in the future.
 
 \subsection{Experiments}
 \label{sec:casestudy}

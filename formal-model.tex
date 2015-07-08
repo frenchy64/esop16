@@ -784,7 +784,7 @@ field accesses are written \fieldexp{\fld{}}{\e{}}
 and method calls $\methodexp{\mth{}}{\e{}}{\overrightarrow{e}}$.
 %and \clj{(new class es*)} is $\newexp{\class{}}{\overrightarrow{es}}$.
 
-\egref{example:getparent-direct-constructor} translates like so.
+\egref{example:getparent-direct-constructor} translates to expression~\ref{eq:unresolved}.
 $$
 \clj{(.getParent (new File "a/b"))}
 $$
@@ -1105,7 +1105,7 @@ $$
 \isacompare{}{\x{}}{\Value{\makekw{en}}}
 {\filterset {\isprop {\Value{\makekw{en}}}{\x{}}}{\notprop{\Value{\makekw{en}}}{\x{}}}}
 $$
-Since \t{} = \Keyword{}, we check the method body like so
+Since \t{} = \Keyword{}, we check the method body with
 $$
 \judgement{{\isprop{\Keyword}{\x{}}},{\isprop {\Value{\makekw{en}}}{\x{}}}}
   {\makestr{hello}}
@@ -1295,8 +1295,13 @@ formed types.
 The semantics for \getliteral{} and \assocliteral{} are straightforward.
 If the entry is missing, B-GetMissing produces \nil{}.
 
-\subsection{Multimethods and Java}
-\subsection{Multimethods and HMaps}
+\subsection{Proof system}
+
+% checks obvious prop logic, but update is most interesting rule.
+
+
+
+
 
 \begin{figure*}
   $$
