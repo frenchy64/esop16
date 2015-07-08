@@ -166,13 +166,12 @@ propositions---a `then' and an `else' proposition,
 that can be assumed if the expression evaluates to a
 true value and a false value respectively.
 
-For example, the `then' proposition for the expression $o$ is $\notprop{\falsy{}}{o}$.
+The `then' proposition {\thenprop{\prop{}}} for the variable $o$ is $\notprop{\falsy{}}{o}$, for example.
 This says if the expression $o$ evaluates to a true value, then $o$ is neither
-of type \False or \Nil. Naturally, the `else' proposition $\isprop{\falsy{}}{o}$---which
-is true when $o$ is a false value---
-says $o$ is either \False or \Nil.
+of type \False or \Nil. Naturally, the `else' proposition {\elseprop{\prop{}}} is $\isprop{\falsy{}}{o}$---which
+is true when $o$ is a false value---says $o$ is either \False or \Nil.
 
-The pair of propositions are called a \emph{proposition set}, written {\filterset{\thenprop{\prop{}}}{\elseprop{\prop{}}}}.
+The pair of propositions {\filterset{\thenprop{\prop{}}}{\elseprop{\prop{}}}} is called a \emph{proposition set}.
 
 \paragraph{The full judgment}
 
@@ -780,15 +779,15 @@ overloading or Java Generics.
 
 We extend the syntax in \figref{main:figure:javatyping} with Java field lookups and calls to
 methods and constructors. 
-To prevent ambiguity between zero-argument methods and fields, field accesses are written \fieldexp{\fld{}}{\e{}},
-and method calls are written $\methodexp{\mth{}}{\e{}}{\overrightarrow{es}}$.
+To prevent ambiguity, % between zero-argument methods and fields, 
+field accesses are written \fieldexp{\fld{}}{\e{}}
+and method calls $\methodexp{\mth{}}{\e{}}{\overrightarrow{e}}$.
 %and \clj{(new class es*)} is $\newexp{\class{}}{\overrightarrow{es}}$.
 
-\egref{example:getparent-direct-constructor}, copied here,
+\egref{example:getparent-direct-constructor} translates like so.
 $$
 \clj{(.getParent (new File "a/b"))}
 $$
-is written
 \begin{equation}  \label{eq:unresolved}
   \qquad {\methodexp {\getparent{}} {\newexp {\File{}} {\makestr{a/b}}} {}}
 \end{equation}

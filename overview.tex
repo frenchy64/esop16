@@ -510,6 +510,7 @@ information.
 a company with a large production Typed Clojure system
 (section~\ref{sec:casestudy} presents a case study).
 
+\begin{exmp}
 \begin{minted}{clojure}
 (defalias RawKeyPair
   "Unencrypted keypair -- extra keys disallowed"
@@ -532,10 +533,10 @@ a company with a large production Typed Clojure system
     ; add encrypted private key
     :enc-private-key (encrypt pk)))
 \end{minted}
-%\begin{exmp}
+\label{example:circleci}
+\end{exmp}
+
 %\inputminted[firstline=10,lastline=22]{clojure}{code/demo/src/demo/key.clj}
-%\label{example:circleci}
-%\end{exmp}
 Fully specified HMap's
 statically enforce the private key is not accidentally left in a supposedly
 encrypted keypair.
