@@ -13,6 +13,7 @@ interleaving presentation of syntax, typing rules, operational semantics,
 and subtyping.
 
 \subsection{Core type system}
+\label{sec:coretypesystem}
 
 Our presentation will start with a review of
 occurrence typing~\cite{TF10}, the foundation of \lambdatc{}.
@@ -1445,10 +1446,42 @@ $$
 \subsection{Proof system}
 
 % checks obvious prop logic, but update is most interesting rule.
+Now that we have covered \lambdatc{}, we now review
+the proof system, in particular the T-Update rule.
+The rest of the proof system, which uses standard proposition logic, 
+we defer to the supplemental material---\figref{appendix:figure:proofsystem} contains the full rules.
+$$
+\LUpdate{}
+$$
+The metavariable \propisnotmeta{} ranges over \t{} and \nottype{\t{}} (without variables).
+The rule says if we know positive information \t{} about object \path{\pathelemp{}}{\x{}}, and some
+either positive or negative information \propisnotmeta{} about some extension of that path,
+\path{\pathelem{}}{\path{\pathelemp{}}{\x{}}}, 
+the \updateliteral{} metafunction can derive some new positive information about \path{\pathelemp{}}{\x{}}.
 
+The example in 
+\secref{sec:coretypesystem}
+that combines information
+$$
+{ \inpropenv 
+  {{\isprop{\Order}{\makelocal{o}}},
+    {\isprop{\Value{\makekw{combo}}}{\path{\keype{\makekw{Meal}}}{\makelocal{o}}}}}
+  {\isprop {\t{}} {\makelocal{o}}}}
+$$
+to deduce \t{},
+uses T-Update where \path{\pathelemp{}}{\x{}} = {\path{\keype{\makekw{Meal}}}{\makelocal{o}}}
+and
+$$
+\update{\Order}{\makekw{combo}}{\path{\keype{\makekw{Meal}}}{\makelocal{o}}}
+$$
+Since {\Order} is just a union of HMaps, we update each member of the union
+via the last HMap case of
+\figref{main:figure:update}.
+Each recursive call hits the first HMap case, since {\makekw{combo}}
+is always present, finally calling \restrictliteral{} in the penultimate case.
 
-
-
+The non-combo HMaps change to \Bot, because \restrict{\makekw{lunch}}{\makekw{combo}} = \Bot,
+leaving just the \makekw{combo} HMap.
 
 %\begin{figure}
 %  $$

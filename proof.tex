@@ -101,37 +101,38 @@
        \inopenvnoeq{\openv{1}}{\path{\pathelem{}}{\objectp{}}}
  \begin{proof}
    By induction on \pathelem{}.
-   \begin{case}[\pathelem{} = \emptypath{}]
-     \inopenvnoeq{\openv{}}{\object{}} = {\inopenvnoeq{\openv{}}{\objectp{}}}
-
-     As 
-     \inopenvnoeq{\openv{}}{\path{\emptypath{}}{\object{}}} = \inopenvnoeq{\openv{}}{\object{}}
-     and
-     \inopenvnoeq{\openv{}}{\path{\emptypath{}}{\objectp{}}} = \inopenvnoeq{\openv{}}{\objectp{}}
-     we can conclude 
-     \inopenvnoeq{\openv{}}{\path{\emptypath{}}{\object{}}} = \inopenvnoeq{\openv{}}{\path{\emptypath{}}{\objectp{}}}.
-   \end{case}
-   \begin{case}[\pathelem{} = {\destructpath{\pesyntax{}}{\pathelem{1}}}]
-     \inopenvnoeq{\openv{}}{\object{}} = {\inopenvnoeq{\openv{}}{\objectp{}}}
-
-     By cases on \pesyntax{}.
-
-     \begin{itemize}
-       \item[]
-   \begin{subcase}[\pesyntax{} = {\keype{\k{}}}] 
-
-%     TODO
-     By the induction hypothesis on {\pathelem{1}}
-     we know {\inopenvnoeq{\openv{}}{\path{\pathelem{1}}{\object{}}}} =
-             {\inopenvnoeq{\openv{1}}{\path{\pathelem{1}}{\objectp{}}}}.
-             By the definition of path translation 
-             {\inopenvnoeq{\openv{}}{\path{\pathelem{1}}{\object{}}}} = {\getexp {{\openv{}}(\object{})}{\k{}}}
-             and 
-             {\inopenvnoeq{\openv{}}{\path{\pathelem{1}}{\objectp{}}}} = {\getexp {{\openv{}}(\objectp{})}{\k{}}}
-   \end{subcase} 
-     \end{itemize}
-%     TODO
-   \end{case}
+   % FIXME
+%   \begin{case}[\pathelem{} = \emptypath{}]
+%     \inopenvnoeq{\openv{}}{\object{}} = {\inopenvnoeq{\openv{}}{\objectp{}}}
+%
+%     As 
+%     \inopenvnoeq{\openv{}}{\path{\emptypath{}}{\object{}}} = \inopenvnoeq{\openv{}}{\object{}}
+%     and
+%     \inopenvnoeq{\openv{}}{\path{\emptypath{}}{\objectp{}}} = \inopenvnoeq{\openv{}}{\objectp{}}
+%     we can conclude 
+%     \inopenvnoeq{\openv{}}{\path{\emptypath{}}{\object{}}} = \inopenvnoeq{\openv{}}{\path{\emptypath{}}{\objectp{}}}.
+%   \end{case}
+%   \begin{case}[\pathelem{} = {\destructpath{\pesyntax{}}{\pathelem{1}}}]
+%     \inopenvnoeq{\openv{}}{\object{}} = {\inopenvnoeq{\openv{}}{\objectp{}}}
+%
+%     By cases on \pesyntax{}.
+%
+%     \begin{itemize}
+%       \item[]
+%   \begin{subcase}[\pesyntax{} = {\keype{\k{}}}] 
+%
+%%     TODO
+%     By the induction hypothesis on {\pathelem{1}}
+%     we know {\inopenvnoeq{\openv{}}{\path{\pathelem{1}}{\object{}}}} =
+%             {\inopenvnoeq{\openv{1}}{\path{\pathelem{1}}{\objectp{}}}}.
+%             By the definition of path translation 
+%             {\inopenvnoeq{\openv{}}{\path{\pathelem{1}}{\object{}}}} = {\getexp {{\openv{}}(\object{})}{\k{}}}
+%             and 
+%             {\inopenvnoeq{\openv{}}{\path{\pathelem{1}}{\objectp{}}}} = {\getexp {{\openv{}}(\objectp{})}{\k{}}}
+%   \end{subcase} 
+%     \end{itemize}
+%%     TODO
+%   \end{case}
  \end{proof}
 \end{lemma}
 
