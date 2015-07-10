@@ -6,8 +6,9 @@ In contrast to Racket, Clojure does not provide extension
 points to the macroexpander. To satisfy our goals of providing
 Typed Clojure as a library that works with the latest version of the Clojure
 compiler, \coretyped{} is implemented as an external static analysis pass
-that must be explicitly invoked by the programmer.
-Therefore, \coretyped{} is in a sense a linter.
+that must be explicitly invoked by the programmer, and not as an
+integral part of the Clojure compilation process. 
+%Therefore, \coretyped{} is in a sense a linter.
 
 This means that type checking is truly optional. 
 On the positive side, \coretyped{} is flexible to the needs of a dynamically
@@ -56,6 +57,10 @@ type-based optimisation is impossible.
 %\end{mathpar}
 
 \subsection{Further Extensions}
+
+In addition to the three key features we present in this paper,
+\coretyped{} supports a number of extensions to handle other Clojure
+features. 
 
 \smallsection{Datatypes, Records and Protocols}
 Clojure features datatypes and protocols. Datatypes are Java classes
@@ -121,18 +126,29 @@ in the `immutable' sequence. While disturbing and a clear unsoundness in Typed C
 this has not yet been an issue in practice and is strongly discouraged as undefined behavior:
 ``Robust programs should not mutate arrays or Iterables that have seqs on them.''~\cite{CljSeqDoc}.
 
-\smallsection{Gradual typing}
-Gradual typing ensures sound interoperability between typed and untyped code by enforcing
-invariants of the type system via run-time contracts.
+\smallsection{Typed-untyped interoperation}
 Currently, interactions between typed and untyped Clojure code are unchecked
-which can violate the expectations of Typed Clojure. We hope to add support
+which can violate the expectations of Typed Clojure.
+Gradual typing~\cite{thf06,siek06} ensures sound interoperability between typed and untyped code by enforcing
+invariants of the type system via run-time contracts.
+ We hope to add support
 for gradual typing in the future.
 
-\subsection{Experiments}
+\subsection{Evaluation}
 \label{sec:casestudy}
 
-We performed a quantitative analysis on two significant Typed Clojure code bases.
-We now present the data and our interpretations of it.
+Throughout this paper, we have focused on three interrelated type
+system features: heterogenous maps, Java interoperability, and
+multimethods. Our hypothesis is that these features are widely used in
+existing Clojure programs, in interconnecting way, and that handling
+them as we have done is required to type check realistic Clojure
+programs.
+
+To evaluate this hypothesis, we analyzed two existing Typed Clojure
+code bases, one from the open-source community, and one from a company
+that uses Typed Clojure in production. For our data gathering, we
+instrumenting the Typed Clojure type checker to record how often
+various features were used. 
 
 \paragraph{feeds2imap}
 feeds2imap is an open source library written in Typed Clojure. It provides an
@@ -152,7 +168,8 @@ RSS reader using the \emph{java.mail} framework.
 % - inlined (:check/instance-call-clojure-lang-probably-inline) 33
 % total 151
 % - user  
-Of 11 typed namespaces, there are 32 Java interactions in user code.
+Of 11 typed namespaces of FIXME lines of code,
+ there are 32 Java interactions in user code. \marginpar{(FIXME what is user code?)}
 The majority are method calls, consisting of 
 20 (62\%) instance methods and 5 (16\%) static methods.
 The rest consists of 1 (3\%) static field access, and
@@ -175,7 +192,8 @@ That leaves 41 (44\%) unchecked vars, mainly due to partially complete
 porting to Typed Clojure, but in some cases due to unannotated third-party 
 libraries.
 
-No typed multimethods are defined.
+No typed multimethods are defined. \marginpar{FIXME: how many are
+  called, and what kind of arguments?}
 
 \paragraph{CircleCI}
 CircleCI %% \footnote{\url{https://circleci.com/}}
@@ -198,13 +216,15 @@ and Typed Clojure.
 %Furthermore, we manually collected and inspected all top-level annotations and
 %classified them.
 
-%We determined that
-%CircleCI has a Clojure code base of approximately 50,000 lines, including around 10,000 
-%lines of typed code.
-%Out of 588 top-level var annotations, 270 (46\%) were checked annotations of
-%functions defined in typed code,
-%129 (22\%) annotations assigned types to external libraries 
-%and the remaining 189 (32\%) annotated `unchecked' user code.
+We determined that
+CircleCI has a Clojure code base of approximately 50,000 lines, including around 10,000 
+lines of typed code.
+%% Out of 588 top-level var annotations, 270 (46\%) were checked annotations of
+%% functions defined in typed code,
+%% 129 (22\%) annotations assigned types to external libraries 
+%% and the remaining 189 (32\%) annotated `unchecked' user code.
+Some the type-annotated definitions were so annotated by the first
+author and contributed back to CircleCI.
 %HMaps were a valuable feature, with 38 (59\%) out of 64 total type aliases
 %featuring them; see \egref{example:circleci} for an instance.
 %
@@ -213,18 +233,18 @@ and Typed Clojure.
 
 %811 top-level var annotations
 %
-Due to a lack of checked multimethods,
-the first author ported 11 previously-untyped multimethods to Typed Clojure, also checking 
-89 methods. All 11 dispatch functions
+%% Due to a lack of checked multimethods,
+%% the first author ported 11 previously-untyped multimethods to Typed Clojure, also checking 
+%% 89 methods.
+
+The CircleCI code base contains 11 checked multimethods.
+ All 11 dispatch functions
 are on a HMap key containing a keyword, in a similar style to
 \egref{example:desserts-on-meal}.
 Correspondingly, all 89 methods are associated with a keyword dispatch value.
-The argument type was a single HMap type, however,
-which means the occurrence typing implementation
-for \clj{defmethod} expressions
-did not help to type check these particular methods.
-In our experience from porting other libraries, this is unusual---the
-kind of data these multimethods dispatch on naturally have all keys in common.
+The argument type was in all cases a single HMap type, however,
+rather than a union type.
+In our experience from porting other libraries, this is unusual.
 
 % 87 typed namespaces
 % :check/gen-analysis     87
@@ -298,12 +318,24 @@ reasons include unannotated third-party libraries,
 work-in-progress conversions to Typed Clojure,
 unsupported Clojure idioms, 
 and hard-to-check code 
-because of poor error messages or lack of documentation.
+because of poor type error messages or lack of documentation.
 
-Based on this and other interactions with Typed Clojure users,
-it is clear the main barrier to entry to Typed Clojure for large systems is the requirement
-to annotate functions outside the borders of typed code.
-We conjecture that this can be addressed by making annotations available for popular libraries.
+\paragraph{Lessons}
+Based on our empirical survey, it's clear that the features we
+consider are vital---they are used on average more than once per typed
+function. Furthermore, as we have seen in the CircleCI case study, the
+combination of heterogenous maps and multimethods is pervasive. The
+data therefore validates our choice of a type system that supports
+expressive multimethod definition and acknolwedges the relationship
+between these seemingly-distinct features. 
+
+The other lesson from our case studies and from other interactions
+with Typed Clojure users, it is clear the main barrier to entry to
+Typed Clojure for large systems is the requirement to annotate
+functions outside the borders of typed code.  We conjecture that this
+can be addressed by making annotations available for popular
+libraries.
+
 
 %OLD
 
