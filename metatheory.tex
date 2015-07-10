@@ -1,15 +1,16 @@
 \section{Metatheory}
 \label{sec:metatheory}
 
-We prove type soundness follow using the same technique as~\citet{TF10}. 
-We also include errors and a \wrong{} value and prove
-well-typed programs do not go wrong.
+We prove type soundness following \citet{TF10}.  Our model is extended
+to include errors and a \wrong{} value, and we prove well-typed
+programs do not go wrong; this is therefore a stronger theorem than
+proved by \citet{TF10}.
 
-Rather than modeling Java's dynamic semantics, we instead
-make our assumptions about Java explicit. We concede that
-method and constructor calls may diverge or error, but we assume they can
-never go wrong. (Assumptions for other operations are given in the supplemental
-material).
+Rather than modeling Java's dynamic semantics, a task of daunting
+complexity, we instead make our assumptions about Java explicit. We
+concede that method and constructor calls may diverge or error, but
+assume they can never go wrong. (Assumptions for other operations are
+given in the supplemental material).
 
 {\javanewassumption{main}}
 
@@ -20,12 +21,11 @@ material).
 %{\istruefalsedefinitions{main}}
 
 For the purposes of our soundness proof, we require that all values
-are \emph{consistent}.
-Consistency
-ensures that occurrence typing does not refer to variables
-hidden inside a closure.
+are \emph{consistent}.  Consistency (defined in the supplemental
+material) states that the types of closures are well-scoped---they do
+not claim propositions about variables hidden in their closures.
 
-{\consistentwithonlydef{main}}
+%{\consistentwithonlydef{main}}
 
 Our main lemma says if there is a defined reduction, then the propositions, object
 and type are correct.
@@ -41,7 +41,7 @@ The metavariable \definedreduction{} ranges over \v{}, \errorvalv{} and \wrong{}
 \end{lemma}
 
 
-We can now state our soundness theorem.
+We can now state our soundness theorems.
 
 {\soundnesstheoremnoproof{main}}
 
