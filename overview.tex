@@ -198,7 +198,8 @@ instance and calls the \clj{getParent} method on the result.
 
 \begin{exmp}
 \begin{minted}{clj}
-  (.getParent (new File "a/b"))  ; :- (U nil Str)
+  ; :- (U nil Str)
+  (.getParent (new File "a/b"))  
   ;=> "a"
 \end{minted}
 \label{example:getparent-direct-constructor}
@@ -292,7 +293,7 @@ specified by a keyword argument.
 
 \begin{exmp}
 \begin{minted}{clojure}
-(ann hi [Kw -> Str]) ; interface type for `hi`
+(ann hi [Kw -> Str]) ; multimethod type
 (defmulti hi identity) ; dispatch function `identity`
 (defmethod hi :en [_] "hello") ; method for `:en`
 (defmethod hi :fr [_] "bonjour") ; method for `:fr`
