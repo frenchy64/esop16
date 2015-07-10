@@ -237,10 +237,10 @@ They are latent because they are instantiated with the
 actual object of the argument in applications before they are used in the proposition environment.
 
 \paragraph{Typing rules}
-The core type rules are
+The core typing rules are
 given as \figref{main:figure:othertypingrules}. We introduce
-the interesting rules while demonstrating how to check
-the complement number predicate
+the interesting rules with the complement number predicate
+as a running example.
 \begin{equation}
 \abs{\makelocal{d}}{\Top}{\ifexp{\appexp{\numberhuh{}}{\makelocal{d}}}{\false{}}{\true{}}}
 \end{equation}
@@ -248,13 +248,13 @@ the complement number predicate
 %a subsumption rule T-Subsume and rules for the false values---T-Nil and T-False---encoded 
 %as impossible (\botprop{}) `then' propositions.
 
-The lambda rule T-Abs introduces \isprop{\Top}{\makelocal{d}}
+The lambda rule T-Abs introduces \isprop{\s{}}{\x{}}} = \isprop{\Top}{\makelocal{d}}
 to check the body.
 With \propenv{} = \isprop{\Top}{\makelocal{d}},
-T-If then checks the test {\appexp{\numberhuh{}}{\makelocal{d}}}
-with T-App with three main steps.
+the T-If rule first checks the test \e{1} = {\appexp{\numberhuh{}}{\makelocal{d}}}
+via the T-App rule, with three main steps.
 
-First, the operator \numberhuh{} is checked with T-Const, which
+First, in T-App the operator \e{} = \numberhuh{} is checked with T-Const, which
 uses 
 the \constanttypeliteral{} relation to give types to constants.
 \numberhuh{} is a predicate over numbers, and
@@ -265,82 +265,150 @@ $$
 The dynamic semantics for constants are given as \figref{main:figure:primitivesem}.
 
 Resuming {\appexp{\numberhuh{}}{\makelocal{d}}},
-the operand \makelocal{d} is checked with
+in T-App the operand \ep{} = \makelocal{d} is checked with
 T-Local as
-$$
+\begin{equation}
 \judgementselfrewrite{\propenv{}}
                      {\makelocal{d}}
-                     {\UnionNilNum}
+                     {\Top}
                      {\filterset{\notprop{\falsy}{\makelocal{d}}}
                                 {\isprop{\falsy}{\makelocal{d}}}}
                      {\makelocal{d}}
-$$
+\end{equation}
 which encodes the type, proposition, and object information
-previously discussed about variables.
+about variables
+as previously discussed.
 
-Finally, T-App substitutes the operand's object for the parameter
----here \makelocal{d} for \numberhuh{}'s \x{}---yielding
-$$
-\judgementselfrewrite{\isprop{\Top}{\makelocal{d}}}{\appexp{\numberhuh{}}{\makelocal{d}}}
+Finally, the T-App rule substitutes the operand's object \objectp{}
+for the parameter \x{} in the latent type, propositions, and object.
+\begin{equation}
+\judgementselfrewrite{\propenv{}}
+  {\appexp{\numberhuh{}}{\makelocal{d}}}
   {\Boolean{}}
   {\filterset{\isprop{\Number{}}{\makelocal{d}}}
              {\notprop{\Number{}}{\makelocal{d}}}}
   {\emptyobject{}}
+\end{equation}
+To demonstrate, the `then' proposition---in T-App {\replacefor {\thenprop{\prop{}}} {\objectp{}} {\x{}}}---substitutes
+the latent `then' proposition of \constanttype{\numberhuh{}} with 
+\makelocal{d}, giving
+{\replacefor {\isprop{\Number{}}{\x{}}} {\makelocal{d}} {\x{}}} =
+{\isprop{\Number{}}{\makelocal{d}}}.
+
+To check the branches of {\ifexp{\appexp{\numberhuh{}}{\makelocal{d}}}{\false{}}{\true{}}},
+T-If
+introduces \thenprop{\prop{1}} = \isprop{\Number{}}{\makelocal{d}}
+in the `then' branch 
+\e{2} = {\false{}},
+and \elseprop{\prop{1}} = \notprop{\Number{}}{\makelocal{d}}
+in the `else' branch
+\e{3} = \true{}.
+
+The branches are checked with T-False and T-True respectively,
+%$$
+%\judgementselfrewrite{\propenv{},{\isprop{\Number{}}{\makelocal{d}}}}
+%  {\false{}}
+%  {\False{}}
+%  {\filterset{\botprop{}}
+%             {\topprop{}}}
+%  {\emptyobject{}}
+%$$
+then T-Subsume.
+$$
+\begin{array}{c}
+\judgementselfrewrite{\propenv{},{\isprop{\Number{}}{\makelocal{d}}}}
+  {\false{}}
+  {\Boolean{}}
+  {\filterset{\notprop{\Number{}}{\makelocal{d}}}
+             {\isprop{\Number{}}{\makelocal{d}}}}
+  {\emptyobject{}}
+  \\
+\judgementselfrewrite{\propenv{},{\notprop{\Number{}}{\makelocal{d}}}}
+  {\true{}}
+  {\Boolean{}}
+  {\filterset{\notprop{\Number{}}{\makelocal{d}}}
+             {\isprop{\Number{}}{\makelocal{d}}}}
+  {\emptyobject{}}
+\end{array}
+$$
+%to suit the T-If outputs \t{} = \Boolean{}, \thenprop{\prop{}}
+%= {\notprop{\Number{}}{\makelocal{d}}}, \elseprop{\prop{}} = {\isprop{\Number{}}{\makelocal{d}}},
+%and \object{} = {\emptyobject{}}.
+%
+%In T-Subsume, we can upcast \t{} = \False{} to \tp{} = \Boolean{} via the premise 
+%\issubtypein{}{\t{}}{\tp{}}.
+%and 
+%\inpropenv {\propenv{}, {\elseprop {\prop{}}}} {\elseprop {\propp{}}}
+%from 
+%{\elseprop {\prop{}}} = \topprop{} to {\elseprop {\propp{}}} = {\isprop{\Number{}}{\makelocal{d}}}.
+The T-Subsume conditions
+\inpropenv {\propenv{}, {\thenprop {\prop{}}}} {\thenprop {\propp{}}}
+and
+\inpropenv {\propenv{}, {\elseprop {\prop{}}}} {\elseprop {\propp{}}}
+allow us to pick compatible propositions.
+
+Finally T-Abs concludes, using the T-If outputs, with
+$$
+{\judgementselfrewrite{}{\abs{\makelocal{d}}{\Top}{\ifexp{\appexp{\numberhuh{}}{\makelocal{d}}}{\false{}}{\true{}}}}
+                    {\ArrowOne {\makelocal{d}} {\Top{}}
+                                      {\Boolean{}}
+                                      {\filterset {\notprop{\Number{}}{\makelocal{d}}}
+                                                  {\isprop{\Number{}}{\makelocal{d}}}}
+                                      {\emptyobject{}}}
+                    {\filterset {\topprop{}}
+                                {\botprop{}}}
+                    {\emptyobject{}}}
 $$
 
-To check {\ifexp{\appexp{\numberhuh{}}{\makelocal{d}}}{\false{}}{\true{}}},
-T-If then
-introduces \isprop{\Number{}}{\makelocal{d}}
-in the `then' branch and \notprop{\Number{}}{\makelocal{d}}
-in the `else' branch.
 %The object \x{} over latent propositions \thenprop{\prop{}} and
 %\elseprop{\prop{}}, latent object \object{}, and latent type \t{}. The
 %actual argument object---\objectp{}---is substituted in at application by T-App.
 
 
 
-The T-App rule instantiates parameters---like \x{} in T-Abs---with their actual object.
-The expression {\appexp{\numberhuh{}}{\makelocal{d}}} replaces its parameter object with \
-\judgementselfrewrite{\isprop{\Top}{\makelocal{d}}}{\appexp{\numberhuh{}}{\makelocal{d}}}
-  {\Boolean{}}
-  {\filterset{\isprop{\Number{}}{\makelocal{d}}}
-             {\notprop{\Number{}}{\makelocal{d}}}}
-  {\emptyobject{}}
+%The T-App rule instantiates parameters---like \x{} in T-Abs---with their actual object.
+%The expression {\appexp{\numberhuh{}}{\makelocal{d}}} replaces its parameter object with \
+%\judgementselfrewrite{\isprop{\Top}{\makelocal{d}}}{\appexp{\numberhuh{}}{\makelocal{d}}}
+%  {\Boolean{}}
+%  {\filterset{\isprop{\Number{}}{\makelocal{d}}}
+%             {\notprop{\Number{}}{\makelocal{d}}}}
+%  {\emptyobject{}}
 
-The T-If refines each branch based on the test---a
-{\appexp{\numberhuh{}}{\makelocal{d}}} test introduces \isprop{\Number{}}{\makelocal{d}}
-for checking the `then' branch and \notprop{\Number{}}{\makelocal{d}}
-for checking the `else' branch.
-Information from each branch is combined via subsumption for the overall type, propositions, and object.
+%The T-If refines each branch based on the test---a
+%{\appexp{\numberhuh{}}{\makelocal{d}}} test introduces \isprop{\Number{}}{\makelocal{d}}
+%for checking the `then' branch and \notprop{\Number{}}{\makelocal{d}}
+%for checking the `else' branch.
+%%Information from each branch is combined via subsumption for the overall type, propositions, and object.
+%The T-Subsume rule 
 
-For example
-$
-\judgementselfrewrite{\isprop{\Top}{\makelocal{d}}}
-  {\ifexp{\appexp{\numberhuh{}}{\makelocal{d}}}{\false{}}{\true{}}}
-  {\Boolean{}}
-  {\filterset{\notprop{\Number{}}{\makelocal{d}}}
-             {\isprop{\Number{}}{\makelocal{d}}}}
-  {\emptyobject{}}
-$
-type checks because T-Subsume allows us to check both branches as
-$
-\judgementselfrewrite{\isprop{\Number{}}{\makelocal{d}}}
-  {\false{}}
-  {\Boolean{}}
-  {\filterset{\notprop{\Number{}}{\makelocal{d}}}
-             {\isprop{\Number{}}{\makelocal{d}}}}
-  {\emptyobject{}}
-$
-and
-$
-\judgementselfrewrite{\notprop{\Number{}}{\makelocal{d}}}
-  {\true{}}
-  {\Boolean{}}
-  {\filterset{\notprop{\Number{}}{\makelocal{d}}}
-             {\isprop{\Number{}}{\makelocal{d}}}}
-  {\emptyobject{}}
-$
-respectively.
+%For example
+%$
+%\judgementselfrewrite{\isprop{\Top}{\makelocal{d}}}
+%  {\ifexp{\appexp{\numberhuh{}}{\makelocal{d}}}{\false{}}{\true{}}}
+%  {\Boolean{}}
+%  {\filterset{\notprop{\Number{}}{\makelocal{d}}}
+%             {\isprop{\Number{}}{\makelocal{d}}}}
+%  {\emptyobject{}}
+%$
+%type checks because T-Subsume allows us to check both branches as
+%$
+%\judgementselfrewrite{\isprop{\Number{}}{\makelocal{d}}}
+%  {\false{}}
+%  {\Boolean{}}
+%  {\filterset{\notprop{\Number{}}{\makelocal{d}}}
+%             {\isprop{\Number{}}{\makelocal{d}}}}
+%  {\emptyobject{}}
+%$
+%and
+%$
+%\judgementselfrewrite{\notprop{\Number{}}{\makelocal{d}}}
+%  {\true{}}
+%  {\Boolean{}}
+%  {\filterset{\notprop{\Number{}}{\makelocal{d}}}
+%             {\isprop{\Number{}}{\makelocal{d}}}}
+%  {\emptyobject{}}
+%$
+%respectively.
 %
 %For example, if \e{2} is true when variable {\makelocal{y}} is a \File{}
 %and \e{3} is true when variable {\makelocal{z}} is a \Number{}, then
@@ -493,9 +561,9 @@ $$
 %The propositions of the test expression \e{1}, \thenprop{\prop{1}} and \elseprop{\prop{1}}, are 
 %used as assumptions in the then and else branch respectively.
 
-The let rule T-Let links inferred information about
-\x{} to the expression used to instantiate \x{}, \ep{1}, via logical implications.
-
+%The let rule T-Let links inferred information about
+%\x{} to the expression used to instantiate \x{}, \ep{1}, via logical implications.
+%
 %The T-Local rule connects the type system to the proof system over type propositions
 %via \inpropenv {\propenv{}} {\isprop {\t{}} {\x{}}}
 %to derive a type for a variable.
@@ -869,7 +937,7 @@ returns a \String.
 We now walk through the conversion from unresolved expression~\ref{eq:unresolved} to 
 resolved expression~\ref{eq:resolved}.
 
-\paragraph{Constructors} First we check and convert {\newexp {\File{}} {\makestr{a/b}}} to {\newstaticexp {\String} {\File{}} {\File{}} {\makestr{a/b}}}
+\paragraph{Constructors} First we check and convert {\newexp {\File{}} {\makestr{a/b}}} to {\newstaticexp {\String} {\File{}} {\File{}} {\makestr{a/b}}}.
 The T-New typing rule checks and rewrites constructors.
 $$
     {\TNew}
@@ -1099,15 +1167,15 @@ $\letexp{hi_0} {\createmultiexp {\ArrowOne{\x{}}{\Keyword}{\String}{\filterset{\
 $
 \end{listing}
 
-For convenience, examples in this section are flattened when they are really nested
-let bindings. We also elide trivial latent propositions and objects.
-The following is an abbreviation of the previous expression.
-\begin{lstlisting}
-${\createmultiexp {\ArrowTwo{\x{}}{\Keyword}{\String}} {\abs{\x{}}{\Keyword}{\x{}}}}$
-${\extendmultiexp {hi} {\makekw{en}} {\abs {\x{}} {\Keyword} {\makestr{hello}}}}$
-${\extendmultiexp {hi} {\makekw{fr}} {\abs {\x{}} {\Keyword} {\makestr{bonjour}}}}$
-$\appexp{hi}{\makekw{en}}$
-\end{lstlisting}
+%For convenience, examples in this section are flattened when they are really nested
+%let bindings. We also elide trivial latent propositions and objects.
+%The following is an abbreviation of the previous expression.
+%\begin{lstlisting}
+%${\createmultiexp {\ArrowTwo{\x{}}{\Keyword}{\String}} {\abs{\x{}}{\Keyword}{\x{}}}}$
+%${\extendmultiexp {hi} {\makekw{en}} {\abs {\x{}} {\Keyword} {\makestr{hello}}}}$
+%${\extendmultiexp {hi} {\makekw{fr}} {\abs {\x{}} {\Keyword} {\makestr{bonjour}}}}$
+%$\appexp{hi}{\makekw{en}}$
+%\end{lstlisting}
 
 %\defmethodliteral{} returns a new extended multimethod
 %without changing the original multimethod. 
