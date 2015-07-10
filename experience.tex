@@ -14,10 +14,8 @@ This means that type checking is truly optional.
 On the positive side, \coretyped{} is flexible to the needs of a dynamically
 typed programmer, encouraging experimentation with programs that may not
 type check.
-On the negative side, programmers must remember to type check their namespaces,
-though since type checking is a function call away, it is easily integrated as editor
-shortcuts or continuous integration.
-Also, programs cannot depend on the static semantics of Typed Clojure, meaning that
+On the negative side, programmers must remember to type check their namespaces.
+Also, programs cannot depend on  Typed Clojure's typs, meaning that
 type-based optimisation is impossible. 
 %If this were not the case, we could dispose of type-hints
 %altogether, and simply use static types to resolve reflection.
@@ -58,8 +56,8 @@ type-based optimisation is impossible.
 
 \subsection{Further Extensions}
 
-In addition to the three key features we present in this paper,
-\coretyped{} supports a number of extensions to handle other Clojure
+In addition to the key features we present in this paper,
+\coretyped{} supports other extensions to handle additional Clojure
 features. 
 
 \smallsection{Datatypes, Records and Protocols}
@@ -207,7 +205,7 @@ wrapping existing \emph{javax.mail} functionality.
 CircleCI %% \footnote{\url{https://circleci.com/}}
 provides continuous integration services built with a mixture of open-
 and closed-source.
-Typed Clojure has been used at CircleCI in production Clojure systems for at least two years.
+Typed Clojure has been used at CircleCI in production  systems for at least two years.
 
 CircleCI provided the first author access to the main closed-source backend system written in Clojure
 and Typed Clojure.
@@ -303,7 +301,7 @@ Of 95 total type aliases defined with \clj{defalias},
 Out of 105 Java interactions, 26 (25\%) are static methods, 36 (34\%)
 are instance methods, 38 (36\%) are constructors, and 5 (5\%) are static
 fields. 35 methods are overriden to return non-nil, and 1 method 
-overridden to accept nil---the latter's low quantity suggests
+overridden to accept nil---suggesting that
 \coretyped{} disallowing \clj{nil} as a method argument by default
 is justified.
 
@@ -332,8 +330,7 @@ From a brief investigation,
 reasons include unannotated third-party libraries,
 work-in-progress conversions to Typed Clojure,
 unsupported Clojure idioms, 
-and hard-to-check code 
-because of poor type error messages or lack of documentation.
+and hard-to-check code.
 
 \paragraph{Lessons}
 Based on our empirical survey, it's clear that the features we
@@ -347,7 +344,7 @@ between these seemingly-distinct features.
 The other lesson from our case studies and from other interactions
 with Typed Clojure users, it is clear the main barrier to entry to
 Typed Clojure for large systems is the requirement to annotate
-functions outside the borders of typed code.  We conjecture that this
+functions outside the borders of typed code.  We hope that this
 can be addressed by making annotations available for popular
 libraries.
 

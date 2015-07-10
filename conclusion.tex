@@ -2,7 +2,7 @@
 \label{sec:conclusion}
 
 Optional type systems must be designed with close attention to the
-languague that they are intendend to work for.
+language that they are intended to work for.
 We have therefore designed Typed Clojure, an optionally-typed version of
 Clojure, with a type system that works with a wide variety of distinctive
 Clojure idioms and features. Although based on the foundation of Typed
@@ -16,22 +16,22 @@ features important in isolation to Clojure and Typed Clojure
 programmers, but they must fit together smoothly to ensure that
 existing Clojure programs are easy to convert to Typed Clojure.
 
-The result is a sound, expressive, and useful type system which, when
+The result is a sound, expressive, and useful type system which, as
 implemented in \coretyped with appropriate extensions, suitable for
 typechecking significant amount of existing Clojure programs.
 %
-As a result, Typed Clojure is already successful: it is widely used in
+As a result, Typed Clojure is already successful: it is used in
 the Clojure community among both enthusiasts and professional
 programmers and receives contributions from many developers.
 
 Our empirical analysis of existing Typed Clojure programs bears out
 our design choices. Multimethods, Java interoperation, and
-heterogenous maps are indeed common in both Clojure and Typed Clojure,
-meaning that our type system must accomodate them. Furthermore, they
+heterogeneous maps are indeed common in both Clojure and Typed Clojure,
+meaning that our type system must accommodate them. Furthermore, they
 are commonly used together, and the features of each are mutually
 reinforcing. Additionally, the choice to make Java's \clj{null}
 explicit in the type system is validated by the many Typed Clojure
-programs that use the ability to specify non-nullable types.
+programs that  specify non-nullable types.
 
 
 % Delete the following paragraphs if space is needed.
@@ -45,12 +45,12 @@ Clojure to enable sound gradual typing for Clojure.
 
 Additionally, the Clojure compiler is unable to use Typed Clojure's
 wealth of static information to optimize programs. Addressing this
-requires not only first enabling sound gradual typing, but also
-integrating Typed Clojure into the Clojure tool chain more deeply, so
-that its information can be passed on to the compiler. 
+requires not only  enabling sound gradual typing, but also
+integrating Typed Clojure into the Clojure tool so
+that its information can be communicated to the compiler. 
 
 Finally, our case study, evaluation, and broader experience indicate that Clojure
 programmers still find themselves unable to use Typed Clojure on some
 of their programs for lack of expressiveness. This requires continued
-effort to analyze and understand the relevant features and idioms and
+effort to analyze and understand the features and idioms and
 develop new type checking approaches.
