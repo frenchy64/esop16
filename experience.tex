@@ -87,7 +87,7 @@ which Typed Clojure defines \emph{bivariantly}---with write and read type parame
 as in the atomic reference \clj{(Atom2 Int Int)} which can write and read \clj{Int}.
 Typed Clojure also supports parametric polymorphism, including
 Typed Racket's variable-arity polymorphism~\cite{stf-esop}, 
-which enables us to assign a type to functions like \clj{swap!} (figure~\ref{main:fig:swap!}),
+which enables us to assign a type to functions like \clj{swap!} (\figref{main:fig:swap!}),
 which takes a mutable \emph{atom},
 a function and extra arguments, and swaps into the atom the result of
 applying the function to the atom's current value and the extra arguments.
@@ -168,8 +168,8 @@ RSS reader using the \emph{java.mail} framework.
 % - inlined (:check/instance-call-clojure-lang-probably-inline) 33
 % total 151
 % - user  32
-Of 11 typed namespaces of FIXME lines of code,
-there are 32 Java interactions in user code. \marginpar{(FIXME what is user code?)}
+Of 11 typed namespaces containing 825 lines of code,
+there are 32 Java interactions.
 The majority are method calls, consisting of 
 20 (62\%) instance methods and 5 (16\%) static methods.
 The rest consists of 1 (3\%) static field access, and
@@ -192,8 +192,16 @@ That leaves 41 (44\%) unchecked vars, mainly due to partially complete
 porting to Typed Clojure, but in some cases due to unannotated third-party 
 libraries.
 
-No typed multimethods are defined. \marginpar{FIXME: how many are
-  called, and what kind of arguments?}
+No typed multimethods are defined or used. 
+% :collect/defalias-is-HMap      7
+% :invoke-special-collect/(quote clojure.core.typed/def-alias*)     18
+Of 18 total type aliases,
+7 (39\%) contained one HMap type, and none contained unions of HMaps---on further
+inspection there was no HMap entry used to dictate control flow, often
+handled by multimethods.
+This is unusual in our experience, and
+is perhaps explained by feeds2imap mainly wrapping
+wrapping existing \emph{javax.mail} functionality.
 
 \paragraph{CircleCI}
 CircleCI %% \footnote{\url{https://circleci.com/}}
@@ -217,13 +225,14 @@ and Typed Clojure.
 %classified them.
 
 We determined that
-CircleCI has a Clojure code base of approximately 50,000 lines, including around 10,000 
-lines of typed code.
+CircleCI has a Clojure code base of
+382 namespaces comprising around 55,000 lines, excluding tests, including 87 namespaces
+and around 19,000 lines of typed code.
 %% Out of 588 top-level var annotations, 270 (46\%) were checked annotations of
 %% functions defined in typed code,
 %% 129 (22\%) annotations assigned types to external libraries 
 %% and the remaining 189 (32\%) annotated `unchecked' user code.
-Some the type-annotated definitions were so annotated by the first
+Some of the type-annotated definitions were so annotated by the first
 author and contributed back to CircleCI.
 %HMaps were a valuable feature, with 38 (59\%) out of 64 total type aliases
 %featuring them; see \egref{example:circleci} for an instance.
@@ -263,6 +272,11 @@ Of 328 lookup operations on HMaps,
 20 (6\%) to absent keys, and
 30 (9\%) lookups are unresolved.
 
+% :collect/defalias-is-HMap     62
+% :invoke-special-collect/(quote clojure.core.typed/def-alias*)     95 
+Of 95 total type aliases defined with \clj{defalias},
+62 (65\%) involved one or more HMap types.
+
 % :new-special/(quote clojure.lang.MultiFn)     11
 
 % :check/:static-call    525
@@ -290,7 +304,7 @@ Out of 105 Java interactions, 26 (25\%) are static methods, 36 (34\%)
 are instance methods, 38 (36\%) are constructors, and 5 (5\%) are static
 fields. 35 methods are overriden to return non-nil, and 1 method 
 overridden to accept nil---the latter's low quantity suggests
-the default choice of \coretyped{} to disallow \clj{nil} as a method argument
+\coretyped{} disallowing \clj{nil} as a method argument by default
 is justified.
 
 % :check/checked-def  407
@@ -307,9 +321,10 @@ and 1 Java interaction occurs every 4.4 top-level definitions.
 % = 1759
 % :collect/:def   1834
 % = 1427 unchecked
-From 87 typed namespaces,
-only 407 (22\%) of 1834 \clj{def} expressions are checked.
-That means 1427 (78\%) are unchecked, either by an explicit \clj{:no-check} annotation
+From 1834 \clj{def} expressions in typed code,
+%87 typed namespaces,
+only 407 (22\%) were checked.
+That leaves 1427 (78\%) which have unchecked definitions, either by an explicit \clj{:no-check} annotation
 or \clj{tc-ignore} macro to suppress type checking,
 or the \clj{warn-on-unannotated-vars} option, which skips \clj{def} expressions
 that lack expected types via \clj{ann}.
