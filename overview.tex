@@ -246,9 +246,11 @@ it is a static type error, as typed code could possibly dereference \clj{nil}.
 \end{minted}
 Since Java-level types do not provide information about nullability,
 by default Typed Clojure conservatively assumes that Java method and
-constructor arguments, such as to @clj{.getParent}
+constructor arguments, such as \clj{"a/b"} provided to the \clj{File} constructor in
+\egref{example:getparent-direct-constructor},
  must be \emph{non-nullable}, but this can be
 configured for  particular calls as needed.
+The target of method invocations is always non-nullable.
 
 Any Java method returning a reference can also return \java{null} ---
 Typed Clojure rejects programs that assume otherwise.
@@ -544,7 +546,7 @@ result from this code base).
 \end{exmp}
 
 %\inputminted[firstline=10,lastline=22]{clojure}{code/demo/src/demo/key.clj}
-Using ully specified HMaps
+Using fully specified HMaps
 statically enforce the private key is not accidentally left in a supposedly
 encrypted keypair.
 
@@ -632,7 +634,7 @@ handling these features. Instead, as type system designers, we must
 search for a compositional approach.
 
 Thankfully, occurrence typing, originally designed for reasoning about
-\clj{if} tests, provide the compositional approach we need.
+\clj{if} tests, provides the compositional approach we need.
 By extending the system with
 a handful of rules based on HMaps and other functions, 
 we can automatically cover both easy cases and those
@@ -699,8 +701,7 @@ orders, simplifying \clj{o} to
 \begin{minted}{clojure}
 '{:Meal ':combo :meal1 Order :meal2 Order}
 \end{minted}
-which is an appropriate argument for the recursive call.
-
+which contains appropriate arguments for both recursive calls.
 
 \paragraph{Nested dispatch}
 An equally valid dispatch mechanism for \clj{desserts}
