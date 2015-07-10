@@ -12,20 +12,71 @@ novel feature of Typed Clojure to the formalism,
 interleaving presentation of syntax, typing rules, operational semantics,
 and subtyping.
 
-\subsection{Occurrence typing}
+\subsection{Core type system}
 
 Our presentation will start with a review of
 occurrence typing~\cite{TF10}, the foundation of \lambdatc{}.
 %We build up the occurrence typing calculus for illustrative purposes, 
 %and present the full syntax at the end of the section.
 
-\paragraph{Logical formulas over type environments}
-In standard type systems, the 
-%use type environments to track lexical type information.
-rules for variables use \emph{type environments}.
-%associating $x$ with its type $\Number$ (a number) in the type environment,
-%%Correspondingly, 
-%and checking the type of a variable is a simple map lookup.
+\paragraph{Expressions} Syntax is given in \figref{main:figure:termsyntax}. Expressions \e{} 
+include variables \x{}, values \v{},
+applications, abstractions, conditionals, and let expressions.
+All binding forms introduce fresh variables.
+Values include booleans \bool{}, \nil{}, class literals {\class{}}, keywords \k{},
+numbers {\num{}},
+constants {\const{}}, and strings \str{}. Lexical closures {\closure {\openv{}} {\abs {\x{}} {\t{}} {\e{}}}}
+close value environments \openv{} over functions, which map bindings to values.
+
+\paragraph{Types} Types \s{} or \t{} include the top type, \emph{untagged} unions, functions, singleton types
+and class instances.
+We abbreviate the classes
+\Booleanlong{} to \Boolean{}, 
+\Keywordlong{} to \Keyword{},
+\NumberFull{}  to \Number{},
+\StringFull{}  to \String{}, and 
+\FileFull{}  to \File{}.
+We also abbreviate the types
+\EmptyUnion{}     to \Bot{}, 
+{\ValueNil}       to \Nil{}, 
+{\ValueTrue}      to \True, and
+{\ValueFalse} to {\False}.
+
+The difference between the types
+\Value{\Keyword} and \Keyword{} is subtle.
+The former is inhabited by the class literal \Keyword{} and the result of 
+\appexp{\classconst{}}{\makekw{a}}---the latter by keywords like \makekw{a}.
+
+Function types contain \emph{latent} (terminology from~\cite{Lucassen88polymorphiceffect}) propositions, object, and return type,
+which may refer to the function argument.
+%Latent means they are relevant when the function is applied rather than evaluated.
+They are latent because they are instantiated with the
+actual object of the argument in applications before they are used in the proposition environment.
+
+\paragraph{Objects}
+%As we saw in \secref{sec:overview},
+%occurrence typing is capable of reasoning
+%about deeply nested expressions.
+To reason about nested expressions,
+each expression is associated with 
+a symbolic representation
+called an \emph{object}.
+%with respect to the current lexical environment. 
+For example,
+  variable \makelocal{m} has object \makelocal{m};
+  $\appexpone{\ccclass{\appexp{\makekw{lunch}}{\makelocal{m}}}}$ has object ${\path{\classpe{}}{\path{\keype{\makekw{lunch}}}{\makelocal{m}}}}$; and
+  $42$ has the \emph{empty} object \emptyobject{}.
+
+\figref{main:figure:termsyntax} gives the syntax for objects \object{}---non-empty objects 
+\path{\pathelem{}}{\x{}} combine of a root variable \x{} and a \emph{path} \pathelem{},
+which consists of
+a possibly-empty sequence of \emph{path elements} (\pesyntax{}) applied right-to-left from the root variable.
+We use two path elements---{\classpe{}} and {\keype{k}}---representing the results
+of calling \classconst{} and of looking up a keyword $k$ respectively.
+
+\paragraph{Propositions}
+In standard type systems, \emph{type environments}
+track variables.
 $$
 \begin{array}{lr}
 \infer [LC-Let]
@@ -79,98 +130,109 @@ $$
            }
 \end{array}
 $$
-The proof system judgment { \inpropenv {\propenv{}} {\isprop {\t{}} {\x{}}}}
-says under logical assumptions {\propenv{}}, variable \x{} is of type \t{}.
 Types can now refer to variables, so we erase \x{} from the final type
 in T0-Let.
-%We later define the more general T-Local.
-
-\paragraph{Symbolic representation}
-%As we saw in \secref{sec:overview},
-%occurrence typing is capable of reasoning
-%about deeply nested expressions.
-To reason about nested expressions,
-each expression is associated with 
-a symbolic representation
-called an \emph{object}.
-%with respect to the current lexical environment. 
-For example,
-  variable \makelocal{m} has object \makelocal{m};
-  $\appexpone{\ccclass{\appexp{\makekw{lunch}}{\makelocal{m}}}}$ has object ${\path{\classpe{}}{\path{\keype{\makekw{lunch}}}{\makelocal{m}}}}$; and
-  $42$ has the \emph{empty} object \emptyobject{}.
-
-\figref{main:figure:termsyntax} gives the syntax for objects---non-empty objects 
-\path{\pathelem{}}{\x{}} consist of a root variable \x{} and a \emph{path} \pathelem{},
-consisting of
-a possibly-empty sequence of \emph{path elements} applied right-to-left starting from the root variable.
-We use two path elements---{\classpe{}} and {\keype{k}}---representing the result
-of a calling \classconst{} and the result of looking up a keyword $k$ respectively.
-
-
-%The particular part of the runtime environment we reference in a
-%type proposition is called the \emph{object}.
-%The typing judgment relates an object to every expression in the language.
-%An object is either \emph{empty}, written \emptyobject{}, 
-%which says 
-%this expression is not known to evaluate to a particular part
-%  of the current runtime environment, or a 
-%variable with some \emph{path}, written \path{\pathelem{}}{\x{}},
-%that exactly indicates how the value of this
-%expression can be derived from the current runtime environment.
-%Type propositions can only reference non-empty objects.
-
-\paragraph{Logical statements about objects}
-%So far we have seen logical statements about the simplest object, a variable---{\isprop{\t{}}{\x{}}}---
-%saying variable \x{} is of type \t{}.
 We extend logical statements to reason about \emph{arbitrary} non-empty 
 objects {\isprop{\t{}}{\path{\pathelem{}}{\x{}}}}.
+The proof system judgment in T0-Local
+$$
+{ \inpropenv {\propenv{}} {\isprop {\t{}} {\path{\pathelem{}}{\x{}}}} }
+$$
+says under logical assumptions {\propenv{}}, object {\path{\pathelem{}}{\x{}}} is of type \t{}.
+%We later define the more general T-Local.
+
+\begin{figure}
+  \footnotesize
+$$
+\begin{array}{lrll}
+  \e{} &::=& \x{}
+                      \alt \v{} 
+                      \alt {\comb {\e{}} {\e{}}} 
+                      \alt {\abs {\x{}} {\t{}} {\e{}}} &\mbox{Expressions} \\
+                      &\alt& {\ifexp {\e{}} {\e{}} {\e{}}}
+                      %\alt {\trdiff{\doexp {\e{}} {\e{}}}}
+                      \alt {\letexp {\x{}} {\e{}} {\e{}}}\\
+                      %\alt {\errorvalv{}}
+  \v{} &::=&          \singletonmeta{}
+                      \alt {\num{}}
+                      \alt {\const{}}
+                      \alt {\str{}}
+                      \alt {\closure {\openv{}} {\abs {\x{}} {\t{}} {\e{}}}}
+                &\mbox{Values} \\
+                \constantssyntax{}\\
+  \s{}, \t{}    &::=& \Top 
+                      \alt {\Unionsplice {\overrightarrow{\t{}}}}
+                      \alt
+                      {\ArrowOne {\x{}} {\t{}}
+                                   {\t{}}
+                                   {\filterset {\prop{}} {\prop{}}}
+                                   {\object{}}}
+                &\mbox{Types} \\
+                      &\alt& {\Value \singletonmeta{}} 
+                      \alt \trdiff{\class{}}\\
+  \singletonallsyntax{}
+                \\ \\
+  \occurrencetypingsyntax{}\\
+  \propenvsyntax{}\\
+  \openvsyntax{}
+  %\\
+  %\classliteralallsyntax{}
+\end{array}
+$$
+\caption{Syntax of Terms, Types, Propositions and Objects}
+\label{main:figure:termsyntax}
+\end{figure}
+
+We further extend logical statements to \emph{propositional logic}.
+\figref{main:figure:termsyntax} describes the syntax
+for propositions \prop{},
+consisting of positive and negative \emph{type propositions} 
+about non-empty objects---{\isprop {\t{}} {\path {\pathelem{}} {\x{}}}}
+and {\notprop {\t{}} {\path {\pathelem{}} {\x{}}}}
+respectively---the latter pronounced ``the object {\path {\pathelem{}} {\x{}}} is \emph{not} of type \t{}''.
+The other propositions are standard logical connectives: implications, conjunctions,
+disjunctions, and the trivial (\topprop{}) and impossible (\botprop{}) propositions.
+
+Each expression is associated with two propositions---when expression
+\e{1} is in test position like
+\ifexp{\e{1}}{\e{2}}{\e{3}},
+the type system extracts \e{1}'s `then' and `else' proposition to check
+\e{2} and \e{3} respectively.
+For example, in \ifexp{\makelocal{o}}{\e{2}}{\e{3}}
+we learn {\makelocal{o}} is true in \e{2} via {\makelocal{o}}'s `then' proposition $\notprop{\falsy{}}{\makelocal{o}}$, and 
+that {\makelocal{o}} is false in \e{3} via {\makelocal{o}}'s `else' proposition $\isprop{\falsy{}}{\makelocal{o}}$.
 
 To illustrate, recall \egref{example:desserts-on-meal}.
-We know the parameter \makelocal{o} is of type $\Order$
-by the annotation on $desserts$---written
-\begin{equation}
-\qquad {\isprop{\Order}{\makelocal{o}}}
-\end{equation}
-as a logical statement.
+We know the parameter \makelocal{o} is of type $\Order$,
+%by the annotation on $desserts$
+written
+{\isprop{\Order}{\makelocal{o}}}
+as a proposition.
 %
 In checking the ${\makekw{combo}}$ method, we also assume
 ${\appexp{\makekw{Meal}}{\makelocal{o}}}$ is ${\makekw{combo}}$,
 based on multimethod dispatch rules. This is written
-\begin{equation}
-  \qquad {\isprop{\Value{\makekw{combo}}}{\path{\keype{\makekw{Meal}}}{\makelocal{o}}}}
-\end{equation}
-and pronounced ``the ${\makekw{Meal}}$ path of variable \makelocal{o} is of type
-{\Value{\makekw{combo}}}'', a keyword singleton type.
+  {\isprop{\Value{\makekw{combo}}}{\path{\keype{\makekw{Meal}}}{\makelocal{o}}}},
+pronounced ``the ${\makekw{Meal}}$ path of variable \makelocal{o} is of type
+{\Value{\makekw{combo}}}''.
 
-\paragraph{Logical system in action} 
+%\paragraph{Logical system in action} 
 To attain the type of \makelocal{o}, 
-T0-Local says we must solve for \t{} in
+we must solve for \t{} in
 $
 { \inpropenv 
   {\propenv{}}
   {\isprop {\t{}} {\makelocal{o}}}}
 $,
-under proposition environment 
-$$
+under proposition environment
+$
 \propenv{} = {{\isprop{\Order}{\makelocal{o}}},
     {\isprop{\Value{\makekw{combo}}}{\path{\keype{\makekw{Meal}}}{\makelocal{o}}}}}
-$$
+$
 which deduces \t{} to be a {\makekw{combo}} meal.
 The logical
 system \emph{combines} pieces of type information to deduce more accurate types for lexical
 bindings---this is explained in \secref{formalmodel:proofsystem}.
-
-\paragraph{Extended to propositional logic}
-We extend our logical statements to \emph{propositional logic}.
-\figref{main:figure:termsyntax} describes the syntax we will use for the rest of the paper.
-The proposition metavariable \prop{} 
-consists of positive and negative \emph{type propositions} 
-about non-empty objects---{\isprop {\t{}} {\path {\pathelem{}} {\x{}}}}
-and {\notprop {\t{}} {\path {\pathelem{}} {\x{}}}}
-respectively---the former we have seen before, 
-the latter pronounced ``the object {\path {\pathelem{}} {\x{}}} is \emph{not} of type \t{}''.
-The other propositions are standard logical connectives: implications, conjunctions,
-disjunctions, and the trivial (\topprop{}) and impossible (\botprop{}) propositions.
 
 %The first insight about occurrence typing is that
 %logical formulas
@@ -189,54 +251,50 @@ disjunctions, and the trivial (\topprop{}) and impossible (\botprop{}) propositi
 %Instead of mapping \x{} to
 %the type \NumberFull{}, we use the proposition {\isprop{\NumberFull}{\x{}}}.
 
-\paragraph{Expressions} The syntax is given in \figref{main:figure:termsyntax}. Expressions include variables, values,
-application, abstractions, conditionals, and let expressions.
-All binding forms introduce fresh variables.
-Values include booleans, \nil{}, class literals, keywords, 
-numbers,
-constants, and strings. Lexical closures {\closure {\openv{}} {\abs {\x{}} {\t{}} {\e{}}}}
-close value environments \openv{} over functions, which map bindings to values.
 
-\paragraph{Types} Types include the top type, \emph{untagged} unions, functions, singleton types
-and class instances.
-We abbreviate the classes
-\Booleanlong{} to \Boolean{}, 
-\Keywordlong{} to \Keyword{},
-\NumberFull{}  to \Number{},
-\StringFull{}  to \String{}, and 
-\FileFull{}  to \File{}.
-We also abbreviate the types
-\EmptyUnion{}     to \Bot{}, 
-{\ValueNil}       to \Nil{}, 
-{\ValueTrue}      to \True, and
-{\ValueFalse} to {\False}.
+\begin{figure}
+  \footnotesize
+  \begin{mathpar}
+    \SRefl{}
 
-The difference between the types
-\Value{\Keyword} and \Keyword{} is subtle.
-The former is inhabited by the class literal \Keyword{} and the result of 
-\appexp{\classconst{}}{\makekw{a}}---the latter by keywords like \makekw{a}.
+    \STop{}
 
-Function types contain \emph{latent} (terminology from~\cite{Lucassen88polymorphiceffect}) propositions, object, and return type,
-which may refer to the function argument.
-%Latent means they are relevant when the function is applied rather than evaluated.
-They are latent because they are instantiated with the
-actual object of the argument in applications before they are used in the proposition environment.
+\SUnionSuper{}
 
-\paragraph{Branching propositions} 
-%Expressions in test position communicate propositions to each branch.
-Each test expression \e{1} in
-\ifexp{\e{1}}{\e{2}}{\e{3}} has a `then' and an `else' proposition to check
-\e{2} and \e{3} respectively.
-For example, in \ifexp{\makelocal{o}}{\e{2}}{\e{3}}
-we know {\makelocal{o}} is true in \e{2} and false in \e{3}.
-%that can be assumed if the expression evaluates to a
-%true value and a false value respectively.
-%
-The `then' and `else' propositions 
-for \makelocal{o}
-are $\notprop{\falsy{}}{\makelocal{o}}$ and $\isprop{\falsy{}}{\makelocal{o}}$ respectively.
+\SUnionSub{}
 
-%The pair of propositions {\filterset{\thenprop{\prop{}}}{\elseprop{\prop{}}}} is called a \emph{proposition set}.
+\SFunMono{}
+
+\SObject{}
+
+\SClass{}
+
+\begin{array}{l}
+\SSBool{}\\\\
+\SSKw{}
+\end{array}
+
+\SFun{}
+
+
+  \end{mathpar}
+  \caption{Core Subtyping rules}
+  \label{main:figure:subtyping}
+\end{figure}
+
+\paragraph{Subtyping}
+\figref{main:figure:subtyping} presents subtyping
+as a reflexive and transitive relation with top type \Top. 
+Singleton types are instances of their respective classes---boolean singleton types
+are of type \Boolean{}, class literals are instances of \Class{} and keywords are
+instances of \Keyword{}.
+Instances of classes \class{} are subtypes of \Object{}. Since function types 
+are subtypes of \IFn{}, all types except for \Nil{} are subtypes of \Object{},
+so \Top{} = {\Union{\Nil}{\Object}}.
+Function subtyping is contravariant left of the arrow---latent propositions, object
+and the result type are covariant.
+Subtyping for untagged unions is standard.
+
 
 
 \paragraph{The full judgment}
@@ -287,7 +345,7 @@ via the T-App rule, with three main steps.
 
 First, in T-App the operator \e{} = \numberhuh{} is checked with T-Const, which
 uses 
-the \constanttypeliteral{} relation to give types to constants.
+\constanttypeliteral{} to type constants.
 \numberhuh{} is a predicate over numbers, and
 \classconst{} returns its argument's class.
 $$
@@ -329,13 +387,13 @@ the latent `then' proposition of \constanttype{\numberhuh{}} with
 To check the branches of {\ifexp{\appexp{\numberhuh{}}{\makelocal{d}}}{\false{}}{\true{}}},
 T-If
 introduces \thenprop{\prop{1}} = \isprop{\Number{}}{\makelocal{d}}
-in the `then' branch 
-\e{2} = {\false{}},
+to check \e{2} = {\false{}},
 and \elseprop{\prop{1}} = \notprop{\Number{}}{\makelocal{d}}
-in the `else' branch
+to check 
 \e{3} = \true{}.
-
-The branches are checked with T-False and T-True respectively,
+%
+The branches are first checked with T-False and T-True respectively,
+then T-Subsume.
 %$$
 %\judgementselfrewrite{\propenv{},{\isprop{\Number{}}{\makelocal{d}}}}
 %  {\false{}}
@@ -344,7 +402,6 @@ The branches are checked with T-False and T-True respectively,
 %             {\topprop{}}}
 %  {\emptyobject{}}
 %$$
-then T-Subsume.
 $$
 \begin{array}{c}
 \judgementselfrewrite{\propenv{},{\isprop{\Number{}}{\makelocal{d}}}}
@@ -486,47 +543,6 @@ $$
 %the else proposition is {\isprop{\falsy}{f}}.
 %\ref{main:figure:typingrules}
 
-\begin{figure}
-  \footnotesize
-$$
-\begin{array}{lrll}
-  \expd{}, \e{} &::=& \x{}
-                      \alt \v{} 
-                      \alt {\comb {\e{}} {\e{}}} 
-                      \alt {\abs {\x{}} {\t{}} {\e{}}} &\mbox{Expressions} \\
-                      &\alt& {\ifexp {\e{}} {\e{}} {\e{}}}
-                      %\alt {\trdiff{\doexp {\e{}} {\e{}}}}
-                      \alt {\letexp {\x{}} {\e{}} {\e{}}}\\
-                      %\alt {\errorvalv{}}
-  \v{} &::=&          \singletonmeta{}
-                      \alt {\num{}}
-                      \alt {\const{}}
-                      \alt {\str{}}
-                      \alt {\closure {\openv{}} {\abs {\x{}} {\t{}} {\e{}}}}
-                &\mbox{Values} \\
-                \constantssyntax{}\\
-  \s{}, \t{}    &::=& \Top 
-                      \alt {\Unionsplice {\overrightarrow{\t{}}}}
-                      \alt
-                      {\ArrowOne {\x{}} {\t{}}
-                                   {\t{}}
-                                   {\filterset {\prop{}} {\prop{}}}
-                                   {\object{}}}
-                &\mbox{Types} \\
-                      &\alt& {\Value \singletonmeta{}} 
-                      \alt \trdiff{\class{}}\\
-  \singletonallsyntax{}
-                \\ \\
-  \occurrencetypingsyntax{}\\
-  \propenvsyntax{}\\
-  \openvsyntax{}
-  %\\
-  %\classliteralallsyntax{}
-\end{array}
-$$
-\caption{Syntax of Terms, Types, Propositions and Objects}
-\label{main:figure:termsyntax}
-\end{figure}
 
 
 \begin{figure*}
@@ -660,18 +676,6 @@ semantics of \ifliteral{}:
     \BIfFalse{}
 \end{mathpar}
 
-\paragraph{Subtyping}
-\figref{main:figure:subtyping} presents subtyping
-as a reflexive and transitive relation with top type \Top. 
-Singleton types are instances of their respective classes---boolean singleton types
-are of type \Boolean{}, class literals are instances of \Class{} and keywords are
-instances of \Keyword{}.
-Instances of classes \class{} are subtypes of \Object{}. Since function types 
-are subtypes of \IFn{}, all types except for \Nil{} are subtypes of \Object{},
-so \Top{} = {\Union{\Nil}{\Object}}.
-Function subtyping is contravariant left of the arrow---latent propositions, object
-and the result type are covariant.
-Subtyping for untagged unions is standard.
 %The definition of \updateliteral{} supports various idioms relating to \classpe{}
 %which we introduce in \secref{sec:isaformal}.
 
@@ -746,36 +750,6 @@ Subtyping for untagged unions is standard.
 %  \caption{Operational Semantics}
 %  \label{main:figure:standardopsem}
 %\end{figure}
-
-\begin{figure}
-  \footnotesize
-  \begin{mathpar}
-    \SRefl{}
-
-    \STop{}
-
-\SUnionSuper{}
-
-\SUnionSub{}
-
-\SFunMono{}
-
-\SObject{}
-
-\SClass{}
-
-\begin{array}{l}
-\SSBool{}\\\\
-\SSKw{}
-\end{array}
-
-\SFun{}
-
-
-  \end{mathpar}
-  \caption{Core Subtyping rules}
-  \label{main:figure:subtyping}
-\end{figure}
 
 %\subsection{Reasoning about Exceptional Control Flow}
 %\label{sec:doformal}
