@@ -192,23 +192,22 @@ That leaves 41 (44\%) unchecked vars, mainly due to partially complete
 porting to Typed Clojure, but in some cases due to unannotated third-party 
 libraries.
 
-No typed multimethods are defined or used. 
-% :collect/defalias-is-HMap      7
-% :invoke-special-collect/(quote clojure.core.typed/def-alias*)     18
-Of 18 total type aliases,
-7 (39\%) contained one HMap type, and none contained unions of HMaps---on further
-inspection there was no HMap entry used to dictate control flow, often
-handled by multimethods.
-This is unusual in our experience, and
-is perhaps explained by feeds2imap mainly wrapping
-wrapping existing \emph{javax.mail} functionality.
+%No typed multimethods are defined or used. 
+%% :collect/defalias-is-HMap      7
+%% :invoke-special-collect/(quote clojure.core.typed/def-alias*)     18
+%Of 18 total type aliases,
+%7 (39\%) contained one HMap type, and none contained unions of HMaps---on further
+%inspection there was no HMap entry used to dictate control flow, often
+%handled by multimethods.
+%This is unusual in our experience, and
+%is perhaps explained by feeds2imap mainly wrapping
+%wrapping existing \emph{javax.mail} functionality.
 
 \paragraph{CircleCI}
 CircleCI %% \footnote{\url{https://circleci.com/}}
 provides continuous integration services built with a mixture of open-
 and closed-source.
 Typed Clojure has been used at CircleCI in production Clojure systems for at least two years.
-
 CircleCI provided the first author access to the main closed-source backend system written in Clojure
 and Typed Clojure.
 %We conducted a study of the effectiveness of Typed Clojure in practice.
@@ -274,8 +273,8 @@ Of 328 lookup operations on HMaps,
 
 % :collect/defalias-is-HMap     62
 % :invoke-special-collect/(quote clojure.core.typed/def-alias*)     95 
-Of 95 total type aliases defined with \clj{defalias},
-62 (65\%) involved one or more HMap types.
+%Of 95 total type aliases defined with \clj{defalias},
+%62 (65\%) involved one or more HMap types.
 
 % :new-special/(quote clojure.lang.MultiFn)     11
 
