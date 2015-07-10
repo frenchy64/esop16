@@ -147,7 +147,7 @@ programs.
 To evaluate this hypothesis, we analyzed two existing Typed Clojure
 code bases, one from the open-source community, and one from a company
 that uses Typed Clojure in production. For our data gathering, we
-instrumenting the Typed Clojure type checker to record how often
+instrumented the Typed Clojure type checker to record how often
 various features were used. 
 
 \paragraph{feeds2imap}
@@ -167,9 +167,9 @@ RSS reader using the \emph{java.mail} framework.
 % - body  20
 % - inlined (:check/instance-call-clojure-lang-probably-inline) 33
 % total 151
-% - user  
+% - user  32
 Of 11 typed namespaces of FIXME lines of code,
- there are 32 Java interactions in user code. \marginpar{(FIXME what is user code?)}
+there are 32 Java interactions in user code. \marginpar{(FIXME what is user code?)}
 The majority are method calls, consisting of 
 20 (62\%) instance methods and 5 (16\%) static methods.
 The rest consists of 1 (3\%) static field access, and
