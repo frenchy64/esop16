@@ -154,6 +154,7 @@
 \newcommand\HVec[1]{[{#1}]}
 \newcommand\makekw[1]{\ma{\metafunctionfont{\mathbin{:}#1}}}
 \newcommand\makestr[1]{\ma{``#1"}}
+\newcommand\makelocal[1]{\ma{\metafunctionfont#1}}
 \newcommand\secref[1]{Section~\ref{#1}}
 \newcommand\figref[1]{Figure~\ref{#1}}
 \newcommand\egref[1]{Example~\ref{#1}}
@@ -269,12 +270,14 @@
 \newcommand\equivapp[2]{(\equivliteral\ #1\ #2)}
 
 % constant typing
-\newcommand\constanttypetwo[2]{\ma{{\delta}_{#1}(#2)}}
+\newcommand\constanttypeliteral[0]{\ma{{\delta}_{\t{}}}}
+\newcommand\constantopsemliteral[0]{\ma{\delta}}
+\newcommand\constanttypetwo[2]{\ma{\constanttypeliteral{}(#2)}}
 \newcommand\constanttype[1]{\constanttypetwo{\t{}}{#1}}
-\newcommand\constantopsem[2]{\ma{{\delta}(#1, #2)}}
+\newcommand\constantopsem[2]{\ma{{\constantopsemliteral}(#1, #2)}}
 \newcommand\classconst[0]{\emph{class}}
 \newcommand\throwconst[0]{\emph{throw}}
-\newcommand\numberhuh[0]{\emph{number?}}
+\newcommand\numberhuh[0]{\emph{n?}}
 \newcommand\inc[0]{\emph{inc}}
 
 % differences from TR
@@ -591,13 +594,13 @@
 \newcommand\TLocal[0]{
 \infer [T-Local]
 { \inpropenv {\propenv{}} {\isprop {\t{}} {\x{}}}
-  %\\\\
-  %\s{} = {\falsydiff} 
+  \\\\
+  \s{} = {\falsydiff} 
 }
 { \judgementselfrewrite {\propenv{}} 
             {\x{}} {\t{}}
-            %{\filterset {{\notprop {\s{}} {\x{}}}} {{\isprop {\s{}} {\x{}}}}}
-            {\filterset {{\notprop {\falsy{}} {\x{}}}} {{\isprop {\falsy{}} {\x{}}}}}
+            {\filterset {{\notprop {\s{}} {\x{}}}} {{\isprop {\s{}} {\x{}}}}}
+            %{\filterset {{\notprop {\falsy{}} {\x{}}}} {{\isprop {\falsy{}} {\x{}}}}}
             {\x{}}
            }
                  }
@@ -672,20 +675,22 @@
                  {\ep1}
              \\\\
   \judgementrewrite {\propenv{}, {\thenprop {\prop{1}}}}
-                 {\e2} {\t{}} {\filterset {\thenprop {\prop{2}}} {\elseprop {\prop{2}}}}
+                 {\e2} {\t{}} {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}}
                  {\object{}}
                  {\ep2}
   \\\\
   \judgementrewrite {\propenv{}, {\elseprop {\prop{1}}}}
-                 {\e3} {\t{}} {\filterset {\thenprop {\prop{3}}} {\elseprop {\prop{3}}}}
+                 {\e3} {\t{}} {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}}
                  {\object{}}
                  {\ep3}
+                 \\\\
+                 \ep{} = {\ifexp {\ep1} {\ep2} {\ep3}}
              }
 { \judgementrewrite {\propenv{}} {\ifexp {\e1} {\e2} {\e3}} {\t{}}
-                 {\filterset {\orprop {\thenprop {\prop{2}}} {\thenprop {\prop{3}}}} 
-                             {\orprop {\elseprop {\prop{2}}} {\elseprop {\prop{3}}}}}
+                 {\filterset {\thenprop {\prop{}}}
+                             {\elseprop {\prop{}}}}
                  {\object{}} 
-                 {\ifexp {\ep1} {\ep2} {\ep3}}}
+                 {\ep{}}}
 
              }
 
@@ -704,18 +709,22 @@
        {\propenv{}, {\isprop {\s{}} {\x{}}},
          {\propp{}},
          {\proppp{}}}
-             {\e{}} {\t{}} {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}}
+             {\e{2}} {\t{}} {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}}
              {\object{}} 
-             {\ep{}}
+             {\ep{2}}
+             \\\\ \ep{} = {\letexp {\x{}} {\ep{1}} {\ep{2}}}
              }
-{ \judgementrewrite {\propenv{}} {\letexp {\x{}} {\e{1}} {\e{}}} {\t{}}
+{ \judgementrewrite {\propenv{}} {\letexp {\x{}} {\e{1}} {\e{2}}} 
+             {\replacefor {\t{}}
+                          {\object{1}}
+                          {\x{}}}
              {\replacefor {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}}
                           {\object{1}}
                           {\x{}}}
              {\replacefor {\object{}} 
                           {\object{1}}
                           {\x{}}}
-             {\letexp {\x{}} {\ep{1}} {\ep{}}}
+             {\ep{}}
              }
 
            }
@@ -757,18 +766,20 @@
 \newcommand\TAbs[0]{
 \infer [T-Abs]
 { \judgementrewrite {\propenv{}, {\isprop {\s{}} {\x{}}}}
-            {\e{}} {\t{}}
+            {\e{}} {\sp{}}
              {\filterset {\thenprop {\prop{}}}
                          {\elseprop {\prop{}}}}
              {\object{}}
              {\ep{}}
-           }
-{ \judgementrewrite {\propenv{}} {\abs {\x{}} {\s{}} {\e{}}}
-                                           {\ArrowOne {\x{}} {\s{}}
-                                                      {\t{}}
+             \\\\
+             \t{} = {\ArrowOne {\x{}} {\s{}}
+                                                      {\sp{}}
                                                       {\filterset {\thenprop {\prop{}}}
                                                                   {\elseprop {\prop{}}}}
                                                       {\object{}}}
+           }
+{ \judgementrewrite {\propenv{}} {\abs {\x{}} {\s{}} {\e{}}}
+  {\t{}}
                 {\filterset {\topprop{}}
                             {\botprop{}}}
                 {\emptyobject{}}
@@ -2418,7 +2429,7 @@ $$
 
 % constants syntax
 \newcommand\constantssyntax[0]{
-  {\const{}}           &::=& \classconst \alt \inc \alt \numberhuh
+  {\const{}}           &::=& \classconst \alt \numberhuh
 
                 &\mbox{Constants}
               }
@@ -2553,7 +2564,12 @@ $$
                                       {\Union{\nil{}}{\Class{}}}
                                       {\filterset {\topprop{}}
                                                   {\topprop{}}}
-                                      {\path {\classpe{}} {\x{}}}}
+                                      {\path {\classpe{}} {\x{}}}}\\
+  \constanttype{\numberhuh} &=& {\ArrowOne {\x{}} {\Top{}}
+                                      {\Boolean{}}
+                                      {\filterset {\isprop{\Number{}}{\x{}}}
+                                                  {\notprop{\Number{}}{\x{}}}}
+                                      {\emptyobject{}}}
 %                                      \\
 %
 %  \constanttype{\throwconst} &=& {\ArrowOne {\x{}} {\Top{}}
@@ -2574,17 +2590,21 @@ $$
 \constantopsem{\classconst}{\class{}} &=& \Class{}\\
 \constantopsem{\classconst}{\closure {\openv{}} {\abs {\x{}} {\t{}} {\e{}}}} &=& \IFn{}\\
 \constantopsem{\classconst}{\multi {\v{d}} {\disptable{}}} &=& \PMulti{}\\
-\constantopsem{\classconst}{\mapval{}} &=& \HMapInstance{}
+\constantopsem{\classconst}{\mapval{}} &=& \HMapInstance{}\\
+\constantopsem{\classconst}{\k{}} &=& \Keyword{}\\
+\constantopsem{\classconst}{\num{}} &=& \Number{}
 \end{array}
 \begin{array}{lllr}
 \constantopsem{\classconst}{\true{}} &=& \Boolean{}\\
 \constantopsem{\classconst}{\false{}} &=& \Boolean{}\\
-\constantopsem{\classconst}{\k{}} &=& \Keyword{}\\
-%\constantopsem{\classconst}{\num{}} &=& \Number{}\\
 \constantopsem{\classconst}{\nil{}} &=& \nil{}
+% never is wrong
   %\constantopsem{\classconst}{\v{}} &=& \wrong{} & otherwise\\
+  \\\\
+\constantopsem{\numberhuh}{\num{}} &=& \true{}\\
+\constantopsem{\numberhuh}{\e{}} &=& \false{} \\
+\ \ \ \ otherwise\\
 %  \\\\
-%\constantopsem{\throwconst}{\v{}} &=& \errorval{\v{}}\\
 \end{array}
 \end{mathpar}
 \caption{Primitives}
@@ -2599,6 +2619,14 @@ $$
 \\
   \inpropenv {\propenv{}} {\isprop {\propisnotmeta{}} {{\pathelem{}}({\path {\pathelemp{}} {\x{}}})}}}
 { \inpropenv {\propenv{}} {\isprop {\update {\t{}} {\propisnotmeta{}} {\pathelem{}}} {\path {\pathelemp{}} {\x{}}}}}
+}
+
+\newcommand\LUpdatePos[0]{
+\infer [L-UpdatePos]
+{ \inpropenv {\propenv{}} {\isprop {\t{}} {\path {\pathelemp{}} {\x{}}}}
+\\
+  \inpropenv {\propenv{}} {\isprop {\s{}} {{\pathelem{}}({\path {\pathelemp{}} {\x{}}})}}}
+{ \inpropenv {\propenv{}} {\isprop {\update {\t{}} {\s{}} {\pathelem{}}} {\path {\pathelemp{}} {\x{}}}}}
 }
 
 \newcommand\TConst[0]{

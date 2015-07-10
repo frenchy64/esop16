@@ -21,7 +21,7 @@ and present the full syntax at the end of the section.
 
 \paragraph{Logical formulas over type environments}
 Standard type systems use type environments to track lexical type information.
-Introducing a lexically scoped variable $x$ is a matter of associating 
+Introducing a lexically scoped variable $x$ is a matter of
 associating $x$ with its type $\Number$ (a number) in the type environment.
 Correspondingly, checking the type of a variable is a simple map lookup.
 $$
@@ -40,8 +40,9 @@ $$
 Occurrence typing takes a different approach.
 The same information is conveyed by \emph{logical formulas}.
 The logical statement {\isprop{\Number{}}{\x{}}} says the value
-obtained via $x$ is of type \Number{}. We now must \emph{prove}
-a variable's type via a \emph{logical system}.
+obtained via $x$ is of type \Number{}. A \emph{logical system}
+must now \emph{prove}
+a variable's type.
 $$
 \begin{array}{lr}
 \judgementtwo{\isprop{\Number{}}{\x{}}}{\appexp{\inc{}}{\x{}}}{\Number}
@@ -54,28 +55,27 @@ $$
 \end{array}
 $$
 The proof system judgment { \inpropenv {\propenv{}} {\isprop {\t{}} {\x{}}}}
-says logical assumptions {\propenv{}} prove variable \x{} is of type \t{}.
+says under logical assumptions {\propenv{}}, variable \x{} is of type \t{}.
+%We later define the more general T-Local.
 
-\paragraph{Symbolic representations}
+\paragraph{Symbolic representation}
 As we saw in \secref{sec:overview},
 occurrence typing is capable of reasoning
 about deeply nested expressions.
 For each expression, the type system assigns a symbolic representation
 with respect to the current lexical environment. For example,
-
 \begin{itemize}
-  \item $x$ is represented as $x$; 
-  \item $\appexpone{\ccclass{\appexp{\makekw{lunch}}{m}}}$ is represented as ${\path{\classpe{}}{\path{\keype{\makekw{lunch}}}{m}}}$;
+  \item variable \makelocal{m} is represented as \makelocal{m}; 
+  \item $\appexpone{\ccclass{\appexp{\makekw{lunch}}{\makelocal{m}}}}$ is represented as ${\path{\classpe{}}{\path{\keype{\makekw{lunch}}}{\makelocal{m}}}}$;
   \item $42$ has no representation, called \emptyobject{}.
 \end{itemize}
-
 This symbolic representation is called the expression's \emph{object}. 
 \figref{main:figure:termsyntax} gives the syntax for objects.
 \emptyobject{} is the
-\emph{empty object}. Non-empty objects \path{\pathelem{}}{\x{}} consist of a symbol \x{} and a \emph{path} \pathelem{},
-which is a possibly-empty sequence of \emph{path elements} applied right-to-left.
-This paper uses two path elements---{\classpe{}} and {\keype{k}}---representing a call to \classconst{} and
-a keyword lookup on $k$ respectively.
+\emph{empty object}. Non-empty objects \path{\pathelem{}}{\x{}} consist of a root variable \x{} and a \emph{path} \pathelem{},
+a possibly-empty sequence of \emph{path elements} applied right-to-left starting from the root variable.
+We use two path elements---{\classpe{}} and {\keype{k}}---representing the result
+of a calling \classconst{} and the result of looking up a keyword $k$ respectively.
 
 
 %The particular part of the runtime environment we reference in a
@@ -91,49 +91,52 @@ a keyword lookup on $k$ respectively.
 %Type propositions can only reference non-empty objects.
 
 \paragraph{Logical statements about objects}
-So far we have seen logical statements about the simplest object, a variable---{\isprop{\t{}}{\x{}}},
+So far we have seen logical statements about the simplest object, a variable---{\isprop{\t{}}{\x{}}}---
 saying variable \x{} is of type \t{}.
 We extend logical statements to reason about \emph{arbitrary} non-empty 
 objects {\isprop{\t{}}{\path{\pathelem{}}{\x{}}}}.
 
 To illustrate, recall \egref{example:desserts-on-meal}.
-We know the parameter $o$ is of type $\Order$
+We know the parameter \makelocal{o} is of type $\Order$
 by the annotation on $desserts$---written
 \begin{equation}
-\qquad {\isprop{\Order}{o}}
+\qquad {\isprop{\Order}{\makelocal{o}}}
 \end{equation}
 as a logical statement.
 %
 In checking the ${\makekw{combo}}$ method, we also assume
-${\appexp{\makekw{Meal}}{o}}$ is ${\makekw{combo}}$,
+${\appexp{\makekw{Meal}}{\makelocal{o}}}$ is ${\makekw{combo}}$,
 based on multimethod dispatch rules. This is written
 \begin{equation}
-  \qquad {\isprop{\Value{\makekw{combo}}}{\path{\keype{\makekw{Meal}}}{o}}}
+  \qquad {\isprop{\Value{\makekw{combo}}}{\path{\keype{\makekw{Meal}}}{\makelocal{o}}}}
 \end{equation}
-and pronounced ``the ${\makekw{Meal}}$ path of variable $o$ is of type
+and pronounced ``the ${\makekw{Meal}}$ path of variable \makelocal{o} is of type
 {\Value{\makekw{combo}}}'', a keyword singleton type.
 
-\paragraph{Logical system in action} At some point in checking the {\makekw{combo}} method,
-we will need the type of $o$.
-Our proposition environment consists of both above facts
-$$
-\propenv{} = {{\isprop{\Order}{o}},
-    {\isprop{\Value{\makekw{combo}}}{\path{\keype{\makekw{Meal}}}{o}}}}
-$$
-and T-LocalProve says $o$ is of type \t{} if \propenv{} \emph{proves} $o$ is of type \t{}
-$$
+\paragraph{Logical system in action} 
+To attain the type of \makelocal{o}, 
+T-LocalProve says we must solve for \t{} in
+$
 { \inpropenv 
   {\propenv{}}
-  {\isprop {\t{}} {o}}}
+  {\isprop {\t{}} {\makelocal{o}}}}
+$,
+under proposition environment 
 $$
-The logical system deduces \t{} as being a {\makekw{combo}} meal.
+\propenv{} = {{\isprop{\Order}{\makelocal{o}}},
+    {\isprop{\Value{\makekw{combo}}}{\path{\keype{\makekw{Meal}}}{\makelocal{o}}}}}
+$$
 
+The main 
+$$
+\LUpdatePos
+$$
 Now the purpose of a logical representation can be conveyed---we rely on the logical
 system to combine pieces of type information to deduce more accurate types for lexical
 bindings.
 
-\paragraph{Extension to propositional logic}
-The kinds of logical statements are extended to \emph{propositional logic}.
+\paragraph{Extended to propositional logic}
+We extend our logical statements to \emph{propositional logic}.
 \figref{main:figure:termsyntax} describes the syntax we will use for the rest of the paper.
 The proposition metavariable \prop{} 
 consists of positive and negative \emph{type propositions} 
@@ -171,7 +174,7 @@ This says if the expression $o$ evaluates to a true value, then $o$ is neither
 of type \False or \Nil. Naturally, the `else' proposition {\elseprop{\prop{}}} is $\isprop{\falsy{}}{o}$---which
 is true when $o$ is a false value---says $o$ is either \False or \Nil.
 
-The pair of propositions {\filterset{\thenprop{\prop{}}}{\elseprop{\prop{}}}} is called a \emph{proposition set}.
+%The pair of propositions {\filterset{\thenprop{\prop{}}}{\elseprop{\prop{}}}} is called a \emph{proposition set}.
 
 \paragraph{The full judgment}
 
@@ -233,31 +236,118 @@ which may refer to the function argument.
 They are latent because they are instantiated with the
 actual object of the argument in applications before they are used in the proposition environment.
 
-\paragraph{Elimination rule for propositions}
-We can now review the main elimination rule for propositions, T-Local.
-$$
-    {\TLocal}
-$$
-It says, if proposition environment \propenv{} proves variable \x{} is 
-of type \t{}, then under proposition environment \propenv{}
-variable \x{} is of type \t{}. Also, if \x{} is a true value, then
-we know \x{} is neither \False or \Nil, and if \x{} is a false value,
-then \x{} is either \False or \Nil. Finally, the symbolic representation
-for \x{}---its object---is \x{}.
+\paragraph{Typing rules}
+The core type rules are
+given as \figref{main:figure:othertypingrules}. We introduce
+the interesting rules while demonstrating how to check
+the complement number predicate
+\begin{equation}
+\abs{\makelocal{d}}{\Top}{\ifexp{\appexp{\numberhuh{}}{\makelocal{d}}}{\false{}}{\true{}}}
+\end{equation}
+%, including
+%a subsumption rule T-Subsume and rules for the false values---T-Nil and T-False---encoded 
+%as impossible (\botprop{}) `then' propositions.
 
-\paragraph{Introduction rules for propositions}
-Every program branch is an opportunity to extend the proposition environment
-since we learn whether a test expression evaluates true or false. The T-If
-rule assumes the test's `then' proposition \thenprop{\prop{1}}
-in the then branch, and the test's `else' proposition \elseprop{\prop{1}}
-in the else branch.
-\begin{mathpar}
-  {\TIf}
-\end{mathpar}
-The `then' proposition is {\orprop {\thenprop {\prop{2}}} {\thenprop {\prop{3}}}}
-because if the entire expression reduces to a true value,
-then either the `then' branch is true---implying {\thenprop {\prop{2}}}---or
-the `else' branch is true---implying {\thenprop {\prop{3}}}.
+The lambda rule T-Abs introduces \isprop{\Top}{\makelocal{d}}
+to check the body.
+With \propenv{} = \isprop{\Top}{\makelocal{d}},
+T-If then checks the test {\appexp{\numberhuh{}}{\makelocal{d}}}
+with T-App with three main steps.
+
+First, the operator \numberhuh{} is checked with T-Const, which
+uses 
+the \constanttypeliteral{} relation to give types to constants.
+\numberhuh{} is a predicate over numbers, and
+\classconst{} returns its argument's class.
+$$
+\constanttypefigure{}
+$$
+The dynamic semantics for constants are given as \figref{main:figure:primitivesem}.
+
+Resuming {\appexp{\numberhuh{}}{\makelocal{d}}},
+the operand \makelocal{d} is checked with
+T-Local as
+$$
+\judgementselfrewrite{\propenv{}}
+                     {\makelocal{d}}
+                     {\UnionNilNum}
+                     {\filterset{\notprop{\falsy}{\makelocal{d}}}
+                                {\isprop{\falsy}{\makelocal{d}}}}
+                     {\makelocal{d}}
+$$
+which encodes the type, proposition, and object information
+previously discussed about variables.
+
+Finally, T-App substitutes the operand's object for the parameter
+---here \makelocal{d} for \numberhuh{}'s \x{}---yielding
+$$
+\judgementselfrewrite{\isprop{\Top}{\makelocal{d}}}{\appexp{\numberhuh{}}{\makelocal{d}}}
+  {\Boolean{}}
+  {\filterset{\isprop{\Number{}}{\makelocal{d}}}
+             {\notprop{\Number{}}{\makelocal{d}}}}
+  {\emptyobject{}}
+$$
+
+To check {\ifexp{\appexp{\numberhuh{}}{\makelocal{d}}}{\false{}}{\true{}}},
+T-If then
+introduces \isprop{\Number{}}{\makelocal{d}}
+in the `then' branch and \notprop{\Number{}}{\makelocal{d}}
+in the `else' branch.
+%The object \x{} over latent propositions \thenprop{\prop{}} and
+%\elseprop{\prop{}}, latent object \object{}, and latent type \t{}. The
+%actual argument object---\objectp{}---is substituted in at application by T-App.
+
+
+
+The T-App rule instantiates parameters---like \x{} in T-Abs---with their actual object.
+The expression {\appexp{\numberhuh{}}{\makelocal{d}}} replaces its parameter object with \
+\judgementselfrewrite{\isprop{\Top}{\makelocal{d}}}{\appexp{\numberhuh{}}{\makelocal{d}}}
+  {\Boolean{}}
+  {\filterset{\isprop{\Number{}}{\makelocal{d}}}
+             {\notprop{\Number{}}{\makelocal{d}}}}
+  {\emptyobject{}}
+
+The T-If refines each branch based on the test---a
+{\appexp{\numberhuh{}}{\makelocal{d}}} test introduces \isprop{\Number{}}{\makelocal{d}}
+for checking the `then' branch and \notprop{\Number{}}{\makelocal{d}}
+for checking the `else' branch.
+Information from each branch is combined via subsumption for the overall type, propositions, and object.
+
+For example
+$
+\judgementselfrewrite{\isprop{\Top}{\makelocal{d}}}
+  {\ifexp{\appexp{\numberhuh{}}{\makelocal{d}}}{\false{}}{\true{}}}
+  {\Boolean{}}
+  {\filterset{\notprop{\Number{}}{\makelocal{d}}}
+             {\isprop{\Number{}}{\makelocal{d}}}}
+  {\emptyobject{}}
+$
+type checks because T-Subsume allows us to check both branches as
+$
+\judgementselfrewrite{\isprop{\Number{}}{\makelocal{d}}}
+  {\false{}}
+  {\Boolean{}}
+  {\filterset{\notprop{\Number{}}{\makelocal{d}}}
+             {\isprop{\Number{}}{\makelocal{d}}}}
+  {\emptyobject{}}
+$
+and
+$
+\judgementselfrewrite{\notprop{\Number{}}{\makelocal{d}}}
+  {\true{}}
+  {\Boolean{}}
+  {\filterset{\notprop{\Number{}}{\makelocal{d}}}
+             {\isprop{\Number{}}{\makelocal{d}}}}
+  {\emptyobject{}}
+$
+respectively.
+%
+%For example, if \e{2} is true when variable {\makelocal{y}} is a \File{}
+%and \e{3} is true when variable {\makelocal{z}} is a \Number{}, then
+%we use T-Subsume on both branches
+%to introduce a logical disjunction
+%since at least one must be true if the entire expression is true.
+
 
 
 %Given a set of propositions, we can use logical reasoning to derive
@@ -340,6 +430,57 @@ $$
 \end{figure}
 
 
+\begin{figure*}
+$$
+\footnotesize
+    %{\TDo}
+    %{\TClass}
+    %{\TIf}
+    %{\TAbs}
+    %\begin{array}{c}
+    %  {\TSubsume}\\\\
+    %  {\TNum}
+    %\end{array}
+  \begin{array}{c}
+    {\TLocal} \ \ \  \ \ \ 
+    {\TIf}\ \ \  \ \ \ \ \ 
+    {\TAbs} \ \ \ \ 
+    \begin{array}{c}
+      {\TNil}\\\\
+      {\TFalse}
+    \end{array}
+    \\\\
+    {\TLet} \ \ \  \ \ \ \ \ \ 
+    {\TApp}
+    \\\\
+    \begin{array}{c}
+      {\TNum}\\\\
+      {\TConst}
+    \end{array} \ \ \ \
+    \begin{array}{c}
+      {\TKw}\\\\
+      {\TNum}\\\\
+      {\TClass}
+    \end{array} \ \ \ \
+    \begin{array}{c}
+      {\TSubsume}
+    \end{array} \ \ \ \ 
+    \begin{array}{c}
+      {\TStr}\\\\
+      {\TTrue}
+    \end{array}
+  \end{array}
+    %\begin{array}{c}
+    %  {\TSubsume}\\\\
+    %  {\TStr}\\\\
+    %  {\TNil}\\\\
+    %  {\TFalse}
+    %\end{array}
+$$
+  \caption{Core typing rules}
+  \label{main:figure:othertypingrules}
+\end{figure*}
+
 
 %\figref{main:figure:typingrules} contains the core typing rules.
 %The key rule for reasoning about conditional control flow is
@@ -352,78 +493,8 @@ $$
 %The propositions of the test expression \e{1}, \thenprop{\prop{1}} and \elseprop{\prop{1}}, are 
 %used as assumptions in the then and else branch respectively.
 
-The introduction rule for lambda abstractions also introduces 
-propositions to bring its parameter into scope when checking the body.
-The proposition set says lambda expressions cannot be false.
-$$
-{\TAbs}
-$$
-The object \x{} is in scope in the latent propositions \thenprop{\prop{}} and
-\elseprop{\prop{}}, latent object \object{}, and latent type \t{}. These are substituted with the
-actual argument object---\objectp{}---with the application rule for functions.
-$$
-    {\TApp}
-$$
-
-The rule for let expressions links inferred information about
+The let rule T-Let links inferred information about
 \x{} to the expression used to instantiate \x{}, \ep{1}, via logical implications.
-$$
-%\footnotesize
-\infer [T-Let]
-{ \judgementrewrite {\propenv{}} {\e{1}} {\s{}} {\filterset {\thenprop {\prop{1}}} {\elseprop {\prop{1}}}}
-             {\object{1}}
-             {\ep{1}}
-             \\\\
-             \propp{} = {\impprop {\notprop {\falsydiff{}} {\x{}}} {\thenprop {\prop{1}}}}
-             \\\\
-             \proppp{} = {\impprop {\isprop {\falsydiff{}} {\x{}}} {\elseprop {\prop{1}}}}
-  \\\\
-  \judgementrewrite
-       {\propenv{}, {\isprop {\s{}} {\x{}}},
-         {\propp{}},
-         {\proppp{}}}
-             {\e{}} {\t{}} {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}}
-             {\object{}} 
-             {\ep{}}
-             }
-{ \judgementrewrite {\propenv{}} {\letexp {\x{}} {\e{1}} {\e{}}} {\t{}}
-             {\replacefor {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}}
-                          {\object{1}}
-                          {\x{}}}
-             {\replacefor {\object{}} 
-                          {\object{1}}
-                          {\x{}}}
-             {\letexp {\x{}} {\ep{1}} {\ep{}}}
-             }
-$$
-
-\paragraph{Other typing rules} The remaining core typing rules
-include a subsumption rule, and rules for other values that reflect
-\nil{} and \false{} as being the only false values.
-$$
-\footnotesize
-    %{\TDo}
-    %{\TClass}
-    %{\TIf}
-    %{\TAbs}
-    %\begin{array}{c}
-    %  {\TSubsume}\\\\
-    %  {\TNum}
-    %\end{array}
-    \begin{array}{c}
-      {\TNum}\\\\
-      {\TConst}\\\\
-      {\TKw}\\\\
-      {\TClass}\\\\
-      {\TTrue}\\\\
-    \end{array}
-    \begin{array}{c}
-      {\TSubsume}\\\\
-      {\TStr}\\\\
-      {\TNil}\\\\
-      {\TFalse}
-    \end{array}
-$$
 
 %The T-Local rule connects the type system to the proof system over type propositions
 %via \inpropenv {\propenv{}} {\isprop {\t{}} {\x{}}}
@@ -502,14 +573,6 @@ so \Top{} = {\Union{\Nil}{\Object}}.
 Function subtyping is contravariant left of the arrow---latent propositions, object
 and the result type are covariant.
 Subtyping for untagged unions is standard.
-
-\paragraph{class} The \classconst{} function is implemented as a constant
-function (via T-Const), which returns a latent object which is the argument applied to the
-\classpe{} path element
-$$
-\constanttypefigure{}
-$$
-The dynamic semantics are given in \figref{main:figure:primitivesem}.
 %The definition of \updateliteral{} supports various idioms relating to \classpe{}
 %which we introduce in \secref{sec:isaformal}.
 
@@ -823,7 +886,7 @@ can be overridden, so we model the more general case.
 % which erases nil
 The return Java type \File is converted to a non-nil
 Typed Clojure type \t{} = \File for the return type,
-and the proposition set says constructors can never be false---constructors
+and the propositions say constructors can never be false---constructors
 can never produce the internal boolean value that Clojure uses for \false{}, or \nil{}.
 Finally, the constructor rewrites to {\newstaticexp {\String} {\File{}} {\File{}} {\makestr{a/b}}}.
 
@@ -1313,12 +1376,12 @@ $$
 \label{main:figure:update}
 \end{figure*}
 
-\begin{figure}
-  $$
-\begin{array}{lllll}
-  \restrictremovefigure{}
-\end{array}
-  $$
-  \caption{Restrict and Remove}
-  \label{main:figure:restrictremove}
-\end{figure}
+%\begin{figure}
+%  $$
+%\begin{array}{lllll}
+%  \restrictremovefigure{}
+%\end{array}
+%  $$
+%  \caption{Restrict and Remove}
+%  \label{main:figure:restrictremove}
+%\end{figure}
