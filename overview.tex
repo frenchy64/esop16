@@ -58,10 +58,10 @@ taking and returning a string.
 (greet "Grace") ; :- Str
 ;=> "Hello, Grace!"
 \end{minted}
-
-The function may take strings, but providing \clj{nil} (Clojure's name for Java's \java{null})
-is a static type error --- \clj{nil} is not a string in Typed Clojure.
-
+%
+Strings are accepted, but providing \clj{nil} (Clojure's name for Java's \java{null})
+is a static type error---\clj{nil} is not a string in Typed Clojure.
+%
 \begin{minted}{clj}
 (greet nil) ; Type Error:
             ;   Expected Str, given nil
@@ -90,11 +90,11 @@ is treated like any other distinct datum in Clojure,  and its status as
 one of only two false values means it is a common choice to indicate
 ``nothing'' or ``failure''.
 
-\paragraph{Flow analysis} Typed Clojure uses occurrence typing~\cite{thf10} to
+\paragraph{Flow analysis} Typed Clojure uses occurrence typing~\cite{TF10} to
 model type-based control flow.
 In \clj{greetings}, a \clj{when} expression ensures \clj{repeat}
 is never passed a \clj{nil} argument.
-
+%
 \begin{minted}{clj}
 (ann  greetings [Str (U nil Int) -> Str])
 (defn greetings [n i]
@@ -107,10 +107,10 @@ is never passed a \clj{nil} argument.
 (greetings "Grace" nil) ; :- Str
 ;=> "Hello, Grace!"
 \end{minted}
-
-Removing the \clj{when} expression is a static type error
---- \clj{repeat} cannot be passed \clj{nil}.
-
+%
+Removing the \clj{when} expression is a static type error---\clj{repeat} 
+cannot be passed \clj{nil}.
+%
 \begin{minted}{clj}
 (ann  greetings-bad [Str (U nil Int) -> Str])
 (defn greetings-bad [n i]
@@ -256,7 +256,7 @@ The target of method invocations is always non-nullable.
 
 Any Java method returning a reference can also return \java{null} ---
 Typed Clojure rejects programs that assume otherwise.
-
+%
 \begin{minted}{clj}
 (defn parent-bad-out [f :- File] :- Str
   (.getParent f)) ; Type Error:
@@ -274,7 +274,7 @@ Typed Clojure rejects programs that assume otherwise.
 %must assume methods can return \clj{nil}.
 
 In contrast, JVM invariants guarantee constructors return a non-null reference.\footnote{\url{http://docs.oracle.com/javase/specs/jls/se7/html/jls-15.html#jls-15.9.4}}
-
+%
 \begin{exmp}
 \inputminted[firstline=15,lastline=16]{clojure}{code/demo/src/demo/parent3.clj}
 \end{exmp}
@@ -305,14 +305,14 @@ specified by a keyword argument.
 
 When invoked, the arguments are first supplied to the dispatch function---\clj{identity}---yielding
 a \emph{dispatch value}. A method is then chosen
-based on the dispatch value---this method is applied to the arguments
+based on the dispatch value---the arguments are then passed to the method
 to finally return a value for the entire expression.
-
+%
 \begin{minted}{clojure}
 (map hi [:en :fr :bocce]) ; map over keyword vector 
 ;=> ("hello" "bonjour" "um...")
 \end{minted}
-
+%
 For example, 
 \clj{(hi :en)} evaluates to \clj{"hello"}---it executes
 the \clj{:en} method
@@ -325,7 +325,7 @@ definition, but this is only part of the story for multimethod dispatch.
 \paragraph{Class-based dispatch}
 For class values, multimethods can choose methods based on subclassing
 relationships.
-
+%
 Recall the multimethod from figure~\ref{fig:ex1}, reproduced here.
 \begin{minted}{clj}
 (ann pname [(U File String) -> (U nil String)])
@@ -355,7 +355,7 @@ an equality check for other values.
 (isa? (class "STAINS/JELLY") Object) ;=> true
 (isa? (class (new File "JELLY")) String) ;=> false
 \end{minted}
-
+%
 The current dispatch value and---in turn---each method's associated dispatch value
 is supplied to \clj{isa?}. If exactly one method returns true, it is chosen.
 
@@ -473,12 +473,16 @@ immutable hash-map, typicially with keyword keys. This structure is
 the primary way to represent compound data in Clojure programs.
 
 Hash-maps are accessed with the \clj{get} function:
+\begin{exmp}
 \begin{minted}{clojure}
-(def breakfast {:en "waffles" :fr "croissants"})
+(def breakfast 
+  {:en "waffles" :fr "croissants"})
 
 (get breakfast :en)    ; :- Str
 ;=> "waffles"
 \end{minted}
+\label{example:breakfastcomplete}
+\end{exmp}
 Additionally, keywords are functions that look themselves up in a
 map. Missing keys produce \clj{nil}.
 \begin{minted}{clojure}
@@ -503,7 +507,8 @@ HMap types default to  partial specification---\clj{:complete?} defaults to \clj
 omits
 information about absent keys, only providing information on
 \clj{:mandatory} keys.
-
+%
+\begin{exmp}
 \begin{minted}{clojure}
 (ann lunch '{:en Str :fr Str})
 (def lunch {:en "muffin" :fr "baguette"})
@@ -515,6 +520,8 @@ information about absent keys, only providing information on
 (:bocce lunch) ; :- Any
 ;=> nil
 \end{minted}
+\label{example:lunchpartial}
+\end{exmp}
 
 \paragraph{HMaps in practice} The next example is extracted from a production system at CircleCI,
 a company with a large production Typed Clojure system
@@ -548,10 +555,9 @@ result from this code base).
 \end{exmp}
 
 %\inputminted[firstline=10,lastline=22]{clojure}{code/demo/src/demo/key.clj}
-Using fully specified HMaps
-statically enforce the private key is not accidentally left in a supposedly
-encrypted keypair.
-
+If we forget to remove the unencrypted private key,
+a type error is given, because \clj{EncKeyPair} is fully specified.
+%
 \begin{minted}{clojure}
 (ann enc-keypair-bad [RawKeyPair -> EncKeyPair])
 (defn enc-keypair-bad
@@ -676,7 +682,7 @@ natural to dispatch on a known entry like \clj{:Meal}.
 (ann desserts [Order -> Int])
 (defmulti desserts "Total desserts per order."
           :Meal)  ; dispatch on :Meal entry
-; map destructuring backwards, d is :desserts entry
+; destructuring reads backwards, d is :desserts entry
 (defmethod desserts :lunch [{d :desserts}] d)
 (defmethod desserts :dinner [{d :desserts}] d)
 (defmethod desserts :combo [{m1 :meal1 m2 :meal2}]
@@ -712,8 +718,8 @@ We have already seen dispatch on \clj{class} and on keywords
 in isolation---occurrence typing automatically understands
 control flow that combines its simple building blocks.
 
-In the first method, the dispatch value is the concrete class \clj{Long}, a subtype
-of \clj{Int}, and the second \clj{nil}, the sentinel value for a failed map lookup.
+In the first method, the dispatch value is the class \clj{Long}, a subtype
+of \clj{Int}, and the second method has dispatch value \clj{nil}, the sentinel value for a failed map lookup.
 In practice, \clj{:lunch} and \clj{:dinner} meals will dispatch to the \clj{Long}
 method, but Typed Clojure infers a slightly more general type due to the definition
 of \clj{:combo} meals.
@@ -752,7 +758,7 @@ must be true.
 %\clj{Order},
 In this method, we deduce
 the entry \clj{:desserts}
-\emph{must} be a present and mapped to an \clj{Int},
+\emph{must} be a present and mapped to a \clj{Long},
 even in a \clj{:combo} meal
 which does not state \clj{:desserts}
 as present or absent.

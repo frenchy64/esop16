@@ -66,6 +66,8 @@
 \newbfop\Object{Object}
 \newbfop\Expr{Expr}
 \newbfop\Order{Order}
+\newbfop\Breakfast{Bf}
+\newbfop\Lunch{Lu}
 \newcommand\MultiFntype[2]{(\PMulti #1\ #2)}
 \newcommand\proctype[2]{(#1 \to #2)}
 \newcommand\EmptyUnion[0]{\ma{(\Uliteral)}}
@@ -134,6 +136,7 @@
 \newcommand\HMapp[2]{(\ma{\HMappliteral #1\ #2})}
 \newcommand\mandatoryentry[2]{\ma{{#1} \mapsto {#2}}}
 \newcommand\mandatoryentrykwnoarrow[2]{\ma{\makekw{#1}\ {#2}}}
+\newcommand\mandatoryentrynoarrow[2]{\ma{{#1}\ {#2}}}
 \newcommand\mandatoryset[1]{\ma{\{#1\}}}
 \newcommand\mandatorysetsingleton[2]{\ma{\mandatoryset{\mandatoryentry{#1}{#2}}}}
 \newcommand\mandatorysetoverright[2]{\ma{\{\overrightarrow{\mandatoryentry{#1}{#2}}\}}}
@@ -154,7 +157,7 @@
 \newcommand\Instance[1]{(\ma{\Instanceliteral\ #1})}
 \newcommand\HVec[1]{[{#1}]}
 \newcommand\makekw[1]{\ma{\metafunctionfont{\mathbin{:}#1}}}
-\newcommand\makestr[1]{\ma{``#1"}}
+\newcommand\makestr[1]{\ma{``{\metafunctionfont{#1}}"}}
 \newcommand\makelocal[1]{\ma{\metafunctionfont#1}}
 \newcommand\secref[1]{Section~\ref{#1}}
 \newcommand\figref[1]{Figure~\ref{#1}}
@@ -261,7 +264,7 @@
 
 % Clojure values
 \newmeta\symbol{symbol}
-\newmeta\nat{nat}
+\newmeta\nat{n}
 
 % constant calls
 \newbfop\ccclass{class}
@@ -1758,26 +1761,26 @@ $$
 }
 
 \newcommand\Multisubtyping[0]{
-%\infer [S-PMultiFn]
-%{ \issubtypein {}
-%  {\s{t}}
-%  {\ArrowOne {\x{}} {\s{}} {\t{}}
-%                                  {\filterset {\thenprop {\prop{}}}
-%                                              {\elseprop {\prop{}}}}
-%                                      {\object{}}}
-%                                      \\\\
-%  \issubtypein {}
-%  {\s{d}}
-%  {\ArrowOne {\x{}} {\s{}} {\tp{}}
-%                                  {\filterset {\thenprop {\propp{}}}
-%                                              {\elseprop {\propp{}}}}
-%                                      {\objectp{}}}
-%}
-%{ \issubtypein {} {\MultiFntype{\s{t}}{\s{d}}}
-%                  {\ArrowOne {\x{}} {\s{}} {\t{}}
-%                             {\filterset {\thenprop {\prop{}}}
-%                                         {\elseprop {\prop{}}}}
-%                             {\object{}}}}
+\infer [S-PMultiFn]
+{ \issubtypein {}
+  {\s{t}}
+  {\ArrowOne {\x{}} {\s{}} {\t{}}
+                                  {\filterset {\thenprop {\prop{}}}
+                                              {\elseprop {\prop{}}}}
+                                      {\object{}}}
+                                      \\\\
+  \issubtypein {}
+  {\s{d}}
+  {\ArrowOne {\x{}} {\s{}} {\tp{}}
+                                  {\filterset {\thenprop {\propp{}}}
+                                              {\elseprop {\propp{}}}}
+                                      {\objectp{}}}
+}
+{ \issubtypein {} {\MultiFntype{\s{t}}{\s{d}}}
+                  {\ArrowOne {\x{}} {\s{}} {\t{}}
+                             {\filterset {\thenprop {\prop{}}}
+                                         {\elseprop {\prop{}}}}
+                             {\object{}}}}
 \infer [S-PMulti]
 { \issubtypein {} {\s{}} {\sp{}}
   \\

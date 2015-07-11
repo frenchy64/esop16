@@ -12,5 +12,5 @@
 (defmethod pname File [f] ; File implementation
   (.getName f)) ; JVM method target `f` verified
                 ; non-nil, but return is nilable
-(pname "lschemer/STAINS/JELLY") ; :- (U nil Str)
+(pname "STAINS/JELLY") ; :- (U nil Str)
 ;=> "JELLY"
