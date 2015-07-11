@@ -102,6 +102,7 @@
 \newcommand\ValueClass[0]{(\ma{\Valueliteral \class{}})}
 \newcommand\ValueKw[0]{(\ma{\Valueliteral \k{}})}
 \newcommand\ValueStr[0]{(\ma{\Valueliteral \str{}})}
+\newcommand\Valkw[1]{\ma{\Value{\makekw{#1}}}}
 \newmeta\singletonmeta{l}
 \newbfop\Top{\ma{\top}}
 \newbfop\Bottom{\ma{\bot}}
@@ -110,7 +111,7 @@
 \newbfop\Keywordlong{Keyword}
 \newbfop\Keywordhint{Keyword}
 \newbfop\Symbol{Symbol}
-\newbfop\NumberFull{Number}
+\newbfop\NumberFull{Nat}
 \newbfop\Number{N}
 \newbfop\Nil{nil}
 \newbfop\True{true}
@@ -173,6 +174,7 @@
 \newmeta\k{k}
 \newmeta\str{s}
 \newmeta\num{n}
+\newmeta\nat{n}
 \newmeta\bool{b}
 \newcommand\operatorfont[1]{\ma{{\mathsf{#1}}}}
 \newcommand\literalfont[1]{\ma{{\mathsf{#1}}}}
@@ -240,8 +242,9 @@
 % Java primitives
 \newmeta\pint{int}
 \newbfop\Integer{java.lang.Integer}
+\newbfop\Int{Int}
 \newmeta\plong{long}
-\newbfop\Long{java.lang.Long}
+\newbfop\Long{Long}
 \newmeta\pdouble{double}
 \newbfop\Double{java.lang.Double}
 \newmeta\pchar{char}
@@ -2435,80 +2438,37 @@ $$
               }
 
 \newcommand\updatefigure[0]{
-\update{\HMapgeneric {\mandatory{}} {\absent{}}}{\propisnotmeta{}}{\destructpath {\pathelem{}} {\keype{\k{}}}}
+\update{\Unionsplice{\overr{\t{}}}}{\propisnotmeta{}}{\pathelem{}}
 &=&
-{\HMapgeneric {\extendmandatoryset{\mandatory{}}{\k{}}{\update{\t{}}{\propisnotmeta{}}{\pathelem{}}}}{\absent{}}}
-& \text{if}\ {\inmandatory{\k{}}{\t{}}{\mandatory{}}}
-%& Present Key
+\Unionsplice{{\overrightarrow{\update{\t{}}{\propisnotmeta{}}{\pathelem{}}}}}
 \\
-\update{\HMapgeneric {\mandatory{}} {\absent{}}}{\t{}}{\destructpath {\pathelem{}} {\keype{\k{}}}}
-&=&
-{\Bottom{}}
-& \text{if}\ {\notsubtypein {} {\Nil{}} {\t{}}}\ \text{and}\ {\inabsent{\k{}}{\absent{}}}
-%& Bad absent +
-\\
-\update{\HMapgeneric {\mandatory{}} {\absent{}}}{\nottype{\t{}}}{\destructpath {\pathelem{}} {\keype{\k{}}}}
-&=&
-{\Bottom{}}
-& \text{if}\ {\issubtypein {} {\Nil{}} {\t{}}}\ \text{and}\ {\inabsent{\k{}}{\absent{}}}
-%& Bad absent -
-\\
-\update{\HMapgeneric {\mandatory{}} {\absent{}}}{\propisnotmeta{}}{\destructpath {\pathelem{}} {\keype{\k{}}}}
-&=&
-{\HMapgeneric {\mandatory{}} {\absent{}}}
-& \text{if}\ {\inabsent{\k{}}{\absent{}}}
-%& Consistent absent
-\\
-\update{\HMapp {\mandatory{}} {\absent{}}}{\t{}}{\destructpath {\pathelem{}} {\keype{\k{}}}}
-&=&
-(\cup\ {\HMapp {\extendmandatoryset {\mandatory{}} {\k{}}
-                                     {\t{}}}
-                {\absent{}}}
-& \text{if}\ {\issubtypein {} {\Nil{}} {\t{}}},\ 
-          \\&&\ \ \ \ \ \ 
-        {\HMapp {\mandatory{}} {\extendabsentset{\absent{}}{\k{}}}})
-&{\notinmandatory{\k{}}{\s{}}{\mandatory{}}}\ \text{and}\ {\notinabsent{\k{}}{\absent{}}}
-\\
-\update{\HMapp {\mandatory{}} {\absent{}}}{\propisnotmeta{}}{\destructpath {\pathelem{}} {\keype{\k{}}}}
-&=&
-{\HMapp {\extendmandatoryset {\mandatory{}} {\k{}}{\update{\Top}{\propisnotmeta{}}{\pathelem{}}}} {\absent{}}}
-& 
-\text{if}\ {\notinmandatory{\k{}}{\s{}}{\mandatory{}}}\ \text{and}\ {\notinabsent{\k{}}{\absent{}}}
-
-\\
-\update{\HMapp {\mandatory{}} {\absent{}}}{\propisnotmeta{}}{\destructpath {\pathelem{}} {\keype{\k{}}}}
-&=&
-{\HMapp {\extendmandatoryset {\mandatory{}} {\k{}}{\update{\Top}{\propisnotmeta{}}{\pathelem{}}}} {\absent{}}}
-\\
-\update{\Unionsplice{{\overrightarrow{\HMapgeneric {\mandatory{}} {\absent{}}}}^i}}{\propisnotmeta{}}{\destructpath {\pathelem{}} {\keype{\k{}}}}
-&=&
-\Unionsplice{{\overrightarrow{\update{\HMapgeneric {\mandatory{}} {\absent{}}}{\propisnotmeta{}}{\destructpath {\pathelem{}} {\keype{\k{}}}}}}^i}
-
-
 % ClassPE
-\\
 \update{\t{}}{\Value{\class{}}}{\destructpath{\pathelem{}}{\classpe{}}}
 &=& \update{\t{}}{\class{}}{\pathelem{}}
-\\
-\update{\t{}}{\nottype{\Value{\class{}}}}{\destructpath{\pathelem{}}{\classpe{}}}
-&=& \update{\t{}}{\nottype{\class{}}}{\pathelem{}}
-& \text{if}\ \not\exists \classp{}.\ {\issubtypein{}{\classp{}}{\class{}}}\ \text{and}\ {\classp{}} \not= \class{}
-\\
-\update{\t{}}{\s{}}{\destructpath{\pathelem{}}{\classpe{}}}
-&=& \update{\t{}}{\Object}{\pathelem{}}
-& \text{if}\ \issubtypein{}{\s{}}{\Object{}}
-\\
-\update{\t{}}{\nottype{\s{}}}{\destructpath{\pathelem{}}{\classpe{}}}
-&=& \update{\t{}}{\Nil{}}{\pathelem{}}
-& \text{if}\ \issubtypein{}{\Object{}}{\s{}}
-\\
-\update{\t{}}{\s{}}{\destructpath{\pathelem{}}{\classpe{}}}
-&=& \update{\t{}}{\Nil}{\pathelem{}}
-& \text{if}\ \issubtypein{}{\s{}}{\Nil{}}
-\\
-\update{\t{}}{\nottype{\s{}}}{\destructpath{\pathelem{}}{\classpe{}}}
-&=& \update{\t{}}{\Object}{\pathelem{}}
-& \text{if}\ \issubtypein{}{\Nil{}}{\s{}}
+
+% handles updating the else branch in (if (isa? (class x) C) ...), don't need it
+%\\
+%\update{\t{}}{\nottype{\Value{\class{}}}}{\destructpath{\pathelem{}}{\classpe{}}}
+%&=& \update{\t{}}{\nottype{\class{}}}{\pathelem{}}
+%& \text{if}\ \not\exists \classp{}.\ {\issubtypein{}{\classp{}}{\class{}}}\ \text{and}\ {\classp{}} \not= \class{}
+
+% These 4 cases are fun but not necessary, handle using `class` to test for nullability
+%\\
+%\update{\t{}}{\s{}}{\destructpath{\pathelem{}}{\classpe{}}}
+%&=& \update{\t{}}{\Object}{\pathelem{}}
+%& \text{if}\ \issubtypein{}{\s{}}{\Object{}}
+%\\
+%\update{\t{}}{\nottype{\s{}}}{\destructpath{\pathelem{}}{\classpe{}}}
+%&=& \update{\t{}}{\Nil{}}{\pathelem{}}
+%& \text{if}\ \issubtypein{}{\Object{}}{\s{}}
+%\\
+%\update{\t{}}{\s{}}{\destructpath{\pathelem{}}{\classpe{}}}
+%&=& \update{\t{}}{\Nil}{\pathelem{}}
+%& \text{if}\ \issubtypein{}{\s{}}{\Nil{}}
+%\\
+%\update{\t{}}{\nottype{\s{}}}{\destructpath{\pathelem{}}{\classpe{}}}
+%&=& \update{\t{}}{\Object}{\pathelem{}}
+%& \text{if}\ \issubtypein{}{\Nil{}}{\s{}}
 
 % What if \s{} is a union of class singletons?
 % this just seems wrong
@@ -2525,6 +2485,69 @@ $$
 \update{\t{}}{\propisnotmeta{}}{\destructpath {\pathelem{}} {\classpe{}}}
 &=& {\t{}}
 
+% keype
+\\
+\update{\HMapgeneric {\mandatory{}} {\absent{}}}{\propisnotmeta{}}{\destructpath {\pathelem{}} {\keype{\k{}}}}
+&=&
+{\HMapgeneric {\extendmandatoryset{\mandatory{}}{\k{}}{\update{\t{}}{\propisnotmeta{}}{\pathelem{}}}}{\absent{}}}
+& \text{if}\ {\inmandatory{\k{}}{\t{}}{\mandatory{}}}
+%& Present Key
+
+\\
+\update{\HMapgeneric {\mandatory{}} {\absent{}}}{\propisnotmeta{}}{\destructpath {\pathelem{}} {\keype{\k{}}}}
+&=&
+{\Bottom{}}
+& \text{if}\ {\notsubtypein {} {\Nil{}} {\propisnotmeta{}}}\ \text{and}\ {\inabsent{\k{}}{\absent{}}}
+
+% both these cases are summarised by the above, which uses negation subtyping
+%\\
+%\update{\HMapgeneric {\mandatory{}} {\absent{}}}{\t{}}{\destructpath {\pathelem{}} {\keype{\k{}}}}
+%&=&
+%{\Bottom{}}
+%& \text{if}\ {\notsubtypein {} {\Nil{}} {\t{}}}\ \text{and}\ {\inabsent{\k{}}{\absent{}}}
+%%& Bad absent +
+%\\
+%\update{\HMapgeneric {\mandatory{}} {\absent{}}}{\nottype{\t{}}}{\destructpath {\pathelem{}} {\keype{\k{}}}}
+%&=&
+%{\Bottom{}}
+%& \text{if}\ {\issubtypein {} {\Nil{}} {\t{}}}\ \text{and}\ {\inabsent{\k{}}{\absent{}}}
+%%& Bad absent -
+
+% this rule doesn't do much, turned into default rule
+%\\
+%\update{\HMapgeneric {\mandatory{}} {\absent{}}}{\propisnotmeta{}}{\destructpath {\pathelem{}} {\keype{\k{}}}}
+%&=&
+%{\HMapgeneric {\mandatory{}} {\absent{}}}
+%& \text{if}\ {\inabsent{\k{}}{\absent{}}}
+%%& Consistent absent
+
+\\
+\update{\HMapp {\mandatory{}} {\absent{}}}{\t{}}{\destructpath {\pathelem{}} {\keype{\k{}}}}
+&=&
+(\cup\ {\HMapp {\extendmandatoryset {\mandatory{}} {\k{}}
+                                     {\t{}}}
+                {\absent{}}}
+& \text{if}\ {\issubtypein {} {\Nil{}} {\t{}}},\ {\notinmandatory{\k{}}{\s{}}{\mandatory{}}}\ \text{and}\ {\notinabsent{\k{}}{\absent{}}}
+          \\&&\ \ \ \ \, \,
+        {\HMapp {\mandatory{}} {\extendabsentset{\absent{}}{\k{}}}})
+\\
+\update{\HMapp {\mandatory{}} {\absent{}}}{\propisnotmeta{}}{\destructpath {\pathelem{}} {\keype{\k{}}}}
+&=&
+{\HMapp {\extendmandatoryset {\mandatory{}} {\k{}}{\update{\Top}{\propisnotmeta{}}{\pathelem{}}}} {\absent{}}}
+& 
+\text{if}\ {\notsubtypein {} {\Nil{}} {\propisnotmeta{}}},\ {\notinmandatory{\k{}}{\s{}}{\mandatory{}}}\ \text{and}\ {\notinabsent{\k{}}{\absent{}}}
+
+%\\
+%\update{\HMapp {\mandatory{}} {\absent{}}}{\propisnotmeta{}}{\destructpath {\pathelem{}} {\keype{\k{}}}}
+%&=&
+%{\HMapp {\extendmandatoryset {\mandatory{}} {\k{}}{\update{\Top}{\propisnotmeta{}}{\pathelem{}}}} {\absent{}}}
+\\
+\update{\t{}}{\propisnotmeta{}}{\destructpath {\pathelem{}} {\keype{\k{}}}}
+&=&
+{\t{}}
+%& Consistent absent
+
+
 \\
 \update{\t{}}{\s{}}{\emptypath{}}
 &=&
@@ -2536,26 +2559,36 @@ $$
 
               }
 
-\newcommand\restrictremovefigure[0]{
-\restrict{\t{}} {\s{}} &=& \Bot{}\\
-                       & & \text{if} \not\exists \v{}.\  
-                          {\judgement {} {\v{}} {\t{}} {\prop{1}}{\object{1}}}\\
-                       & &\text{and}\ 
-                          {\judgement {} {\v{}} {\s{}} {\prop{2}}{\object{2}}}
-                          \\
-\restrict{\Unionsplice{\overrightarrow{{\t{}}}}}{\s{}} &=& 
-\Unionsplice{\overrightarrow{\restrict{{\t{}}}{\s{}}}}
+\newcommand\restrictfigure[0]{
+\restrict{\t{}} {\s{}} &=& \Bot{} &
+                       \text{if} \not\exists \v{}.\  
+                          {\judgement {} {\v{}} {\t{}} {\prop{}}{\object{}}}
+                          \ \text{and}\ 
+                          {\judgement {} {\v{}} {\s{}} {\propp{}}{\objectp{}}}
+                          %handled by update
+%                          \\
+%\restrict{\Unionsplice{\overrightarrow{{\t{}}}}}{\s{}} &=& 
+%\Unionsplice{\overrightarrow{\restrict{{\t{}}}{\s{}}}}
 \\
 \restrict{\t{}}{\s{}} &=& {\t{}} & \text{if}\ {\issubtypein {} {\t{}} {\s{}}}
 \\
 \restrict{\t{}}{\s{}} &=& {\s{}} & \text{otherwise}
-\\\\
+}
+
+\newcommand\removefigure[0]{
 \remove{\t{}}{\s{}} &=& {\Bot{}} & \text{if}\ {\issubtypein {} {\t{}} {\s{}}}
-\\
-\remove{\Unionsplice{\overrightarrow{{\t{}}}}}{\s{}} &=& 
-\Unionsplice{\overrightarrow{\remove{{\t{}}}{\s{}}}}
+% handled by update
+%\\
+%\remove{\Unionsplice{\overrightarrow{{\t{}}}}}{\s{}} &=& 
+%\Unionsplice{\overrightarrow{\remove{{\t{}}}{\s{}}}}
 \\
 \remove{\t{}}{\s{}} &=& {\t{}} & \text{otherwise}
+}
+
+\newcommand\restrictremovefigure[0]{
+  \restrictfigure{}
+\\\\
+  \removefigure{}
 }
 
 \newcommand\constanttypefigure[0]{

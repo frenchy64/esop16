@@ -194,13 +194,14 @@ Clojure supports interoperability with Java, including the ability to
 call constructors, invoke methods, and access fields.
 
 The following Typed Clojure program constructs a new \clj{File}
-instance and calls the \clj{getParent} method on the result.
+instance and calls the \clj{getParent} method on the result,
+returning a string \clj{"a"}, inferred as nullable.
 
 \begin{exmp}
 \begin{minted}{clj}
-  ; :- (U nil Str)
-  (.getParent (new File "a/b"))  
-  ;=> "a"
+(.getParent (new File "a/b"))  
+; :- (U nil Str)
+;=> "a"
 \end{minted}
 \label{example:getparent-direct-constructor}
 \end{exmp}
@@ -211,9 +212,9 @@ however if a specific constructor, method, or field cannot be found based on the
 static types of its arguments, a type error is thrown.
 
 \begin{minted}{clj}
-  (fn [f]           ; Type Error:                    
-    (.getParent f)) ;   Unresolved interop: getParent
-                    
+(fn [f]           ; Type Error:                    
+  (.getParent f)) ;   Unresolved interop: getParent
+                  
 \end{minted}
 
 Function arguments default to \clj{Any}, the most permissive type. Ascribing
@@ -711,18 +712,29 @@ We have already seen dispatch on \clj{class} and on keywords
 in isolation---occurrence typing automatically understands
 control flow that combines its simple building blocks.
 
+In the first method, the dispatch value is the concrete class \clj{Long}, a subtype
+of \clj{Int}, and the second \clj{nil}, the sentinel value for a failed map lookup.
+In practice, \clj{:lunch} and \clj{:dinner} meals will dispatch to the \clj{Long}
+method, but Typed Clojure infers a slightly more general type due to the definition
+of \clj{:combo} meals.
+
+\begin{exmp}
 \begin{minted}{clojure}
 (ann desserts' [Order -> Int])
 (defmulti desserts' 
           (fn [o :- Order] (class (:desserts o))))
 (defmethod desserts' Long [{d :desserts :as o}] 
   ; o :- (U '{:Meal ':lunch :desserts Int}
-  ;         '{:Meal ':dinner :desserts Int})
+  ;         '{:Meal ':dinner :desserts Int}
+  ;         '{:Meal ':combo :desserts Int
+  ;           :meal1 Order :meal2 Order})
   d)
 (defmethod desserts' nil [{m1 :meal1 m2 :meal2 :as o}]
   ; o :- '{:Meal ':combo :meal1 Order :meal2 Order}
   (+ (desserts' m1) (desserts' m2)))
 \end{minted}
+\label{example:desserts-on-class}
+\end{exmp}
 %
 %(desserts' {:Meal :combo 
 %            :meal1 {:Meal :lunch :desserts 1}
@@ -736,25 +748,23 @@ its argument is at least of type \clj{'{:desserts Long}}---since
 \end{minted}
 must be true.
 %
-Knowing \clj{o} is also an
-\clj{Order}, we can eliminate the possibility of
-a \clj{:combo} meal, and deduce the type:
-\begin{minted}{clojure}
-(U '{:Meal ':lunch :desserts Int}
-   '{:Meal ':dinner :desserts Int})
-\end{minted}
-Looking up \clj{:desserts} on this type returns an \clj{Int}.
+%Knowing \clj{o} is also an
+%\clj{Order},
+In this method, we deduce
+the entry \clj{:desserts}
+\emph{must} be a present and mapped to an \clj{Int},
+even in a \clj{:combo} meal
+which does not state \clj{:desserts}
+as present or absent.
 
-In the \clj{nil} case, we know
-\begin{minted}{clojure}
-(isa? (class (:desserts o)) nil)
-\end{minted}
-is true---which implies \clj{(class (:desserts o))} is \clj{nil}.
-
+In the \clj{nil} method,
+\clj{(isa? (class (:desserts o)) nil)}
+must be true---which implies \clj{(class (:desserts o))} is \clj{nil}.
+%
 Since lookups on missing keys return \clj{nil}, either
 \begin{itemize}
-  \item \clj{o} has a \clj{:desserts} entry to \clj{nil}, or
-  \item \clj{o} is missing a \clj{:desserts} entry.
+  \item \clj{o} has a \clj{:desserts} entry to \clj{nil}, like \clj{{:desserts nil}}, or
+  \item \clj{o} is missing a \clj{:desserts} entry, like \clj{{}}.
 \end{itemize}
 Equivalently, we learn \clj{o} is at least of type
 \begin{minted}{clojure}
@@ -762,11 +772,16 @@ Equivalently, we learn \clj{o} is at least of type
    ; :absent-keys, a set of known absent entries
    (HMap :absent-keys #{:desserts}))
 \end{minted}
-Since \clj{o} is originally an \clj{Order}, this simplifies to a \clj{:combo} meal, 
-\begin{minted}{clojure}
-'{:Meal ':combo :meal1 Order :meal2 Order}
-\end{minted}
-thus allowing both recursive calls to type check.
+This eliminates non-\clj{:combo} meals
+since their \clj{'{:desserts Int}} type does not agree
+with this new information (because \clj{:desserts}
+is neither mapped to \clj{nil} or absent).
+
+%simplifies to a \clj{:combo} meal, 
+%\begin{minted}{clojure}
+%'{:Meal ':combo :meal1 Order :meal2 Order}
+%\end{minted}
+%thus allowing both recursive calls to type check.
 
 \paragraph{From multimethod to multiple dispatch}
 Clojure multimethod dispatch, and Typed Clojure's handling of it, goes

@@ -127,7 +127,7 @@ this has not yet been an issue in practice and is strongly discouraged as undefi
 \smallsection{Typed-untyped interoperation}
 Currently, interactions between typed and untyped Clojure code are unchecked
 which can violate the expectations of Typed Clojure.
-Gradual typing~\cite{thf06,siek06} ensures sound interoperability between typed and untyped code by enforcing
+Gradual typing~\cite{thf06,siek06:_gradual} ensures sound interoperability between typed and untyped code by enforcing
 invariants of the type system via run-time contracts.
  We hope to add support
 for gradual typing in the future.
@@ -323,7 +323,7 @@ From 1834 \clj{def} expressions in typed code,
 %87 typed namespaces,
 only 407 (22\%) were checked.
 That leaves 1427 (78\%) which have unchecked definitions, either by an explicit \clj{:no-check} annotation
-or \clj{tc-ignore} macro to suppress type checking,
+or \clj{tc-ignore} to suppress type checking,
 or the \clj{warn-on-unannotated-vars} option, which skips \clj{def} expressions
 that lack expected types via \clj{ann}.
 From a brief investigation,
