@@ -1487,6 +1487,8 @@ $$
 \abs{\makelocal{u}}{\Lunch}{\getexp{\makelocal{u}}{\makekw{bocce}}}
 $$
 The result type is \Top, and the return object is \path{\keype{\makekw{bocce}}}{\makelocal{u}}.
+Notice the propositions attached to each \getliteral{} rule are trivial---propositions
+are erased once they enter a HMap type.
 
 For presentational reasons, lookups on unions of HMaps are only supported in T-GetHMap. 
 Furthermore, each element of the union must contain the key we are looking up.
@@ -1501,7 +1503,7 @@ particular we can check
 but cannot check \egref{example:desserts-on-class}
 because a \makekw{combo} meal lacks a \makekw{desserts} entry.
 
-Extending a map with T-Assoc preserves its completeness.
+Extending a map with T-AssocHMap preserves its completeness.
 $$
 \abs{\makelocal{b}}{\Breakfast}{\assocexp{\makelocal{b}}{\makekw{au}}{\makestr{beans}}}
 $$
@@ -1509,7 +1511,9 @@ The result type is
 $
 \HMapc{\mandatoryset{\mandatoryentrynoarrow{\Valkw{en}}{\String}, {\mandatoryentrynoarrow{\Valkw{fr}}{\String}}
         ,{\mandatoryentrynoarrow{\Valkw{au}}{\String}}}}
-$.
+$,
+which is complete, like its input.
+T-AssocHMap also enforces ${\k{}} \not\in {\absent{}}$ to prevent badly formed types.
 
 %for cases like \egref{example:desserts-on-meal}
 %where every element in the union
@@ -1530,9 +1534,9 @@ as long as they agree on the mandatory entries of the partial map via subtyping 
 
 %The objects in the T-Get rules are more complicated than those in T-Local---the 
 %next section discusses this in detail.
-Finally T-AssocHMap extends an HMap with a mandatory entry while preserving completeness
-and absent entries, and enforcing ${\k{}} \not\in {\absent{}}$ to prevent badly
-formed types.
+%Finally T-AssocHMap extends an HMap with a mandatory entry while preserving completeness
+%and absent entries, and enforcing ${\k{}} \not\in {\absent{}}$ to prevent badly
+%formed types.
 
 The semantics for \getliteral{} and \assocliteral{} are straightforward.
 If the entry is missing, B-GetMissing produces \nil{}.
@@ -1584,11 +1588,11 @@ The proof system for occurrence typing uses standard propositional logic,
 except for where nested information is combined. This is
 handled by the L-Update rule (\figref{main:figure:lupdate})---it says
 under \propenv{}, if object \path{\pathelemp{}}{\x{}} is of type \t{}, and 
-some extension
+an extension
 \path{\pathelem{}}{\path{\pathelemp{}}{\x{}}}
 is of possibly-negative type \propisnotmeta{}, then
 {\update{\t{}}{\propisnotmeta{}}{\pathelem{}}}
-is the new type of \path{\pathelemp{}}{\x{}} under \propenv{}.
+is \path{\pathelemp{}}{\x{}}'s type under \propenv{}.
 
 Recall \egref{example:desserts-on-meal}.
 %, resuming from
@@ -1627,8 +1631,18 @@ $
 \inpropenv{\propenv{}}{\isprop{\update{\Order}{\Long}{[{\classpe{}}, {\keype{\makekw{desserts}}}]}}{\makelocal{o}}}
 $
 updates the argument in the {\Long} method.
-This recurs and extra time for each meal to handle the {\classpe{}}
+This recurs twice for each meal to handle the {\classpe{}}
 path element.
+
+We describe the other \updateliteral{} cases.
+The first \classpe{} case updates
+to \class{} if \classconst{} returns \Value{\class{}}.
+The second \keype{\k{}} case detects contradictions in absent
+keys. % not overlapping with \Nil{}.
+The third \keype{\k{}} case updates unknown entries to be mapped to \Nil{} or absent.
+The fourth \keype{\k{}} case updates unknown entries to be \emph{present}
+when they do no overlap with \Nil{}.
+
 %$
 %{\update{\Number}{\Long}{[{\classpe{}}]}}}
 %$
