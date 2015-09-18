@@ -1,0 +1,213 @@
+% Typed Clojure is undoubtedly an extremely useful contribution around which
+% there is justifiably a great deal of excitement in the Clojure community
+% (much like Typed Racket in the Racket community). 
+
+% The authors have done a
+% lot of work in identifying the features of Clojure that need to be addressed,
+% and the system described here seems to be a good fit.
+
+% The main limitation of the paper (which is really, the flip side of its
+% strength) is that the key technical ideas -- namely occurrence typing --
+% is already there in Typed Racket. 
+
+% Unfortunately extending occurrence
+% typing to account for null, HMaps and multimethods is not extremely novel. 
+
+We disagree. These features combine in ways that are sufficient to demonstrate,
+the advantages of the unified framework of occurrence typing, distilled in Example 9.
+
+This is not recognised in practice --- reviewer #47A mentioned systems that implement
+similar systems but chose to ignore occurrence typing. 
+
+For example, TypeScript 1.6 recently extended their ad-hoc
+flow-typing system to include custom predicates, a basic feature of occurrence typing.
+
+% Also, the work on multimethods is
+% novel to this setting, and my favorite part of the paper.
+
+% There were some curious things about the case studies.
+% 
+% + feeds2imap doesn't as far as I can tell, use multimethods
+%   or particularly fancy HMaps, hence does not provide much
+%   evidence about 2,3 above.
+
+Correct, feeds2imap contains no typed or untyped multimethod definitions,
+and uses HMaps in standard ways.
+
+% + circleCI is very large (55KLoc) -- and hence, likely more complex.
+%   (And the authors indicate there are various things that fall outside
+%   the scope of Typed Clojure at the moment.) However, even in this large
+%   code base, there are only 11 checked multimethods? The paper says:
+
+%   However, only 40% of it is typed, and of that only 20% of the definitions
+%   are actually checked? 
+%   So only 8% of the definitions are type checked.
+
+While correct, 407 functions are still typed.
+CircleCI was gradually porting to Typed Clojure where extra checking was deemed desirable.
+
+We determined difficulty of checking a barrier to checking
+the CircleCI code base. This motivates future work on gradual typing, which should
+check the remaining invariants at runtime with less difficulty.
+
+%   "The CircleCI code base contains 11 checked multimethods.
+%    All 11 dispatch functions are on a HMap key containing a
+%    keyword, in a similar style to Example 8. Correspondingly,
+%    all 89 methods are associated with a keyword dispatch value."
+% 
+%   Which 89 methods? I was a bit confused by that sentence here
+%   so a clarification would be welcome.
+
+11 multimethods are typed, which contain 89 defmethods.
+
+% At any rate, I was not ready to accept the conclusions drawn
+% in the "Lessons" paragraph because multimethods didn't seem
+% that pervasive across the whole code base (but yes null is
+% everywhere, and so are records/HMaps.) The paper says:
+% 
+%   "(the features) are used on average more than once per typed function"
+% 
+% but this could also be because only a small fraction of all functions
+% are typed functions?
+%
+% To strengthen the paper I suggest the authors additionally
+% measure, how prevalent these features are in the untyped
+% code as well, 
+
+In emperically we have found these to be important idioms, but we will
+include an analysis of idioms in typical untyped code.
+
+% and perhaps give a qualitative analysis of
+% the kinds of idioms outside the scope of typed clojure.
+
+The major limitations of Typed Clojure are given in 5.2, we found particular
+
+% The numeric data (various percentages, etc.) would be easier to
+% follow as some sort of stacked graph or pie chart or some such.
+% Then there are reports from two case studies. These reports are not accessible and do not make it easy to compare even the two case studies: there are no tables and numbers are interspersed with the narrative. 
+
+We will change the presentation to be visual.
+
+% The main merit of the paper is that the authors have pulled through the technical essence of TypedRacket (i.e., occurrence typing) and applied it to Clojure. They show how to integrate features particular to Clojure (multimethods and immutable maps) in such a system. 
+
+% I think this is a nice approach to obtain a practical system.
+
+% First, I was enthusiastic about the system.
+% However, at the end of the day, the Clojure-specific features does not add much technical innovation to the TypedRacket system. Indeed, the authors note a number of times that the treatment of multimethods falls out more or less for free from occurrence typing. Examining the typing rules shows that much of the typing for multimethods and maps are specialized versions of the occurrence typing rules. 
+% Thus, the message I get is that occurrence typing scales to Clojure without having to investigate dramatically new results.
+% 
+% I was also disappointed with the evaluation. 
+
+
+
+% The authors do not pose clear questions at the beginning of the evaluation section, so the direction is never 100% clear. 
+
+% It would be useful to distill some more specific research questions to drive an empirical evaluation with potentially stronger conclusions.
+
+% The hypothesis is a bit weak: that Clojure programs do indeed use the features discussed in this paper.
+
+
+% In particular, the industrial code seems to be somewhere in transition between untyped and typed, which doesn't seem to be handled gracefully by the type system, yet. 
+
+
+% How does Typed Clojure integrate into the Clojure compiler?
+
+Typed Clojure can be optionally integrated into the compilation pipeline for. We assume
+this while presenting the language for presentational purposes.
+
+% p5r "difference betweem (Val K) and K"
+% 
+% Is this a general observation or is it specific to K?
+
+General, we are describing the different between the types of class literals and
+types of instances of a class. We will change K to an arbitrary C.
+
+% The (Multi ...) type is close to unreadable.
+
+Unfortunately we are unsure how to make multimethod types more readable.
+
+% I was looking for the subtyping Multi <: Fn.
+
+See S-PMultiFn (Figure 8), described Section 3.4, "Subtyping".
+
+% p10 r, Lemma 1
+% 
+% I was expecting some relation between the \psi+- and the \psi'+-
+
+To aid with the proof, we split this part of the lemma into 4 parts.
+The 2nd part talks about \psi+, and the 3rd part only talks about the type, where
+we choose any \psi+' that fits.
+
+% p11l "protocols"
+% 
+% too short to understand
+
+? TODO
+
+% p11r Evaluation
+% 
+% Not conclusive:
+% * lists numbers in an unsystematic way
+% * does not clearly pose or answer specific research questions
+% * my take-home is that TC is implemented and runs on nontrivial code bases. The quality of the typings is unclear. I also would have expected a report of the limitations found during the experiments (e.g., idioms that were not well handled by the typechecker).
+
+% One unanswered practical question is this: how long does the typechecker run?
+
+Typechecking is expensive. <TODO how expensive?>
+
+%   Section 2.3: the notation ':-' is used without introduction,
+%   which I'm guessing means "is of type"?
+
+Yes, we will clarify this.
+
+%   Section 2.4. Is the 'Kw' type built-in?
+
+Yes, it is an alias for the Java class clojure.lang.Keyword.
+
+% Page 5, first line: To me, the "its" here is ambiguous: does it refer
+% to the control flow, or the occurrence typing?
+
+"occurrence typing automatically understands control flow that combines atomic tests."
+
+% Page 5, "Expressions". "All binding forms introduce fresh
+% variables". Isn't that a tautology?
+
+We intend the name of the binding to be 'fresh'. Otherwise nested 'let's typed by
+T-Let with repeated names will combine in unsound ways.
+
+% Weaknesses
+% 
+% * The paper could do a better job in isolating the key contributions of the work.
+
+% * The evaluation is disappointing. It is missing a distillation of research questions.
+
+% However, I am unable to support the paper because I cannot identify the "significant new contributions" that would meet POPL's criteria for acceptance. 
+% The main contribution appears to be the application of occurrence typing (or more generally symbolic reasoning embedded in type systems) to the particular Clojure features of multimethod dispatch and hmaps. 
+% This paper would be stronger if the critical type system advances could be clearly distilled that are (1) needed for Clojure features but also (2) are somehow more general insights.
+
+We agree our main contribution is the application of occurrence typing in a new setting.
+
+One of our main contributions is demonstrating that occurrence typing is generally applicable.
+Reviewer
+??? who TODO ??
+says
+many type systems have similar features to occurrence typing, but few
+implement the generality of occurrence typing.
+
+We claim the knowledge that occurrence typing can be naturally extended to handle exotic control
+flow styles, for example Clojure multimethods --- which were not considered by the inventors
+of occurrence typing --- is a "significant new contribution".
+
+We agree that the integration was in hindsight straightforward. 
+
+We think the conception of occurrence typing for local control flow
+
+% In Section 3, is perhaps too much focus on "what" and not enough "why" to provide context for what is new and novel versus what is standard. 
+% As an example of this early in the section, the paragraph about "Objects" is explicit and detailed about its components 
+% but not its role in the type system. Is it simply a way to name heap objects as an access path? Or is it something more?
+
+Precisely, yes. The justification will be elaborated.
+
+% Section 3.6 is potentially an important subsection that discusses the symbolic reasoning, but unfortunately it is very terse and is disconnected from the thread of the story.
+
+We will discuss only the important examples in 3.6 in greater detail.
