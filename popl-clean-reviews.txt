@@ -1,0 +1,322 @@
+===========================================================================
+                           POPL 2016 Review #47A
+---------------------------------------------------------------------------
+              Paper #47: Practical Optional Types for Clojure
+---------------------------------------------------------------------------
+
+
+                      Overall merit: 3. Weak accept
+Reviewer expertise (shown to authors): 4. 
+                                        Expert (I have published papers in
+                                        related topics)
+
+                         ===== Paper summary =====
+
+This paper builds on the notion of "occurrence typing", developed by one
+of the authors as a means of statically typing Racket programs, and shows
+how it can be applied to obtain a similar "optional" type system for Clojure
+programs. In particular, it shows how occurrence typing can be used to
+account for key idioms of Clojure not present in Racket, namely
+
+1. Possibly null values (due to Java interop),
+2. Heterogenous Maps (but really records here, with named fields), and
+3. Multimethods with rather flexible dispatch policies.
+
+The paper shows how the above are handled by example, by formalizing the type
+system within a core calculus and proving soundness results, and perhaps most
+importantly, by describing two non-trivial case studies that describe the
+prevalence of the above features in real-world Clojure code bases, and the
+effectiveness of the proposed methods in that setting.
+
+===== Comments for authors and suggestions to make this a strong paper =====
+
+Typed Clojure is undoubtedly an extremely useful contribution around which
+there is justifiably a great deal of excitement in the Clojure community
+(much like Typed Racket in the Racket community). The authors have done a
+lot of work in identifying the features of Clojure that need to be addressed,
+and the system described here seems to be a good fit.
+
+The main limitation of the paper (which is really, the flip side of its
+strength) is that the key technical ideas -- namely occurrence typing --
+is already there in Typed Racket, and unfortunately extending occurrence
+typing to account for 1,2 and 3 is not extremely novel. (Indeed many previous
+systems already do this: e.g. Krishnamurthi et al's TeJaS -- for JavaScript,
+which also has nullable values and heterogenous maps, and recently Flow
+and TypeScript -- optional fields, nullable values.)
+
+I should point out that while the above systems perform similar analyses,
+I believe none of them claim formal soundness guarantees against a core
+model which is a contribution here. Also, the work on multimethods is
+novel to this setting, and my favorite part of the paper.
+
+There were some curious things about the case studies.
+
++ feeds2imap doesn't as far as I can tell, use multimethods
+  or particularly fancy HMaps, hence does not provide much
+  evidence about 2,3 above.
+
++ circleCI is very large (55KLoc) -- and hence, likely more complex.
+  However, only 40% of it is typed, and of that only 20% of the definitions
+  are actually checked? So only 8% of the definitions are type checked.
+  (And the authors indicate there are various things that fall outside
+  the scope of Typed Clojure at the moment.) However, even in this large
+  code base, there are only 11 checked multimethods? The paper says:
+
+  "The CircleCI code base contains 11 checked multimethods.
+   All 11 dispatch functions are on a HMap key containing a
+   keyword, in a similar style to Example 8. Correspondingly,
+   all 89 methods are associated with a keyword dispatch value."
+
+  Which 89 methods? I was a bit confused by that sentence here
+  so a clarification would be welcome.
+
+At any rate, I was not ready to accept the conclusions drawn
+in the "Lessons" paragraph because multimethods didn't seem
+that pervasive across the whole code base (but yes null is
+everywhere, and so are records/HMaps.) The paper says:
+
+  "(the features) are used on average more than once per typed function"
+
+but this could also be because only a small fraction of all functions
+are typed functions?
+
+To strengthen the paper I suggest the authors additionally
+measure, how prevalent these features are in the untyped
+code as well, and perhaps give a qualitative analysis of
+the kinds of idioms outside the scope of typed clojure.
+
+Minor details:
+
++ I find the choice of notation with subscripts and superscripts
+  to be a bit heavy -- in particular, when you end up with uneven
+  line spacing, the text does not look nice,
+
++ The numeric data (various percentages, etc.) would be easier to
+  follow as some sort of stacked graph or pie chart or some such.
+
+===========================================================================
+                           POPL 2016 Review #47B
+---------------------------------------------------------------------------
+              Paper #47: Practical Optional Types for Clojure
+---------------------------------------------------------------------------
+
+
+                      Overall merit: 3. Weak accept
+Reviewer expertise (shown to authors): 4. 
+                                        Expert (I have published papers in
+                                        related topics)
+
+                         ===== Paper summary =====
+
+The paper proposes an optional type system for Clojure. The system is closely modeled after TypedRacket, which is another Lisp dialect, and it picks up most of its technical background from occurrence typing. Beyond that, the paper proposes a means of typing heterogeneous maps, shows how to integrate Clojure's multimethods in the type system, and how to interface effectively with Java. The authors give a soundness proof of their system and report some results that have been obtained with their implementation, which is a tool separate from the Clojure compiler.
+
+===== Comments for authors and suggestions to make this a strong paper =====
+
+The main merit of the paper is that the authors have pulled through the technical essence of TypedRacket (i.e., occurrence typing) and applied it to Clojure. They show how to integrate features particular to Clojure (multimethods and immutable maps) in such a system. I think this is a nice approach to obtain a practical system.
+
+First, I was enthusiastic about the system.
+However, at the end of the day, the Clojure-specific features does not add much technical innovation to the TypedRacket system. Indeed, the authors note a number of times that the treatment of multimethods falls out more or less for free from occurrence typing. Examining the typing rules shows that much of the typing for multimethods and maps are specialized versions of the occurrence typing rules. 
+Thus, the message I get is that occurrence typing scales to Clojure without having to investigate dramatically new results.
+
+I was also disappointed with the evaluation. The authors do not pose clear questions at the beginning of the evaluation section, so the direction is never 100% clear. Then there are reports from two case studies. These reports are not accessible and do not make it easy to compare even the two case studies: there are no tables and numbers are interspersed with the narrative. From what I can extract from the evaluation section, it seems that the results are far from conclusive. In particular, the industrial code seems to be somewhere in transition between untyped and typed, which doesn't seem to be handled gracefully by the type system, yet. (there is a gradual version in the works, but that's no what this paper is about.) 
+
+The paper is a bit rough in some places.
+
+DETAILS
+
+p3l "Typed Clojure helps the Clojure compiler avoid expensive reflective calls"
+
+I' wondering how it does so. Later you say that the typechecker is *not* integrated with the compiler. Also, it seems that while the typechecker essentially reproduces Java's algorithms for overloading resolution and field access, this information is not preserved and has to be reconstructed by the compiler, which may resolve differently if the typechecker contains an error. 
+
+p4l "(defn enc-keypair ..."
+
+The pattern matching syntax is confusing to the uninitiated. It is never explained.
+
+p4r "(defalias Order ..."
+
+Apparently, aliases may be recursive, but this is never mentioned in the text.
+
+p5r "difference betweem (Val K) and K"
+
+Is this a general observation or is it specific to K?
+
+p5r "In T0-Local ... \tau_{\pi(x)} ..."
+
+The rule just says "\tau_x".
+
+p6l "The full judgment"
+
+You never explain e' in the typing judgment. Explain here and point forward to where you need it.
+
+p7l "We introduce non-reflective expressions ..."
+
+Too brief. Motivation is missing. What is a NRE and why is it advantageous.
+
+p7r "immutable multimethods"
+
+We don't know about mutable multimethods.
+
+The \lambda-TC notation is very hard to parse, viz (defmulti x:S e)
+Althought, the (Multi ...) type is close to unreadable.
+
+p8 Fig 7
+
+Hard to read: no space between S-PMultiFn and S-PMulti
+and B-DefMethod and B-DefMulti.
+
+B-DefMethod uses e_f, but T-DefMethod asks for \lambda x^t.e_b.
+Also using e' is misleading because e' often denotes a transformed expression,
+but the B-rules run on transformed (NRE) expressions already, so maybe the unprimed
+metavariables are inconsistent.
+
+I was looking for the subtyping Multi <: Fn.
+
+p10 r, Lemma 1
+
+I was expecting some relation between the \psi+- and the \psi'+-
+
+Theorem 1 lacks a period at the end.
+
+p11l "typs" -> "types"
+
+p11l "protocols"
+
+too short to understand
+
+p11r Evaluation
+
+Not conclusive:
+* lists numbers in an unsystematic way
+* does not clearly pose or answer specific research questions
+* my take-home is that TC is implemented and runs on nontrivial code bases. The quality of the typings is unclear. I also would have expected a report of the limitations found during the experiments (e.g., idioms that were not well handled by the typechecker).
+
+One unanswered practical question is this: how long does the typechecker run?
+
+===========================================================================
+                           POPL 2016 Review #47C
+---------------------------------------------------------------------------
+              Paper #47: Practical Optional Types for Clojure
+---------------------------------------------------------------------------
+
+
+                      Overall merit: 4. Accept
+Reviewer expertise (shown to authors): 2. 
+                                        Some familiarity (I am familiar
+                                        with the topic)
+
+                         ===== Paper summary =====
+
+In this paper, the authors present a type system for the Clojure
+language. Clojure is a mature implementation of Lisp for the JVM, with
+a large existing base of code written using dynamic typing idioms.
+
+The type system presented here is intended to be retrofitted on to
+existing Clojure programs, and therefore needs to be able to handle
+common idioms and practices used by Clojure programmers. The basis of
+the type system is Occurence Typing, developed by Tobin-Hochstadt and
+Felleisen for Racket Scheme, which handles the implicit information
+that is learnt by a program as it performs dynamic tests, and uses it
+to prove that 'bad' things cannot happen. The authors of the present
+paper identify three additional features/idioms of Clojure that go
+beyond Occurence Typing: multimethods, Java interoperability, and
+heterogeneous maps. The paper presents a type system for Clojure that
+handles these additional features, proves it sound (with caveats due
+to Java interoperability), and also presents two case studies to
+evaluate the type system in practice.
+
+===== Comments for authors and suggestions to make this a strong paper =====
+
+I liked this paper. I have no previous experience with occurrence
+typing, either practically or theoretically, and this paper was able
+to get me up to a reasonable level of comprehension. It also does a
+very good job of explaining the Clojure idioms that the system covers
+and how they are treated. The presentation of the type system gets a
+little complex, but maybe this is to be expected given the complexity
+of the features being handled. I really liked the inclusion of the two
+case studies discussing the actual use of the system -- this sets the
+paper apart from most papers that present such programmer aids and
+makes a real attempt to assess how well the system works in
+practice. Also, the detailed explanation of the unsound spots of the
+system was very welcome.
+
+Some criticisms:
+
+- While Section 2 introducing the main features of the system is well
+  done, there were a few places where I felt the ordering could have
+  been better planned so that syntax or constructs aren't used before
+  they are explained. Some places where I spotted this:
+
+  1. Section 2.3: the notation ':-' is used without introduction,
+  which I'm guessing means "is of type"?
+
+  2. Section 2.4. Is the 'Kw' type built-in?
+
+  3. Section 2.5. "HMaps in Practice" uses "defalias", but this isn't
+  introduced until "HMaps and unions" in Section 2.6.
+
+- In Section 2.3: "Typed Clojure helps the Clojure compiler avoid
+  expensive reflective calls." How is this consistent with the
+  conclusion that states: "the Clojure compiler is unable to use Typed
+  Clojure's wealth of static information to optimize programs"?
+
+- The bibliography seems to be incorrectly capitalised in many
+  cases. E.g., "R. Hickey. The clojure programming language. In
+  Proc. DLS, 2008".
+
+- This isn't really a criticism, but it is quite noticable how the
+  switch from informal examples involving desserts and other food, to
+  the formal theory involving 'F's and 'K's is accompanied by a
+  draining of all colour...
+
+
+Some typos/other minor things:
+
+Section 2.5. "typicially" => "typically"
+
+Page 5, first line: To me, the "its" here is ambiguous: does it refer
+to the control flow, or the occurrence typing?
+
+Page 5, "Expressions". "All binding forms introduce fresh
+variables". Isn't that a tautology?
+
+===========================================================================
+                           POPL 2016 Review #47D
+---------------------------------------------------------------------------
+              Paper #47: Practical Optional Types for Clojure
+---------------------------------------------------------------------------
+
+
+                      Overall merit: 2. Weak reject
+Reviewer expertise (shown to authors): 4. 
+                                        Expert (I have published papers in
+                                        related topics)
+
+                         ===== Paper summary =====
+
+This paper presents Typed Clojure, an optional type system for Clojure. Typed Clojure builds on Typed Racket and introduces new types to handle unique Clojure language features idioms, such as multimethods and heterogeneous maps. The discussion includes a proof of type soundness and a report on Typed Closure being used in production.
+
+===== Comments for authors and suggestions to make this a strong paper =====
+
+Strengths
+
+* The paper presents development of a type system for a language that is both being used in production systems and with interesting/less common language features.
+
+Weaknesses
+
+* The paper could do a better job in isolating the key contributions of the work.
+
+* The evaluation is disappointing. It is missing a distillation of research questions.
+
+I enjoyed reading the paper and learning about the Clojure idioms and the corresponding type system challenges. The challenges of optional typing for Clojure is interesting and well illustrated by the paper.
+
+However, I am unable to support the paper because I cannot identify the "significant new contributions" that would meet POPL's criteria for acceptance. The main contribution appears to be the application of occurrence typing (or more generally symbolic reasoning embedded in type systems) to the particular Clojure features of multimethod dispatch and hmaps. This paper would be stronger if the critical type system advances could be clearly distilled that are (1) needed for Clojure features but also (2) are somehow more general insights.
+
+Sections 1 and 2 provide an introduction to Clojure and Typed Clojure in a compelling tutorial manner. I appreciated this. The unique aspects of Clojure are clear from these sections.
+
+Section 3 presents a core language, operational semantics, and type system for modeling Typed Clojure. One high-level comment about this section is that there is perhaps too much focus on "what" and not enough "why" to provide context for what is new and novel versus what is standard. 
+
+As an example of this early in the section, the paragraph about "Objects" is explicit and detailed about its components but not its role in the type system. Is it simply a way to name heap objects as an access path? Or is it something more?
+
+Section 3.6 is potentially an important subsection that discusses the symbolic reasoning, but unfortunately it is very terse and is disconnected from the thread of the story.
+
+Section 5 discusses aspects of the Typed Closure implementation with a report on a case study in Section 5.3. The evaluation is disappointing. The hypothesis is a bit weak: that Clojure programs do indeed use the features discussed in this paper. It would be useful to distill some more specific research questions to drive an empirical evaluation with potentially stronger conclusions.
