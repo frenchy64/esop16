@@ -1,6 +1,41 @@
-% Typed Clojure is undoubtedly an extremely useful contribution around which
-% there is justifiably a great deal of excitement in the Clojure community
-% (much like Typed Racket in the Racket community). 
+We thank the reviewers for their detailed and thorough feedback.
+We are glad the reviewers appeared to enjoy our paper:
+
+"Typed Clojure is undoubtedly an extremely useful contribution"- Review A
+
+"The challenges of optional typing for Clojure is interesting and well illustrated by the paper." - Review D
+
+"[Case studies] set the paper apart from most papers that present such programmer aids" - Review C
+
+"[...] this is a nice approach to obtain a practical system." - Review B
+
+"[...] the system described here seems to be a good fit." - Review A
+
+Reviewers had concerns on two major issues.
+
+1. Does this work qualify as a "significant new contribution"?
+
+Our main contribution is demonstrating Typed Racket's occurrence typing is generally applicable
+to a practical type system for Clojure, by:
+ 
+ a. identifying common Clojure idioms,
+ b. elegantly extending occurrence typing to consider these idioms, and
+ c. building an implementation that scales to some real Clojure code bases.
+
+Review B cites "occurrence typing scales to Clojure without having to investigate dramatically new results",
+as a disadvantage. We respectfully disagree this hinders the paper, in fact:
+
+ a. this relationship was non-obvious and not predicted by the literature,
+ b. the creators of occurrence typing did not anticipate typing Clojure, and
+ c. the happy accident that occurrence typing extends gracefully to Clojure is a strong advantage, 
+    building on a solid foundation.
+
+2. What does the evaluation section show?
+
+Two conclusions:
+ a. Typing realistic Clojure programs requires all the features we've described.
+ b. Typed Clojure is sufficient to scale to some large Clojure code bases, but there
+    remain limitations.
 
 % The authors have done a
 % lot of work in identifying the features of Clojure that need to be addressed,
@@ -95,8 +130,19 @@ We will change the presentation to be visual.
 % First, I was enthusiastic about the system.
 % However, at the end of the day, the Clojure-specific features does not add much technical innovation to the TypedRacket system. Indeed, the authors note a number of times that the treatment of multimethods falls out more or less for free from occurrence typing. Examining the typing rules shows that much of the typing for multimethods and maps are specialized versions of the occurrence typing rules. 
 % Thus, the message I get is that occurrence typing scales to Clojure without having to investigate dramatically new results.
-% 
+
+1. showing this approach scales to clojure is a novel contribution
+2. we make novel technical contributions by showing how to use occurrence typing
+   to handle multimethods, not previously anticipated or understood.
+3. the fact that it works out, shows that it's good approach.
+
+The fact we can reuse the mechanism of logical propositions from conditional,
+to use  for MM is a STRENGTH, not a weakness.
+
+QUESTION: Is HMap novel relative to TeJas??
+
 % I was also disappointed with the evaluation. 
+
 
 
 
