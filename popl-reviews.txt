@@ -68,13 +68,6 @@ limitations that users encountered and future work to address them.
 
 We now address specific questions from the reviewers.
 
-% + feeds2imap doesn't as far as I can tell, use multimethods
-%   or particularly fancy HMaps, hence does not provide much
-%   evidence about 2,3 above.
-
-Correct, feeds2imap contains no typed or untyped multimethod definitions,
-and uses HMaps in standard ways.
-
 % + CircleCI is very large (55KLoc)
 %   However, even in this large code base, there are only 11 checked multimethods?
 
@@ -88,27 +81,6 @@ of these particular multimethods --- averaging 8 defmethods per defmulti.
 Why are there only 11 multimethods amongst 1834 functions in typed code?
 Functions are used instead in other places where the HMap type is sufficient (ie. no dispatch
 is necessary) -- like an internal library for managing SSH keys (a subset is presented as Example 7). 
-
-%   However, only 40% of it is typed, and of that only 20% of the definitions
-%   are actually checked? 
-%   So only 8% of the definitions are type checked.
-
-This is a good estimation. While correct, 407 top-level definitions are still typed.
-CircleCI was gradually porting to Typed Clojure where extra checking was deemed desirable.
-
-We determined difficulty of checking a barrier to checking
-the CircleCI code base. This motivates future work on gradual typing, which should
-check the remaining invariants at runtime with less difficulty.
-
-%   "The CircleCI code base contains 11 checked multimethods.
-%    All 11 dispatch functions are on a HMap key containing a
-%    keyword, in a similar style to Example 8. Correspondingly,
-%    all 89 methods are associated with a keyword dispatch value."
-% 
-%   Which 89 methods? I was a bit confused by that sentence here
-%   so a clarification would be welcome.
-
-11 multimethods are typed, which contain 89 defmethods.
 
 % At any rate, I was not ready to accept the conclusions drawn
 % in the "Lessons" paragraph because multimethods didn't seem
@@ -130,29 +102,14 @@ Since they contained ~100 Java interactions and ~300 heterogeneous map usages,
 We will include an analysis of idioms in typical untyped code.
 Anecdotally, we have found these to be important idioms.
 
-% and perhaps give a qualitative analysis of
-% the kinds of idioms outside the scope of typed clojure.
-
-The major limitations of Typed Clojure are given in 5.2.
-
 % The numeric data (various percentages, etc.) would be easier to
 % follow as some sort of stacked graph or pie chart or some such.
-%
-% Then there are reports from two case studies. These reports are not
-% accessible and do not make it easy to compare even the two case 
-% studies: there are no tables and numbers are interspersed with the narrative.
 
 We will change the presentation to be visual.
 
-% The hypothesis is a bit weak: that Clojure programs do indeed use the features discussed in this paper.
-
-This is a crucial observation from our experiments. It suggests to us that our effort in design, implementation, and
-theory for Java interoperability, heterogeneous maps, and multimethods have a greater pay off than had
-we chosen to concentrate on more obscure Clojure idioms.
-
 % How does Typed Clojure integrate into the Clojure compiler?
 
-This is unclear and will be clarified in the prose.
+This will be clarified in the prose.
 
 Typed Clojure can be optionally integrated into the compilation pipeline (via nREPL, an extensible REPL).
 We assume this setup for presentational purposes --- chiefly to avoid mentioning Clojure "type hints"
@@ -219,7 +176,7 @@ We will clarify this in the paper.
 
 % In Section 3, is perhaps too much focus on "what" and not enough "why" to provide context for what is new and novel versus what is standard. 
 % As an example of this early in the section, the paragraph about "Objects" is explicit and detailed about its components 
-% but not its role in the type system. Is it simply a way to name heap objects as an access path? Or is it something more?
+% but not its role in the type system. Is it simply a way to name heap objects as an access path?
 
 Precisely, yes. The justification will be elaborated, and Section 3 will focus more or the "why".
 
