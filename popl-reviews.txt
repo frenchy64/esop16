@@ -33,7 +33,7 @@ compositional result.  As noted by Review A, heterogeneous maps in
 this style are not new -- Krishnamurthi et al's (DLS 2013) TeJaS, a
 type system for JavaScript supports similar -- however the combination
 with occurrence typing produces novel results which are used in
-practice in Typed Clojure--see Example 9 for a demonstration..
+practice in Typed Clojure--see Example 9 for a demonstration.
 
 2. What questions does the evaluation section answer?
 
@@ -64,6 +64,9 @@ with 89 concrete implemenations.
 Our answer to Q3 is necessarily more subjective, but describes the
 limitations that users encountered and future work to address them.
 
+===================================================================
+
+We now address specific questions from the reviewers.
 
 % + feeds2imap doesn't as far as I can tell, use multimethods
 %   or particularly fancy HMaps, hence does not provide much
@@ -72,7 +75,7 @@ limitations that users encountered and future work to address them.
 Correct, feeds2imap contains no typed or untyped multimethod definitions,
 and uses HMaps in standard ways.
 
-% + circleCI is very large (55KLoc)
+% + CircleCI is very large (55KLoc)
 %   However, even in this large code base, there are only 11 checked multimethods?
 
 The entire CircleCI codebase contains only 41 multimethods. They are used almost exclusively
@@ -130,11 +133,14 @@ Anecdotally, we have found these to be important idioms.
 % and perhaps give a qualitative analysis of
 % the kinds of idioms outside the scope of typed clojure.
 
-The major limitations of Typed Clojure are given in 5.2, we found particular
+The major limitations of Typed Clojure are given in 5.2.
 
 % The numeric data (various percentages, etc.) would be easier to
 % follow as some sort of stacked graph or pie chart or some such.
-% Then there are reports from two case studies. These reports are not accessible and do not make it easy to compare even the two case studies: there are no tables and numbers are interspersed with the narrative. 
+%
+% Then there are reports from two case studies. These reports are not
+% accessible and do not make it easy to compare even the two case 
+% studies: there are no tables and numbers are interspersed with the narrative.
 
 We will change the presentation to be visual.
 
@@ -178,14 +184,15 @@ To aid with the proof, we split this part of the lemma into 4 parts.
 The 2nd part talks about \psi+, and the 3rd part only talks about the type, where
 we choose any \psi+' that fits.
 
-% Not conclusive:
-% * lists numbers in an unsystematic way
-% * does not clearly pose or answer specific research questions
-% * my take-home is that TC is implemented and runs on nontrivial code bases. The quality of the typings is unclear. I also would have expected a report of the limitations found during the experiments (e.g., idioms that were not well handled by the typechecker).
-
 % One unanswered practical question is this: how long does the typechecker run?
 
-Typechecking is expensive. <TODO how expensive?>
+Typechecking is expensive. 
+
+CircleCI's 89 typed namespaces take ~10 minutes to check on CircleCI's own continuous
+integration tool, at "x20 parallelism".
+
+feeds2imap's 25 typed namespaces take 30 seconds on a Ubuntu Virtual Machine with 1GB
+memory and 2.4GHz Intel Core i5.
 
 %   Section 2.3: the notation ':-' is used without introduction,
 %   which I'm guessing means "is of type"?
@@ -209,12 +216,6 @@ We intend the name of the binding to be 'fresh'. Otherwise nested 'let's typed b
 T-Let with repeated names will combine in unsound ways.
 
 We will clarify this in the paper.
-
-% Weaknesses
-% 
-% * The paper could do a better job in isolating the key contributions of the work.
-
-% This paper would be stronger if the critical type system advances could be clearly distilled that are (1) needed for Clojure features but also (2) are somehow more general insights.
 
 % In Section 3, is perhaps too much focus on "what" and not enough "why" to provide context for what is new and novel versus what is standard. 
 % As an example of this early in the section, the paragraph about "Objects" is explicit and detailed about its components 
