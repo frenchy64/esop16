@@ -76,14 +76,12 @@ We now address specific questions from the reviewers.
 % are typed functions?
 
 We feel the ~400 typed functions in CircleCI is significant enough to extrapolate from.
-Since they contained ~100 Java interactions and ~300 heterogeneous map usages,
 
 % To strengthen the paper I suggest the authors additionally
 % measure, how prevalent these features are in the untyped
 % code as well, 
 
 We will include an analysis of idioms in typical untyped code.
-Anecdotally, we have found these to be important idioms.
 
 % The numeric data (various percentages, etc.) would be easier to
 % follow as some sort of stacked graph or pie chart or some such.
