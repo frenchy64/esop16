@@ -75,7 +75,8 @@ We now address specific questions from the reviewers.
 % but this could also be because only a small fraction of all functions
 % are typed functions?
 
-We feel the ~400 typed functions in CircleCI is significant enough to extrapolate from.
+We feel the ~400 typed functions in CircleCI is significant enough to
+extrapolate from.
 
 % To strengthen the paper I suggest the authors additionally
 % measure, how prevalent these features are in the untyped
@@ -92,9 +93,10 @@ We will change the presentation to be visual.
 
 This will be clarified in the prose.
 
-Typed Clojure can be optionally integrated into the compilation pipeline (via nREPL, an extensible REPL).
-We assume this setup for presentational purposes --- chiefly to avoid mentioning Clojure "type hints"
-which complicate the paper significantly.
+Typed Clojure can be optionally integrated into the compilation
+pipeline (via nREPL, an extensible REPL).  We assume this setup for
+presentational purposes --- chiefly to avoid mentioning Clojure "type
+hints" which complicate the paper significantly.
 
 % p5r "difference betweem (Val K) and K"
 % 
@@ -102,8 +104,8 @@ which complicate the paper significantly.
 
 We will change K to an arbitrary C.
 
-This is a general observation, we are describing the difference between the types of class literals and
-types of instances of a class. 
+This is a general observation, we are describing the difference
+between the types of class literals and types of instances of a class.
 
 % The (Multi ...) type is close to unreadable.
 
@@ -119,21 +121,22 @@ Multimethods are subtypes of their interface types.
 % I was expecting some relation between the \psi+- and the \psi'+-
 
 To aid with the proof, we split this part of the lemma into 4 parts.
-The 2nd part talks about \psi+, and the 3rd part only talks about the type, where
-we choose any \psi+' that fits.
+The 2nd part talks about \psi+, and the 3rd part only talks about the
+type, where we choose any \psi+' that fits.
 
-% One unanswered practical question is this: how long does the typechecker run?
+% One unanswered practical question is this: how long does the
+% typechecker run?
 
 Typechecking is expensive. 
 
-CircleCI's 89 typed namespaces take ~10 minutes to check on CircleCI's own continuous
-integration tool, at "x20 parallelism".
+CircleCI's 89 typed namespaces take ~10 minutes to check on CircleCI's
+own continuous integration tool, at "x20 parallelism".
 
-feeds2imap's 25 typed namespaces take 30 seconds on a Ubuntu Virtual Machine with 1GB
-memory and 2.4GHz Intel Core i5.
+feeds2imap's 25 typed namespaces take 30 seconds on a Ubuntu Virtual
+Machine with 1GB memory and 2.4GHz Intel Core i5.
 
-%   Section 2.3: the notation ':-' is used without introduction,
-%   which I'm guessing means "is of type"?
+%  Section 2.3: the notation ':-' is used without introduction, which
+%  I'm guessing means "is of type"?
 
 Yes, we will clarify this.
 
@@ -141,26 +144,33 @@ Yes, we will clarify this.
 
 Yes, it is an alias for the Java class clojure.lang.Keyword.
 
-% Page 5, first line: To me, the "its" here is ambiguous: does it refer
-% to the control flow, or the occurrence typing?
+% Page 5, first line: To me, the "its" here is ambiguous: does it
+% refer to the control flow, or the occurrence typing?
 
-"occurrence typing automatically understands control flow that combines atomic tests
-already understood by occurrence typing."
+"occurrence typing automatically understands control flow that
+combines atomic tests already understood by occurrence typing."
 
 % Page 5, "Expressions". "All binding forms introduce fresh
 % variables". Isn't that a tautology?
 
-We intend the name of the binding to be 'fresh'. Otherwise nested 'let's typed by
-T-Let with repeated names will combine in unsound ways.
+We intend the name of the binding to be 'fresh'. Otherwise nested
+'let's typed by T-Let with repeated names will combine in unsound
+ways.
 
 We will clarify this in the paper.
 
-% In Section 3, is perhaps too much focus on "what" and not enough "why" to provide context for what is new and novel versus what is standard. 
-% As an example of this early in the section, the paragraph about "Objects" is explicit and detailed about its components 
-% but not its role in the type system. Is it simply a way to name heap objects as an access path?
+% In Section 3, is perhaps too much focus on "what" and not enough
+% "why" to provide context for what is new and novel versus what is
+% standard.  As an example of this early in the section, the paragraph
+% about "Objects" is explicit and detailed about its components but
+% not its role in the type system. Is it simply a way to name heap
+% objects as an access path?
 
-Precisely, yes. The justification will be elaborated, and Section 3 will focus more or the "why".
+Precisely, yes. The justification will be elaborated, and Section 3
+will focus more or the "why".
 
-% Section 3.6 is potentially an important subsection that discusses the symbolic reasoning, but unfortunately it is very terse and is disconnected from the thread of the story.
+% Section 3.6 is potentially an important subsection that discusses
+% the symbolic reasoning, but unfortunately it is very terse and is
+% disconnected from the thread of the story.
 
 We will discuss only the important examples in 3.6 in greater detail.
