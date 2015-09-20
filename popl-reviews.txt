@@ -1,72 +1,66 @@
 We thank the reviewers for their detailed and thorough feedback.
 We are glad the reviewers appeared to enjoy our paper:
 
-"Typed Clojure is undoubtedly an extremely useful contribution [...]" - Review A
+"Typed Clojure is undoubtedly an extremely useful contribution" - Review A
 
 "The challenges of optional typing for Clojure is interesting and well illustrated by the paper." - Review D
 
-"[...] this is a nice approach to obtain a practical system." - Review B
+"this is a nice approach to obtain a practical system." - Review B
 
-Reviewers chiefly had concerns on two major issues.
+Reviewers had concerns with two major issues.
 
-1. Does this work qualify as a "significant new contribution"?
+1. Does this work qualify as a significant new contribution?
 
-Our main contribution is demonstrating Typed Racket's occurrence typing is generally applicable
-to a practical type system for Clojure, by:
- 
- a. identifying common Clojure idioms,
- b. elegantly extending occurrence typing to consider these idioms, and
- c. building an implementation that scales to some real Clojure code bases.
+Our main contribution is the theory, implementation and evaluation of a practical type system for 
+Clojure based on occurrence typing.
 
-Review B cites "occurrence typing scales to Clojure without having to investigate dramatically new results",
-as a disadvantage. We respectfully disagree this hinders the paper, in fact:
+Review B correctly notes
+  "occurrence typing scales to Clojure without having to investigate dramatically new results",
+but cites this as a disadvantage.
 
- a. this relationship was non-obvious and not predicted by the literature,
- b. the creators of occurrence typing did not anticipate typing Clojure, and
- c. the happy accident that occurrence typing extends gracefully to Clojure is a strong advantage, 
-    by building on a solid foundation.
+We believe this is a strong advantage: Typed Clojure is built on strong theoretical foundations.
+The relationship between occurrence typing and Clojure now seems intuitive, but the full extent
+of their synthesis was non-obvious.
 
-As noted by review A, Krishnamurthi et al's TeJaS (DLS 2013), a type system for JavaScript,
-contains similar heterogeneous maps to Typed Clojure. The paper cites ESOP 2011 (Guha et al.) 
-as a possible avenue for combining their work with flow typing, but neither give a 
-combined treatment with heterogeneous maps.
+Our work uncovered a strong link between occurrence typing -- a flow typing mechanism originally designed
+for local conditials -- and Clojure's multimethods, an elaborate control-flow mechanism that includes
+arbitrary dispatch.
 
-In contrast, we investigate the intersection of flow typing and heterogeneous maps. 
-Our result is subtle but extremely compositional (Figure 8, Figure 9 HMap rules).
-and reinforced with a strong evaluation.
+We investigated the intersection of flow typing and heterogeneous maps. 
+Our result is subtle (Figure 9 HMap rules) but extremely compositional.
+As noted by Review A, heterogeneous maps in this style are not new -- Krishnamurthi et al's (DLS 2013) TeJaS, 
+a type system for JavaScript supports similar -- however this is the first combined treatment with flow typing.
 
-Review A further states
-  "the work on multimethods is novel to this setting, and my favorite part of the paper.",
-but disagrees with our claimed degree of novelty.
+Review A claims "extending occurrence typing to account for [heterogeneous maps and multimethods]
+is not extremely novel".
+
+"the work on multimethods is novel to this setting, and my favorite part of the paper."
+
+but discounts its novelty as 
+even though .
 
 Our treatment of multimethods 
-  a. give a formal description of Clojure multimethods
-  b. understand the arbitrary dispatch mechanism to check
+  a. cleanly extends occurrence typing 
+  b. 
 
 The compositionality of heterogeneous maps with flow typing is best illustrated with 
 Example 9, a 
 
 2. What does the evaluation section show?
 
-We demonstrate the practical utility of our work with a widely-used implementation
-that checks thousands of lines of code.
+We demonstrate the utility of our work by checking thousands of lines of non-trivial code.
+Some reviewers felt our evaluation lacked direction and analysis.
 
-We agree with Review C:
- "I really liked the inclusion of the two
-  case studies discussing the actual use of the system -- this sets the
-  paper apart from most papers that present such programmer aids and
-  makes a real attempt to assess how well the system works in
-  practice."
+To clarify, we wanted to answer these questions:
+  a. Is our implementation sufficient to type check real Clojure code?
 
-However, other reviewers felt the evaluation lacked direction.
+     We 
+      
+     feeds2imap is an example of a typical Clojure library. It wraps a Java library and uses keyword
+     maps to transport data.
 
-We wanted to answer these questions:
-  a. Can typical open source Clojure libraries be ported to Typed Clojure?
-  b. How effective is Typed Clojure at scale?
-  c. How often are the support idioms used in typed code?
+  b. How often are the featured idioms used in typed code?
 
-We chose to port feeds2imap as an example of a typical open source Clojure library wrapping 
-Java functionality (java.mail) with a thin layer of keyword maps.
 
 Review A raised concerns on the low numbers of Typed Clojure's key features in the case studies.
 As noted by Review A, this did not validate 
