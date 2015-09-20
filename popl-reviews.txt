@@ -1,17 +1,13 @@
 We thank the reviewers for their detailed and thorough feedback.
 We are glad the reviewers appeared to enjoy our paper:
 
-"Typed Clojure is undoubtedly an extremely useful contribution"- Review A
+"Typed Clojure is undoubtedly an extremely useful contribution [...]" - Review A
 
 "The challenges of optional typing for Clojure is interesting and well illustrated by the paper." - Review D
 
-"[Case studies] set the paper apart from most papers that present such programmer aids" - Review C
-
 "[...] this is a nice approach to obtain a practical system." - Review B
 
-"[...] the system described here seems to be a good fit." - Review A
-
-Reviewers had concerns on two major issues.
+Reviewers chiefly had concerns on two major issues.
 
 1. Does this work qualify as a "significant new contribution"?
 
@@ -28,37 +24,67 @@ as a disadvantage. We respectfully disagree this hinders the paper, in fact:
  a. this relationship was non-obvious and not predicted by the literature,
  b. the creators of occurrence typing did not anticipate typing Clojure, and
  c. the happy accident that occurrence typing extends gracefully to Clojure is a strong advantage, 
-    building on a solid foundation.
+    by building on a solid foundation.
+
+As noted by review A, Krishnamurthi et al's TeJaS (DLS 2013), a type system for JavaScript,
+contains similar heterogeneous maps to Typed Clojure. The paper cites ESOP 2011 (Guha et al.) 
+as a possible avenue for combining their work with flow typing, but neither give a 
+combined treatment with heterogeneous maps.
+
+In contrast, we investigate the intersection of flow typing and heterogeneous maps. 
+Our result is subtle but extremely compositional (Figure 8, Figure 9 HMap rules).
+and reinforced with a strong evaluation.
+
+Review A further states
+  "the work on multimethods is novel to this setting, and my favorite part of the paper.",
+but disagrees with our claimed degree of novelty.
+
+Our treatment of multimethods 
+  a. give a formal description of Clojure multimethods
+  b. understand the arbitrary dispatch mechanism to check
+
+The compositionality of heterogeneous maps with flow typing is best illustrated with 
+Example 9, a 
 
 2. What does the evaluation section show?
+
+We demonstrate the practical utility of our work with a widely-used implementation
+that checks thousands of lines of code.
+
+We agree with Review C:
+ "I really liked the inclusion of the two
+  case studies discussing the actual use of the system -- this sets the
+  paper apart from most papers that present such programmer aids and
+  makes a real attempt to assess how well the system works in
+  practice."
+
+However, other reviewers felt the evaluation lacked direction.
+
+We wanted to answer these questions:
+  a. Can typical open source Clojure libraries be ported to Typed Clojure?
+  b. How effective is Typed Clojure at scale?
+  c. How often are the support idioms used in typed code?
+
+We chose to port feeds2imap as an example of a typical open source Clojure library wrapping 
+Java functionality (java.mail) with a thin layer of keyword maps.
+
+Review A raised concerns on the low numbers of Typed Clojure's key features in the case studies.
+As noted by Review A, this did not validate 
+
+The smaller study feeds2imap contains no typed or untyped multimethod definitions
+
+The larger study contains code used from industry.
 
 Two conclusions:
  a. Typing realistic Clojure programs requires all the features we've described.
  b. Typed Clojure is sufficient to scale to some large Clojure code bases, but there
     remain limitations.
 
-% The authors have done a
-% lot of work in identifying the features of Clojure that need to be addressed,
-% and the system described here seems to be a good fit.
-
-% The main limitation of the paper (which is really, the flip side of its
-% strength) is that the key technical ideas -- namely occurrence typing --
-% is already there in Typed Racket. 
-
 % Unfortunately extending occurrence
 % typing to account for null, HMaps and multimethods is not extremely novel. 
 
 We disagree. These features combine in ways that are sufficient to demonstrate,
 the advantages of the unified framework of occurrence typing, distilled in Example 9.
-
-This is not recognised in practice --- reviewer #47A mentioned systems that implement
-similar systems but chose to ignore occurrence typing. 
-
-For example, TypeScript 1.6 recently extended their ad-hoc
-flow-typing system to include custom predicates, a basic feature of occurrence typing.
-
-% Also, the work on multimethods is
-% novel to this setting, and my favorite part of the paper.
 
 % There were some curious things about the case studies.
 % 
@@ -141,20 +167,11 @@ to use  for MM is a STRENGTH, not a weakness.
 
 QUESTION: Is HMap novel relative to TeJas??
 
-% I was also disappointed with the evaluation. 
-
-
-
-
 % The authors do not pose clear questions at the beginning of the evaluation section, so the direction is never 100% clear. 
 
 % It would be useful to distill some more specific research questions to drive an empirical evaluation with potentially stronger conclusions.
 
 % The hypothesis is a bit weak: that Clojure programs do indeed use the features discussed in this paper.
-
-
-% In particular, the industrial code seems to be somewhere in transition between untyped and typed, which doesn't seem to be handled gracefully by the type system, yet. 
-
 
 % How does Typed Clojure integrate into the Clojure compiler?
 
@@ -184,12 +201,6 @@ To aid with the proof, we split this part of the lemma into 4 parts.
 The 2nd part talks about \psi+, and the 3rd part only talks about the type, where
 we choose any \psi+' that fits.
 
-% p11l "protocols"
-% 
-% too short to understand
-
-? TODO
-
 % p11r Evaluation
 % 
 % Not conclusive:
@@ -213,7 +224,8 @@ Yes, it is an alias for the Java class clojure.lang.Keyword.
 % Page 5, first line: To me, the "its" here is ambiguous: does it refer
 % to the control flow, or the occurrence typing?
 
-"occurrence typing automatically understands control flow that combines atomic tests."
+"occurrence typing automatically understands control flow that combines atomic tests
+already understood by occurrence typing."
 
 % Page 5, "Expressions". "All binding forms introduce fresh
 % variables". Isn't that a tautology?
@@ -221,38 +233,19 @@ Yes, it is an alias for the Java class clojure.lang.Keyword.
 We intend the name of the binding to be 'fresh'. Otherwise nested 'let's typed by
 T-Let with repeated names will combine in unsound ways.
 
+We will clarify this in the paper.
+
 % Weaknesses
 % 
 % * The paper could do a better job in isolating the key contributions of the work.
 
-% * The evaluation is disappointing. It is missing a distillation of research questions.
-
-% However, I am unable to support the paper because I cannot identify the "significant new contributions" that would meet POPL's criteria for acceptance. 
-% The main contribution appears to be the application of occurrence typing (or more generally symbolic reasoning embedded in type systems) to the particular Clojure features of multimethod dispatch and hmaps. 
 % This paper would be stronger if the critical type system advances could be clearly distilled that are (1) needed for Clojure features but also (2) are somehow more general insights.
-
-We agree our main contribution is the application of occurrence typing in a new setting.
-
-One of our main contributions is demonstrating that occurrence typing is generally applicable.
-Reviewer
-??? who TODO ??
-says
-many type systems have similar features to occurrence typing, but few
-implement the generality of occurrence typing.
-
-We claim the knowledge that occurrence typing can be naturally extended to handle exotic control
-flow styles, for example Clojure multimethods --- which were not considered by the inventors
-of occurrence typing --- is a "significant new contribution".
-
-We agree that the integration was in hindsight straightforward. 
-
-We think the conception of occurrence typing for local control flow
 
 % In Section 3, is perhaps too much focus on "what" and not enough "why" to provide context for what is new and novel versus what is standard. 
 % As an example of this early in the section, the paragraph about "Objects" is explicit and detailed about its components 
 % but not its role in the type system. Is it simply a way to name heap objects as an access path? Or is it something more?
 
-Precisely, yes. The justification will be elaborated.
+Precisely, yes. The justification will be elaborated, and Section 3 will focus more or the "why".
 
 % Section 3.6 is potentially an important subsection that discusses the symbolic reasoning, but unfortunately it is very terse and is disconnected from the thread of the story.
 
