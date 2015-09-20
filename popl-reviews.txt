@@ -65,14 +65,6 @@ Our answer to Q3 is necessarily more subjective, but describes the
 limitations that users encountered and future work to address them.
 
 
-% Unfortunately extending occurrence
-% typing to account for null, HMaps and multimethods is not extremely novel. 
-
-We disagree. These features combine in ways that are sufficient to demonstrate,
-the advantages of the unified framework of occurrence typing, distilled in Example 9.
-
-% There were some curious things about the case studies.
-% 
 % + feeds2imap doesn't as far as I can tell, use multimethods
 %   or particularly fancy HMaps, hence does not provide much
 %   evidence about 2,3 above.
@@ -80,16 +72,25 @@ the advantages of the unified framework of occurrence typing, distilled in Examp
 Correct, feeds2imap contains no typed or untyped multimethod definitions,
 and uses HMaps in standard ways.
 
-% + circleCI is very large (55KLoc) -- and hence, likely more complex.
-%   (And the authors indicate there are various things that fall outside
-%   the scope of Typed Clojure at the moment.) However, even in this large
-%   code base, there are only 11 checked multimethods? The paper says:
+% + circleCI is very large (55KLoc)
+%   However, even in this large code base, there are only 11 checked multimethods?
+
+The entire CircleCI codebase contains only 41 multimethods. They are used almost exclusively
+to dispatch on very general HMap types (in a similar style as Example 8). For example functions that create
+and query cloud containers are multimethods dispatching on the container's operating system.
+
+These 11 multimethods account for 89 defmethod expressions, which indicate the polymorphic nature
+of these particular multimethods --- averaging 8 defmethods per defmulti.
+
+Why are there only 11 multimethods amongst 1834 functions in typed code?
+Functions are used instead in other places where the HMap type is sufficient (ie. no dispatch
+is necessary) -- like an internal library for managing SSH keys (a subset is presented as Example 7). 
 
 %   However, only 40% of it is typed, and of that only 20% of the definitions
 %   are actually checked? 
 %   So only 8% of the definitions are type checked.
 
-While correct, 407 functions are still typed.
+This is a good estimation. While correct, 407 top-level definitions are still typed.
 CircleCI was gradually porting to Typed Clojure where extra checking was deemed desirable.
 
 We determined difficulty of checking a barrier to checking
@@ -115,13 +116,16 @@ check the remaining invariants at runtime with less difficulty.
 % 
 % but this could also be because only a small fraction of all functions
 % are typed functions?
-%
+
+We feel the ~400 typed functions in CircleCI is significant enough to extrapolate from.
+Since they contained ~100 Java interactions and ~300 heterogeneous map usages,
+
 % To strengthen the paper I suggest the authors additionally
 % measure, how prevalent these features are in the untyped
 % code as well, 
 
-In emperically we have found these to be important idioms, but we will
-include an analysis of idioms in typical untyped code.
+We will include an analysis of idioms in typical untyped code.
+Anecdotally, we have found these to be important idioms.
 
 % and perhaps give a qualitative analysis of
 % the kinds of idioms outside the scope of typed clojure.
@@ -134,41 +138,28 @@ The major limitations of Typed Clojure are given in 5.2, we found particular
 
 We will change the presentation to be visual.
 
-% The main merit of the paper is that the authors have pulled through the technical essence of TypedRacket (i.e., occurrence typing) and applied it to Clojure. They show how to integrate features particular to Clojure (multimethods and immutable maps) in such a system. 
-
-% I think this is a nice approach to obtain a practical system.
-
-% First, I was enthusiastic about the system.
-% However, at the end of the day, the Clojure-specific features does not add much technical innovation to the TypedRacket system. Indeed, the authors note a number of times that the treatment of multimethods falls out more or less for free from occurrence typing. Examining the typing rules shows that much of the typing for multimethods and maps are specialized versions of the occurrence typing rules. 
-% Thus, the message I get is that occurrence typing scales to Clojure without having to investigate dramatically new results.
-
-1. showing this approach scales to clojure is a novel contribution
-2. we make novel technical contributions by showing how to use occurrence typing
-   to handle multimethods, not previously anticipated or understood.
-3. the fact that it works out, shows that it's good approach.
-
-The fact we can reuse the mechanism of logical propositions from conditional,
-to use  for MM is a STRENGTH, not a weakness.
-
-QUESTION: Is HMap novel relative to TeJas??
-
-% The authors do not pose clear questions at the beginning of the evaluation section, so the direction is never 100% clear. 
-
-% It would be useful to distill some more specific research questions to drive an empirical evaluation with potentially stronger conclusions.
-
 % The hypothesis is a bit weak: that Clojure programs do indeed use the features discussed in this paper.
+
+This is a crucial observation from our experiments. It suggests to us that our effort in design, implementation, and
+theory for Java interoperability, heterogeneous maps, and multimethods have a greater pay off than had
+we chosen to concentrate on more obscure Clojure idioms.
 
 % How does Typed Clojure integrate into the Clojure compiler?
 
-Typed Clojure can be optionally integrated into the compilation pipeline for. We assume
-this while presenting the language for presentational purposes.
+This is unclear and will be clarified in the prose.
+
+Typed Clojure can be optionally integrated into the compilation pipeline (via nREPL, an extensible REPL).
+We assume this setup for presentational purposes --- chiefly to avoid mentioning Clojure "type hints"
+which complicate the paper significantly.
 
 % p5r "difference betweem (Val K) and K"
 % 
 % Is this a general observation or is it specific to K?
 
-General, we are describing the different between the types of class literals and
-types of instances of a class. We will change K to an arbitrary C.
+We will change K to an arbitrary C.
+
+This is a general observation, we are describing the difference between the types of class literals and
+types of instances of a class. 
 
 % The (Multi ...) type is close to unreadable.
 
@@ -176,7 +167,8 @@ Unfortunately we are unsure how to make multimethod types more readable.
 
 % I was looking for the subtyping Multi <: Fn.
 
-See S-PMultiFn (Figure 8), described Section 3.4, "Subtyping".
+Please see S-PMultiFn (Figure 8), described Section 3.4, "Subtyping".
+Multimethods are subtypes of their interface types.
 
 % p10 r, Lemma 1
 % 
@@ -186,8 +178,6 @@ To aid with the proof, we split this part of the lemma into 4 parts.
 The 2nd part talks about \psi+, and the 3rd part only talks about the type, where
 we choose any \psi+' that fits.
 
-% p11r Evaluation
-% 
 % Not conclusive:
 % * lists numbers in an unsystematic way
 % * does not clearly pose or answer specific research questions
