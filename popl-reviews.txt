@@ -85,7 +85,7 @@ REVIEW B: How does Typed Clojure integrate into the Clojure compiler?
   pipeline via an extensible REPL---this is the most straightforward way
   to use it.
 
-REVIEW B: Where is Multi <: Fn subtyping rule?
+REVIEW B: Where is the Multi <: Fn subtyping rule?
 
   See S-PMultiFn (Figure 8).
 
