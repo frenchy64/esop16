@@ -54,12 +54,12 @@ thousands of lines of non-trivial code. While the reviews correctly
 point out that much of CircleCI's code base is not typed, the portion
 that is contains thousands of lines of production code.
 
-To answer Q2, we see that multimethods, heterogenous maps, and Java
+To answer Q2, we see that multimethods, heterogeneous maps, and Java
 interoperability are all widely used in our sample. Even though
 multimethods are not defined in the feeds2imap code, they are
 called. The small number of multimethods defined in the CircleCI code
 may be misleading---the numbers are similar to 11 interfaces in Java,
-with 89 concrete implemenations.
+with 89 concrete implementations.
 
 Our answer to Q3 is necessarily more subjective, but describes the
 limitations that users encountered and future work to address them.
@@ -73,31 +73,28 @@ revised version. In other cases, the reviewers guessed at the correct
 meaning of some symbols---always correctly, and we will clarify in the
 paper.
 
-% could [the empirical results] also be because only a small fraction
-% of all functions are typed functions?
+REVIEW A: "Could the empirical results also be because only a small fraction
+           of all functions are typed functions?"
 
-Our experience is that the ~400 typed functions in CircleCI is
-representative of the code base.
+  Our experience is that the ~400 typed functions in CircleCI is
+  representative of the code base.
 
-% How does Typed Clojure integrate into the Clojure compiler?
+REVIEW B: How does Typed Clojure integrate into the Clojure compiler?
 
-Typed Clojure can be optionally integrated into the compilation
-pipeline via an extensible REPL---this is the most straightforward way
-to use it.
+  Typed Clojure can be optionally integrated into the compilation
+  pipeline via an extensible REPL---this is the most straightforward way
+  to use it.
 
-% I was looking for the subtyping Multi <: Fn.
+REVIEW B: Where is Multi <: Fn subtyping rule?
 
-Please see S-PMultiFn (Figure 8), described Section 3.4, "Subtyping".
-Multimethods are subtypes of their interface types.
+  See S-PMultiFn (Figure 8).
 
-% How long does the typechecker run?
+REVIEW B: How long does the typechecker run?
 
-Typechecking is expensive. 
+  Typechecking is expensive. 
 
-CircleCI's 89 typed namespaces take ~10 minutes to check on CircleCI's
-own continuous integration tool, at "x20 parallelism".
+  CircleCI's 89 typed namespaces take ~10 minutes to check on CircleCI's
+  own continuous integration tool, at "x20 parallelism".
 
-feeds2imap's 25 typed namespaces take 30 seconds on a Ubuntu Virtual
-Machine with 1GB memory and 2.4GHz Intel Core i5.
-
-
+  feeds2imap's 25 typed namespaces take 30 seconds on a Ubuntu Virtual
+  Machine with 1GB memory and 2.4GHz Intel Core i5.
