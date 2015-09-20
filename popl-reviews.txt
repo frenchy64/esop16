@@ -68,24 +68,7 @@ limitations that users encountered and future work to address them.
 
 We now address specific questions from the reviewers.
 
-% + CircleCI is very large (55KLoc)
-%   However, even in this large code base, there are only 11 checked multimethods?
-
-The entire CircleCI codebase contains only 41 multimethods. They are used almost exclusively
-to dispatch on very general HMap types (in a similar style as Example 8). For example functions that create
-and query cloud containers are multimethods dispatching on the container's operating system.
-
-These 11 multimethods account for 89 defmethod expressions, which indicate the polymorphic nature
-of these particular multimethods --- averaging 8 defmethods per defmulti.
-
-Why are there only 11 multimethods amongst 1834 functions in typed code?
-Functions are used instead in other places where the HMap type is sufficient (ie. no dispatch
-is necessary) -- like an internal library for managing SSH keys (a subset is presented as Example 7). 
-
-% At any rate, I was not ready to accept the conclusions drawn
-% in the "Lessons" paragraph because multimethods didn't seem
-% that pervasive across the whole code base (but yes null is
-% everywhere, and so are records/HMaps.) The paper says:
+% The paper says:
 % 
 %   "(the features) are used on average more than once per typed function"
 % 
