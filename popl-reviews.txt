@@ -66,66 +66,31 @@ limitations that users encountered and future work to address them.
 
 ===================================================================
 
-We now address specific questions from the reviewers.
+We now address a few specific questions from the reviewers. The
+reviewers also make several suggestions for presentation revisions and
+improvements to the evaluation---we will make these changes in a
+revised version. In other cases, the reviewers guessed at the correct
+meaning of some symbols---always correctly, and we will clarify in the
+paper.
 
-% The paper says:
-% 
-%   "(the features) are used on average more than once per typed function"
-% 
-% but this could also be because only a small fraction of all functions
-% are typed functions?
+% could [the empirical results] also be because only a small fraction
+% of all functions are typed functions?
 
-We feel the ~400 typed functions in CircleCI is significant enough to
-extrapolate from.
-
-% To strengthen the paper I suggest the authors additionally
-% measure, how prevalent these features are in the untyped
-% code as well, 
-
-We will include an analysis of idioms in typical untyped code.
-
-% The numeric data (various percentages, etc.) would be easier to
-% follow as some sort of stacked graph or pie chart or some such.
-
-We will change the presentation to be visual.
+Our experience is that the ~400 typed functions in CircleCI is
+representative of the code base.
 
 % How does Typed Clojure integrate into the Clojure compiler?
 
-This will be clarified in the prose.
-
 Typed Clojure can be optionally integrated into the compilation
-pipeline (via nREPL, an extensible REPL).  We assume this setup for
-presentational purposes --- chiefly to avoid mentioning Clojure "type
-hints" which complicate the paper significantly.
-
-% p5r "difference betweem (Val K) and K"
-% 
-% Is this a general observation or is it specific to K?
-
-We will change K to an arbitrary C.
-
-This is a general observation, we are describing the difference
-between the types of class literals and types of instances of a class.
-
-% The (Multi ...) type is close to unreadable.
-
-Unfortunately we are unsure how to make multimethod types more readable.
+pipeline via an extensible REPL---this is the most straightforward way
+to use it.
 
 % I was looking for the subtyping Multi <: Fn.
 
 Please see S-PMultiFn (Figure 8), described Section 3.4, "Subtyping".
 Multimethods are subtypes of their interface types.
 
-% p10 r, Lemma 1
-% 
-% I was expecting some relation between the \psi+- and the \psi'+-
-
-To aid with the proof, we split this part of the lemma into 4 parts.
-The 2nd part talks about \psi+, and the 3rd part only talks about the
-type, where we choose any \psi+' that fits.
-
-% One unanswered practical question is this: how long does the
-% typechecker run?
+% How long does the typechecker run?
 
 Typechecking is expensive. 
 
@@ -135,42 +100,4 @@ own continuous integration tool, at "x20 parallelism".
 feeds2imap's 25 typed namespaces take 30 seconds on a Ubuntu Virtual
 Machine with 1GB memory and 2.4GHz Intel Core i5.
 
-%  Section 2.3: the notation ':-' is used without introduction, which
-%  I'm guessing means "is of type"?
 
-Yes, we will clarify this.
-
-%   Section 2.4. Is the 'Kw' type built-in?
-
-Yes, it is an alias for the Java class clojure.lang.Keyword.
-
-% Page 5, first line: To me, the "its" here is ambiguous: does it
-% refer to the control flow, or the occurrence typing?
-
-"occurrence typing automatically understands control flow that
-combines atomic tests already understood by occurrence typing."
-
-% Page 5, "Expressions". "All binding forms introduce fresh
-% variables". Isn't that a tautology?
-
-We intend the name of the binding to be 'fresh'. Otherwise nested
-'let's typed by T-Let with repeated names will combine in unsound
-ways.
-
-We will clarify this in the paper.
-
-% In Section 3, is perhaps too much focus on "what" and not enough
-% "why" to provide context for what is new and novel versus what is
-% standard.  As an example of this early in the section, the paragraph
-% about "Objects" is explicit and detailed about its components but
-% not its role in the type system. Is it simply a way to name heap
-% objects as an access path?
-
-Precisely, yes. The justification will be elaborated, and Section 3
-will focus more or the "why".
-
-% Section 3.6 is potentially an important subsection that discusses
-% the symbolic reasoning, but unfortunately it is very terse and is
-% disconnected from the thread of the story.
-
-We will discuss only the important examples in 3.6 in greater detail.
