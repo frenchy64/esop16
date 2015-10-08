@@ -325,7 +325,7 @@ $$
   \label{main:figure:othertypingrules}
 \end{figure*}
 
-We formalize our type system following~\citet{TF10}.
+We formalize our type system following~\cite{TF10}.
 %(with differences highlighted in $\trdiff{\text{blue}}$)
 The typing judgment 
 $$
@@ -704,7 +704,7 @@ and result type are covariant.
 Subtyping for untagged unions is standard.
 
 \paragraph{Operational semantics} We define the dynamic semantics for \lambdatc{}
-in a big-step style using an environment, following~\citet{TF10}.
+in a big-step style using an environment, following~\cite{TF10}.
 We include both errors and a \wrong{} value, which is provably ruled out by the
 type system.
 The main judgment is \opsem{\openv{}}{\e{}}{\definedreduction{}}
@@ -904,7 +904,7 @@ semantics of \ifliteral{}:
 
 \subsection{Java Interoperability}
 
-\begin{figure}[t]
+\begin{figure}%[t]
   \footnotesize
   $$
   \begin{altgrammar}
@@ -1045,7 +1045,7 @@ rules that rewrite to reflective calls.
 %a \emph{path} that consists of a series of
 %\emph{path elements} applied right-to-left to a variable
 %written \path{\pathelem{}}{\x{}}.
-%\citet{TF10} introduce the path elements \carpe{} and \cdrpe{}
+%\cite{TF10} introduce the path elements \carpe{} and \cdrpe{}
 %to reason about selector operations on cons cells.
 %We instead want to reason about HMap lookups and calls to \classconst{}.
 %
@@ -1150,7 +1150,7 @@ The operational behavior of \isaliteral{} is given by B-IsA (\figref{main:figure
 
 \subsection{Multimethods}
 
-\begin{figure}[t!]
+\begin{figure}%[t!]
   \footnotesize
 $$
 \begin{altgrammar}

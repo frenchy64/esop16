@@ -39,16 +39,20 @@
 
 \newcommand\smallsection[1]{\textbf{\emph{#1}}}
 
-\usepackage{amsthm}
+%\usepackage{amsthm}
+%
+%\newtheorem{assumption}{Assumption}
+%\newtheorem{lemma}{Lemma}
+%\newtheorem{theorem}{Theorem}
+%\newtheorem{corollary}{Corollary}
+%\newtheorem{definition}{Definition}
+%
+%\theoremstyle{remark}
+%\newtheorem*{case}{Case}
+%
+%\theoremstyle{remark}
+%\newtheorem*{subcase}{Subcase}
 
-\newtheorem{assumption}{Assumption}
-\newtheorem{lemma}{Lemma}
-\newtheorem{theorem}{Theorem}
-\newtheorem{corollary}{Corollary}
-\newtheorem{definition}{Definition}
-
-\theoremstyle{remark}
-\newtheorem*{case}{Case}
-
-\theoremstyle{remark}
-\newtheorem*{subcase}{Subcase}
+% ESOP format
+\spn@wtheorem{assumption}{Assumption}{\bfseries}{\itshape}
+\spn@wtheorem{subcase}{Subcase}{\bfseries}{\itshape}
