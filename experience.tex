@@ -92,12 +92,11 @@ applying the function to the atom's current value and the extra arguments.
 
 \begin{figure}
 \begin{minted}{clojure}
-(ann clojure.core/swap! 
-  (All [w r b ...] 
-    [(Atom2 w r) [r b ... b -> w] b ... b -> w]))
-
+(ann clojure.core/swap! (All [w r b ...] 
+                          [(Atom2 w r) [r b ... b -> w] b ... b -> w]))
+(swap! (atom :- Num 1) + 2 3);=> 6 (atom contains 6)
 \end{minted}
-\inputminted[firstline=5,lastline=5]{clojure}{code/demo/src/demo/atom.clj}
+%\inputminted[firstline=5,lastline=5]{clojure}{code/demo/src/demo/atom.clj}
 \caption{Type annotation and example call of \clj{swap!}}
 \label{main:fig:swap!}
 \end{figure}

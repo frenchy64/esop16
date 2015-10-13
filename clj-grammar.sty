@@ -1192,11 +1192,11 @@
   \prop{}       &::=& {\isprop {\t{}} {\path {\pathelem{}} {\x{}}}}
                       \alt {\notprop {\t{}} {\path {\pathelem{}} {\x{}}}}
                       \alt {\impprop {\prop{}} {\prop{}}}
-                &\mbox{Propositions} \\
-                      &\alt& {\andprop {\prop{}} {\prop{}}}
+                      \alt {\andprop {\prop{}} {\prop{}}}
                       \alt {\orprop {\prop{}} {\prop{}}}
                       \alt \topprop{}
-                      \alt \botprop{}\\
+                      \alt \botprop{}
+                &\mbox{Propositions} \\
 
   \object{}     &::=& {\path {\pathelem{}} {\x{}}}
                       \alt \emptyobject{}
@@ -1279,11 +1279,11 @@
 \newcommand\BIfTrue[0]{
 \infer [B-IfTrue]
 { \opsem {\openv{}} {\e{1}} {\v{1}}
-  \\\\
-  {\v{1}} \not= {\false{}}
   \\
-  {\trdiff{{\v{1}} \not= {\nil{}}}}
+  {\v{1}} \not= {\false{}}
   \\\\
+  {\trdiff{{\v{1}} \not= {\nil{}}}}
+  \\
   \opsem {\openv{}} {\e{2}} {\v{}}
 }
 { \opsem {\openv{}}
@@ -1418,7 +1418,7 @@ $$
 { \opsem {\openv{}}
          {\e{}}
          {\multi {\v{d}} {\disptable{}}}
-         \\\\
+         \\
   \opsem {\openv{}}
          {\ep{}}
          {\v{v}}
@@ -1426,7 +1426,7 @@ $$
   \opsem {\openv{}}
          {\e{f}}
          {\v{f}}
-         \\\\
+         \\
          \v{} = 
         {\multi {\v{d}} {\extenddisptable {\disptable{}} 
                                 {\v{v}}
@@ -1513,11 +1513,11 @@ $$
 \infer [B-Assoc]
 {\opsem {\openv{}}
         {\e{}} {\mapval{}}
-        \\\\
+        \\
  \opsem {\openv{}} {\e{k}} {\k{}}
         \\\\
  \opsem {\openv{}} {\e{v}} {\v{v}}
- \\\\
+ \\
  {\v{}} = {\extendmap{\mapval{}}
                 {\k{}}{\v{v}}}
 }
@@ -1533,12 +1533,12 @@ $$
 \infer [B-Get]
 {\opsem {\openv{}}
         {\e{}} {\mapval{}}
-        \\\\
+        \\
  \opsem {\openv{}}
         {\ep{}} {\k{}}
         \\\\
  \keyinmap{\k{}}{\mapval{}}
-        \\\\
+        \\
  \getmap{\mapval{}}
         {\k{}}
         =
@@ -1555,7 +1555,7 @@ $$
 \infer [B-GetMissing]
 {\opsem {\openv{}}
         {\e{}} {\mapval{}}
-        \\\\
+        \\
  \opsem {\openv{}}
         {\ep{}} {\k{}}
         \\\\
@@ -2140,14 +2140,14 @@ $$
 \newcommand\javanewassumption[1]{
 \begin{assumption}[\newjavaliteral] \label{#1:assumption:new}
   If\ $\forall i.\ {\v{i}} = {\classvalue{\classhint{i}}{\overrightarrow{\classfieldpair{\fld{j}} {\v{j}}}}}\ or\ {\v{i}}= {\nil}$
-  and \consistentwith{\v{i}}{\openv{}}
+  and {\v{i}} is consistent with {\openv{}}
   then either
   \begin{itemize}
   \item $\newjava {\classhint{}}
                 {\overrightarrow{\classhint{i}}}
                 {\overrightarrow{\v{i}}}
                 {\classvalue{\classhint{}}{\overrightarrow {\classfieldpair{\fld{k}} {\v{k}}}}}$
-                which \consistentwith{}{\openv{}},
+                which is consistent with {\openv{}},
   \item 
         $\newjava {\classhint{}}
                 {\overrightarrow{\classhint{i}}}
@@ -2493,14 +2493,15 @@ $$
 \update{\HMapgeneric {\mandatory{}} {\absent{}}}{\propisnotmeta{}}{\destructpath {\pathelem{}} {\keype{\k{}}}}
 &=&
 {\HMapgeneric {\extendmandatoryset{\mandatory{}}{\k{}}{\update{\t{}}{\propisnotmeta{}}{\pathelem{}}}}{\absent{}}}
-& \text{if}\ {\inmandatory{\k{}}{\t{}}{\mandatory{}}}
+\\
+&& \text{if}\ {\inmandatory{\k{}}{\t{}}{\mandatory{}}}
 %& Present Key
 
 \\
 \update{\HMapgeneric {\mandatory{}} {\absent{}}}{\propisnotmeta{}}{\destructpath {\pathelem{}} {\keype{\k{}}}}
 &=&
 {\Bottom{}}
-& \text{if}\ {\notsubtypein {} {\Nil{}} {\propisnotmeta{}}}\ \text{and}\ {\inabsent{\k{}}{\absent{}}}
+\ \ \text{if}\ {\notsubtypein {} {\Nil{}} {\propisnotmeta{}}}\ \text{and}\ {\inabsent{\k{}}{\absent{}}}
 
 % both these cases are summarised by the above, which uses negation subtyping
 %\\
@@ -2530,14 +2531,16 @@ $$
 (\cup\ {\HMapp {\extendmandatoryset {\mandatory{}} {\k{}}
                                      {\t{}}}
                 {\absent{}}}
-& \text{if}\ {\issubtypein {} {\Nil{}} {\t{}}},\ {\notinmandatory{\k{}}{\s{}}{\mandatory{}}}\ \text{and}\ {\notinabsent{\k{}}{\absent{}}}
           \\&&\ \ \ \ \, \,
         {\HMapp {\mandatory{}} {\extendabsentset{\absent{}}{\k{}}}})
+        \\
+&& \text{if}\ {\issubtypein {} {\Nil{}} {\t{}}},\ {\notinmandatory{\k{}}{\s{}}{\mandatory{}}}\ \text{and}\ {\notinabsent{\k{}}{\absent{}}}
 \\
 \update{\HMapp {\mandatory{}} {\absent{}}}{\propisnotmeta{}}{\destructpath {\pathelem{}} {\keype{\k{}}}}
 &=&
 {\HMapp {\extendmandatoryset {\mandatory{}} {\k{}}{\update{\Top}{\propisnotmeta{}}{\pathelem{}}}} {\absent{}}}
-& 
+\\
+&& 
 \text{if}\ {\notsubtypein {} {\Nil{}} {\propisnotmeta{}}},\ {\notinmandatory{\k{}}{\s{}}{\mandatory{}}}\ \text{and}\ {\notinabsent{\k{}}{\absent{}}}
 
 %\\

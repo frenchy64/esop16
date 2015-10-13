@@ -158,11 +158,12 @@ $$
   \e{} &::=& \x{}
                       \alt \v{} 
                       \alt {\comb {\e{}} {\e{}}} 
-                      \alt {\abs {\x{}} {\t{}} {\e{}}} &\mbox{Expressions} \\
-                      &\alt& {\ifexp {\e{}} {\e{}} {\e{}}}
+                      \alt {\abs {\x{}} {\t{}} {\e{}}} 
+                      \alt {\ifexp {\e{}} {\e{}} {\e{}}}
                       %\alt {\trdiff{\doexp {\e{}} {\e{}}}}
-                      \alt {\letexp {\x{}} {\e{}} {\e{}}}\\
+                      \alt {\letexp {\x{}} {\e{}} {\e{}}}
                       %\alt {\errorvalv{}}
+                      &\mbox{Expressions} \\
   \v{} &::=&          \singletonmeta{}
                       \alt {\nat{}}
                       \alt {\const{}}
@@ -177,9 +178,9 @@ $$
                                    {\t{}}
                                    {\filterset {\prop{}} {\prop{}}}
                                    {\object{}}}
+                      \alt {\Value \singletonmeta{}} 
+                      \alt \trdiff{\class{}}
                 &\mbox{Types} \\
-                      &\alt& {\Value \singletonmeta{}} 
-                      \alt \trdiff{\class{}}\\
   \singletonallsyntax{}
                 \\ \\
   \occurrencetypingsyntax{}\\
@@ -275,7 +276,6 @@ bindings---this is explained in \secref{formalmodel:proofsystem}.
 
 
 \begin{figure*}
-$$
 \footnotesize
     %{\TDo}
     %{\TClass}
@@ -285,42 +285,43 @@ $$
     %  {\TSubsume}\\\\
     %  {\TNum}
     %\end{array}
-  \begin{array}{c}
-    {\TLocal} \ \ \  \ \ \ 
-    {\TIf}\ \ \  \ \ \ \ \ 
-    {\TAbs} \ \ \ \ 
-    \begin{array}{c}
-      {\TNil}\\\\
-      {\TFalse}
-    \end{array}
-    \\\\
-    {\TLet} \ \ \  \ \ \ \ \ \ 
+  \begin{mathpar}
+        {\TLocal}
+
+        {\TIf}
+
+        {\TAbs}\\
+
+        {\TNil}
+
+    {\TFalse}
+
+    {\TLet}\\
+
     {\TApp}
-    \\\\
-    \begin{array}{c}
-      {\TNum}\\\\
-      {\TConst}
-    \end{array} \ \ \ \
-    \begin{array}{c}
-      {\TKw}\\\\
-      {\TNum}\\\\
-      {\TClass}
-    \end{array} \ \ \ \
-    \begin{array}{c}
-      {\TSubsume}
-    \end{array} \ \ \ \ 
-    \begin{array}{c}
-      {\TStr}\\\\
-      {\TTrue}
-    \end{array}
-  \end{array}
+
+    {\TNum}\\
+
+    {\TConst}
+
+    {\TKw}
+
+    {\TNum}\\\\
+
+    {\TClass}
+
+    {\TSubsume}
+
+    {\TStr}\\
+
+    {\TTrue}
+  \end{mathpar}
     %\begin{array}{c}
     %  {\TSubsume}\\\\
     %  {\TStr}\\\\
     %  {\TNil}\\\\
     %  {\TFalse}
     %\end{array}
-$$
   \caption{Core typing rules}
   \label{main:figure:othertypingrules}
 \end{figure*}
@@ -1154,9 +1155,9 @@ The operational behavior of \isaliteral{} is given by B-IsA (\figref{main:figure
   \footnotesize
 $$
 \begin{altgrammar}
-  \e{} &::=& \ldots \alt {\createmultiexp {\t{}} {\e{}}} &\mbox{Expressions} \\
-             &\alt& {\extendmultiexp {\e{}} {\e{}} {\e{}}}
-             \alt {\isaapp {\e{}} {\e{}}}\\
+  \e{} &::=& \ldots \alt {\createmultiexp {\t{}} {\e{}}} \alt
+             {\extendmultiexp {\e{}} {\e{}} {\e{}}}
+             \alt {\isaapp {\e{}} {\e{}}} &\mbox{Expressions} \\
   \v{} &::=& \ldots \alt {\multi {\v{}} {\disptable{}}}
                 &\mbox{Values} \\
  \disptablesyntax{} \\\\
@@ -1372,7 +1373,7 @@ B-DefMethod produces a new multimethod with an extended dispatch table.
 
 The overall dispatch mechanism is summarised by B-BetaMulti.
 $$
-    \BBetaMulti{}
+\footnotesize \BBetaMulti{}
 $$
 First the dispatch function \v{d} is applied to the argument \vp{} to obtain
 the dispatch value \v{e}.
@@ -1427,9 +1428,7 @@ heterogeneous map types.
 The partially specified map of
 \clj{lunch} in \egref{example:lunchpartial}
 is written
-$$
-\HMapp{\mandatoryset{\mandatoryentrynoarrow{\Valkw{en}}{\String}, {\mandatoryentrynoarrow{\Valkw{fr}}{\String}}}}{\emptyabsent{}}
-$$
+\HMapp{\mandatoryset{\mandatoryentrynoarrow{\Valkw{en}}{\String}, {\mandatoryentrynoarrow{\Valkw{fr}}{\String}}}}{\emptyabsent{}}.
 We abbreviate this type as \Lunch in this section.
 The type \HMapgeneric{\mandatory{}}{\absent{}}
 contains {\mandatory{}}, a map of \emph{present} entries (mapping keywords to types),
@@ -1441,9 +1440,7 @@ and {\partial{}} (``partial'') if there are \emph{unknown} entries.
 The type of the fully specified map
 \clj{breakfast} in \egref{example:breakfastcomplete} elides the absent entries,
 written
-$$
-\HMapc{\mandatoryset{\mandatoryentrynoarrow{\Valkw{en}}{\String}, {\mandatoryentrynoarrow{\Valkw{fr}}{\String}}}}
-$$
+\HMapc{\mandatoryset{\mandatoryentrynoarrow{\Valkw{en}}{\String}, {\mandatoryentrynoarrow{\Valkw{fr}}{\String}}}}.
 We abbreviate this type as \Breakfast in this section.
 To ease presentation, 
 if an HMap has completeness tag \complete{} then \absent{} implicitly contains all keywords not in the domain of \mandatory{}.
@@ -1575,18 +1572,13 @@ $$
 \subsection{Proof system}
 \label{formalmodel:proofsystem}
 
-\begin{figure}
+The proof system for occurrence typing uses standard propositional logic,
+except for where nested information is combined. This is
+handled by the L-Update rule.
   $$
 \LUpdate{}
 $$
-%(The metavariable \propisnotmeta{} ranges over \t{} and \nottype{\t{}} (without variables).)
-  \caption{Proof system update rule (full rules \figref{appendix:figure:proofsystem})}
-  \label{main:figure:lupdate}
-\end{figure}
-
-The proof system for occurrence typing uses standard propositional logic,
-except for where nested information is combined. This is
-handled by the L-Update rule (\figref{main:figure:lupdate})---it says
+It says
 under \propenv{}, if object \path{\pathelemp{}}{\x{}} is of type \t{}, and 
 an extension
 \path{\pathelem{}}{\path{\pathelemp{}}{\x{}}}
