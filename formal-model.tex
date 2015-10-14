@@ -89,8 +89,7 @@ of calling \classconst{} and of looking up a keyword $k$ respectively.
 \paragraph{Propositions with a logical system}
 In standard type systems, \emph{type environments}
 track variables.
-$$
-\begin{array}{lr}
+\begin{mathpar}
 \infer [LC-Let]
 { \judgementtwo {{\propenv{}}}
                 {\e{1}} {\s{}}
@@ -102,15 +101,14 @@ $$
   \judgementtwo {\propenv{}} 
             {\letexp{\x{}}{\e{1}}{\e{2}}} {\t{}}
            }
-&
+
 \infer [LC-Local]
 { {\propenv{}}(\x{}) = {\t{}}
 }
 { \judgementtwo {\propenv{}} 
             {\x{}} {\t{}}
            }
-\end{array}
-$$
+\end{mathpar}
 
 Occurrence typing instead pairs \emph{logical formulas},
 that can reason about arbitrary non-empty objects,
@@ -120,8 +118,7 @@ variable $x$ is of type \s{}.
 %A \emph{logical system}
 %must now \emph{prove}
 %a variable's type.
-$$
-\begin{array}{lr}
+\begin{mathpar}
 \infer [T0-Let]
 { \judgementtwo {{\propenv{}}}
                 {\e{1}} {\s{}}
@@ -135,14 +132,13 @@ $$
             {\t{}}
            }
 %\judgementtwo{\isprop{\Number{}}{\x{}}}{\appexp{\inc{}}{\x{}}}{\Number}
-&
+
 \infer [T0-Local]
 { \inpropenv {\propenv{}} {\isprop {\t{}} {\x{}}}}
 { \judgementtwo {\propenv{}} 
             {\x{}} {\t{}}
            }
-\end{array}
-$$
+\end{mathpar}
 In T0-Local, 
 $
 { \inpropenv {\propenv{}} {\isprop {\t{}} {\path{\pathelem{}}{\x{}}}} }
@@ -151,7 +147,7 @@ appeals to the proof system to solve \t{}.
 %says under logical assumptions {\propenv{}}, object {\path{\pathelem{}}{\x{}}} is of type \t{}.
 %We later define the more general T-Local.
 
-\begin{figure}
+\begin{figure}[t!]
   \footnotesize
 $$
 \begin{array}{lrll}
@@ -205,9 +201,9 @@ The other propositions are standard logical connectives: implications, conjuncti
 disjunctions, and the trivial (\topprop{}) and impossible (\botprop{}) propositions.
 %
 The full proof system judgement
-$$
+$
 { \inpropenv {\propenv{}} {\prop{}} }
-$$
+$
 says \emph{proposition environment} {\propenv{}} proves proposition \prop{}.
 
 Each expression is associated with two propositions---when expression
@@ -272,7 +268,7 @@ bindings---this is explained in \secref{formalmodel:proofsystem}.
 
 
 
-\paragraph{The full judgment}
+\paragraph{Typing judgment}
 
 
 \begin{figure*}
@@ -287,34 +283,31 @@ bindings---this is explained in \secref{formalmodel:proofsystem}.
     %\end{array}
   \begin{mathpar}
         {\TLocal}
-
+        {\TAbs}
         {\TIf}
-
-        {\TAbs}\\
-
-        {\TNil}
-
-    {\TFalse}
-
-    {\TLet}\\
-
-    {\TApp}
-
-    {\TNum}\\
-
+    \\
+    \begin{array}{c}
+    {\TKw}\\
+      {\TNum}\\
+    \end{array}
+    \begin{array}{c}
+      {\TNil}\\
+      {\TFalse}\\
     {\TConst}
-
-    {\TKw}
-
-    {\TNum}\\\\
-
-    {\TClass}
-
-    {\TSubsume}
-
+    \end{array}
+    \begin{array}{c}
     {\TStr}\\
-
+    {\TClass}\\
     {\TTrue}
+  \end{array}
+        \\
+
+    {\TLet}
+    \\
+
+    {\TApp}\ \ 
+    {\TSubsume}
+    \\
   \end{mathpar}
     %\begin{array}{c}
     %  {\TSubsume}\\\\
@@ -326,7 +319,44 @@ bindings---this is explained in \secref{formalmodel:proofsystem}.
   \label{main:figure:othertypingrules}
 \end{figure*}
 
-We formalize our type system following~\cite{TF10}.
+\begin{figure}%[t!]
+  \footnotesize
+  \begin{mathpar}
+
+\SUnionSuper{}\ \ \ 
+\SUnionSub{}\ \ \ 
+\SFunMono{}\ \ \ 
+\begin{array}{l}
+\SObject{}\\
+\SClass{}\\
+\SSBool{}
+\end{array}
+
+\SFun{}
+\begin{array}{l}
+    \SRefl{}\ \ \ 
+    \STop{}\\
+\SSKw{}
+\end{array}
+
+
+  \end{mathpar}
+  \caption{Core subtyping rules}
+  \label{main:figure:subtyping}
+\end{figure}
+
+\begin{figure}
+\begin{mathpar}
+    \BIfTrue{}
+
+    \BIfFalse{}
+\end{mathpar}
+  \caption{Select core semantics}
+\label{main:figure:coresemantics}
+\end{figure}
+
+
+We formalize our system following Tobin-Hochstadt and Felleisen \cite{TF10}.
 %(with differences highlighted in $\trdiff{\text{blue}}$)
 The typing judgment 
 $$
@@ -395,14 +425,6 @@ uses
 to type constants.
 \numberhuh{} is a predicate over numbers, and
 \classconst{} returns its argument's class.
-
-\begin{figure}
-  $$
-\constanttypefigure{}
-  $$
-  \caption{Constant typing}
-  \label{main:figure:constanttyping}
-\end{figure}
 
 Resuming {\appexp{\numberhuh{}}{\makelocal{d}}},
 in T-App the operand \ep{} = \makelocal{d} is checked with
@@ -661,36 +683,6 @@ $$
 %  {\filterset{\topprop{}}{\botprop{}}}{\emptyobject{}}
 %$$
 
-\begin{figure}
-  \footnotesize
-  \begin{mathpar}
-    \SRefl{}
-
-    \STop{}
-
-\SUnionSuper{}
-
-\SUnionSub{}
-
-\SFunMono{}
-
-\SObject{}
-
-\SClass{}
-
-\begin{array}{l}
-\SSBool{}\\\\
-\SSKw{}
-\end{array}
-
-\SFun{}
-
-
-  \end{mathpar}
-  \caption{Core subtyping rules}
-  \label{main:figure:subtyping}
-\end{figure}
-
 \paragraph{Subtyping}
 \figref{main:figure:subtyping} presents subtyping
 as a reflexive and transitive relation with top type \Top. 
@@ -712,12 +704,7 @@ The main judgment is \opsem{\openv{}}{\e{}}{\definedreduction{}}
 which states that \e{} evaluates to answer \definedreduction{} in environment
 \openv{}. We chose to omit the core rules (see \figref{appendix:figure:opsem})
 however a notable difference is \nil{} is a false value, which affects the
-semantics of \ifliteral{}:
-\begin{mathpar}
-    \BIfTrue{}
-
-    \BIfFalse{}
-\end{mathpar}
+semantics of \ifliteral{} (\figref{main:figure:coresemantics}).
 
 %The definition of \updateliteral{} supports various idioms relating to \classpe{}
 %which we introduce in \secref{sec:isaformal}.
@@ -905,16 +892,14 @@ semantics of \ifliteral{}:
 
 \subsection{Java Interoperability}
 
-\begin{figure}%[t]
+\begin{figure}
   \footnotesize
   $$
   \begin{altgrammar}
-    \e{} &::=& \ldots   
-                      {\fieldexp {\fld{}} {\e{}}}
-                      \alt {\methodexp {\mth{}} {\e{}} {\overrightarrow{\e{}}}}&\mbox{Expressions}\\
-                      &\alt& {\newexp {\class{}} {\overrightarrow{\e{}}}}\\
-     &\alt& \mininonreflectiveexpsyntax{}
-    \\
+    \e{} &::=& \ldots   {\fieldexp {\fld{}} {\e{}}} \alt {\methodexp {\mth{}} {\e{}} {\overrightarrow{\e{}}}}
+                      \alt {\newexp {\class{}} {\overrightarrow{\e{}}}}
+                      &\mbox{Expressions}\\
+     &\alt& \nonreflectiveexpsyntax{} &\mbox{Non-reflective Expressions}\\
 
     \v{} &::=& \ldots \alt {\classvalue{\classhint{}} {\overrightarrow {\classfieldpair{\fld{}} {\v{}}}}}
     &\mbox{Values} \\
@@ -939,20 +924,27 @@ semantics of \ifliteral{}:
   \begin{altgrammar}
     \convertjavatypenonnil{}
   \end{altgrammar}
-  \\
   \begin{altgrammar}
     \converttctype{}
   \end{altgrammar}
 \end{mathpar}
   \begin{mathpar}
-    \BField{}
-
+    \BField{}\ \ \ 
+%
     \BNew{}
 
     \BMethod{}
   \end{mathpar}
   \caption{Java Interoperability Syntax, Typing and Operational Semantics}
   \label{main:figure:javatyping}
+\end{figure}
+
+\begin{figure}
+  $$
+\constanttypefigure{}
+  $$
+  \caption{Constant typing}
+  \label{main:figure:constanttyping}
 \end{figure}
 
 We present Java interoperability in a restricted setting without class inheritance,
@@ -1151,7 +1143,7 @@ The operational behavior of \isaliteral{} is given by B-IsA (\figref{main:figure
 
 \subsection{Multimethods}
 
-\begin{figure}%[t!]
+\begin{figure}
   \footnotesize
 $$
 \begin{altgrammar}
@@ -1160,7 +1152,7 @@ $$
              \alt {\isaapp {\e{}} {\e{}}} &\mbox{Expressions} \\
   \v{} &::=& \ldots \alt {\multi {\v{}} {\disptable{}}}
                 &\mbox{Values} \\
- \disptablesyntax{} \\\\
+ \disptablesyntax{} \\
   \s{}, \t{} &::=& \ldots \alt {\MultiFntype{\t{}}{\t{}}}
                 &\mbox{Types}
 \end{altgrammar}
@@ -1177,23 +1169,24 @@ $$
   \end{mathpar}
   \begin{mathpar}
     \Multisubtyping{}
+
+    \BDefMulti{}
   \end{mathpar}
   \begin{mathpar}
     \BDefMethod{}
-    \BDefMulti{}
     %\BBetaMulti{}
   \end{mathpar}
   \getmethodfigure{}
-$$
-\begin{array}{ll}
-  \vcenter{\hbox{\BIsA{}}}
-  &
-  \vcenter{\hbox{\isaopsemfigure{}}}
-\end{array}
-$$
+\begin{mathpar}
+  {\BIsA{}}
+  {\isaopsemfigure{}}
+  \\
+\BBetaMulti{}
+\end{mathpar}
 \caption{Multimethod Syntax, Typing and Operational Semantics}
 \label{main:figure:mmsyntax}
 \end{figure}
+
 
 \figref{main:figure:mmsyntax}
 presents \emph{immutable}
@@ -1372,9 +1365,6 @@ B-DefMulti creates a multimethod with the given dispatch function and an empty d
 B-DefMethod produces a new multimethod with an extended dispatch table.
 
 The overall dispatch mechanism is summarised by B-BetaMulti.
-$$
-\footnotesize \BBetaMulti{}
-$$
 First the dispatch function \v{d} is applied to the argument \vp{} to obtain
 the dispatch value \v{e}.
 Based on \v{e},
@@ -1401,26 +1391,53 @@ and applies it to the original argument for the final result.
   \end{altgrammar}
   $$
   \begin{mathpar}
+    {\TAssoc}
+
     {\TGetHMap}
 
     {\TGetAbsent}
 
     {\TGetHMapPartialDefault}
+    \ \ \ 
+  {\SHMapMono}
+  \end{mathpar}
+  \begin{mathpar}
+  {\SHMapP}\ \ 
+  {\SHMap}
 
-    {\TAssoc}
   \end{mathpar}
   \begin{mathpar}
-    \HMapsubtyping{}
-  \end{mathpar}
-  \begin{mathpar}
-    {\BAssoc}
-    {\BGet}
+    {\BAssoc}\ \ 
+    {\BGet}\ \ 
     {\BGetMissing}
   \end{mathpar}
   \caption{HMap Syntax, Typing and Operational Semantics}
   \label{main:figure:hmapsyntax}
 \end{figure}
 
+\begin{figure}
+  $$
+\LUpdate{}
+$$
+\caption{Update rule}
+\label{main:figure:updaterule}
+\end{figure}
+
+\begin{figure}
+$$
+\begin{array}{lr}
+  \begin{array}{llll}
+    \restrictfigure{}
+  \end{array}
+  \ \ 
+  \begin{array}{llll}
+    \removefigure{}
+  \end{array}
+\end{array}
+$$
+\caption{Restrict and remove}
+\label{main:figure:restrictremove}
+\end{figure}
 
 \figref{main:figure:hmapsyntax}
 presents
@@ -1484,11 +1501,10 @@ $$
 \abs{\makelocal{u}}{\Lunch}{\getexp{\makelocal{u}}{\makekw{bocce}}}
 $$
 The result type is \Top, and the return object is \path{\keype{\makekw{bocce}}}{\makelocal{u}}.
-Notice the propositions attached to each \getliteral{} rule are trivial---propositions
-are erased once they enter a HMap type.
+Notice propositions are erased once they enter a HMap type.
 
-For presentational reasons, lookups on unions of HMaps are only supported in T-GetHMap. 
-Furthermore, each element of the union must contain the key we are looking up.
+For presentational reasons, lookups on unions of HMaps are only supported in T-GetHMap
+and each element of the union must contain the relevant key.
 $$
 \abs{\makelocal{u}}{\Unionsplice{\Breakfast \Lunch}}{\getexp{\makelocal{u}}{\makekw{en}}}
 $$
@@ -1536,28 +1552,20 @@ as long as they agree on the mandatory entries of the partial map via subtyping 
 %formed types.
 
 The semantics for \getliteral{} and \assocliteral{} are straightforward.
-If the entry is missing, B-GetMissing produces \nil{}.
+%If the entry is missing, B-GetMissing produces \nil{}.
 
-\begin{figure*}
+\begin{figure}
   $$
 \begin{array}{llll}
 \updatefigure{}
 \end{array}
 $$
-$$
-\begin{array}{lr}
-  \begin{array}{llll}
-    \restrictfigure{}
-  \end{array}
-  \begin{array}{llll}
-    \removefigure{}
-  \end{array}
-\end{array}
-$$
 \caption{Type update (the metavariable \propisnotmeta{} ranges over \t{} and \nottype{\t{}} (without variables), 
-  \notsubtypein{}{\Nil{}}{\nottype{\t{}}} when \issubtypein{}{\Nil{}}{\t{}})}
+  \notsubtypein{}{\Nil{}}{\nottype{\t{}}} when \issubtypein{}{\Nil{}}{\t{}}, see
+\figref{main:figure:restrictremove} for \restrictliteral{} and \removeliteral{}.
+  )}
 \label{main:figure:update}
-\end{figure*}
+\end{figure}
 
 %\begin{figure}
 %  $$
@@ -1572,12 +1580,10 @@ $$
 \subsection{Proof system}
 \label{formalmodel:proofsystem}
 
-The proof system for occurrence typing uses standard propositional logic,
+The occurrence typing proof system uses standard propositional logic,
 except for where nested information is combined. This is
-handled by the L-Update rule.
-  $$
-\LUpdate{}
-$$
+handled by L-Update (\figref{main:figure:updaterule}).
+
 It says
 under \propenv{}, if object \path{\pathelemp{}}{\x{}} is of type \t{}, and 
 an extension

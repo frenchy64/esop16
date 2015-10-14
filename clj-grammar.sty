@@ -706,11 +706,11 @@
 { \judgementrewrite {\propenv{}} {\e{1}} {\s{}} {\filterset {\thenprop {\prop{1}}} {\elseprop {\prop{1}}}}
              {\object{1}}
              {\ep{1}}
-             \\\\
+             \\
              \propp{} = {\impprop {\notprop {\falsydiff{}} {\x{}}} {\thenprop {\prop{1}}}}
-             \\\\
+             \\
              \proppp{} = {\impprop {\isprop {\falsydiff{}} {\x{}}} {\elseprop {\prop{1}}}}
-  \\\\
+  \\
   \judgementrewrite
        {\propenv{}, {\isprop {\s{}} {\x{}}},
          {\propp{}},
@@ -718,7 +718,6 @@
              {\e{2}} {\t{}} {\filterset {\thenprop {\prop{}}} {\elseprop {\prop{}}}}
              {\object{}} 
              {\ep{2}}
-             \\\\ \ep{} = {\letexp {\x{}} {\ep{1}} {\ep{2}}}
              }
 { \judgementrewrite {\propenv{}} {\letexp {\x{}} {\e{1}} {\e{2}}} 
              {\replacefor {\t{}}
@@ -730,7 +729,7 @@
              {\replacefor {\object{}} 
                           {\object{1}}
                           {\x{}}}
-             {\ep{}}
+             {\letexp {\x{}} {\ep{1}} {\ep{2}}}
              }
 
            }
@@ -868,13 +867,17 @@
 \newcommand\TField[0]{
 \infer [T-Field]
 { \judgementtworewrite {\propenv{}} {\e{}} {\s{}} {\ep{}}
-  \\
+  \ \ \ 
+  %\\
   \issubtypein{}{\s{}}{\Object{}}
-                  \\
+  \ \ \ 
+                  %\\
   \tctojava{\s{}}{\classhint{1}}
-                  \\
+  \ \ \ 
+                  %\\
                   \inct{\ctfldentry{\fld{}}{\classhint{2}}}{\ctlookupfields{\ct{}}{\classhint{1}}}
-                  \\
+  \ \ \ 
+                  %\\
   \javatotcnil{\classhint{2}}{\t{}}
            }
 { \judgementrewrite {\propenv{}} {\fieldexp {\fld{}} {\e{}}} {\t{}}
@@ -906,8 +909,6 @@
 { 
   \judgementtworewrite {\propenv{}} {\e{}} {\s{}} {\ep{}}
              \\
-             \issubtypein{}{\s{}}{\Object{}}
-             \\
   \tctojava{\s{}}{\classhint{1}}
                   \\
                   \inct{\ctmthentry{\mth{}}{\overrightarrow{\classhint{i}}}{\classhint{2}}}{\ctlookupmethods{\ct{}}{\classhint{1}}}
@@ -919,6 +920,8 @@
                   }
                   \\
                   \javatotcnil{\classhint{2}}{\t{}}
+             \\
+             \issubtypein{}{\s{}}{\Object{}}
            }
 { \judgementrewrite {\propenv{}} {\methodexp {\mth{}} {\e{}} {\overrightarrow{\e{i}}}}
              {\t{}}
@@ -1006,7 +1009,7 @@
                    {\filterset {\thenprop {\propp{}}}
                                {\elseprop {\propp{}}}}
                    {\objectp{}}}
-             \\\\
+             \\
 \judgementtworewrite {\propenv{}}
                   {\e{m}} {\MultiFntype {\t{m}} {\t{d}}}
                   {\ep{m}}
@@ -1061,22 +1064,20 @@
 \newcommand\TAssoc[0]{
 \infer [T-AssocHMap]
 { 
-  \judgementtworewrite {\propenv{}} {\e{}} {\HMapgeneric {\mandatory{}} {\absent}} {\ep{}}
-  \\
+  \judgementtworewrite {\propenv{}} {\e{}} {\HMapgeneric {\mandatory{}} {\absent}} {\assocexp {\ep{}} {\ep{k}} {\ep{v}}}
+  \ \ \ %\\
   \judgementtworewrite {\propenv{}} {\e{k}} {\Value{\k{}}} {\ep{k}}
-  \\
+  \ \ \ %\\
   \judgementtworewrite {\propenv{}} {\e{v}} {\t{}} {\ep{v}}
-  \\
+   \ \ \ %\\
   {\k{}} \not\in {\absent{}}
-  \\
-  {\ep{}} = {\assocexp {\ep{}} {\ep{k}} {\ep{v}}}
 }
 { \judgementrewrite {\propenv{}} 
              {\assocexp {\e{}} {\e{k}} {\e{v}}}
                        {\HMapgeneric {\extendmandatoryset {\mandatory{}}{\k{}}{\t{}}} {\absent}}
              {\filterset {\topprop{}} {\botprop{}}}
              {\emptyobject{}}
-             {\ep{}}
+             {\assocexp {\ep{}} {\ep{k}} {\ep{v}}}
 }
          }
 
@@ -1087,9 +1088,9 @@
   {\filterset {\thenprop{\prop{1}}}{\elseprop{\prop{1}}}}
   {\object{}}
   {\ep{}}
-           \\
+  \ \ \ %\\
   \judgementtworewrite {\propenv{}} {\e{k}} {\Value {k}} {\ep{k}}
-             \\
+  \ \ \ %\\
              {\overrightarrow{\inmandatory{\k{}}{\t{}}{\mandatory{}}}}^i
        }
 { \judgementrewrite {\propenv{}} {\getexp {\e{}} {\e{k}}} {\Unionsplice {{\overrightarrow {\t{}}}^i}}
@@ -1317,9 +1318,9 @@
 \newcommand\BIsA[0]{
 \infer [B-IsA]
 { \opsem {\openv{}} {\e{1}} {\v{1}}
-  \\\\
+  \\
   \opsem {\openv{}} {\e{2}} {\v{2}}
-  \\\\
+  \\
   \isaopsem{\v{1}}{\v{2}} = {\v{}}
 }
 {\opsem {\openv{}} {\isaapp {\e{1}} {\e{2}}} {\v{}}}
@@ -1350,20 +1351,24 @@
 { \opsem {\openv{}}
          {\e{}}
          {\multi {\v{d}} {\disptable{}}}
-         \\
+         \  \  \ 
+%         \\ 
   \opsem {\openv{}}
          {\ep{}}
          {\vp{}}
-         \\
+         \ \  \ 
+         %\\
   \opsem {\openv{}}
          {\appexp {\v{d}} {\vp{}}}
          {\v{e}}
-         \\
+         \ \  \ 
+         %\\
   \getmethod {\disptable{}}
              {\v{e}}
              {\v{k}}
              {\v{f}}
-         \\
+             \ \ 
+         % \\
   \opsem {\openv{}}
          {\appexp {\v{f}} {\vp{}}}
          {\v{}}
@@ -1376,17 +1381,15 @@
 
      \newcommand\getmethodfigure[0]{
 $$
-\begin{array}{lr}
+\begin{array}{ll}
 
   \getmethod {\disptable{}}
              {\v{e}}
              {\v{v}}
              {\v{f}}
-             \ \ \ 
-             \text{ if } {\overrightarrow{\v{fs}}} = \{{\v{f}}\}
-                \\
-             \ \ \ \ \ \ \ \ 
-             \text{where } {\overrightarrow{\v{fs}}} = 
+             &
+             \text{if } {\overrightarrow{\v{fs}}} = \{{\v{f}}\}
+             \text{ where } {\overrightarrow{\v{fs}}} = 
                 \{ \v{f} | 
                     {\mapvalentry{\v{k}}{\v{f}}} \in \disptable{} 
                   \text{ and } 
@@ -1394,7 +1397,7 @@ $$
              \\
   \getmethoderr {\disptable{}}
              {\v{e}}
-             {\mmerror{}} \ \ \ \ \text{otherwise}
+             {\mmerror{}} &\text{otherwise}
 
 \end{array}
 $$
@@ -1403,7 +1406,7 @@ $$
      \newcommand\BDefMulti[0]{
 \infer [B-DefMulti]
 { \opsem {\openv{}} {\e{}} {\v{d}}
-  \\\\ 
+  \\
   \v{} = {\multi {\v{d}} {\emptydisptable}}
 }
 {\opsem {\openv{}}
@@ -1422,7 +1425,7 @@ $$
   \opsem {\openv{}}
          {\ep{}}
          {\v{v}}
-         \\\\
+         \\
   \opsem {\openv{}}
          {\e{f}}
          {\v{f}}
@@ -1457,7 +1460,7 @@ $$
 { \opsem {\openv{}}
          {\e{}}
        {\v{}}
-         \\\\
+         \\
          \getfieldjava{\classhint{1}} {\v{1}} {\fld{}} {\classhint{2}} {\v{}}
        }
 { \opsem {\openv{}}
@@ -1477,7 +1480,7 @@ $$
          {\e{a}}
          {\v{a}}
        }
-  \\\\
+  \\
   \invokejavamethod {\classhint{1}} {\v{m}} {mth}
                     {\overrightarrow{\classhint{a}}} {\overrightarrow{\v{a}}}
                     {\classhint{2}}
@@ -1497,7 +1500,7 @@ $$
          {\e{i}}
          {\v{i}}
        }
-         \\\\
+         \\
          \newjava {\classhint{1}}
                   {\overrightarrow{\classhint{i}}}
                   {\overrightarrow{\v{i}}}
@@ -1515,16 +1518,14 @@ $$
         {\e{}} {\mapval{}}
         \\
  \opsem {\openv{}} {\e{k}} {\k{}}
-        \\\\
+ \\\\
  \opsem {\openv{}} {\e{v}} {\v{v}}
- \\
- {\v{}} = {\extendmap{\mapval{}}
-                {\k{}}{\v{v}}}
 }
 {
  \opsem {\openv{}}
         {\assocexp {\e{}} {\e{k}} {\e{v}}} 
-      {\v{}}
+        {\extendmap{\mapval{}}
+          {\k{}}{\v{v}}}
                 }
               }
 
@@ -1533,21 +1534,17 @@ $$
 \infer [B-Get]
 {\opsem {\openv{}}
         {\e{}} {\mapval{}}
-        \\
+         \\
  \opsem {\openv{}}
         {\ep{}} {\k{}}
         \\\\
  \keyinmap{\k{}}{\mapval{}}
-        \\
- \getmap{\mapval{}}
-        {\k{}}
-        =
-        {\v{}}
 }
 {
  \opsem {\openv{}}
         {\getexp {\e{}} {\ep{}}}
-        {\v{}}
+        {\getmap{\mapval{}}
+          {\k{}}}
 }
 }
 
@@ -1555,10 +1552,10 @@ $$
 \infer [B-GetMissing]
 {\opsem {\openv{}}
         {\e{}} {\mapval{}}
-        \\
+        \\\\
  \opsem {\openv{}}
         {\ep{}} {\k{}}
-        \\\\
+        \\
  \keynotinmap{\k{}}{\mapval{}}
 }
 {
@@ -1689,7 +1686,7 @@ $$
   \issubtypein {} {\t{}} {\tp{}}
   \\
   \inpropenv {\thenprop {\prop{}}} {\thenprop {\propp{}}}
-  \\\\
+  \\
   \inpropenv {\elseprop {\prop{}}} {\elseprop {\propp{}}}
   \\
   \issubobjin{} {\object{}} {\objectp{}}
@@ -1736,7 +1733,17 @@ $$
 
 }
 
-\newcommand\HMapsubtyping[0]{
+\newcommand\SHMapP[0]{
+\infer [S-HMapP]
+{ \forall i.\ {\inmandatory{\k{i}}{\s{i}}{\mandatory{}}} \text{ and } \issubtypein {} {\s{i{}}} {\t{i{}}}
+}
+{\issubtypein {} 
+  {\HMapcwithabsent {\mandatory{}}{\absentp{}}}
+  {\HMapp {{\mandatorysetoverright{\k{}}{\t{}}}^i} {\absent{}}}
+               }
+}
+
+\newcommand\SHMap[0]{
 \infer [S-HMap]
 { \forall i.\ {\inmandatory{\k{i}}{\s{i}}{\mandatory{}}} \text{ and } \issubtypein {} {\s{i{}}} {\t{i{}}}
   \\
@@ -1745,19 +1752,22 @@ $$
 {\issubtypein {} {\HMapgeneric {\mandatory{}} {\absent{1}}}
   {\HMapgeneric {{\mandatorysetoverright{\k{}}{\t{}}}^i} {\absent{2}}}
                }
+             }
 
-\infer [S-HMapP]
-{ \forall i.\ {\inmandatory{\k{i}}{\s{i}}{\mandatory{}}} \text{ and } \issubtypein {} {\s{i{}}} {\t{i{}}}
-}
-{\issubtypein {} 
-  {\HMapcwithabsent {\mandatory{}}{\absentp{}}}
-  {\HMapp {{\mandatorysetoverright{\k{}}{\t{}}}^i} {\absent{}}}
-               }
+\newcommand\SHMapMono[0]{
 \infer [S-HMapMono]
 {}
 {\issubtypein {} 
   {\HMapgeneric {\mandatory{}} {\absent{}}}
   {\HMapInstance{}}}
+}
+
+\newcommand\HMapsubtyping[0]{
+  {\SHMapP}
+
+  {\SHMap}
+
+  {\SHMapMono}
 }
 
 \newcommand\Multisubtyping[0]{
@@ -1768,7 +1778,7 @@ $$
                                   {\filterset {\thenprop {\prop{}}}
                                               {\elseprop {\prop{}}}}
                                       {\object{}}}
-                                      \\\\
+                                      \\
   \issubtypein {}
   {\s{d}}
   {\ArrowOne {\x{}} {\s{}} {\tp{}}
@@ -1781,6 +1791,7 @@ $$
                              {\filterset {\thenprop {\prop{}}}
                                          {\elseprop {\prop{}}}}
                              {\object{}}}}
+
 \infer [S-PMulti]
 { \issubtypein {} {\s{}} {\sp{}}
   \\
@@ -1817,7 +1828,7 @@ $$
 
 \newcommand\isapropsfigure[0]{
   \ma{
-\begin{array}{lllr}
+\begin{array}{llll}
   \isacomparealign{\s{}}{\path{\classpe{}}{\path{\pathelem{}}{\x{}}}}{\Value{\class{}}}
              {\filterset{\isprop{\class{}} {\path{\pathelem{}}{\x{}}}}
                         {\notprop{\class{}}{\path{\pathelem{}}{\x{}}}}}
@@ -1827,13 +1838,13 @@ $$
                {\filtersetparen{\isprop{\Value{\singletonmeta{}}} {\x{}}}
                    {\notprop{\Value{\singletonmeta{}}}{\x{}}}}
                    {\object{}}
-                   {\x{}}}\\
-                   && \ \text{if}\ {\singletonmeta{}} \not= \class{}
+                   {\x{}}}
+                   & \text{if}\ {\singletonmeta{}} \not= \class{}
                \\
   \isacomparealign{\s{}}{\object{}}{\t{}}
                   {\filterset{\topprop{}}
                              {\topprop{}}}
-                           \ \ \ \ \ \ \ \ \ \text{otherwise}
+                           &\text{otherwise}
 \end{array}
   }
 }
@@ -1937,11 +1948,11 @@ $$
 \newcommand\classtableallsyntax[0]{
   \ctentrymeta{} &::=& 
   \{ \ctmethodsliteral \mapsto 
-  \set{\overrightarrow{\ctmthentry{\mth{}}{\overrightarrow{\classhint{}}}{\classhint{}}}},&\mbox{Class descriptors} \\
-  &&\ \ 
-  \ctfieldsliteral \mapsto \{ \overrightarrow{\ctfldentry{\fld{}}{\classhint{}}} \},\\&&\ \ 
+  \set{\overrightarrow{\ctmthentry{\mth{}}{\overrightarrow{\classhint{}}}{\classhint{}}}},
+  \ctfieldsliteral \mapsto \{ \overrightarrow{\ctfldentry{\fld{}}{\classhint{}}} \},
   \ctconstructorsliteral \mapsto \{ \ctctorentry{\overrightarrow{\classhint{}}} \}
-                          \}\\
+                          \}
+  &\mbox{Class descriptors} \\
   \ct{}   &::=& \{ \overrightarrow{\classhint{} \mapsto \ctentrymeta{}} \}
                &\mbox{Class Table}
              }
@@ -2256,7 +2267,7 @@ and all of the following hold:
 If \judgementrewrite{\propenv{}}{\ep{}}{\t{}}{\filterset{\thenprop{\prop{}}}{\elseprop{\prop{}}}}{\object{}}{\e{}}
 and \opsem {\openv{}} {\e{}} {\v{}} 
 then \judgementrewrite{}{\v{}}{\t{}}{\filterset{\thenprop{\propp{}}}{\elseprop{\propp{}}}}{\objectp{}}{\v{}}
-        for some \thenprop{\propp{}}, \elseprop{\propp{}} and {\objectp{}}
+        for some \thenprop{\propp{}}, \elseprop{\propp{}} and {\objectp{}}.
       }
 
 \newcommand\soundnesstheoremnoproof[1]{

@@ -6,7 +6,7 @@ We now begin a tour of the central features of Typed Clojure,
 beginning with Clojure itself. In our presentation, we will make 
 use of the full Typed Clojure system to illustrate the key type system
 ideas, before studying the core features in detail in
-section~\ref{sec:formal}. 
+\secref{sec:formal}. 
 
 \subsection{Clojure}
 
@@ -67,6 +67,8 @@ is a static type error---\clj{nil} is not a string in Typed Clojure.
 
 \paragraph{Unions} We can make the annotation more permissive with \emph{ad-hoc unions}
 to allow \clj{nil}.
+All Clojure values are true except \clj{nil} and \clj{false}, so a \clj{nil} test
+amounts to a test on the value.
 
 \begin{minted}{clj}
 (ann  greet-nil [(U nil Str) -> Str])
@@ -77,8 +79,6 @@ to allow \clj{nil}.
 ;=> "Hello!"
 \end{minted}
 
-All Clojure values are true except \clj{nil} and \clj{false}, so the
-comma is only added when the argument is non-nil.
 
 Typed Clojure guarantees that well-typed code cannot
 dereference the null-pointer.
@@ -89,33 +89,26 @@ one of only two false values means it is a common choice to indicate
 
 \paragraph{Flow analysis} Typed Clojure uses occurrence typing~\cite{TF10} to
 model type-based control flow.
-In \clj{greetings}, a \clj{when} expression ensures \clj{repeat}
-is never passed a \clj{nil} argument.
+In \clj{greetings}, a branch ensures \clj{repeat}
+is never passed \clj{nil}.
 %
 \begin{minted}{clj}
 (ann  greetings [Str (U nil Int) -> Str])
 (defn greetings [n i]
-  (str "Hello, " (when i  ; when i is a non-nil integer
-                   (apply str (repeat i "hello, ")))
-       n "!"))
+  (str "Hello, " (when i (apply str (repeat i "hello, "))) n "!"))
 (greetings "Donald" 2)  ; :- Str
 ;=> "Hello, hello, hello, Donald!"
 (greetings "Grace" nil) ; :- Str
 ;=> "Hello, Grace!"
 \end{minted}
 %
-Removing the \clj{when} expression is a static type error---\clj{repeat} 
-cannot be passed \clj{nil}.
+Removing the branch is a static type error---\clj{repeat} cannot be passed \clj{nil}.
 %
 \begin{minted}{clj}
 (ann  greetings-bad [Str (U nil Int) -> Str])
-(defn greetings-bad [n i]
-  (str "Hello, " (apply str 
-                   (repeat i ; Type Error: Expected Int, given (U nil Int).
-                           "hello, "))
-       n "!"))
+(defn greetings-bad [n i]           ; Expected Int, given (U nil Int)
+  (str "Hello, " (apply str (repeat i "hello, ")) n "!"))
 \end{minted}
-
 
 
 %\subsection{Type System Basics}
@@ -249,7 +242,7 @@ Typed Clojure rejects programs that assume otherwise.
 (defn parent-bad-out [f :- File] :- Str
   (.getParent f)) ; Type Error: Expected Str, given (U nil Str).
 \end{minted}
-
+%
 %Typed Clojure and Java treat \java{null} differently.
 %In Clojure, where it is known as \clj{nil}, Typed Clojure assigns it an explicit type
 %called \clj{nil}. In Java \java{null} is implicitly a member of any reference type.
@@ -259,11 +252,11 @@ Typed Clojure rejects programs that assume otherwise.
 %Reference types in Java are nullable, so to guarantee a method call does not
 %leak \java{null} into a Typed Clojure program we
 %must assume methods can return \clj{nil}.
-
-In contrast, JVM invariants guarantee constructors return a non-null reference.\footnote{\url{http://docs.oracle.com/javase/specs/jls/se7/html/jls-15.html#jls-15.9.4}}
+%
+In contrast, JVM invariants guarantee constructors return non-null.\footnote{\url{http://docs.oracle.com/javase/specs/jls/se7/html/jls-15.html#jls-15.9.4}}
 %
 \begin{exmp}
-\inputminted[firstline=15,lastline=16]{clojure}{code/demo/src/demo/parent3.clj}
+\inputminted[firstline=15,lastline=15]{clojure}{code/demo/src/demo/parent3.clj}
 \end{exmp}
 
 
@@ -296,8 +289,7 @@ based on the dispatch value---the arguments are then passed to the method
 to finally return a value for the entire expression.
 %
 \begin{minted}{clojure}
-(map hi [:en :fr :bocce]) ; map over keyword vector 
-;=> ("hello" "bonjour" "um...")
+(map hi [:en :fr :bocce]) ;=> ("hello" "bonjour" "um...")
 \end{minted}
 %
 For example, 
@@ -357,8 +349,7 @@ is false. The \clj{String} method body
 chooses the \clj{File} method for opposite reasons,
 resulting in 
 \begin{minted}{clojure}
-(.getName (new File "STAINS/JELLY")) ; :- (U nil Str)
-;=> "JELLY"
+(.getName (new File "STAINS/JELLY")) ;=> "JELLY" :- (U nil Str)
 \end{minted}
 
 %The following Typed Clojure program is semantically identical to figure~\ref{fig:ex1}.
@@ -459,30 +450,23 @@ structure is the
 immutable hash-map, typicially with keyword keys. This structure is
 the primary way to represent compound data in Clojure programs.
 
-Hash-maps are accessed with the \clj{get} function:
+Keywords look themselves up in a map when called, or return \clj{nil}.
+%
 \begin{exmp}
 \begin{minted}{clojure}
 (def breakfast {:en "waffles" :fr "croissants"})
-(get breakfast :en)    ; :- Str
-;=> "waffles"
+(:en breakfast)  ;=> "waffles" :- Str
+(:bocce breakfast) ; nil :- nil
 \end{minted}
 \label{example:breakfastcomplete}
 \end{exmp}
-Additionally, keywords are functions that look themselves up in a
-map. Missing keys produce \clj{nil}.
-\begin{minted}{clojure}
-(:fr breakfast)        ; :- Str
-;=> "croissants"
-(:bocce breakfast) ; :- nil
-;=> nil
-\end{minted}
 
-In Typed Clojure, \emph{HMap types} describe the most common usages of
+\emph{HMap types} describe the most common usages of
 keyword-keyed maps.
 \begin{minted}{clojure}
 breakfast ; :- (HMap :mandatory {:en Str, :fr Str}, :complete? true)
 \end{minted}
-The inferred type for \clj{breakfast} holds two kinds of information---the known entries--\clj{:en}
+The inferred type for \clj{breakfast} holds two pieces of information---the known entries--\clj{:en}
 and \clj{:fr}---and their types, which are  \clj{:mandatory}, and that 
 no other key is present, since \clj{:complete?} is \clj{true}.
 
@@ -496,36 +480,38 @@ information about absent keys, only providing information on
 \begin{minted}{clojure}
 (ann lunch '{:en Str :fr Str})
 (def lunch {:en "muffin" :fr "baguette"})
-(:en lunch)    ; :- Str
-;=> "muffin"
-(:fr lunch)    ; :- Str
-;=> "baguette"
-(:bocce lunch) ; :- Any     ; Unknown lookups are now less accurate
-;=> nil
+(:bocce lunch) ; nil :- Any ; less accurate type
 \end{minted}
 \label{example:lunchpartial}
 \end{exmp}
+%(:en lunch)    ; :- Str
+%;=> "muffin"
+%(:fr lunch)    ; :- Str
+%;=> "baguette"
 
 \paragraph{HMaps in practice} The next example is extracted from a production system at CircleCI,
 a company with a large production Typed Clojure system
-(section~\ref{sec:casestudy} presents a case study and empirical
+(\secref{sec:casestudy} presents a case study and empirical
 result from this code base).
 
 \begin{exmp}
 \begin{minted}{clojure}
 (defalias RawKeyPair ; extra keys disallowed
   (HMap :mandatory {:pub RawKey, :priv RawKey}, :complete? true))
-
 (defalias EncKeyPair ; extra keys disallowed
   (HMap :mandatory {:pub RawKey, :enc-priv EncKey}, :complete? true))
 
 (ann enc-keypair [RawKeyPair -> EncKeyPair])
 (defn enc-keypair [{pk :priv :as kp}] ; original map is kp
-  (assoc (dissoc kp :priv)       ; remove unencrypted private key
-         :enc-priv (encrypt pk))) ; add encrypted private key
+  (assoc (dissoc kp :priv) :enc-priv (encrypt pk)))
 \end{minted}
 \label{example:circleci}
 \end{exmp}
+
+%(ann enc-keypair [RawKeyPair -> EncKeyPair])
+%(defn enc-keypair [{pk :priv :as kp}] ; original map is kp
+%  (assoc (dissoc kp :priv)       ; remove unencrypted private key
+%         :enc-priv (encrypt pk))) ; add encrypted private key
 
 %\inputminted[firstline=10,lastline=22]{clojure}{code/demo/src/demo/key.clj}
 If we forget to remove the unencrypted private key,
@@ -534,10 +520,7 @@ a type error is given, because \clj{EncKeyPair} is fully specified.
 \begin{minted}{clojure}
 (ann enc-keypair-bad [RawKeyPair -> EncKeyPair])
 (defn enc-keypair-bad [{pk :priv :as kp}]
-  (assoc kp :enc-priv (encrypt pk)))
-  ; Type Error: Expected EncKeyPair, given 
-  ;   (HMap :mandatory {:enc-priv EncKey, :priv RawKey, :pub RawKey}
-  ;         :complete? true)
+  (assoc kp :enc-priv (encrypt pk))) ; Type error: :pub disallowed
 \end{minted}
 The extra \clj{:priv} entry does not match \clj{EncKeyPair}, so a type error
 is raised.
@@ -605,8 +588,8 @@ is raised.
 Since HMaps are the primary way of specifying the structure of data in Clojure,
 and multimethods are the primary tool for dispatching on data, they are inevitably
 linked.
-There are infinite ways of both structuring and dispatching on data,
-so we cannot hope to merely add a set of special case rules for
+There are infinite ways of structuring and dispatching on data,
+so we cannot merely add a set of special case rules for
 handling these features. Instead, as type system designers, we must
 search for a compositional approach.
 
@@ -615,7 +598,7 @@ Thankfully, occurrence typing, originally designed for reasoning about
 By extending the system with
 a handful of rules based on HMaps and other functions, 
 we can automatically cover both easy cases and those
-that compose simple rules in arbitrary ways.
+that compose rules in arbitrary ways.
 
 Futhermore, this approach extends to multimethod dispatch---the primitive branching
 mechanism works like the humble \clj{if} conditional. 
@@ -683,8 +666,8 @@ We have already seen dispatch on \clj{class} and on keywords
 in isolation---occurrence typing automatically understands
 control flow that combines its simple building blocks.
 
-In the first method, the dispatch value is the class \clj{Long}, a subtype
-of \clj{Int}, and the second method has dispatch value \clj{nil}, the sentinel value for a failed map lookup.
+The first method has dispatch value \clj{Long}, a subtype
+of \clj{Int}, and the second method has \clj{nil}, the sentinel value for a failed map lookup.
 In practice, \clj{:lunch} and \clj{:dinner} meals will dispatch to the \clj{Long}
 method, but Typed Clojure infers a slightly more general type due to the definition
 of \clj{:combo} meals.
@@ -732,18 +715,18 @@ must be true---which implies \clj{(class (:desserts o))} is \clj{nil}.
 Since lookups on missing keys return \clj{nil}, either
 \begin{itemize}
   \item \clj{o} has a \clj{:desserts} entry to \clj{nil}, like \clj{{:desserts nil}}, or
-  \item \clj{o} is missing a \clj{:desserts} entry, like \clj{{}}.
+  \item \clj{o} is missing a \clj{:desserts} entry.%, like \clj{{}}.
 \end{itemize}
-Equivalently, we learn \clj{o} is of type
+We can express this type with the \clj{:absent-keys} HMap option
+%Equivalently, \clj{o} is of type
 % Note: mintedinline doesn't work with hash characters #
 \begin{minted}{clojure}
-; :absent-keys, a set of known absent entries
 (U '{:desserts nil} (HMap :absent-keys #{:desserts}))
 \end{minted}
 This eliminates non-\clj{:combo} meals
 since their \clj{'{:desserts Int}} type does not agree
 with this new information (because \clj{:desserts}
-is neither mapped to \clj{nil} or absent).
+is neither \clj{nil} or absent).
 
 %simplifies to a \clj{:combo} meal, 
 %\begin{minted}{clojure}

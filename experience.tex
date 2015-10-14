@@ -3,7 +3,8 @@
 
 Typed Clojure is implemented as a Clojure library---\coretyped{}.
 In contrast to Racket, Clojure does not provide extension
-points to the macroexpander. To satisfy our goals of providing
+points to the macroexpander. 
+To satisfy our goals of providing
 Typed Clojure as a library that works with the latest version of the Clojure
 compiler, \coretyped{} is implemented as an external static analysis pass
 that must be explicitly invoked by the programmer, and not as an
@@ -54,21 +55,21 @@ type-based optimisation is impossible.
 %             }
 %\end{mathpar}
 
-\subsection{Further Extensions}
-
-In addition to the key features we present in this paper,
-\coretyped{} supports other extensions to handle additional Clojure
-features. 
-
-\smallsection{Datatypes, Records and Protocols}
-Clojure features datatypes and protocols. Datatypes are Java classes
-declared final with public final fields. They can implement Java interfaces
-or protocols, which are similar to interfaces but already-defined classes
-and \nil{} may extend protocols.
+%\subsection{Further Extensions}
 %
-Typed Clojure can reason about most of these features,
-including the ability to define polymorphic datatypes and protocols and
-utilising the Java type system to help check implemented interface methods.
+%In addition to the key features we present in this paper,
+%\coretyped{} supports other extensions to handle additional Clojure
+%features. 
+%
+%\smallsection{Datatypes, Records and Protocols}
+%Clojure features datatypes and protocols. Datatypes are Java classes
+%declared final with public final fields. They can implement Java interfaces
+%or protocols, which are similar to interfaces but already-defined classes
+%and \nil{} may extend protocols.
+%%
+%Typed Clojure can reason about most of these features,
+%including the ability to define polymorphic datatypes and protocols and
+%utilising the Java type system to help check implemented interface methods.
 
 %\smallsection{Intersection Types}
 %Typed Clojure includes simple intersection types which do no sophisticated
@@ -79,57 +80,27 @@ utilising the Java type system to help check implemented interface methods.
 %Without intersection types, we must choose which piece of information to forget.
 %In Typed Clojure, \clj{x} is simply of type \clj{(I x Number)}.
 %
-\smallsection{Mutation and Polymorphism}
-Clojure supports mutable references with software-transactional-memory
-which Typed Clojure defines \emph{bivariantly}---with write and read type parameters
-as in the atomic reference \clj{(Atom2 Int Int)} which can write and read \clj{Int}.
-Typed Clojure also supports parametric polymorphism, including
-Typed Racket's variable-arity polymorphism~\cite{stf-esop}, 
-which enables us to assign a type to functions like \clj{swap!} (\figref{main:fig:swap!}),
-which takes a mutable \emph{atom},
-a function and extra arguments, and swaps into the atom the result of
-applying the function to the atom's current value and the extra arguments.
-
-\begin{figure}
-\begin{minted}{clojure}
-(ann clojure.core/swap! (All [w r b ...] 
-                          [(Atom2 w r) [r b ... b -> w] b ... b -> w]))
-(swap! (atom :- Num 1) + 2 3);=> 6 (atom contains 6)
-\end{minted}
-%\inputminted[firstline=5,lastline=5]{clojure}{code/demo/src/demo/atom.clj}
-\caption{Type annotation and example call of \clj{swap!}}
-\label{main:fig:swap!}
-\end{figure}
-
-\subsection{Limitations}
-\smallsection{Java Arrays}
-Java arrays are known to be statically unsound.
-\cite{Bra98} summarises the approach taken to regain runtime soundness, which involves
-checking array writes at runtime.
-
-Typed Clojure implements an experimental partial solution, making arrays \emph{bivariant},
-separating the write and read types into contravariant and covariant parameters.
-If the array originates from typed code, then we may track the write and read
-parameters statically. Currently arrays from foreign sources
-have their write parameter set to to \Bot{}, protecting typed code from writing
-something of incorrect type. However there are currently no casting mechanisms to 
-convince Typed Clojure the foreign array is writeable.
-
-\smallsection{Array-backed sequences}
-Typed Clojure assumes sequences are immutable. This is almost always true, however
-for performance reasons,
-sequences created from Java arrays (and Iterables) reflect future writes to the array 
-in the `immutable' sequence. While disturbing and a clear unsoundness in Typed Clojure,
-this has not yet been an issue in practice and is strongly discouraged as undefined behavior:
-``Robust programs should not mutate arrays or Iterables that have seqs on them.''~\cite{CljSeqDoc}.
-
-\smallsection{Typed-untyped interoperation}
-Currently, interactions between typed and untyped Clojure code are unchecked
-which can violate the expectations of Typed Clojure.
-Gradual typing~\cite{thf06,siek06:_gradual} ensures sound interoperability between typed and untyped code by enforcing
-invariants of the type system via run-time contracts.
- We hope to add support
-for gradual typing in the future.
+%\smallsection{Mutation and Polymorphism}
+%Clojure supports mutable references with software-transactional-memory
+%which Typed Clojure defines \emph{bivariantly}---with write and read type parameters
+%as in the atomic reference \clj{(Atom2 Int Int)} which can write and read \clj{Int}.
+%Typed Clojure also supports parametric polymorphism, including
+%Typed Racket's variable-arity polymorphism~\cite{stf-esop}, 
+%which enables us to assign a type to functions like \clj{swap!} (\figref{main:fig:swap!}),
+%which takes a mutable \emph{atom},
+%a function and extra arguments, and swaps into the atom the result of
+%applying the function to the atom's current value and the extra arguments.
+%
+%\begin{figure}
+%\begin{minted}{clojure}
+%(ann clojure.core/swap! (All [w r b ...] 
+%                          [(Atom2 w r) [r b ... b -> w] b ... b -> w]))
+%(swap! (atom :- Num 1) + 2 3);=> 6 (atom contains 6)
+%\end{minted}
+%%\inputminted[firstline=5,lastline=5]{clojure}{code/demo/src/demo/atom.clj}
+%\caption{Type annotation and example call of \clj{swap!}}
+%\label{main:fig:swap!}
+%\end{figure}
 
 \subsection{Evaluation}
 \label{sec:casestudy}
@@ -204,10 +175,11 @@ wrapping existing \emph{javax.mail} functionality.
 CircleCI %% \footnote{\url{https://circleci.com/}}
 provides continuous integration services built with a mixture of open-
 and closed-source.
-Typed Clojure has been used at CircleCI in production  systems for at least two years.
-
-CircleCI provided the first author access to the main closed-source backend system written in Clojure
-and Typed Clojure.
+Typed Clojure has been used at CircleCI in production systems for two years \cite{CircleCIUsesTC},
+an experience we summarise in \secref{sec:limitations}.
+%
+%CircleCI provided the first author access to the main closed-source backend system written in Clojure
+%and Typed Clojure.
 %We conducted a study of the effectiveness of Typed Clojure in practice.
 %There is no clear metric for quantifying typed Clojure code, since untyped code
 %can be freely mixed and some seemingly typed namespaces are not checked
@@ -220,23 +192,23 @@ and Typed Clojure.
 %and also considered those untyped.
 %Furthermore, we manually collected and inspected all top-level annotations and
 %classified them.
+%
+%We determined that
+They maintain a mixed typed-untyped Clojure code base of
+382 namespaces comprising around 55,000 lines, 
 
-We determined that
-CircleCI has a Clojure code base of
-382 namespaces comprising around 55,000 lines, excluding tests, including 87 namespaces
-and around 19,000 lines of typed code.
 %% Out of 588 top-level var annotations, 270 (46\%) were checked annotations of
 %% functions defined in typed code,
 %% 129 (22\%) annotations assigned types to external libraries 
 %% and the remaining 189 (32\%) annotated `unchecked' user code.
-Some of the type-annotated definitions were so annotated by the first
-author and contributed back to CircleCI.
+%Some of the type-annotated definitions were so annotated by the first
+%author and contributed back to CircleCI.
 %HMaps were a valuable feature, with 38 (59\%) out of 64 total type aliases
 %featuring them; see \egref{example:circleci} for an instance.
 %
 %Because of various shortcomings of \coretyped{}, all 57 \clj{defmethod}
 %expressions in typed namespaces were unchecked.
-
+%
 %811 top-level var annotations
 %
 %% Due to a lack of checked multimethods,
@@ -268,35 +240,35 @@ Of 328 lookup operations on HMaps,
 70 (21\%) to optional keys,
 20 (6\%) to absent keys, and
 30 (9\%) lookups are unresolved.
-
+%
 % :collect/defalias-is-HMap     62
 % :invoke-special-collect/(quote clojure.core.typed/def-alias*)     95 
 Of 95 total type aliases defined with \clj{defalias},
 62 (65\%) involved one or more HMap types.
-
-% :new-special/(quote clojure.lang.MultiFn)     11
-
-% :check/:static-call    525
-% :check/static-call-clojure-lang-probably-inline    499
-% = 26 user
-
-% :check/:instance-call    510
-% :check/instance-call-clojure-lang-probably-inline    474
-% = 36 user
-
-% :check/:new    159
-% :check/new-clojure-lang-probably-inline    121
-% = 38
-
-% :check/:static-field     92
-% :check/static-field-clojure-lang-probably-inline     87
-% = 5
-
-% 26 + 36 + 38 + 5 = 105
-
-% :invoke-special-collect/(quote clojure.core.typed/non-nil-return*) 35
-% :invoke-special-collect/(quote clojure.core.typed/nilable-param*)  1
-
+%
+%% :new-special/(quote clojure.lang.MultiFn)     11
+%
+%% :check/:static-call    525
+%% :check/static-call-clojure-lang-probably-inline    499
+%% = 26 user
+%
+%% :check/:instance-call    510
+%% :check/instance-call-clojure-lang-probably-inline    474
+%% = 36 user
+%
+%% :check/:new    159
+%% :check/new-clojure-lang-probably-inline    121
+%% = 38
+%
+%% :check/:static-field     92
+%% :check/static-field-clojure-lang-probably-inline     87
+%% = 5
+%
+%% 26 + 36 + 38 + 5 = 105
+%
+%% :invoke-special-collect/(quote clojure.core.typed/non-nil-return*) 35
+%% :invoke-special-collect/(quote clojure.core.typed/nilable-param*)  1
+%
 Out of 105 Java interactions, 26 (25\%) are static methods, 36 (34\%)
 are instance methods, 38 (36\%) are constructors, and 5 (5\%) are static
 fields. 35 methods are overriden to return non-nil, and 1 method 
@@ -332,20 +304,80 @@ unsupported Clojure idioms,
 and hard-to-check code.
 
 \paragraph{Lessons}
-Based on our empirical survey, it's clear that the features we
-consider are vital---they are used on average more than once per typed
-function. Furthermore, as we have seen in the CircleCI case study, the
-combination of heterogenous maps and multimethods is pervasive. The
-data therefore validates our choice of a type system that supports
-expressive multimethod definition and acknowledges the relationship
-between these seemingly-distinct features. 
+Based on our empirical survey, it's clear that HMaps and Java interoperability support
+are vital features---they are used on average more than once per typed
+function. 
 
-The other lesson from our case studies and from other interactions
-with Typed Clojure users, it is clear the main barrier to entry to
-Typed Clojure for large systems is the requirement to annotate
-functions outside the borders of typed code.  We hope that this
-can be addressed by making annotations available for popular
-libraries.
+Multimethods are less common
+in our case studies. The entire CircleCI code base contained only 26 multimethods,
+are contained in the actual 
+
+%The
+%data therefore validates our choice of a type system that supports
+%expressive multimethod definition and acknowledges the relationship
+%between these seemingly-distinct features. 
+
+%
+%The other lesson from our case studies and from other interactions
+%with Typed Clojure users, it is clear the main barrier to entry to
+%Typed Clojure for large systems is the requirement to annotate
+%functions outside the borders of typed code.  We hope that this
+%can be addressed by making annotations available for popular
+%libraries.
+
+\subsection{Limitations}
+\label{sec:limitations}
+
+After a 2 year trial, our second case study  disabled type checking~\cite{CircleCIBlog}
+because of issues with the Typed Clojure implementation.% We summarise the main issues.
+
+\smallsection{Performance}
+CircleCI reports a 3GHz i7 MacBook Pro takes 2 minutes
+to check a single namespace. Typed Clojure does not cache results of
+transitive dependencies for correctness, and we conjecture adding this feature will significantly
+improve re-checking performance.
+Preserving static soundness in the context of arbitrary code reloading is a largely unexplored area.
+
+\smallsection{Library annotations}
+Annotations for external code is rarely available, so a large part of the
+untyped-typed porting process is reverse engineering libraries.
+
+\smallsection{Unsupported idioms}
+While the current set of features is vital to checking Clojure code, as we have seen
+in \secref{sec:casestudy} there is still much work to do.
+In practice, common Clojure functions are too polymorphic for the current implementation
+or theory to account for. For example, \clj{comp} provides variable-arity function composition,
+and further research is required to check callsites.
+
+%\smallsection{Java Arrays}
+%Java arrays are known to be statically unsound.
+%\cite{Bra98} summarises the approach taken to regain runtime soundness, which involves
+%checking array writes at runtime.
+%
+%Typed Clojure implements an experimental partial solution, making arrays \emph{bivariant},
+%separating the write and read types into contravariant and covariant parameters.
+%If the array originates from typed code, then we may track the write and read
+%parameters statically. Currently arrays from foreign sources
+%have their write parameter set to to \Bot{}, protecting typed code from writing
+%something of incorrect type. However there are currently no casting mechanisms to 
+%convince Typed Clojure the foreign array is writeable.
+
+%\smallsection{Array-backed sequences}
+%Typed Clojure assumes sequences are immutable. This is almost always true, however
+%for performance reasons,
+%sequences created from Java arrays (and Iterables) reflect future writes to the array 
+%in the `immutable' sequence. While disturbing and a clear unsoundness in Typed Clojure,
+%this has not yet been an issue in practice and is strongly discouraged as undefined behavior:
+%``Robust programs should not mutate arrays or Iterables that have seqs on them.''~\cite{CljSeqDoc}.
+
+\smallsection{Typed-untyped interoperation}
+Currently, interactions between typed and untyped Clojure code are unchecked
+which can violate the expectations of Typed Clojure.
+Gradual typing~\cite{thf06,siek06:_gradual} ensures sound interoperability between typed and untyped code by enforcing
+invariants of the type system via run-time contracts.
+ We hope to add support
+for gradual typing in the future.
+
 
 
 %OLD

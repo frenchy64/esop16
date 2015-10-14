@@ -12,8 +12,8 @@
 (fn [^File f :- File] :- (U nil Str)
   (.getParent f))
 
-(fn [s :- String] :- File
-  (new File s))
+(parent (new File s))
+
 
 (defn parent [f :- (U nil File)]
   (if f (.getParent f) nil))
