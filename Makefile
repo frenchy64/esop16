@@ -4,8 +4,8 @@ all:
 	pdflatex -shell-escape small.tex 
 	bibtex small
 	pdflatex -shell-escape small.tex 
-	pdftk small.pdf cat 1-13 output typed-clojure-draft.pdf
-	pdftk small.pdf cat 14-end output typed-clojure-supplemental.pdf
+	pdftk small.pdf cat 1-28 output typed-clojure-draft.pdf
+	pdftk small.pdf cat 29-end output typed-clojure-supplemental.pdf
 
 fast:
 	pdflatex -shell-escape small.tex 
