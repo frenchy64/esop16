@@ -11,12 +11,12 @@ that must be explicitly invoked by the programmer, and not as an
 integral part of the Clojure compilation process. 
 %Therefore, \coretyped{} is in a sense a linter.
 
-This means that type checking is truly optional. 
+This means that type checking is  optional. 
 On the positive side, \coretyped{} is flexible to the needs of a dynamically
 typed programmer, encouraging experimentation with programs that may not
 type check.
 On the negative side, programmers must remember to type check their namespaces.
-Also, programs cannot depend on  Typed Clojure's typs, meaning that
+Also, the compiler cannot depend on types, making
 type-based optimisation is impossible. 
 %If this were not the case, we could dispose of type-hints
 %altogether, and simply use static types to resolve reflection.
@@ -307,7 +307,7 @@ and hard-to-check code.
 Based on our empirical survey, HMaps and Java interoperability support
 are vital features used on average more than once per typed
 function. 
-
+%
 Multimethods are less common
 in our case studies. The CircleCI code base contains only 26 multimethods,
 a low number in our experience.

@@ -28,21 +28,16 @@ not claim propositions about variables hidden in their closures.
 
 %{\consistentwithonlydef{main}}
 
-Our main lemma says if there is a defined reduction, then the propositions, object
-and type are correct.
-The metavariable \definedreduction{} ranges over \v{}, \errorvalv{} and \wrong{}.
+We can now state our main lemma and soundness theorem.  The
+metavariable \definedreduction{} ranges over \v{}, \errorvalv{} and
+\wrong{}. Proofs are deferred to \ref{appendix:lemma:soundness}.
 
 \begin{lemma}\label{main:lemma:soundness}
 
   {\soundnesslemmahypothesis}
-  \begin{proof}
-    By induction on the derivation of \opsem {\openv{}} {\e{}} {\a{}}.
-    (Full proof given as lemma~\ref{appendix:lemma:soundness}).
-  \end{proof}
 \end{lemma}
 
 
-We can now state our soundness theorem.
 
 {\soundnesstheoremnoproof{main}}
 

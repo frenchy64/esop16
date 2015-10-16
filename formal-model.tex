@@ -1412,14 +1412,6 @@ and applies it to the original argument for the final result.
   \label{main:figure:hmapsyntax}
 \end{figure}
 
-\begin{figure}
-  \footnotesize
-  $$
-\LUpdate{}
-$$
-\caption{Update rule}
-\label{main:figure:updaterule}
-\end{figure}
 
 \begin{figure}
   \footnotesize
@@ -1581,7 +1573,12 @@ $$
 
 The occurrence typing proof system uses standard propositional logic,
 except for where nested information is combined. This is
-handled by L-Update (\figref{main:figure:updaterule}).
+handled by L-Update:
+{  \footnotesize
+  $$
+\LUpdate{}
+$$
+}
 
 It says
 under \propenv{}, if object \path{\pathelemp{}}{\x{}} is of type \t{}, and 
