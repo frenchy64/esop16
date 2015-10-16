@@ -1473,12 +1473,15 @@ The result type is \String, and the return object is \path{\keype{\makekw{en}}}{
 The object {\replacefor {\path {\keype{k}} {\x{}}} {\object{}} {\x{}}}
 is a symbolic representation for a keyword lookup of $k$ in \object{}.
 The substitution for {\x{}} handles the case where \object{} is empty.
-$$
+\begin{mathpar}
 \begin{array}{rcl}
 {\replacefor {\path {\keype{k}} {\x{}}} {\y{}} {\x{}}} &=& {\path {\keype{k}} {\y{}}} \\
+\end{array}
+\ \ \ \ \ \ \ 
+\begin{array}{rcl}
 {\replacefor {\path {\keype{k}} {\x{}}} {\emptyobject{}} {\x{}}} &=& \emptyobject{}
 \end{array}
-$$
+\end{mathpar}
 
 An absent lookup is checked by T-GetHMapAbsent.
 $$

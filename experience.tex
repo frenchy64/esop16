@@ -328,15 +328,14 @@ a low number in our experience.
 \subsection{Limitations}
 \label{sec:limitations}
 
-After a 2 year trial, our second case study  disabled type checking~\cite{CircleCIBlog}
-because of issues with the Typed Clojure implementation.% We summarise the main issues.
+After a 2 year trial, the second case study  disabled type checking~\cite{CircleCIBlog}
+citing issues with the checker implementation.% We summarise the main issues.
 
 \smallsection{Performance}
-CircleCI reports a 3GHz i7 MacBook Pro takes 2 minutes
-to check a single namespace. Typed Clojure does not cache results of
-transitive dependencies for correctness, and we conjecture adding this feature will significantly
-improve re-checking performance.
-Preserving static soundness in the context of arbitrary code reloading is a largely unexplored area.
+Rechecking files with transitive dependencies is expensive since they all must be rechecked.
+We conjecture caching type state will significantly
+improve re-checking performance,
+though preserving static soundness in the context of arbitrary code reloading is a largely unexplored area.
 
 \smallsection{Library annotations}
 Annotations for external code is rarely available, so a large part of the
