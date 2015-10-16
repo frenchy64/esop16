@@ -47,10 +47,9 @@ address in Typed Clojure.
 
 \subsection{Typed Clojure}
 
-Here is a simple program in Typed Clojure.
+Here is a simple one-argument function
 %
-We define \clj{greet} as a one-argument function
-taking and returning a string.
+\clj{greet} that takes and returns strings.
 
 \begin{minted}{clj}
 (ann  greet [Str -> Str])
@@ -59,37 +58,30 @@ taking and returning a string.
 ;=> "Hello, Grace!"
 \end{minted}
 %
-Strings are accepted, but providing \clj{nil} (Clojure's name for Java's \java{null})
-is a static type error---\clj{nil} is not a string in Typed Clojure.
+Providing \clj{nil} (exactly Java's \java{null})
+is a static type error---\clj{nil} is not a string.
 %
 \begin{minted}{clj}
 (greet nil) ; Type Error: Expected Str, given nil
 \end{minted}
 
-\paragraph{Unions} We can make the annotation more permissive with \emph{ad-hoc unions}
-to allow \clj{nil}.
-All Clojure values are true except \clj{nil} and \clj{false}, so a \clj{nil} test
-amounts to a test on the value.
+\paragraph{Unions} To allow \clj{nil}, we use \emph{ad-hoc unions} (\clj{nil} and \clj{false}
+are logically false).
 
 \begin{minted}{clj}
 (ann  greet-nil [(U nil Str) -> Str])
 (defn greet-nil [n] (str "Hello" (when n (str ", " n)) "!"))
-(greet-nil "Donald") ; :- Str
-;=> "Hello, Donald!"
-(greet-nil nil)      ; :- Str
-;=> "Hello!"
+(greet-nil "Donald") ;=> "Hello, Donald!" :- Str 
+(greet-nil nil)      ;=> "Hello!"         :- Str
 \end{minted}
 
 
-Typed Clojure guarantees that well-typed code cannot
-dereference the null-pointer.
-This is especially important for Clojure programs---\clj{nil}
-is treated like any other distinct datum in Clojure,  and its status as
-one of only two false values means it is a common choice to indicate
-``nothing'' or ``failure''.
+Typed Clojure prevents well-typed code from dereferencing \clj{nil}.
+%This is important for Clojure programs---\clj{nil}
+%is treated like any other distinct datum in Clojure.
 
-\paragraph{Flow analysis} Typed Clojure uses occurrence typing~\cite{TF10} to
-model type-based control flow.
+\paragraph{Flow analysis} Occurrence typing~\cite{TF10}
+models type-based control flow.
 In \clj{greetings}, a branch ensures \clj{repeat}
 is never passed \clj{nil}.
 %
@@ -97,10 +89,8 @@ is never passed \clj{nil}.
 (ann  greetings [Str (U nil Int) -> Str])
 (defn greetings [n i]
   (str "Hello, " (when i (apply str (repeat i "hello, "))) n "!"))
-(greetings "Donald" 2)  ; :- Str
-;=> "Hello, hello, hello, Donald!"
-(greetings "Grace" nil) ; :- Str
-;=> "Hello, Grace!"
+(greetings "Donald" 2)  ;=> "Hello, hello, hello, Donald!" :- Str
+(greetings "Grace" nil) ;=> "Hello, Grace!"                :- Str
 \end{minted}
 %
 Removing the branch is a static type error---\clj{repeat} cannot be passed \clj{nil}.
@@ -177,31 +167,26 @@ Removing the branch is a static type error---\clj{repeat} cannot be passed \clj{
 \subsection{Java interoperability}
 \label{sec:overviewjavainterop}
 
-Clojure supports interoperability with Java, including the ability to
-call constructors, invoke methods, and access fields.
-
-The following Typed Clojure program constructs a new \clj{File}
-instance and calls the \clj{getParent} method on the result,
-returning a nullable string \clj{"a"}.
+Clojure can interact with Java constructors, methods, and fields.
+This program calls the \clj{getParent} on a constructed
+\clj{File}
+instance, inferred as a nullable string.
 
 \begin{exmp}
 \begin{minted}{clj}
-(.getParent (new File "a/b"))  ; :- (U nil Str)
-;=> "a"
+(.getParent (new File "a/b"))  ;=> "a" :- (U nil Str)
 \end{minted}
 \label{example:getparent-direct-constructor}
 \end{exmp}
-
-Typed Clojure helps the Clojure compiler avoid expensive reflective 
-calls,
-however if a specific constructor, method, or field cannot be found based on the
+%
+Typed Clojure can optionally integrate with the Clojure compiler to avoid expensive reflective 
+calls, however if a specific constructor, method, or field cannot be found based on the
 static types of its arguments, a type error is thrown.
-
+%
 \begin{minted}{clj}
 (fn [f] (.getParent f)) ; Type Error: Unresolved interop: getParent
-                  
 \end{minted}
-
+%
 Function arguments default to \clj{Any}, the most permissive type. Ascribing
 a parameter type allows Typed Clojure to find a specific method.
 
@@ -227,16 +212,12 @@ it is a static type error, as typed code could possibly dereference \clj{nil}.
 (defn parent-bad-in [f :- (U nil File)]
   (.getParent f)) ; Type Error: Cannot call instance method on nil.
 \end{minted}
-Since Java-level types do not provide information about nullability,
-by default Typed Clojure conservatively assumes that Java method and
-constructor arguments, such as \clj{"a/b"} provided to the \clj{File} constructor in
-\egref{example:getparent-direct-constructor},
- must be \emph{non-nullable}, but this can be
-configured for  particular calls as needed.
-The target of method invocations is always non-nullable.
+Since Java-level types lack nullability information,
+Typed Clojure conservatively asserts Java methods and
+constructor arguments cannot be passed \clj{nil}---this restriction can be
+adjusted per method. Method targets can never be \clj{nil}.
 
-Any Java method returning a reference can also return \java{null} ---
-Typed Clojure rejects programs that assume otherwise.
+Typed Clojure rejects programs that assume methods cannot return \clj{nil}.
 %
 \begin{minted}{clj}
 (defn parent-bad-out [f :- File] :- Str
@@ -305,18 +286,18 @@ definition, but this is only part of the story for multimethod dispatch.
 For class values, multimethods can choose methods based on subclassing
 relationships.
 %
-Recall the multimethod from figure~\ref{fig:ex1}, reproduced here.
-\begin{minted}{clj}
-(ann pname [(U File String) -> (U nil String)])
-(defmulti pname class)
-(defmethod pname String [s] (pname (new File s)))
-(defmethod pname File [f] (.getName f))
-\end{minted}
-
+Recall the multimethod from \figref{fig:ex1}. %, reproduced here.
+%\begin{minted}{clj}
+%(ann pname [(U File String) -> (U nil String)])
+%(defmulti pname class)
+%(defmethod pname String [s] (pname (new File s)))
+%(defmethod pname File [f] (.getName f))
+%\end{minted}
+%
 %Its dispatching function is
 %\clj{class}, with two methods associated with dispatch values \clj{java.lang.String} and \clj{java.io.File}
 %respectively.
-\noindent
+%\noindent
 The dispatch function \clj{class}
 %---associated at multimethod creation with \clj{defmulti}---
 dictates 
@@ -327,30 +308,30 @@ The multimethod dispatch rules use
 \clj{isa?}, a hybrid predicate which is a subclassing check for classes and
 an equality check for other values.
 
+%(isa? (class "STAINS/JELLY") Object) ;=> true
+%(isa? (identity :en) :fr) ;=> false
+%(isa? (class (new File "JELLY")) String) ;=> false
 \begin{minted}{clojure}
-(isa? (identity :en) :en) ;=> true
-(isa? (identity :en) :fr) ;=> false
-(isa? (class "STAINS/JELLY") String) ;=> true
-(isa? (class "STAINS/JELLY") Object) ;=> true
-(isa? (class (new File "JELLY")) String) ;=> false
+(isa? :en :en)       ;=> true
+(isa? String Object) ;=> true
 \end{minted}
 %
 The current dispatch value and---in turn---each method's associated dispatch value
 is supplied to \clj{isa?}. If exactly one method returns true, it is chosen.
-
-In our example,
+%
+For example,
+the call
   \clj{(pname "STAINS/JELLY")}
-chooses the  method for \clj{String} because
-\clj{(isa? (class "STAINS/JELLY") String)}
-is true and
-\clj{(isa? (class "STAINS/JELLY") File)}
-is false. The \clj{String} method body
-\clj{(pname (new File "STAINS/JELLY"))}
-chooses the \clj{File} method for opposite reasons,
-resulting in 
-\begin{minted}{clojure}
-(.getName (new File "STAINS/JELLY")) ;=> "JELLY" :- (U nil Str)
-\end{minted}
+picks the \clj{String} method because \clj{(isa? String String)}
+is true, and
+\clj{(isa? String File)}
+is not.
+%---\clj{(class "STAINS/JELLY")}
+%is \clj{String}.
+%
+%The \clj{String} method body
+%\clj{(pname (new File "STAINS/JELLY"))}
+%chooses the \clj{File} method for opposite reasons.
 
 %The following Typed Clojure program is semantically identical to figure~\ref{fig:ex1}.
 %
@@ -455,8 +436,8 @@ Keywords look themselves up in a map when called, or return \clj{nil}.
 \begin{exmp}
 \begin{minted}{clojure}
 (def breakfast {:en "waffles" :fr "croissants"})
-(:en breakfast)  ;=> "waffles" :- Str
-(:bocce breakfast) ; nil :- nil
+(:en breakfast)    ;=> "waffles" :- Str
+(:bocce breakfast) ;=> nil       :- nil
 \end{minted}
 \label{example:breakfastcomplete}
 \end{exmp}
@@ -480,7 +461,7 @@ information about absent keys, only providing information on
 \begin{minted}{clojure}
 (ann lunch '{:en Str :fr Str})
 (def lunch {:en "muffin" :fr "baguette"})
-(:bocce lunch) ; nil :- Any ; less accurate type
+(:bocce lunch) ;=> nil :- Any ; less accurate type
 \end{minted}
 \label{example:lunchpartial}
 \end{exmp}
@@ -514,16 +495,12 @@ result from this code base).
 %         :enc-priv (encrypt pk))) ; add encrypted private key
 
 %\inputminted[firstline=10,lastline=22]{clojure}{code/demo/src/demo/key.clj}
-If we forget to remove the unencrypted private key,
-a type error is given, because \clj{EncKeyPair} is fully specified.
+As \clj{EncKeyPair} is fully specified, we must remove extra keys like \clj{:priv}.
 %
 \begin{minted}{clojure}
-(ann enc-keypair-bad [RawKeyPair -> EncKeyPair])
 (defn enc-keypair-bad [{pk :priv :as kp}]
-  (assoc kp :enc-priv (encrypt pk))) ; Type error: :pub disallowed
+  (assoc kp :enc-priv (encrypt pk))) ; Type error: :priv disallowed
 \end{minted}
-The extra \clj{:priv} entry does not match \clj{EncKeyPair}, so a type error
-is raised.
 
 %\clj{enc-keypair} takes an unencrypted keypair and returns an encrypted keypair by
 %dissociating the raw \clj{:priv} entry with \clj{dissoc}
