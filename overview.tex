@@ -3,26 +3,27 @@
 \label{sec:overview}
 
 We now begin a tour of the central features of Typed Clojure,
-beginning with Clojure itself. In our presentation, we will make 
-use of the full Typed Clojure system to illustrate the key type system
+beginning with Clojure itself. Our presentation
+uses the full Typed Clojure system to illustrate key type system
 ideas, before studying the core features in detail in
 \secref{sec:formal}. 
 
 \subsection{Clojure}
 
-Clojure~\cite{Hic08} is a Lisp built to run on the
-Java Virtual Machine with exemplary support for concurrent programming
-and immutable data structures. It emphasizes mostly-functional
-programming, restricting imperative updates to a limited set of
-structures which have specific thread synchronization behaviour. By
-default, it provides fast implementations of immutable lists, vectors,
-and hash tables, which are used for most data structures, although it
-also provides means for defining new records.
-
-One of Clojure's primary advantages is easy interoperation with
-existing Java libraries. It automatically generates appropriate JVM
-bytecode to make Java method and constructor calls, and treats Java
-values as any other Clojure value. However, this smooth
+Clojure~\cite{Hic08} is a Lisp that runs on the
+Java Virtual Machine with support for concurrent programming
+and immutable data structures in a mostly-functional
+style.
+%, restricting imperative updates to a limited set of
+%structures each with specific thread synchronization behaviour. 
+%Fast implementations of immutable vectors, and hash tables are featured,
+%and a means for defining new records.
+%
+Clojure provides easy interoperation with
+existing Java libraries,
+with
+Java
+values being as any other Clojure value. However, this smooth
 interoperability comes at the cost of pervasive \java{null}, which
 leads to the possibility of null pointer exceptions---a drawback we
 address in Typed Clojure.
@@ -181,7 +182,7 @@ call constructors, invoke methods, and access fields.
 
 The following Typed Clojure program constructs a new \clj{File}
 instance and calls the \clj{getParent} method on the result,
-returning a string \clj{"a"}, inferred as nullable.
+returning a nullable string \clj{"a"}.
 
 \begin{exmp}
 \begin{minted}{clj}
@@ -224,8 +225,7 @@ The conditional guards from dereferencing \clj{nil}, and---as before---removing
 it is a static type error, as typed code could possibly dereference \clj{nil}.
 \begin{minted}{clj}
 (defn parent-bad-in [f :- (U nil File)]
-  (.getParent f)) ; Type Error: Cannot call instance method 
-                  ; java.io.File/getParent on type (U nil File).
+  (.getParent f)) ; Type Error: Cannot call instance method on nil.
 \end{minted}
 Since Java-level types do not provide information about nullability,
 by default Typed Clojure conservatively assumes that Java method and
@@ -740,8 +740,8 @@ even further, supporting dispatch on multiple arguments via vectors.
 %
 Dispatch on multiple arguments is beyond the scope of this paper,
 but the same intuition applies---adding support for multiple dispatch
-automatically allows arbitrary combinations and nestings
-of it and previous simple dispatch rules.
+admits arbitrary combinations and nestings
+of it and previous dispatch rules.
 
 %\begin{exmp}
 %\inputminted[firstline=6,lastline=13]{clojure}{code/demo/src/demo/hmap.clj}

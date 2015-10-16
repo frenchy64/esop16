@@ -175,8 +175,10 @@ wrapping existing \emph{javax.mail} functionality.
 CircleCI %% \footnote{\url{https://circleci.com/}}
 provides continuous integration services built with a mixture of open-
 and closed-source.
-Typed Clojure has been used at CircleCI in production systems for two years \cite{CircleCIUsesTC},
-an experience we summarise in \secref{sec:limitations}.
+Typed Clojure was used at CircleCI in production systems for two years \cite{CircleCIUsesTC},
+maintaining
+87 namespaces and 19,000 lines of code.
+%an experience we summarise in \secref{sec:limitations}.
 %
 %CircleCI provided the first author access to the main closed-source backend system written in Clojure
 %and Typed Clojure.
@@ -194,8 +196,6 @@ an experience we summarise in \secref{sec:limitations}.
 %classified them.
 %
 %We determined that
-They maintain a mixed typed-untyped Clojure code base of
-382 namespaces comprising around 55,000 lines, 
 
 %% Out of 588 top-level var annotations, 270 (46\%) were checked annotations of
 %% functions defined in typed code,
@@ -304,13 +304,13 @@ unsupported Clojure idioms,
 and hard-to-check code.
 
 \paragraph{Lessons}
-Based on our empirical survey, it's clear that HMaps and Java interoperability support
-are vital features---they are used on average more than once per typed
+Based on our empirical survey, HMaps and Java interoperability support
+are vital features used on average more than once per typed
 function. 
 
 Multimethods are less common
-in our case studies. The entire CircleCI code base contained only 26 multimethods,
-are contained in the actual 
+in our case studies. The CircleCI code base contains only 26 multimethods,
+a low number in our experience.
 
 %The
 %data therefore validates our choice of a type system that supports
@@ -369,14 +369,14 @@ and further research is required to check callsites.
 %in the `immutable' sequence. While disturbing and a clear unsoundness in Typed Clojure,
 %this has not yet been an issue in practice and is strongly discouraged as undefined behavior:
 %``Robust programs should not mutate arrays or Iterables that have seqs on them.''~\cite{CljSeqDoc}.
-
-\smallsection{Typed-untyped interoperation}
-Currently, interactions between typed and untyped Clojure code are unchecked
-which can violate the expectations of Typed Clojure.
-Gradual typing~\cite{thf06,siek06:_gradual} ensures sound interoperability between typed and untyped code by enforcing
-invariants of the type system via run-time contracts.
- We hope to add support
-for gradual typing in the future.
+%
+%\smallsection{Typed-untyped interoperation}
+%Currently, interactions between typed and untyped Clojure code are unchecked
+%which can violate the expectations of Typed Clojure.
+%Gradual typing~\cite{thf06,siek06:_gradual} ensures sound interoperability between typed and untyped code by enforcing
+%invariants of the type system via run-time contracts.
+% We hope to add support
+%for gradual typing in the future.
 
 
 

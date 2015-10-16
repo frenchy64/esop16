@@ -9,7 +9,7 @@ and modular type checking.  In contrast to Typed Clojure, in these
 system methods declare the types of arguments that they expect which
 corresponds to exclusively using \clj{class} as the dispatch function
 in Typed Clojure. However, Typed Clojure does not attempt to rule out
-failed dispatches at runtime.
+failed dispatches.
 
 % one sentence
 % TC based on TR, already covered
@@ -70,23 +70,26 @@ Programmers must manually check for
 
 
 \paragraph{Other optional and gradual type systems}
-In addition to Typed Racket, several other gradual type
-systems have been developed recently, targeting existing
+%In addition to Typed Racket, 
+Several other gradual type
+systems have been developed for existing
 dynamically-typed languages.  Reticulated Python~\cite{Vitousek14} is
 an experimental gradually typed system for Python, implemented as a
 source-to-source translation that inserts dynamic checks at language
-boundaries and supporting Python's first-class object system.  Typed
-Clojure does not support a first-class object system because Java (and
-Clojure) have nominal classes, however HMaps offer an alternative to
+boundaries and supporting Python's first-class object system. 
+Clojure's nominal classes avoids the need to support
+first-class object system in Typed Clojure, however HMaps offer an alternative to
 the structural objects offered by Reticulated. Similarly,
 GradualTalk~\cite{gradualtalk} offers gradual typing for SmallTalk,
 with nominal classes.
 
-Optional types, requiring less implementation effort and avoiding
-runtime cost, have been  adopted in industry, including Hack for PHP~\cite{hack}, and Flow~\cite{flow} and
+Optional types
+%, requiring less implementation effort and avoiding
+%runtime cost, 
+have been  adopted in industry, including Hack for PHP~\cite{hack}, and Flow~\cite{flow} and
 TypeScript~\cite{typescript}, two extensions of JavaScript. These
-systems  support  forms of occurrence typing, but not in the
-generality presented here, nor do they include the other features we
+systems  support  limited forms of occurrence typing,
+and do not include the other features we
 present.
 
 %  \item GradualTalk

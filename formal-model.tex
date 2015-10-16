@@ -2,7 +2,7 @@
 
 \label{sec:formal}
 
-Now that we have demonstrated the core features Typed Clojure
+After demonstrating the core features Typed Clojure
 provides, we link them together in a formal model called
 \lambdatc{}.
 %
@@ -15,7 +15,7 @@ and subtyping.
 \subsection{Core type system}
 \label{sec:coretypesystem}
 
-Our presentation will start with a review of
+We start with a review of
 occurrence typing~\cite{TF10}, the foundation of \lambdatc{}.
 %We build up the occurrence typing calculus for illustrative purposes, 
 %and present the full syntax at the end of the section.
@@ -216,13 +216,13 @@ we learn variable {\makelocal{o}} is true in \e{2} via {\makelocal{o}}'s `then' 
 that {\makelocal{o}} is false in \e{3} via {\makelocal{o}}'s `else' proposition $\isprop{\falsy{}}{\makelocal{o}}$.
 
 To illustrate, recall \egref{example:desserts-on-meal}.
-We know the parameter \makelocal{o} is of type $\Order$,
+The parameter \makelocal{o} is of type $\Order$,
 %by the annotation on $desserts$
 written
 {\isprop{\Order}{\makelocal{o}}}
 as a proposition.
 %
-In checking the ${\makekw{combo}}$ method, we also assume
+In the ${\makekw{combo}}$ method, we know
 ${\appexp{\makekw{Meal}}{\makelocal{o}}}$ is ${\makekw{combo}}$,
 based on multimethod dispatch rules. This is written
   {\isprop{\Value{\makekw{combo}}}{\path{\keype{\makekw{Meal}}}{\makelocal{o}}}},
@@ -266,9 +266,6 @@ bindings---this is explained in \secref{formalmodel:proofsystem}.
 
 
 
-
-
-\paragraph{Typing judgment}
 
 
 \begin{figure*}
@@ -355,18 +352,19 @@ bindings---this is explained in \secref{formalmodel:proofsystem}.
 \label{main:figure:coresemantics}
 \end{figure}
 
+\paragraph{Typing judgment}
 
 We formalize our system following Tobin-Hochstadt and Felleisen \cite{TF10}.
 %(with differences highlighted in $\trdiff{\text{blue}}$)
 The typing judgment 
-$$
+$
 {\judgementrewrite   {\propenv}
               {\e{}} {\t{}}
   {\filterset {\thenprop {\prop{}}}
               {\elseprop {\prop{}}}}
   {\object{}}
   {\ep{}}}
-$$
+$
 says expression \e{} rewrites to \ep{}, which
 is of type \t{} in the 
 proposition environment $\propenv{}$, with 
@@ -416,8 +414,8 @@ as a running example.
 The lambda rule T-Abs introduces \isprop{\s{}}{\x{}}} = \isprop{\Top}{\makelocal{d}}
 to check the body.
 With \propenv{} = \isprop{\Top}{\makelocal{d}},
-the T-If rule first checks the test \e{1} = {\appexp{\numberhuh{}}{\makelocal{d}}}
-via the T-App rule, with three main steps.
+T-If first checks the test \e{1} = {\appexp{\numberhuh{}}{\makelocal{d}}}
+via the T-App rule, with three steps.
 
 First, in T-App the operator \e{} = \numberhuh{} is checked with T-Const, which
 uses 
@@ -438,8 +436,7 @@ T-Local as
                      {\makelocal{d}}
 \end{equation}
 which encodes the type, proposition, and object information
-about variables
-as previously discussed.
+about variables.
 
 Finally, the T-App rule substitutes the operand's object \objectp{}
 for the parameter \x{} in the latent type, propositions, and object.
@@ -974,8 +971,8 @@ From the left, the one-argument constructor for \File takes a \String, and the
 and
 returns a \String.
 
-We now walk through the conversion from unresolved expression~\ref{eq:unresolved} to 
-resolved expression~\ref{eq:resolved}.
+We now walk through this conversion.% from unresolved expression~\ref{eq:unresolved} to 
+%resolved expression~\ref{eq:resolved}.
 
 \paragraph{Constructors} First we check and convert {\newexp {\File{}} {\makestr{a/b}}} to {\newstaticexp {\String} {\File{}} {\File{}} {\makestr{a/b}}}.
 The T-New typing rule checks and rewrites constructors.
@@ -1416,6 +1413,7 @@ and applies it to the original argument for the final result.
 \end{figure}
 
 \begin{figure}
+  \footnotesize
   $$
 \LUpdate{}
 $$
@@ -1424,6 +1422,7 @@ $$
 \end{figure}
 
 \begin{figure}
+  \footnotesize
 $$
 \begin{array}{lr}
   \begin{array}{llll}
@@ -1495,7 +1494,7 @@ $$
 $$
 The result type is \Nil, and the return object is \path{\keype{\makekw{bocce}}}{\makelocal{b}}.
 
-A lookup of a key that is neither present or absent is checked by
+A lookup that is not present or absent is checked by
 T-GetHMapPartialDefault.
 $$
 \abs{\makelocal{u}}{\Lunch}{\getexp{\makelocal{u}}{\makekw{bocce}}}
@@ -1525,7 +1524,7 @@ $
 \HMapc{\mandatoryset{\mandatoryentrynoarrow{\Valkw{en}}{\String}, {\mandatoryentrynoarrow{\Valkw{fr}}{\String}}
         ,{\mandatoryentrynoarrow{\Valkw{au}}{\String}}}}
 $,
-which is complete, like its input.
+a complete map.
 T-AssocHMap also enforces ${\k{}} \not\in {\absent{}}$ to prevent badly formed types.
 
 %for cases like \egref{example:desserts-on-meal}
@@ -1535,7 +1534,7 @@ T-AssocHMap also enforces ${\k{}} \not\in {\absent{}}$ to prevent badly formed t
 \paragraph{Subtyping}
 Subtyping for HMaps
 designate \MapLiteral{} as a common supertype for all HMaps.
-S-HMap says that an HMap is a subtype of another HMap if they agree
+S-HMap says that HMaps are subtypes if they agree
 on \completenessmeta{}, agree on mandatory entries with subtyping
 and at least cover the absent keys of the supertype.
 Complete maps are subtypes of partial maps
