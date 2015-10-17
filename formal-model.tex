@@ -464,7 +464,11 @@ to check
 \e{3} = \true{}.
 %
 The branches are first checked with T-False and T-True respectively,
-then T-Subsume.
+the T-Subsume premises
+\inpropenv {\propenv{}, {\thenprop {\prop{}}}} {\thenprop {\propp{}}}
+and
+\inpropenv {\propenv{}, {\elseprop {\prop{}}}} {\elseprop {\propp{}}}
+allow us to pick compatible propositions for both branches.
 %$$
 %\judgementselfrewrite{\propenv{},{\isprop{\Number{}}{\makelocal{d}}}}
 %  {\false{}}
@@ -500,13 +504,8 @@ $$
 %\inpropenv {\propenv{}, {\elseprop {\prop{}}}} {\elseprop {\propp{}}}
 %from 
 %{\elseprop {\prop{}}} = \topprop{} to {\elseprop {\propp{}}} = {\isprop{\Number{}}{\makelocal{d}}}.
-The T-Subsume premises
-\inpropenv {\propenv{}, {\thenprop {\prop{}}}} {\thenprop {\propp{}}}
-and
-\inpropenv {\propenv{}, {\elseprop {\prop{}}}} {\elseprop {\propp{}}}
-allow us to pick compatible propositions for both branches.
 
-Finally T-Abs concludes, using the T-If outputs, with
+Finally T-Abs assigns a type to the overall function:
 $$
 {\judgementselfrewrite{}{\abs{\makelocal{d}}{\Top}{\ifexp{\appexp{\numberhuh{}}{\makelocal{d}}}{\false{}}{\true{}}}}
                     {\ArrowOne {\makelocal{d}} {\Top{}}
@@ -955,7 +954,7 @@ field accesses are written \fieldexp{\fld{}}{\e{}}
 and method calls $\methodexp{\mth{}}{\e{}}{\overrightarrow{e}}$.
 %and \clj{(new class es*)} is $\newexp{\class{}}{\overrightarrow{es}}$.
 
-\egref{example:getparent-direct-constructor} \clj{(.getParent (new File "a/b"))}
+In \egref{example:getparent-direct-constructor}, \clj{(.getParent (new File "a/b"))}
 translates to
 \begin{equation}  \label{eq:unresolved}
   \qquad {\methodexp {\getparent{}} {\newexp {\File{}} {\makestr{a/b}}} {}}
@@ -1191,7 +1190,8 @@ presents \emph{immutable}
 multimethods without default methods to ease presentation.
 %Syntax and semantics are given in \figref{main:figure:mmsyntax}. 
 %Multimethods can error if no matching method is chosen (rules in the supplemental material).
-Below is the translation of \egref{example:hi-multimethod} to \lambdatc{}.
+\figref{main:figure:mmexample}
+is the translation of \egref{example:hi-multimethod} to \lambdatc{}.
 %\begin{minted}{clojure}
 %(ann hi [Kw -> Str])
 %(defmulti hi identity)
@@ -1200,7 +1200,7 @@ Below is the translation of \egref{example:hi-multimethod} to \lambdatc{}.
 %(hi :en) ;=> "hello"
 %\end{minted}
 
-\begin{listing}
+\begin{figure}
 $\letexp{hi_0} {\createmultiexp {\ArrowOne{\x{}}{\Keyword}{\String}{\filterset{\topprop{}}{\topprop{}}}{\emptyobject{}}} {\abs{\x{}}{\Keyword}{\x{}}}}
   {\\\text{\quad}
     \letexp{hi_1} {\extendmultiexp {hi_0} {\makekw{en}} {\abs {\x{}} {\Keyword} {\makestr{hello}}}}
@@ -1209,7 +1209,9 @@ $\letexp{hi_0} {\createmultiexp {\ArrowOne{\x{}}{\Keyword}{\String}{\filterset{\
         {\\\text{\quad\quad\quad
           \appexp{hi_2}{\makekw{en}}}}}}
 $
-\end{listing}
+\caption{Multimethod example}
+\label{main:figure:mmexample}
+\end{figure}
 %
 %For convenience, examples in this section are flattened when they are really nested
 %let bindings. We also elide trivial latent propositions and objects.
@@ -1349,12 +1351,12 @@ and \object{} = \emptyobject{}, which also agrees with the method body, above.
 %{\MultiFntype {\s{}}{\sp{}}} is a subtype of its interface type {\s{}}.
 
 \paragraph{Subtyping}
-Multimethods are also functions, which is encoded via S-PMultiFn.
+Multimethods are functions, via S-PMultiFn,
 %$$
 %\SPMultiFn{}
 %$$
-This rule says a multimethod can be upcast to its interface type. This means
-multimethod call sites can be handled by T-App via T-Subsume. Other rules are given in
+which says a multimethod can be upcast to its interface type. 
+Multimethod call sites are then handled by T-App via T-Subsume. Other rules are given
 in \figref{main:figure:mmsyntax}. 
 
 \paragraph{Semantics}
@@ -1435,18 +1437,19 @@ $$
 \figref{main:figure:hmapsyntax}
 presents
 heterogeneous map types.
-The partially specified map of
-\clj{lunch} in \egref{example:lunchpartial}
-is written
-\HMapp{\mandatoryset{\mandatoryentrynoarrow{\Valkw{en}}{\String}, {\mandatoryentrynoarrow{\Valkw{fr}}{\String}}}}{\emptyabsent{}}.
-We abbreviate this type as \Lunch in this section.
 The type \HMapgeneric{\mandatory{}}{\absent{}}
 contains {\mandatory{}}, a map of \emph{present} entries (mapping keywords to types),
 \absent{}, a set of keyword keys that are known to be \emph{absent}
 and
 tag \completenessmeta{} which is either {\complete{}} (``complete'') if the map is fully specified by \mandatory{},
 and {\partial{}} (``partial'') if there are \emph{unknown} entries.
-
+%
+The partially specified map of
+\clj{lunch} in \egref{example:lunchpartial}
+is written
+\HMapp{\mandatoryset{\mandatoryentrynoarrow{\Valkw{en}}{\String}, {\mandatoryentrynoarrow{\Valkw{fr}}{\String}}}}{\emptyabsent{}}.
+We abbreviate this type as \Lunch in this section.
+%
 The type of the fully specified map
 \clj{breakfast} in \egref{example:breakfastcomplete} elides the absent entries,
 written

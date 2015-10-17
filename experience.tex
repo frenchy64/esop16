@@ -2,22 +2,32 @@
 \label{sec:experience}
 
 Typed Clojure is implemented as a Clojure library---\coretyped{}.
-In contrast to Racket, Clojure does not provide extension
-points to the macroexpander. 
-To satisfy our goals of providing
-Typed Clojure as a library that works with the latest version of the Clojure
-compiler, \coretyped{} is implemented as an external static analysis pass
-that must be explicitly invoked by the programmer, and not as an
-integral part of the Clojure compilation process. 
-%Therefore, \coretyped{} is in a sense a linter.
+It provides preliminary integration with the Clojure compilation
+pipeline, primarily to resolve Java interoperability, however
+most usages are entirely optionally typed.
+%In contrast to Racket, Clojure does not provide extension
+%points to the macroexpander. 
+%To satisfy our goals of providing
+%Typed Clojure as a library that works with the latest version of the Clojure
+%compiler, \coretyped{} is implemented as an external static analysis pass
+%that must be explicitly invoked by the programmer, and not as an
+%integral part of the Clojure compilation process. 
+%%Therefore, \coretyped{} is in a sense a linter.
 
-This means that type checking is  optional. 
-On the positive side, \coretyped{} is flexible to the needs of a dynamically
-typed programmer, encouraging experimentation with programs that may not
-type check.
-On the negative side, programmers must remember to type check their namespaces.
-Also, the compiler cannot depend on types, making
-type-based optimisation is impossible. 
+The \coretyped{} implementation extends this paper in several key areas 
+to handle checking real Clojure code, including an implementation
+of Typed Racket's variable-arity polymorphism~\cite{stf-esop}, 
+and support for other Clojure idioms like datatypes and protocols.
+
+%Recently, steps have been taken to integrate Typed Clojure into 
+
+%This means that type checking is  optional. 
+%On the positive side, \coretyped{} is flexible to the needs of a dynamically
+%typed programmer, encouraging experimentation with programs that may not
+%type check.
+%On the negative side, programmers must remember to type check their namespaces.
+%Also, the compiler cannot depend on types, making
+%type-based optimisation is impossible. 
 %If this were not the case, we could dispose of type-hints
 %altogether, and simply use static types to resolve reflection.
 
@@ -309,7 +319,8 @@ are vital features used on average more than once per typed
 function. 
 %
 Multimethods are less common
-in our case studies. The CircleCI code base contains only 26 multimethods,
+in our case studies. The CircleCI code base contains only 26 multimethods total
+in 55,000 lines of mixed untyped-typed Clojure code,
 a low number in our experience.
 
 %The
@@ -325,20 +336,22 @@ a low number in our experience.
 %can be addressed by making annotations available for popular
 %libraries.
 
-\subsection{Limitations}
+\subsection{Further challenges}
 \label{sec:limitations}
 
-After a 2 year trial, the second case study  disabled type checking~\cite{CircleCIBlog}
-citing issues with the checker implementation.% We summarise the main issues.
+After a 2 year trial, the second case study decided to disabled type checking~\cite{CircleCIBlog}.
+They were supportive of the fundamental ideas presented in this paper, but primarily
+cited issues with the checker implementation in practice and would reconsider
+type checking if they were resolved.
 
 \smallsection{Performance}
-Rechecking files with transitive dependencies is expensive since they all must be rechecked.
+Rechecking files with transitive dependencies is expensive since all dependencies must be rechecked.
 We conjecture caching type state will significantly
 improve re-checking performance,
 though preserving static soundness in the context of arbitrary code reloading is a largely unexplored area.
 
 \smallsection{Library annotations}
-Annotations for external code is rarely available, so a large part of the
+Annotations for external code are rarely available, so a large part of the
 untyped-typed porting process is reverse engineering libraries.
 
 \smallsection{Unsupported idioms}

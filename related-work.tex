@@ -54,14 +54,16 @@ invariants as HMaps with types for JS objects. They must deal with
 mutable objects, they feature refinement types and strong updates to
 the heap to track changes to objects.
 
+TeJaS~\cite{TeJaS}, another type system for JavaScript,
+also supports similar HMaps, with the ability to
+record the presence and absence of entries, but lacks a compositional
+flow-checking approach like occurrence typing.
+
 Typed Lua~\cite{Maidl:2014:TLO} has \emph{table types} which track
 entries in a mutable Lua table.  Typed Lua changes the dynamic
 semantics of Lua to accommodate mutability: Typed Lua raises a runtime
 error for lookups on missing keys---HMaps consider lookups on missing
 keys normal.
-
-The integration of completeness information, crucial for many examples
-in Typed Clojure, is not provided by any of these systems.
 
 \paragraph{Java Interoperability in Statically Typed Languages}
 Scala~\cite{OCD+} has nullable references for compatibility with Java.
