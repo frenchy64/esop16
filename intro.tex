@@ -7,10 +7,10 @@ development, combined with a recognition that types often improve
 programmer productivity, software reliability, and performance, has
 led to the recent development of a wide variety of optional and
 gradual type systems aimed at checking existing programs written in
-existing languages.  These include  TypeScript and Flow for
-JavaScript, Hack for PHP, and MyPy
-for Python among the optional systems, and Typed Racket, Reticulated
-Python, and GradualTalk among gradually-typed systems.\footnote{We
+existing languages.  These include  TypeScript~\cite{typescript} and Flow~\cite{flow} for
+JavaScript, Hack~\cite{hack} for PHP, and mypy~\cite{mypy}
+for Python among the optional systems, and Typed Racket~\cite{TF08}, Reticulated
+Python~\cite{Vitousek14}, and GradualTalk~\cite{gradualtalk} among gradually-typed systems.\footnote{We
   use ``gradual typing'' for systems like Typed Racket with sound
   interoperation between typed and untyped code; Typed Clojure or
  TypeScript which don't
@@ -40,12 +40,9 @@ existing Java libraries without leaving Clojure.
 Since its initial release in 2007, Clojure has been widely adopted for
 ``backend'' development in places where its support for parallelism,
 functional programming, and Lisp-influenced abstraction is desired on
-the JVM. As a result, it has an extensive base of existing untyped
-programs, whose developers can benefit from Typed Clojure. As
-a result, Typed Clojure is used in industry, experience we discuss
-in this paper.
-
-
+the JVM. As a result, there is an extensive base of existing untyped
+programs whose developers can benefit from Typed Clojure,
+an experience we discuss in this paper.
 
 Since Clojure is a language in the
 Lisp family, we apply the lessons of Typed Racket, an existing gradual type
@@ -83,23 +80,22 @@ Java libraries, and \textbf{Clojure/Java interoperation} is found in almost
 every significant Clojure code base. Typed Clojure therefore builds in
 an understanding of the Java type system and handles interoperation
 appropriately. Notably, \texttt{null} is a distinct type in Typed Clojure,
-leading to automatic type-enforced
-absence of null-pointer exceptions.
+designed to automatically rule out null-pointer exceptions.
 
 An example of these features is given in
-figure~\ref{fig:ex1}. Here, the \texttt{pname} multimethod dispatches
+\figref{fig:ex1}. Here, the \texttt{pname} multimethod dispatches
 on the \texttt{class} of the argument---for \texttt{String}s,
 the first method implementation is called, for \texttt{File}s, the
 second. The \texttt{String} method calls
 a \texttt{File} constructor, returning a non-nil \texttt{File} instance---the 
 \texttt{.getName} method 
 on \texttt{File} requires a non-nil target, returning a nilable
-type.  Typed Clojure offers an opt-in mode that
-resolves JVM overloading, avoiding expensive runtime reflective calls.
+type.  
+%Typed Clojure offers an opt-in mode that
+%resolves JVM overloading, avoiding expensive runtime reflective calls.
 
-Finally, high-performance immutable dictionaries
-are the most common Clojure data structure,
-which programmers repurpose liberally.
+Finally, flexible, high-performance immutable dictionaries
+are the most common Clojure data structure.
 Simply treating them as uniformly-typed
 key-value mappings would be insufficient for existing
 programs and programming styles. Instead, Typed Clojure provides a
@@ -163,6 +159,6 @@ Our main contributions are as follows:
  %discuss the full implementation of
  %Typed Clojure, \coretyped{}, which extends the formal model in many ways, 
  present an empirical analysis of significant code bases written
- in the full implementation of Typed Clojure---\coretyped{}---in \secref{sec:experience}. 
+ in \coretyped{}---the full implementation of Typed Clojure---in \secref{sec:experience}. 
  Finally, we discuss related work and conclude.
 

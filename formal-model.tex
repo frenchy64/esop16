@@ -2,8 +2,8 @@
 
 \label{sec:formal}
 
-After demonstrating the core features Typed Clojure
-provides, we link them together in a formal model called
+After demonstrating the core features of Typed Clojure, 
+we link them together in a formal model called
 \lambdatc{}.
 %
 Building on occurrence typing,
@@ -23,11 +23,12 @@ occurrence typing~\cite{TF10}, the foundation of \lambdatc{}.
 \paragraph{Expressions} Syntax is given in \figref{main:figure:termsyntax}. Expressions \e{} 
 include variables \x{}, values \v{},
 applications, abstractions, conditionals, and let expressions.
-All binding forms introduce fresh variables.
+All binding forms introduce fresh variables---a subtle but important point since our type environments
+are not simply dictionaries.
 Values include booleans \bool{}, \nil{}, class literals {\class{}}, keywords \k{},
 integers {\nat{}},
 constants {\const{}}, and strings \str{}. Lexical closures {\closure {\openv{}} {\abs {\x{}} {\t{}} {\e{}}}}
-close value environments \openv{} over functions, which map bindings to values.
+close value environments \openv{}---which map bindings to values---over functions.
 
 \paragraph{Types} Types \s{} or \t{} 
 include the top type \Top,
@@ -47,9 +48,10 @@ We also abbreviate the types
 {\ValueFalse} to {\False}.
 %
 The difference between the types
-\Value{\Keyword} and \Keyword{} is subtle.
-The former is inhabited by the class literal \Keyword{} and the result of 
-\appexp{\classconst{}}{\makekw{a}}---the latter by keywords like \makekw{a}.
+\Value{\class{}} and \class{} is subtle.
+The former is inhabited by class literals like \Keyword{} and the result of 
+\appexp{\classconst{}}{\makekw{a}}---the latter by \emph{instances} of classes,
+like a keyword literal \makekw{a}, an instance of the type \Keyword{}.
 %
 Function types 
 $
@@ -69,8 +71,7 @@ actual object of the argument in applications. % before they are used in the pro
 %As we saw in \secref{sec:overview},
 %occurrence typing is capable of reasoning
 %about deeply nested expressions.
-To reason about nested expressions,
-each expression is associated with 
+Each expression is associated with 
 a symbolic representation
 called an \emph{object}.
 %with respect to the current lexical environment. 
@@ -84,11 +85,11 @@ For example,
 which consists of
 a possibly-empty sequence of \emph{path elements} (\pesyntax{}) applied right-to-left from the root variable.
 We use two path elements---{\classpe{}} and {\keype{k}}---representing the results
-of calling \classconst{} and of looking up a keyword $k$ respectively.
+of calling \classconst{} and looking up a keyword $k$, respectively.
 
 \paragraph{Propositions with a logical system}
-In standard type systems, \emph{type environments}
-track variables.
+In standard type systems, association lists often
+track the types of variables, like in LC-Let and LC-Local.
 \begin{mathpar}
 \infer [LC-Let]
 { \judgementtwo {{\propenv{}}}
@@ -141,9 +142,9 @@ variable $x$ is of type \s{}.
 \end{mathpar}
 In T0-Local, 
 $
-{ \inpropenv {\propenv{}} {\isprop {\t{}} {\path{\pathelem{}}{\x{}}}} }
+{ \inpropenv {\propenv{}} {\isprop {\t{}}{\x{}}}}
 $
-appeals to the proof system to solve \t{}.
+appeals to the proof system to solve for \t{}.
 %says under logical assumptions {\propenv{}}, object {\path{\pathelem{}}{\x{}}} is of type \t{}.
 %We later define the more general T-Local.
 
@@ -996,7 +997,7 @@ can never produce the internal boolean value that Clojure uses for \false{}, or 
 Finally, the constructor rewrites to {\newstaticexp {\String} {\File{}} {\File{}} {\makestr{a/b}}}.
 
 \paragraph{Methods} Next we convert {\methodexp {\getparent{}} {\newstaticexp {\String} {\File{}} {\File{}} {\makestr{a/b}}} {}}
-to
+to the non-reflective expression
 {\methodstaticexp {\File} {} {\String} {\getparent{}} {\newstaticexp {\String} {\File{}} {\File{}} {\makestr{a/b}}} {}}.
 %The T-Method rule checks unresolved methods.
 %$$
@@ -1124,7 +1125,7 @@ metafunction, used to calculate the propositions for
 %  \TIsA{}
 %\end{mathpar}
 
-As an example,
+As an example, the expression
 \isaapp{\appexp{\classconst{}}{\x{}}}{\Keyword}
 has the true and false propositions 
 \isacompare{\s{}}{\path{\classpe{}}{\x{}}}{\Value{\Keyword}}{\filterset{\isprop{\Keyword}{\x{}}}{\notprop{\Keyword}{\x{}}}},
@@ -1209,7 +1210,7 @@ $\letexp{hi_0} {\createmultiexp {\ArrowOne{\x{}}{\Keyword}{\String}{\filterset{\
           \appexp{hi_2}{\makekw{en}}}}}}
 $
 \end{listing}
-
+%
 %For convenience, examples in this section are flattened when they are really nested
 %let bindings. We also elide trivial latent propositions and objects.
 %The following is an abbreviation of the previous expression.
@@ -1219,7 +1220,7 @@ $
 %${\extendmultiexp {hi} {\makekw{fr}} {\abs {\x{}} {\Keyword} {\makestr{bonjour}}}}$
 %$\appexp{hi}{\makekw{en}}$
 %\end{lstlisting}
-
+%
 %\defmethodliteral{} returns a new extended multimethod
 %without changing the original multimethod. 
 %
@@ -1229,16 +1230,17 @@ $
 %    (let [hi (defmethod hi :fr [_] "bonjour")]
 %      (hi :en))) ;=> "hello"
 %\end{minted}
-
-%\paragraph{How to check}
-We now show to check
-{\createmultiexp {\ArrowTwo{\x{}}{\Keyword}{\String}} {\abs{\x{}}{\Keyword}{\x{}}}}.
 %
-The expression {\createmultiexp {\s{}} {\e{}}} creates a multimethod with \emph{interface type} \s{}, and dispatch function \e{}
+%\paragraph{How to check}
+To check 
+{\createmultiexp {\ArrowTwo{\x{}}{\Keyword}{\String}} {\abs{\x{}}{\Keyword}{\x{}}}},
+%
+we note
+{\createmultiexp {\s{}} {\e{}}} creates a multimethod with \emph{interface type} \s{}, and dispatch function \e{}
 of type \sp{},
 producing a value of type
 {\MultiFntype {\s{}} {\sp{}}}. % with interface type {\s{}} and dispatch function type {\sp{}}.
-The T-DefMulti typing rule simply checks the dispatch function, and
+The T-DefMulti typing rule checks the dispatch function, and
 verifies both the interface and dispatch type's domain agree.
 %$$
 %    \TDefMulti{}
@@ -1613,7 +1615,7 @@ Each initial recursion hits the first HMap case, since there is some \t{} such t
 \completenessmeta{} accepts partial maps \partial{}.
 
 To demonstrate,
-\makekw{lunch} meals hit the first HMap case and
+\makekw{lunch} meals are handled by the first HMap case and
 update to {\HMapp {\extendmandatoryset {\mandatory{}}{\Valkw{Meal}}{\sp{}}} {\emptyabsent{}}}
 where \sp{} = {\update{\Valkw{lunch}}{\Valkw{combo}}{\emptypath{}}}
 and \mandatory{} = \mandatoryset{\mandatoryentry{\Valkw{Meal}}{\Valkw{lunch}},{\mandatoryentry{\Valkw{desserts}}{\Number{}}}}.

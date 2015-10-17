@@ -38,11 +38,14 @@
 \include{bibliography.bib}
 \usepackage{chngcntr}
 \usepackage{url}
+% seems like a nightmare to use, but you get clickable links
+%\usepackage{hyperref}
+
 \newcounter{ex}
 \newenvironment{exmp}{
 \refstepcounter{ex}%
 \par\vspace{.8em}\hfill\framebox{\small Example~\theex}\nopagebreak
-\\[-2.5em]\nopagebreak}
+\\[-3.23em]\nopagebreak}
 {\relax}
 
 
@@ -120,9 +123,9 @@ heterogeneous dictionary types.
 We provide a formal model of the Typed Clojure type system
 incorporating these and other features, with a proof of
 soundness. Additionally, Typed Clojure is now in use by numerous
-corporations and developers working with Clojure, and we report on 
-a quantitative analysis of the use of the features described in this
-paper in two substantial code bases.
+corporations and developers working with Clojure, and we present
+a quantitative analysis on the use of type system features
+in two substantial code bases.
 
 
 %% Clojure is a dynamically typed language hosted on the Java 

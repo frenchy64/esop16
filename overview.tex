@@ -19,14 +19,8 @@ style.
 %Fast implementations of immutable vectors, and hash tables are featured,
 %and a means for defining new records.
 %
-Clojure provides easy interoperation with
-existing Java libraries,
-with
-Java
-values being as any other Clojure value. However, this smooth
-interoperability comes at the cost of pervasive \java{null}, which
-leads to the possibility of null pointer exceptions---a drawback we
-address in Typed Clojure.
+Clojure provides easy interoperation with existing Java libraries, with Java values being like any other Clojure value. 
+However, this smooth interoperability comes at the cost of pervasive \java{null}, which leads to the possibility of null pointer exceptions---a drawback we address in Typed Clojure.
 
 %\paragraph{Clojure Syntax}
 %
@@ -54,8 +48,7 @@ Here is a simple one-argument function
 \begin{minted}{clj}
 (ann  greet [Str -> Str])
 (defn greet [n] (str "Hello, " n "!"))
-(greet "Grace") ; :- Str
-;=> "Hello, Grace!"
+(greet "Grace") ;=> "Hello, Grace!" :- Str
 \end{minted}
 %
 Providing \clj{nil} (exactly Java's \java{null})
@@ -67,15 +60,15 @@ is a static type error---\clj{nil} is not a string.
 
 \paragraph{Unions} To allow \clj{nil}, we use \emph{ad-hoc unions} (\clj{nil} and \clj{false}
 are logically false).
-
+%
 \begin{minted}{clj}
 (ann  greet-nil [(U nil Str) -> Str])
 (defn greet-nil [n] (str "Hello" (when n (str ", " n)) "!"))
 (greet-nil "Donald") ;=> "Hello, Donald!" :- Str 
 (greet-nil nil)      ;=> "Hello!"         :- Str
 \end{minted}
-
-
+%
+%
 Typed Clojure prevents well-typed code from dereferencing \clj{nil}.
 %This is important for Clojure programs---\clj{nil}
 %is treated like any other distinct datum in Clojure.
@@ -170,7 +163,7 @@ Removing the branch is a static type error---\clj{repeat} cannot be passed \clj{
 Clojure can interact with Java constructors, methods, and fields.
 This program calls the \clj{getParent} on a constructed
 \clj{File}
-instance, inferred as a nullable string.
+instance, returning a nullable string.
 
 \begin{exmp}
 \begin{minted}{clj}
@@ -179,9 +172,9 @@ instance, inferred as a nullable string.
 \label{example:getparent-direct-constructor}
 \end{exmp}
 %
-Typed Clojure can optionally integrate with the Clojure compiler to avoid expensive reflective 
-calls, however if a specific constructor, method, or field cannot be found based on the
-static types of its arguments, a type error is thrown.
+Typed Clojure can integrate with the Clojure compiler to avoid expensive reflective 
+calls like \clj{getParent}, however if a specific overload cannot be found based on the
+surrounding static context, a type error is thrown.
 %
 \begin{minted}{clj}
 (fn [f] (.getParent f)) ; Type Error: Unresolved interop: getParent
@@ -212,10 +205,6 @@ it is a static type error, as typed code could possibly dereference \clj{nil}.
 (defn parent-bad-in [f :- (U nil File)]
   (.getParent f)) ; Type Error: Cannot call instance method on nil.
 \end{minted}
-Since Java-level types lack nullability information,
-Typed Clojure conservatively asserts Java methods and
-constructor arguments cannot be passed \clj{nil}---this restriction can be
-adjusted per method. Method targets can never be \clj{nil}.
 
 Typed Clojure rejects programs that assume methods cannot return \clj{nil}.
 %
@@ -223,6 +212,11 @@ Typed Clojure rejects programs that assume methods cannot return \clj{nil}.
 (defn parent-bad-out [f :- File] :- Str
   (.getParent f)) ; Type Error: Expected Str, given (U nil Str).
 \end{minted}
+Since Java-level types lack nullability information,
+Typed Clojure conservatively assumes Java methods and
+constructor arguments cannot be passed \clj{nil}---this restriction can be
+adjusted per method, but method targets can never be \clj{nil}.
+
 %
 %Typed Clojure and Java treat \java{null} differently.
 %In Clojure, where it is known as \clj{nil}, Typed Clojure assigns it an explicit type
@@ -245,13 +239,12 @@ In contrast, JVM invariants guarantee constructors return non-null.\footnote{\ur
 
 \label{sec:multioverview}
 
-\emph{Multimethods} are a kind of extensible function, and they are
-widely used to define Clojure operations.  It combines a
-\emph{dispatch function} with one or more \emph{methods}.
+\emph{Multimethods} are a kind of extensible function---combining a \emph{dispatch function} with 
+one or more \emph{methods}---widely used to define Clojure operations.
 
 \paragraph{Value-based dispatch}
-This simple multimethod says hello in different languages, as
-specified by a keyword argument.
+This simple multimethod says hello in different languages.%, as
+%specified by a keyword argument.
 
 \begin{exmp}
 \begin{minted}{clojure}
@@ -266,8 +259,7 @@ specified by a keyword argument.
 
 When invoked, the arguments are first supplied to the dispatch function---\clj{identity}---yielding
 a \emph{dispatch value}. A method is then chosen
-based on the dispatch value---the arguments are then passed to the method
-to finally return a value for the entire expression.
+based on the dispatch value, to which the arguments are then passed to return a value.
 %
 \begin{minted}{clojure}
 (map hi [:en :fr :bocce]) ;=> ("hello" "bonjour" "um...")
@@ -305,7 +297,7 @@ whether the \clj{String} or \clj{File} method is chosen.
 %---both installed via \clj{defmethod}
 %
 The multimethod dispatch rules use
-\clj{isa?}, a hybrid predicate which is a subclassing check for classes and
+\clj{isa?}, a hybrid predicate which is both a subclassing check for classes and
 an equality check for other values.
 
 %(isa? (class "STAINS/JELLY") Object) ;=> true
@@ -426,12 +418,12 @@ is not.
 
 \subsection{Heterogeneous hash-maps}
 
-Beyond primitives and Java objects, the most common Clojure data
-structure is the 
-immutable hash-map, typicially with keyword keys. This structure is
-the primary way to represent compound data in Clojure programs.
-
-Keywords look themselves up in a map when called, or return \clj{nil}.
+%Beyond primitives and Java objects, 
+The most common way to represent compound data in Clojure 
+are immutable hash-maps, typicially with keyword keys.
+%
+Keywords double as functions that
+look themselves up in a map, or return \clj{nil} if absent.
 %
 \begin{exmp}
 \begin{minted}{clojure}
@@ -447,15 +439,12 @@ keyword-keyed maps.
 \begin{minted}{clojure}
 breakfast ; :- (HMap :mandatory {:en Str, :fr Str}, :complete? true)
 \end{minted}
-The inferred type for \clj{breakfast} holds two pieces of information---the known entries--\clj{:en}
-and \clj{:fr}---and their types, which are  \clj{:mandatory}, and that 
-no other key is present, since \clj{:complete?} is \clj{true}.
+This says
+\clj{:en} and \clj{:fr} are known entries mapped to strings,
+and the map is fully specified---that is, no other entries exist---by \clj{:complete?} being \clj{true}.
 
-HMap types default to  partial specification---\clj{:complete?} defaults to \clj{false}. The HMap shorthand 
-\clj{'{:en Str :fr Str}}
-omits
-information about absent keys, only providing information on
-\clj{:mandatory} keys.
+HMap types default to partial specification, with
+\clj{'{:en Str :fr Str}} abbreviating \clj{(HMap :mandatory {:en Str, :fr Str})}.
 %
 \begin{exmp}
 \begin{minted}{clojure}
@@ -478,13 +467,14 @@ result from this code base).
 \begin{exmp}
 \begin{minted}{clojure}
 (defalias RawKeyPair ; extra keys disallowed
-  (HMap :mandatory {:pub RawKey, :priv RawKey}, :complete? true))
+  (HMap :mandatory {:pub RawKey, :priv RawKey}, 
+        :complete? true))
 (defalias EncKeyPair ; extra keys disallowed
   (HMap :mandatory {:pub RawKey, :enc-priv EncKey}, :complete? true))
 
 (ann enc-keypair [RawKeyPair -> EncKeyPair])
-(defn enc-keypair [{pk :priv :as kp}] ; original map is kp
-  (assoc (dissoc kp :priv) :enc-priv (encrypt pk)))
+(defn enc-keypair [kp]
+  (assoc (dissoc kp :priv) :enc-priv (encrypt (:priv kp))))
 \end{minted}
 \label{example:circleci}
 \end{exmp}
@@ -498,8 +488,8 @@ result from this code base).
 As \clj{EncKeyPair} is fully specified, we must remove extra keys like \clj{:priv}.
 %
 \begin{minted}{clojure}
-(defn enc-keypair-bad [{pk :priv :as kp}]
-  (assoc kp :enc-priv (encrypt pk))) ; Type error: :priv disallowed
+(defn enc-keypair-bad [kp] ; Type error: :priv disallowed
+  (assoc kp :enc-priv (encrypt (:priv kp))))
 \end{minted}
 
 %\clj{enc-keypair} takes an unencrypted keypair and returns an encrypted keypair by
@@ -562,13 +552,11 @@ As \clj{EncKeyPair} is fully specified, we must remove extra keys like \clj{:pri
 
 \subsection{HMaps and multimethods, joined at the hip}
 
-Since HMaps are the primary way of specifying the structure of data in Clojure,
-and multimethods are the primary tool for dispatching on data, they are inevitably
-linked.
-There are infinite ways of structuring and dispatching on data,
-so we cannot merely add a set of special case rules for
-handling these features. Instead, as type system designers, we must
-search for a compositional approach.
+HMaps and multimethods are the primary ways for representing
+and dispatching on data respectively, and so are intrinsically linked.
+As type system designers, we must
+search for a compositional approach that can anticipate
+any combination of these features.
 
 Thankfully, occurrence typing, originally designed for reasoning about
 \clj{if} tests, provides the compositional approach we need.
@@ -577,12 +565,16 @@ a handful of rules based on HMaps and other functions,
 we can automatically cover both easy cases and those
 that compose rules in arbitrary ways.
 
-Futhermore, this approach extends to multimethod dispatch---the primitive branching
-mechanism works like the humble \clj{if} conditional. 
-Only a small number of rules are needed
-to encode the \clj{isa?}-based dispatch, themselves made of simple pieces.
-In practice, this means that conditional-based control flow typing
- extends to  multimethod dispatch, and vice-versa.
+Futhermore, this approach extends to multimethod dispatch by reusing
+occurrence typing's approach to conditionals
+%, whose branching
+%mechanism may appear complex, but
+%can be understood in terms of the humble \clj{if} conditional. 
+and
+encoding a small number of rules to handle
+the \clj{isa?}-based dispatch.
+In practice, conditional-based control flow typing
+extends to multimethod dispatch, and vice-versa.
 
 We first demonstrate a very common, simple dispatch style,
 then move on to deeper structural dispatching where occurrence typing's
@@ -604,41 +596,40 @@ The \clj{:Meal} entry is common to each HMap, always mapped to a known keyword s
 type.
 It's natural to dispatch on the \clj{class} of an instance---it's similarly
 natural to dispatch on a known entry like \clj{:Meal}.
-
+%
 \begin{exmp}
 \begin{minted}{clojure}
 (ann desserts [Order -> Int])
 (defmulti desserts :Meal)  ; dispatch on :Meal entry
-(defmethod desserts :lunch [{d :desserts}] d) ; d is :desserts entry
-(defmethod desserts :dinner [{d :desserts}] d)
-(defmethod desserts :combo [{m1 :meal1 m2 :meal2}] 
-  (+ (desserts m1) (desserts m2)))
+(defmethod desserts :lunch [o] (:desserts d))
+(defmethod desserts :dinner [o] (:desserts d))
+(defmethod desserts :combo [o] 
+  (+ (desserts (:meal1 o)) (desserts (:meal2 o))))
 
 (desserts {:Meal :combo, :meal1 {:Meal :lunch :desserts 1}, 
-           :meal2 {:Meal :dinner :desserts 2}})
-;=> 3
+           :meal2 {:Meal :dinner :desserts 2}}) ;=> 3
 \end{minted}
 \label{example:desserts-on-meal}
 \end{exmp}
-
+%
 The \clj{:combo} method is verified to only structurally recur
-on \clj{Order}s. This is achieved because we learn the argument---\clj{o}---must % em dash needs space here, looks weird
+on \clj{Order}s. This is achieved because we learn the argument \clj{o} must
 be of type
 \clj{'{:Meal :combo}}
 since
 \clj{(isa? (:Meal o) :combo)}
-must be true. Combining \clj{'{:Meal :combo}}
+is true. Combining this
 with the fact that \clj{o} is an \clj{Order}
 eliminates possibility of \clj{:lunch} and \clj{:dinner}
 orders, simplifying \clj{o} to
-\begin{minted}{clojure}
-'{:Meal ':combo :meal1 Order :meal2 Order}
-\end{minted}
+\clj{'{:Meal ':combo :meal1 Order :meal2 Order}}
 which contains appropriate arguments for both recursive calls.
 
 \paragraph{Nested dispatch}
-An equally valid dispatch mechanism for \clj{desserts}
-would be on the \clj{class} of the \clj{:desserts} key.
+A more exotic dispatch mechanism for \clj{desserts}
+might be on the \clj{class} of the \clj{:desserts} key.
+If the result is a number, then we know the \clj{:desserts}
+key is a number, otherwise the input is a \clj{:combo} meal.
 We have already seen dispatch on \clj{class} and on keywords
 in isolation---occurrence typing automatically understands
 control flow that combines its simple building blocks.
@@ -652,14 +643,15 @@ of \clj{:combo} meals.
 \begin{exmp}
 \begin{minted}{clojure}
 (ann desserts' [Order -> Int])
-(defmulti desserts' (fn [o :- Order] (class (:desserts o))))
-(defmethod desserts' Long [{d :desserts :as o}] 
-  ; o :- (U '{:Meal ':lunch, :desserts Int} '{:Meal ':dinner, :desserts Int}
-  ;         '{:Meal ':combo :desserts Int, :meal1 Order, :meal2 Order})
-  d)
-(defmethod desserts' nil [{m1 :meal1 m2 :meal2 :as o}]
+(defmulti desserts' 
+  (fn [o :- Order] (class (:desserts o))))
+(defmethod desserts' Long [o] 
+; o :- (U '{:Meal (U ':dinner ':lunch), :desserts Int}
+;       '{:Meal ':combo, :desserts Int, :meal1 Order, :meal2 Order})
+  (:desserts o))
+(defmethod desserts' nil [o]
   ; o :- '{:Meal ':combo, :meal1 Order, :meal2 Order}
-  (+ (desserts' m1) (desserts' m2)))
+  (+ (desserts' (:meal1 o)) (desserts' (:meal2 o))))
 \end{minted}
 \label{example:desserts-on-class}
 \end{exmp}
@@ -671,18 +663,15 @@ of \clj{:combo} meals.
 
 In the \clj{Long} method, Typed Clojure learns that
 its argument is at least of type \clj{'{:desserts Long}}---since
-\begin{minted}{clojure}
-(isa? (class (:desserts o)) Long)
-\end{minted}
+\clj{(isa? (class (:desserts o)) Long)}
 must be true.
 %
 %Knowing \clj{o} is also an
 %\clj{Order},
-In this method, we deduce
-the entry \clj{:desserts}
-\emph{must} be a present and mapped to a \clj{Long},
-even in a \clj{:combo} meal
-which does not state \clj{:desserts}
+Here the
+\clj{:desserts} entry
+\emph{must} be present and mapped to a \clj{Long}---even in a \clj{:combo} meal,
+which does not specify \clj{:desserts}
 as present or absent.
 
 In the \clj{nil} method,
@@ -711,7 +700,7 @@ is neither \clj{nil} or absent).
 %\end{minted}
 %thus allowing both recursive calls to type check.
 
-\paragraph{From multimethod to multiple dispatch}
+\paragraph{From multiple to arbitrary dispatch}
 Clojure multimethod dispatch, and Typed Clojure's handling of it, goes
 even further, supporting dispatch on multiple arguments via vectors.
 %
