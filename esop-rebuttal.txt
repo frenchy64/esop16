@@ -1,0 +1,113 @@
+Major issues:
+
+1) Section 5.1 should use tables instead of prose.
+
+We will restate the data in tables.
+
+==========================================================================
+
+Q: What is the delta between occurrence typing in ICFP'10 and the as presented here?
+
+A:
+
+Q: Is TC decidable?
+
+Q: Why can't the type system check Example 9? What restrictions are imposed on HMaps?
+
+A: For presentational reasons, we only support a specific pattern of looking up
+a known key in a union of HMaps...
+
+Q: What specific patterns could not be supported by TC that led to CircleCI
+   abandoning it?
+
+Q: How is TC compiled/used in practice? Is it sealed from untyped namespaces?
+
+A: core.typed 
+
+Q: "Java cannot be passed nil"?
+
+A: This is a conservative assumption, as the paper states in the same sentence.
+   In practice this is a reasonable default, as discussed in the CircleCI evaluation (5.1).
+
+Q: Does (dissoc k) just remove its argument-entry from a map?
+
+A: (dissoc m k) returns a new map that is like m, but without a k entry.
+
+Q: How symbolic representations of objects in OT relate to Scala's
+   path-dependent types?
+
+A: ??
+
+Q: Formula (3) -- do the positive/negative statements mean that d
+   is of type Nat, so N_d should be read as a proposition?
+
+A: Yes, N_d says d is a Nat, \overline{N_d} says d is not a Nat.
+
+Q: Are Java's generic classes (in particular collections) supported
+   in TC type checking algorithm?
+
+A: No. We chose to avoid the added complexity of Java generics ..
+
+Q: How do Clojure IDE's "incrementalize" type checking for code completion?
+
+A: Cursive Clojure prioritizes type hints assigned to variables in the local scope
+   during method name autocompletion.
+   
+Q: "Then (new[S] F "a/b") is checked against a nilable conversion..."?
+
+A: FIXME I have no idea, looks like a bug?
+
+Q: What is the type of (defmethod e_m e_v e_f)?
+
+A: As shown in T-DefMethod, it returns the same type as e_m.
+
+Q: How overlapping multi-method clauses are handled?
+
+A: In the type system, each method is checked in isolation with respect to 
+   just the current dispatch value and the dispatch function type.
+   In the operational semantics, B-BetaMulti can only fire if there is an unambiguous
+   match, encoded in the GM metafunction.
+
+Q: Citation for Footnote 1?
+
+A: FIXME
+
+Q: What category do you consider e.g. C# 4.0, or Scala's Dynamic, or
+   Dart? (WRT gradual typing)
+
+Q: Is the additional of an Unknown or Dynamic type in a static
+    type system enough to make it gradual?
+    
+Q: Is "optional" here a synonym for Bracha's "pluggable" type system?
+
+A: Yes, because the type system does not affect the final program.
+  ... But also no...
+
+Q: One way of thinking about those
+   annotations is that in fact Typed Clojure actually is a gradual type
+   system as well as an optional type system, with the annotations
+   effectively acting as type assumptions which will be checked
+   dynamically to interact with other untyped code.
+
+A: Typed Clojure does not check these assumptions at runtime, thus is not
+   gradually typed in any sense, just optionally typed like TypeScript.
+
+Q: What is "ann"?
+
+A: (ann v t) 'ann'otates variable v as type t. See examples in Section 2.2.
+
+Q: What is the "Any" type?
+
+A: "Any" is effectively the same as (U nil Object), and has no special runtime semantics.
+   This also holds in the implementation, as JVM primitives pun their boxed equivalents
+   as static types, reflecting how Clojure deals with primitives.
+
+Q: Why does 42 have the object "0"?
+
+A: There is no known way to derive 42 from the current environment, so the object is "empty".
+   More recent forumlations of occurrence typing assign the object "42" to aid symbolic
+   computations.
+
+Q: Is the complexity of multimethods worth it, given the case studies?   
+
+A: 
