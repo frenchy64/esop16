@@ -11,7 +11,8 @@ The reviewers' primary concerns are with three issues:
 As described in Section 1, our overall contributions are
 
   - a type system for Clojure that support Clojure idioms,
-  - a sound formal model for three crucial type system features, and
+  - a sound formal model for three crucial type system features,
+  - an implementation successfully used in practice and industry, and
   - an evaluation of the type system in practice.
 
 There are two main extensions specifically in relation to occurrence typing.
