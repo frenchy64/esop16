@@ -76,7 +76,10 @@ It is *not* a Dynamic type (Review 2).
 
 ==========================================================================
 
-Following are responses to specific statements or queries.
+We now address a few specific questions from the reviewers. The
+reviewers also make several suggestions for presentation revisions and
+improvements to the evaluation, including comparisons to other systems---we 
+will make these changes in a revised version.
 
 REVIEW 1: Section 5.1 should use tables instead of prose.
 
