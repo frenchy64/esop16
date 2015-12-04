@@ -1,28 +1,87 @@
-Major issues:
+We thank the reviewers for their detailed feedback.  We are thrilled the
+reviewers found the paper "a joy to read", "an excellent demonstration 
+of occurrence typing's power", and providing a "substantial practical 
+contribution".
 
-1) Section 5.1 should use tables instead of prose.
+The reviewers' primary concerns are with two issues:
 
-We will restate the data in tables.
+1. What are the contributions beyond occurrence typing as presented
+   in ICFP'10?
+
+There are two main extensions in relation to occurrence typing.
+
+The first is the presentation of HMap's, with support for flow checking
+on sub-parts of maps. This required several extra typing rules (Fig. 10)
+and subtle, but clean, extensions to the `update` rule (Fig. 12, clauses
+4-7).
+
+The second is multimethods, which is mainly contained in the T-DefMethod
+typing rule. It is in the same spirit as T-If, which was present in ICFP'10,
+but demonstrates occurrence typing extends gracefully to support complex 
+control flow patterns.
+
+The main takeaway is that occurrence typing as formulated in ICFP'10
+serves as a valuable base to support for the nuances of a Clojure type system,
+without any particular foresight from the original authors.
+
+2. Are multimethods worth the extra complexity in the type system, given
+   they are used so little in practice?
+
+Yes.
+
+The numbers presented in the evaluation section are possibly misleading.
+Even though a low number of multimethods are defined in practice, extending
+them via `defmethod` accounts for a large amount of code.
+
+A comparable analogy to a Java code base might be assuming interfaces are
+a minor feature if a small number of interfaces are defined, yet a large number
+of classes extend them.
+
+As noted in Section 5.1, these multimethods are single-dispatch on a
+fixed map entry, which further gives them similar roles as Java interfaces,
+which perform single dispatch on the first argument of methods.
+
+Following are responses to specific statements or queries.
 
 ==========================================================================
 
-Q: What is the delta between occurrence typing in ICFP'10 and the as presented here?
+Q. Section 5.1 should use tables instead of prose.
 
-A:
+A. We will restate the data in tables.
 
-Q: Is TC decidable?
+Q: Is TC decidable? `restrict` seems problematic.
+
+A: The calculus leaves the details of `restrict` up to implementations. core.typed
+   features an ad-hoc intersection type, so `restrict` simply returns the intersection 
+   of both types, thus making the occurrence typing implementation decidable.
 
 Q: Why can't the type system check Example 9? What restrictions are imposed on HMaps?
 
-A: For presentational reasons, we only support a specific pattern of looking up
-a known key in a union of HMaps...
+A: For presentational reasons we only support a specific pattern of looking up
+   a common, known key in a union of HMaps (notice T-GetHMap (Fig. 10) is the only rule
+   supporting lookups on unions of HMaps). Example 9 is checkable in core.typed, 
+   but not the calculus, and serves as a demonstration of the kinds of patterns
+   that might occur in Clojure code.
 
 Q: What specific patterns could not be supported by TC that led to CircleCI
    abandoning it?
 
+A: We refer to the detailed blog post they published: 
+
+     http://blog.circleci.com/why-were-no-longer-using-core-typed/
+
+Q: Are the case studies representative programs that would be good candidates for optiona
+   typing?
+
+A: We chose the CircleCI code base as it was a substantial size. The other case
+   study was a randomly chosen open source project. A goal of Typed Clojure is to support
+   as many Clojure idioms as possible, and we learnt valuable lessons from both projects
+   in this regard.
+
 Q: How is TC compiled/used in practice? Is it sealed from untyped namespaces?
 
-A: core.typed 
+A: TC is simply compiled to be normal Clojure code. As alluded to in Footnote 1,
+   Typed Clojure is not gradually typed.
 
 Q: "Java cannot be passed nil"?
 
@@ -33,10 +92,10 @@ Q: Does (dissoc k) just remove its argument-entry from a map?
 
 A: (dissoc m k) returns a new map that is like m, but without a k entry.
 
-Q: How symbolic representations of objects in OT relate to Scala's
+Q: How do symbolic representations of objects in OT relate to Scala's
    path-dependent types?
 
-A: ??
+A: They are unrelated.
 
 Q: Formula (3) -- do the positive/negative statements mean that d
    is of type Nat, so N_d should be read as a proposition?
@@ -46,16 +105,19 @@ A: Yes, N_d says d is a Nat, \overline{N_d} says d is not a Nat.
 Q: Are Java's generic classes (in particular collections) supported
    in TC type checking algorithm?
 
-A: No. We chose to avoid the added complexity of Java generics ..
+A: No. TC however supports parametric polymorphism for Clojure collections and a manual subset
+   of Java collections. In practice, this is sufficient for many interop situations.
 
-Q: How do Clojure IDE's "incrementalize" type checking for code completion?
+Q: The simplified syntax chosen for method calls works for compilers, but
+   not IDE's. How do Clojure IDE's "incrementalize" type checking for code completion?
 
-A: Cursive Clojure prioritizes type hints assigned to variables in the local scope
+A: This syntax is not arbitrary; (.method o) is sugar for (. o (method)) in Clojure.
+   Cursive Clojure prioritizes type hints assigned to variables in the local scope
    during method name autocompletion.
    
 Q: "Then (new[S] F "a/b") is checked against a nilable conversion..."?
 
-A: FIXME I have no idea, looks like a bug?
+A: The prose should be fixed to instead read "non-nilable".
 
 Q: What is the type of (defmethod e_m e_v e_f)?
 
@@ -70,23 +132,29 @@ A: In the type system, each method is checked in isolation with respect to
 
 Q: Citation for Footnote 1?
 
-A: FIXME
+A: Siek et al SNAPL'15 is a good candidate for describing gradual typing, however optional
+   typing is not explicitly defined.
 
 Q: What category do you consider e.g. C# 4.0, or Scala's Dynamic, or
    Dart? (WRT gradual typing)
 
+A: C# 4.0 is gradually typed. Scala's Dynamic is an unrelated metaprogramming construct, 
+   comparable to a statically resolved "method_missing" in Ruby.  Dart is 
+   optionally typed.
+
 Q: Is the additional of an Unknown or Dynamic type in a static
-    type system enough to make it gradual?
+   type system enough to make it gradual?
+
+A: A gradual type system is defined by its operational semantics, in particular
+   how the runtime prevents untyped code from breaking static invariants.
     
 Q: Is "optional" here a synonym for Bracha's "pluggable" type system?
 
-A: Yes, because the type system does not affect the final program.
-  ... But also no...
+A: They are in the same spirit.
 
-Q: One way of thinking about those
-   annotations is that in fact Typed Clojure actually is a gradual type
-   system as well as an optional type system, with the annotations
-   effectively acting as type assumptions which will be checked
+Q: One way of thinking about those annotations is that in fact Typed Clojure 
+   actually is a gradual type system as well as an optional type system, with 
+   the annotations effectively acting as type assumptions which will be checked
    dynamically to interact with other untyped code.
 
 A: Typed Clojure does not check these assumptions at runtime, thus is not
@@ -95,19 +163,15 @@ A: Typed Clojure does not check these assumptions at runtime, thus is not
 Q: What is "ann"?
 
 A: (ann v t) 'ann'otates variable v as type t. See examples in Section 2.2.
+   We will explain this explicitly.
 
-Q: What is the "Any" type?
+Q: What is the "Any" type? "Kw"?
 
 A: "Any" is effectively the same as (U nil Object), and has no special runtime semantics.
-   This also holds in the implementation, as JVM primitives pun their boxed equivalents
-   as static types, reflecting how Clojure deals with primitives.
+   It is *not* a Dynamic type.
+   "Kw" is the type for keywords.
 
 Q: Why does 42 have the object "0"?
 
-A: There is no known way to derive 42 from the current environment, so the object is "empty".
-   More recent forumlations of occurrence typing assign the object "42" to aid symbolic
-   computations.
-
-Q: Is the complexity of multimethods worth it, given the case studies?   
-
-A: 
+A: There is no known way to derive 42 from the current environment, so we say the 
+   object is "empty".
