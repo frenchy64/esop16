@@ -3,12 +3,18 @@ reviewers found the paper "a joy to read", "an excellent demonstration
 of occurrence typing's power", and providing a "substantial practical 
 contribution".
 
-The reviewers' primary concerns are with two issues:
+The reviewers' primary concerns are with three issues:
 
 1. What are the contributions beyond occurrence typing as presented
    in ICFP'10?
 
-There are two main extensions in relation to occurrence typing.
+As described in Section 1, our overall contributions are
+
+  - a type system for Clojure that support Clojure idioms,
+  - a sound formal model for three crucial type system features, and
+  - an evaluation of the type system in practice.
+
+There are two main extensions specifically in relation to occurrence typing.
 
 The first is the presentation of HMap's, with support for flow checking
 on sub-parts of maps. This required several extra typing rules (Fig. 10)
@@ -41,137 +47,132 @@ As noted in Section 5.1, these multimethods are single-dispatch on a
 fixed map entry, which further gives them similar roles as Java interfaces,
 which perform single dispatch on the first argument of methods.
 
-Following are responses to specific statements or queries.
+3. What is the distinction between optional and gradual typing?
+
+Optional typing refers to type systems that do not enforce type invariants
+at runtime, and are comparable to Bracha's "pluggable" type systems (as
+suggested by Review 2).
+
+Typed Clojure does not check assumptions at runtime, thus is not
+gradually typed in any sense, just optionally typed like TypeScript.
+
+Review 2 requests to categorize the following:
+ - C# 4.0 is gradually typed. 
+ - Scala's Dynamic is an unrelated metaprogramming construct, 
+   comparable to a statically resolved "method_missing" in Ruby. 
+ - Dart is optionally typed.
+
+A gradual type system is defined by its operational semantics, in particular
+how the runtime prevents untyped code from breaking static invariants. An
+addition of an "Unknown or Dynamic type" (Review 2) is not enough to make
+a gradual type system.
+
+We distinguish optional and gradual typing in footnote 1. A good reference for 
+this distinction is Siek et al SNAPL'15 (as requested by Review 2).
+
+"Any" is effectively the same as `(U nil Object)`, and has no special runtime semantics.
+It is *not* a Dynamic type (Review 2).
 
 ==========================================================================
 
-Q. Section 5.1 should use tables instead of prose.
+Following are responses to specific statements or queries.
 
-A. We will restate the data in tables.
+REVIEW 1: Section 5.1 should use tables instead of prose.
 
-Q: Is TC decidable? `restrict` seems problematic.
+  We will restate the data in tables.
 
-A: The calculus leaves the details of `restrict` up to implementations. core.typed
-   features an ad-hoc intersection type, so `restrict` simply returns the intersection 
-   of both types, thus making the occurrence typing implementation decidable.
+REVIEW 1: Is TC decidable? `restrict` seems problematic.
 
-Q: Why can't the type system check Example 9? What restrictions are imposed on HMaps?
+  The calculus leaves the details of `restrict` up to implementations. core.typed
+  features an ad-hoc intersection type, so `restrict` simply returns the intersection 
+  of both types, thus making the occurrence typing implementation decidable.
 
-A: For presentational reasons we only support a specific pattern of looking up
-   a common, known key in a union of HMaps (notice T-GetHMap (Fig. 10) is the only rule
-   supporting lookups on unions of HMaps). Example 9 is checkable in core.typed, 
-   but not the calculus, and serves as a demonstration of the kinds of patterns
-   that might occur in Clojure code.
+REVIEW 1: Why can't the type system check Example 9? 
+          What restrictions are imposed on HMaps?
 
-Q: What specific patterns could not be supported by TC that led to CircleCI
-   abandoning it?
+  For presentational reasons we only support a specific pattern of looking up
+  a common, known key in a union of HMaps (notice T-GetHMap (Fig. 10) is the only rule
+  supporting lookups on unions of HMaps). Example 9 is checkable in core.typed, 
+  but not the calculus, and serves as a demonstration of the kinds of patterns
+  that might occur in Clojure code.
 
-A: We refer to the detailed blog post they published: 
+REVIEW 1: What specific patterns could not be supported by TC that led to CircleCI
+          abandoning it?
 
-     http://blog.circleci.com/why-were-no-longer-using-core-typed/
+  We refer to the detailed blog post they published: 
 
-Q: Are the case studies representative programs that would be good candidates for optiona
-   typing?
+    http://blog.circleci.com/why-were-no-longer-using-core-typed/
 
-A: We chose the CircleCI code base as it was a substantial size. The other case
-   study was a randomly chosen open source project. A goal of Typed Clojure is to support
-   as many Clojure idioms as possible, and we learnt valuable lessons from both projects
-   in this regard.
+REVIEW 3: Are the case studies representative programs that would be good candidates 
+          for optional typing?
 
-Q: How is TC compiled/used in practice? Is it sealed from untyped namespaces?
+  We chose the CircleCI code base as it was a substantial size. The other case
+  study was a randomly chosen open source project. A goal of Typed Clojure is to support
+  as many Clojure idioms as possible, and we learnt valuable lessons from both projects
+  in this regard.
 
-A: TC is simply compiled to be normal Clojure code. As alluded to in Footnote 1,
-   Typed Clojure is not gradually typed.
+REVIEW 1: How is TC compiled/used in practice? Is it sealed from untyped namespaces?
 
-Q: "Java cannot be passed nil"?
+  TC is compiled to as normal Clojure code. As alluded to in Footnote 1,
+  Typed Clojure is not gradually typed.
 
-A: This is a conservative assumption, as the paper states in the same sentence.
-   In practice this is a reasonable default, as discussed in the CircleCI evaluation (5.1).
+REVIEW 1: "Java cannot be passed nil"?
 
-Q: Does (dissoc k) just remove its argument-entry from a map?
+  This is a conservative assumption, as the paper states in the same sentence.
+  In practice this is a reasonable default, as discussed in the CircleCI evaluation (5.1).
 
-A: (dissoc m k) returns a new map that is like m, but without a k entry.
+REVIEW 1: Does (dissoc k) just remove its argument-entry from a map?
 
-Q: How do symbolic representations of objects in OT relate to Scala's
-   path-dependent types?
+  (dissoc m k) returns a new map that is like m, but without a k entry.
 
-A: They are unrelated.
+REVIEW 1: How do symbolic representations of objects in OT relate to Scala's
+          path-dependent types?
 
-Q: Formula (3) -- do the positive/negative statements mean that d
-   is of type Nat, so N_d should be read as a proposition?
+  They are unrelated.
 
-A: Yes, N_d says d is a Nat, \overline{N_d} says d is not a Nat.
+REVIEW 1: Formula (3) -- do the positive/negative statements mean that d
+          is of type Nat, so N_d should be read as a proposition?
 
-Q: Are Java's generic classes (in particular collections) supported
-   in TC type checking algorithm?
+  Yes, N_d says d is a Nat, \overline{N_d} says d is not a Nat.
 
-A: No. TC however supports parametric polymorphism for Clojure collections and a manual subset
-   of Java collections. In practice, this is sufficient for many interop situations.
+REVIEW 1: Are Java's generic classes (in particular collections) supported
+          in TC type checking algorithm?
 
-Q: The simplified syntax chosen for method calls works for compilers, but
-   not IDE's. How do Clojure IDE's "incrementalize" type checking for code completion?
+  No. TC however supports parametric polymorphism for Clojure collections and a manual subset
+  of Java collections. In practice, this is sufficient for many interop situations.
 
-A: This syntax is not arbitrary; (.method o) is sugar for (. o (method)) in Clojure.
-   Cursive Clojure prioritizes type hints assigned to variables in the local scope
-   during method name autocompletion.
+REVIEW 1: The simplified syntax chosen for method calls works for compilers, but
+          not IDE's. How do Clojure IDE's "incrementalize" type checking for code completion?
+
+  This syntax is not arbitrary; (.method o) is sugar for (. o (method)) in Clojure.
+  Cursive Clojure prioritizes type hints assigned to variables in the local scope
+  during method name autocompletion.
    
-Q: "Then (new[S] F "a/b") is checked against a nilable conversion..."?
+REVIEW 1: "Then (new[S] F "a/b") is checked against a nilable conversion..."?
 
-A: The prose should be fixed to instead read "non-nilable".
+  The prose should be fixed to instead read "non-nilable".
 
-Q: What is the type of (defmethod e_m e_v e_f)?
+REVIEW 1: What is the type of (defmethod e_m e_v e_f)?
 
-A: As shown in T-DefMethod, it returns the same type as e_m.
+  As shown in T-DefMethod, it returns the same type as e_m.
 
-Q: How overlapping multi-method clauses are handled?
+REVIEW 1: How overlapping multi-method clauses are handled?
 
-A: In the type system, each method is checked in isolation with respect to 
-   just the current dispatch value and the dispatch function type.
-   In the operational semantics, B-BetaMulti can only fire if there is an unambiguous
-   match, encoded in the GM metafunction.
+  In the type system, each method is checked in isolation with respect to 
+  just the current dispatch value and the dispatch function type.
+  In the operational semantics, B-BetaMulti can only fire if there is an unambiguous
+  match, encoded in the GM metafunction.
 
-Q: Citation for Footnote 1?
+REVIEW 2: What is "ann"?
 
-A: Siek et al SNAPL'15 is a good candidate for describing gradual typing, however optional
-   typing is not explicitly defined.
+  (ann v t) 'ann'otates variable v as type t. See examples in Section 2.2.
+  We will explain this explicitly.
 
-Q: What category do you consider e.g. C# 4.0, or Scala's Dynamic, or
-   Dart? (WRT gradual typing)
+REVIEW 2: What is the "Kw" type?
 
-A: C# 4.0 is gradually typed. Scala's Dynamic is an unrelated metaprogramming construct, 
-   comparable to a statically resolved "method_missing" in Ruby.  Dart is 
-   optionally typed.
-
-Q: Is the additional of an Unknown or Dynamic type in a static
-   type system enough to make it gradual?
-
-A: A gradual type system is defined by its operational semantics, in particular
-   how the runtime prevents untyped code from breaking static invariants.
-    
-Q: Is "optional" here a synonym for Bracha's "pluggable" type system?
-
-A: They are in the same spirit.
-
-Q: One way of thinking about those annotations is that in fact Typed Clojure 
-   actually is a gradual type system as well as an optional type system, with 
-   the annotations effectively acting as type assumptions which will be checked
-   dynamically to interact with other untyped code.
-
-A: Typed Clojure does not check these assumptions at runtime, thus is not
-   gradually typed in any sense, just optionally typed like TypeScript.
-
-Q: What is "ann"?
-
-A: (ann v t) 'ann'otates variable v as type t. See examples in Section 2.2.
-   We will explain this explicitly.
-
-Q: What is the "Any" type? "Kw"?
-
-A: "Any" is effectively the same as (U nil Object), and has no special runtime semantics.
-   It is *not* a Dynamic type.
    "Kw" is the type for keywords.
 
-Q: Why does 42 have the object "0"?
+REVIEW 2: Why does 42 have the object "0"?
 
-A: There is no known way to derive 42 from the current environment, so we say the 
-   object is "empty".
+  There is no known way to derive 42 from the current environment, so we say the 
+  object is "empty".
