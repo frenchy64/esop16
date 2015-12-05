@@ -37,7 +37,7 @@ multimethods are are.  Even though a low number of distinct
 multimethods are defined in practice, extending them via `defmethod`
 accounts for a large amount of code.
 
-Analagously, though Java code may define few interfaces, they will be
+Analogously, though Java code may define few interfaces, they will be
 used in more class definitions, and then in many method calls.
 
 As noted in Section 5.1, these multimethods are often single-dispatch
