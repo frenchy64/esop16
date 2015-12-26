@@ -129,8 +129,8 @@ instrumented the Typed Clojure type checker to record how often
 various features were used. 
 
 \paragraph{feeds2imap}
-feeds2imap is an open source library written in Typed Clojure. It provides an
-RSS reader using the \emph{java.mail} framework.
+feeds2imap is an open source library written in Typed Clojure. 
+It provides an RSS reader using the \emph{javax.mail} framework.
 
 % static call (:check/:static-call) = 74
 % - user   5
@@ -146,40 +146,24 @@ RSS reader using the \emph{java.mail} framework.
 % - inlined (:check/instance-call-clojure-lang-probably-inline) 33
 % total 151
 % - user  32
-Of 11 typed namespaces containing 825 lines of code,
-there are 32 Java interactions.
-The majority are method calls, consisting of 
-20 (62\%) instance methods and 5 (16\%) static methods.
-The rest consists of 1 (3\%) static field access, and
-6 (19\%) constructor calls---there are no instance field
-accesses.
+Of 11 typed namespaces containing 825 lines of code, there are 32 Java interactions.
+The majority are method calls, consisting of 20 (62\%) instance methods and 5 (16\%) static methods. 
+The rest consists of 1 (3\%) static field access, and 6 (19\%) constructor calls---there are no instance field accesses.
 
 %  from :check/find-val-type-with-hmap* numbers
-There are 27 lookup operations on HMap types, of which 20 (74\%) resolve to
-mandatory entries, 6 (22\%) to optional entries,
-and 1 (4\%) is an unresolved lookup. 
+There are 27 lookup operations on HMap types, of which 20 (74\%) resolve to mandatory entries, 6 (22\%) to optional entries, and 1 (4\%) is an unresolved lookup. 
 No lookups involved fully specified maps.
 
 % :collect/:def     93
 % :check/checked-def 52
-From 93 \clj{def} expressions in typed code, 52 (56\%) are checked,
-with a rate of 1
-Java interaction for 1.6 checked top-level definitions, and
-1 HMap lookup to 1.9 checked top-level definitions.
-That leaves 41 (44\%) unchecked vars, mainly due to partially complete 
-porting to Typed Clojure, but in some cases due to unannotated third-party 
-libraries.
+From 93 \clj{def} expressions in typed code, 52 (56\%) are checked, with a rate of 1 Java interaction for 1.6 checked top-level definitions, and 1 HMap lookup to 1.9 checked top-level definitions.
+That leaves 41 (44\%) unchecked vars, mainly due to partially complete porting to Typed Clojure, but in some cases due to unannotated third-party libraries.
 
 No typed multimethods are defined or used. 
 % :collect/defalias-is-HMap      7
 % :invoke-special-collect/(quote clojure.core.typed/def-alias*)     18
-Of 18 total type aliases,
-7 (39\%) contained one HMap type, and none contained unions of HMaps---on further
-inspection there was no HMap entry used to dictate control flow, often
-handled by multimethods.
-This is unusual in our experience, and
-is perhaps explained by feeds2imap mainly wrapping
-wrapping existing \emph{javax.mail} functionality.
+Of 18 total type aliases, 7 (39\%) contained one HMap type, and none contained unions of HMaps---on further inspection there was no HMap entry used to dictate control flow, often handled by multimethods.
+This is unusual in our experience, and is perhaps explained by feeds2imap mainly wrapping existing \emph{javax.mail} functionality.
 
 \paragraph{CircleCI}
 CircleCI %% \footnote{\url{https://circleci.com/}}

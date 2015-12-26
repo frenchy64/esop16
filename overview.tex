@@ -478,14 +478,15 @@ result from this code base).
 \end{minted}
 \label{example:circleci}
 \end{exmp}
-
+%
 %(ann enc-keypair [RawKeyPair -> EncKeyPair])
 %(defn enc-keypair [{pk :priv :as kp}] ; original map is kp
 %  (assoc (dissoc kp :priv)       ; remove unencrypted private key
 %         :enc-priv (encrypt pk))) ; add encrypted private key
-
+%
 %\inputminted[firstline=10,lastline=22]{clojure}{code/demo/src/demo/key.clj}
-As \clj{EncKeyPair} is fully specified, we must remove extra keys like \clj{:priv}.
+As \clj{EncKeyPair} is fully specified, we remove extra keys like \clj{:priv}
+via \clj{dissoc}. Notice removing \clj{dissoc} causes a type error.
 %
 \begin{minted}{clojure}
 (defn enc-keypair-bad [kp] ; Type error: :priv disallowed

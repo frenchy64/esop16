@@ -1,0 +1,69 @@
+- Outline delta from ICFP'10
+- is OC decidable?
+
+* In page 19, there is a statement "... but cannot check Example 9".
+
+- specific patterns about CircleCI
+- Section 5.1 provide tables
+
+p.5: "Java methods and constructor arguments cannot be passed nil" --
+given that nil = null, this statement looks strange, as Java methods
+regularly take null as arguments. Please, clarify.
+
+DONE p.6: Does (dissoc k) just remove its argument-entry from a map?
+
+p.9: How symbolic representations of objects in OT relate to Scala's
+path-dependent types?
+
+p.12: Formula (3) -- do the positive/negative statements mean that d
+is of type Nat, so N_d should be read as a proposition?
+
+p.13: Are Java's generic classes (in particular collections) supported
+in TC type checking algorithm?
+
+p.15: "Then (new[S] F "a/b") is checked against a nilable
+conversion..." -- which rule requires this check and why?
+
+p.17: "with o' = x ..." -- which "x" is meant here from the code on
+Fig.9?
+
+p.17: What is the type of (defmethod e_m e_v e_f)?
+
+p.17: How overlapping multi-method clauses are handled?
+
+p.17: "\phi''_+ = (Val:en)_x" -- how this proposition calculated?
+Does it require evaluating the dispatch function (which is an
+identity)?
+
+p.17: "A, a set of keyword keys that are known to be absent" -- how
+it's calculated and represented in the type-checking algorithm?
+
+p.19: "The result type is T, and the return object is..." - this is
+strange, as Example 4 provided a default value in the map and its type
+was String, not T.
+
+p.21: Do "error" terms serves only to specify erroneous Java calls
+(which are admitted by the type system)?
+
+p.24: "Java Interoperability in Statically Typed Languages" -- a
+significant work in this direction has been done in Kotlin:
+https://kotlinlang.org/docs/reference/null-safety.html. Perhaps, you
+should compare to it.
+
+- Gradual typing vs optional typing?
+
+minor points
+ - include page numbers in papers sent for review
+ - spell Smalltalk, Strongtalk and Gradualtalk correctly!
+ - cite Strongtalk, Dimondback Ruby,  (which is optional & gradual as
+      I see it, while Strongtalk is just optional) and others.
+ - the comparison between HMaps & OCaml row polymorphism could be expanded.
+ - I didn't know what Clojure "ann" was. Still don't
+ - ditto Kw & Any (p.5)
+ - I presume Any is *not* type Dynamic (which accepts any method
+ request statically?) I think the paper also mentions type Object: how
+ are Any and Object related?
+  - p.9 why does 42 have the object "0"
+  - check your bibliography: 1,3,6,12,14,17,22.
+
+- what is consistency

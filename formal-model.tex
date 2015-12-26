@@ -946,10 +946,11 @@ semantics of \ifliteral{} (\figref{main:figure:coresemantics}).
 
 We present Java interoperability in a restricted setting without class inheritance,
 overloading or Java Generics.
-
+%
 We extend the syntax in \figref{main:figure:javatyping} with Java field lookups and calls to
 methods and constructors. 
-To prevent ambiguity, % between zero-argument methods and fields, 
+To prevent ambiguity between zero-argument methods and fields,
+we use Clojure's primitive ``dot'' syntax:
 field accesses are written \fieldexp{\fld{}}{\e{}}
 and method calls $\methodexp{\mth{}}{\e{}}{\overrightarrow{e}}$.
 %and \clj{(new class es*)} is $\newexp{\class{}}{\overrightarrow{es}}$.
@@ -1002,21 +1003,17 @@ to the non-reflective expression
 %$$
 %    {\TMethod}
 %$$
-We use T-Method to check {\methodexp {\getparent{}} {\newstaticexp {\String} {\File{}} {\File{}} {\makestr{a/b}}} {}}, 
-which checks unresolved methods.
-We verify the target type \s{} = \File is non-nil before erasing \Nil
-by converting to a Java type \classhint{1} = \File.
-The specific overload is chosen from the class table based on \classhint{1}---there is at most one.
-Then {\newstaticexp {\String} {\File{}} {\File{}} {\makestr{a/b}}}
-is checked against a nilable conversion of \classhint{1}, \t{1} = \Union{\Nil}{\File},
-which succeeds by the previous rule.
-The nilable return type \t{} = \Union{\Nil}{\String} is given, and---finally---the 
+The T-Method rule for unresolved methods
+checks {\methodexp {\getparent{}} {\newstaticexp {\String} {\File{}} {\File{}} {\makestr{a/b}}} {}}.
+We verify the target type \s{} = \File is non-nil by T-New.
+The overload is chosen from the class table based on \classhint{1} = \File---there is at most one.
+The nilable return type \t{} = \Union{\Nil}{\String} is given, and the 
 entire expression rewrites to expression \ref{eq:resolved}.
 %
 %We allow arguments to constructors and methods to be nilable, but not method
 %and field targets.
 
-The T-Field rule is included in \figref{main:figure:javatyping}, and is like T-Method, but without arguments.
+The T-Field rule (\figref{main:figure:javatyping}) is like T-Method, but without arguments.
 
 The evaluation rules B-Field, B-New and B-Method (\figref{main:figure:javatyping}) simply evaluate their
 arguments and call the relevant JVM operation, which we do not model---\secref{sec:metatheory}
@@ -1185,13 +1182,10 @@ $$
 \end{figure}
 
 
-\figref{main:figure:mmsyntax}
-presents \emph{immutable}
-multimethods without default methods to ease presentation.
+\figref{main:figure:mmsyntax} presents \emph{immutable} multimethods without default methods to ease presentation.
 %Syntax and semantics are given in \figref{main:figure:mmsyntax}. 
 %Multimethods can error if no matching method is chosen (rules in the supplemental material).
-\figref{main:figure:mmexample}
-is the translation of \egref{example:hi-multimethod} to \lambdatc{}.
+\figref{main:figure:mmexample} translates the mutable \egref{example:hi-multimethod} to \lambdatc{}.
 %\begin{minted}{clojure}
 %(ann hi [Kw -> Str])
 %(defmulti hi identity)
