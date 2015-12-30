@@ -486,7 +486,8 @@ result from this code base).
 %
 %\inputminted[firstline=10,lastline=22]{clojure}{code/demo/src/demo/key.clj}
 As \clj{EncKeyPair} is fully specified, we remove extra keys like \clj{:priv}
-via \clj{dissoc}. Notice removing \clj{dissoc} causes a type error.
+via \clj{dissoc}, which returns a new map that is the first argument without the
+entry named by the second argument. Notice removing \clj{dissoc} causes a type error.
 %
 \begin{minted}{clojure}
 (defn enc-keypair-bad [kp] ; Type error: :priv disallowed

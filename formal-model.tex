@@ -437,10 +437,16 @@ T-Local as
                      {\makelocal{d}}
 \end{equation}
 which encodes the type, proposition, and object information
-about variables.
+about variables. The proposition {\notprop{\falsy}{\makelocal{d}}}
+says ``it is not the case that variable {\makelocal{d}} is of type {\falsy}'';
+{\isprop{\falsy}{\makelocal{d}}} says ``{\makelocal{d}} is of type {\falsy}''.
 
 Finally, the T-App rule substitutes the operand's object \objectp{}
-for the parameter \x{} in the latent type, propositions, and object.
+for the parameter \x{} in the latent type, propositions, and object. The proposition
+{\isprop{\Number{}}{\makelocal{d}}} says ``{\makelocal{d}} is of type {\Number{}}'';
+{\notprop{\Number{}}{\makelocal{d}}} says ``it is not the case that {\makelocal{d}}
+is of type {\Number{}}''. The object {\makelocal{d}} is the symbolic representation
+of what the expression {\makelocal{d}} evaluates to.
 \begin{equation}
 \judgementselfrewrite{\propenv{}}
   {\appexp{\numberhuh{}}{\makelocal{d}}}
@@ -1248,7 +1254,7 @@ $
               {\ArrowOne{\x{}}{\Keyword}{\Keyword}{\filterset{\topprop{}}{\topprop{}}}{\x{}}}}
 $.
 
-Next, show how to check
+Next, we show how to check
 $
 {\extendmultiexp {hi_0} {\makekw{en}} {\abs {\x{}} {\Keyword} {\makestr{hello}}}}
 $.
@@ -1283,6 +1289,7 @@ $
 $.
 Finally from the interface type \t{m}, we know \thenprop{\prop{}} = \elseprop{\prop{}} = \topprop{},
 and \object{} = \emptyobject{}, which also agrees with the method body, above.
+Notice the overall type of a \defmethodliteral{} is the same as its first subexpression \e{m}.
 
 
 %The expression {\createmultiexp {\s{}} {\e{}}} 

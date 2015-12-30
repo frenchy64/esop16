@@ -1,8 +1,11 @@
 \section{Experience}
 \label{sec:experience}
 
-Typed Clojure is implemented as a Clojure library---\coretyped{}.
-It provides preliminary integration with the Clojure compilation
+Typed Clojure is implemented as a Clojure library---\coretyped{}---which has seen wide usage.
+
+\subsection{Implementation}
+
+\coretyped{} provides preliminary integration with the Clojure compilation
 pipeline, primarily to resolve Java interoperability, however
 most usages are entirely optionally typed.
 %In contrast to Racket, Clojure does not provide extension
@@ -18,6 +21,11 @@ The \coretyped{} implementation extends this paper in several key areas
 to handle checking real Clojure code, including an implementation
 of Typed Racket's variable-arity polymorphism~\cite{stf-esop}, 
 and support for other Clojure idioms like datatypes and protocols.
+
+There is no integration with Java Generics, so only Java 1.4-style erased types are ``trusted''
+by \coretyped{}.
+Casts are needed to recover the discarded information, which---for collections---are 
+then tracked via Clojure's universal sequence interface~\cite{CljSeqDoc}.
 
 %Recently, steps have been taken to integrate Typed Clojure into 
 
@@ -342,8 +350,7 @@ untyped-typed porting process is reverse engineering libraries.
 While the current set of features is vital to checking Clojure code, as we have seen
 in \secref{sec:casestudy} there is still much work to do.
 In practice, common Clojure functions are too polymorphic for the current implementation
-or theory to account for. For example, \clj{comp} provides variable-arity function composition,
-and further research is required to check callsites.
+or theory to account for. The post-mortem~\cite{CircleCIBlog} contains more details.
 
 %\smallsection{Java Arrays}
 %Java arrays are known to be statically unsound.

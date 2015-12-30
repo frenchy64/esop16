@@ -3,23 +3,11 @@
 
 * In page 19, there is a statement "... but cannot check Example 9".
 
-- specific patterns about CircleCI
 - Section 5.1 provide tables
 
 p.5: "Java methods and constructor arguments cannot be passed nil" --
 given that nil = null, this statement looks strange, as Java methods
 regularly take null as arguments. Please, clarify.
-
-DONE p.6: Does (dissoc k) just remove its argument-entry from a map?
-
-p.9: How symbolic representations of objects in OT relate to Scala's
-path-dependent types?
-
-p.12: Formula (3) -- do the positive/negative statements mean that d
-is of type Nat, so N_d should be read as a proposition?
-
-p.13: Are Java's generic classes (in particular collections) supported
-in TC type checking algorithm?
 
 p.15: "Then (new[S] F "a/b") is checked against a nilable
 conversion..." -- which rule requires this check and why?
