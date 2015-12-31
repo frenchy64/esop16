@@ -1113,25 +1113,48 @@ rules that rewrite to reflective calls.
 
 \label{sec:isaformal}
 
-We now consider the \isaliteral{} operation, a core part of the dispatch mechanism for multimethods. 
-Recalling the \secref{sec:multioverview} examples,
+We now consider the \isaliteral{} operation, a core part of the multimethod dispatch mechanism. 
+Recalling the examples in \secref{sec:multioverview},
 \isaliteral{} is
-a subclassing test for classes, otherwise an equality test.
+a subclassing test for classes, but otherwise is an equality test.
 %---we do not model the semantics for vectors
 %
-The key component of the T-IsA rule (\figref{main:figure:mmsyntax})
-is the \isacompareliteral{} 
-metafunction, used to calculate the propositions for
-\isaliteral{} tests.
+The T-IsA rule uses \isacompareliteral{}
+(\figref{main:figure:mmsyntax}), a metafunction which produces the propositions for
+\isaliteral{} expressions.
 %\begin{mathpar}
 %  \TIsA{}
 %\end{mathpar}
 
-As an example, the expression
+To demonstrate the first \isacompareliteral{} case,
+the expression
 \isaapp{\appexp{\classconst{}}{\x{}}}{\Keyword}
-has the true and false propositions 
+is true if \x{} is a keyword, otherwise false.
+When checked with T-IsA,
+the object of the left subexpression \object{} = {\path{\classpe{}}{\x{}}}
+(which starts with the {\classpe{}} path element)
+and the type of the right subexpression \t{} = {\Value{\Keyword}} (a singleton class type)
+together trigger the first \isacompareliteral{} case
 \isacompare{\s{}}{\path{\classpe{}}{\x{}}}{\Value{\Keyword}}{\filterset{\isprop{\Keyword}{\x{}}}{\notprop{\Keyword}{\x{}}}},
-meaning that if this expression produces true, \x{} is a keyword, otherwise it is not.
+giving propositions that correspond to our informal description {\filterset{\thenprop{\prop{}}}{\elseprop{\prop{}}}} = {\filterset{\isprop{\Keyword}{\x{}}}{\notprop{\Keyword}{\x{}}}}.
+
+The second \isacompareliteral{} case captures the simple equality mode for non-class singleton types.
+For example,
+the expression
+\isaapp{\x{}}{\makekw{en}} produces true 
+when \x{} evaluates to {\makekw{en}}, otherwise it produces false.
+Using T-IsA,
+it has the propositions {\filterset{\thenprop{\prop{}}}{\elseprop{\prop{}}}} = 
+\isacompare{}{\x{}}{\Value{\makekw{en}}}{\filterset {\isprop {\Value{\makekw{en}}}{\x{}}}{\notprop{\Value{\makekw{en}}}{\x{}}}}
+since \object{} = {\x{}} and \t{} = {\Value{\makekw{en}}}.
+%
+The side condition on the second \isacompareliteral{} case ensures we are in equality mode---if \x{} can possibly be a class in 
+\isaapp{\x{}}{\Object{}}, \isacompareliteral{} uses its conservative default case,
+since if \x{} is a class literal, subclassing mode could be triggered.
+%
+Capture-avoiding substitution of objects {\replacefor {} {\object{}} {\x{}}} used in this case erases propositions
+that would otherwise have \emptyobject{} substituted in for their objects---it
+is defined in the appendix.
 
 The operational behavior of \isaliteral{} is given by B-IsA (\figref{main:figure:mmsyntax}). \isaopsemliteral{} explicitly handles classes in the second case.
 
@@ -1277,11 +1300,13 @@ $
 $
 with \objectp{} = {\x{}} (from below the arrow on the right argument of the previous type) and \t{v} = \Value{\makekw{en}}. 
 Then {\thenprop{\proppp{}}} = 
-{\isprop {\Value{\makekw{en}}}{\x{}}} by
+{\isprop {\Value{\makekw{en}}}{\x{}}}
+from
 $
 \isacompare{}{\x{}}{\Value{\makekw{en}}}
 {\filterset {\isprop {\Value{\makekw{en}}}{\x{}}}{\notprop{\Value{\makekw{en}}}{\x{}}}}
-$.
+$
+(see \secref{sec:isaformal}).
 Since \t{} = \Keyword{}, we check the method body with
 $
 \judgement{{\isprop{\Keyword}{\x{}}},{\isprop {\Value{\makekw{en}}}{\x{}}}}

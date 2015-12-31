@@ -9,10 +9,6 @@ p.5: "Java methods and constructor arguments cannot be passed nil" --
 given that nil = null, this statement looks strange, as Java methods
 regularly take null as arguments. Please, clarify.
 
-p.17: "\phi''_+ = (Val:en)_x" -- how this proposition calculated?
-Does it require evaluating the dispatch function (which is an
-identity)?
-
 p.17: "A, a set of keyword keys that are known to be absent" -- how
 it's calculated and represented in the type-checking algorithm?
 
