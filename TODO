@@ -15,10 +15,6 @@ conversion..." -- which rule requires this check and why?
 p.17: "with o' = x ..." -- which "x" is meant here from the code on
 Fig.9?
 
-p.17: What is the type of (defmethod e_m e_v e_f)?
-
-p.17: How overlapping multi-method clauses are handled?
-
 p.17: "\phi''_+ = (Val:en)_x" -- how this proposition calculated?
 Does it require evaluating the dispatch function (which is an
 identity)?

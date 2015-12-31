@@ -1291,6 +1291,8 @@ Finally from the interface type \t{m}, we know \thenprop{\prop{}} = \elseprop{\p
 and \object{} = \emptyobject{}, which also agrees with the method body, above.
 Notice the overall type of a \defmethodliteral{} is the same as its first subexpression \e{m}.
 
+It is worth noting the lack of special typing rules for overlapping methods---each
+method is checked independently based on local type information.
 
 %The expression {\createmultiexp {\s{}} {\e{}}} 
 %defines a multimethod
