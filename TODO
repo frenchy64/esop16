@@ -9,9 +9,6 @@ p.5: "Java methods and constructor arguments cannot be passed nil" --
 given that nil = null, this statement looks strange, as Java methods
 regularly take null as arguments. Please, clarify.
 
-p.17: "with o' = x ..." -- which "x" is meant here from the code on
-Fig.9?
-
 p.17: "\phi''_+ = (Val:en)_x" -- how this proposition calculated?
 Does it require evaluating the dispatch function (which is an
 identity)?
@@ -30,8 +27,6 @@ should compare to it.
 
 - Gradual typing vs optional typing?
 
-minor points
- - include page numbers in papers sent for review
  - spell Smalltalk, Strongtalk and Gradualtalk correctly!
  - cite Strongtalk, Dimondback Ruby,  (which is optional & gradual as
       I see it, while Strongtalk is just optional) and others.
