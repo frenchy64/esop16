@@ -9,9 +9,6 @@ p.5: "Java methods and constructor arguments cannot be passed nil" --
 given that nil = null, this statement looks strange, as Java methods
 regularly take null as arguments. Please, clarify.
 
-p.15: "Then (new[S] F "a/b") is checked against a nilable
-conversion..." -- which rule requires this check and why?
-
 p.17: "with o' = x ..." -- which "x" is meant here from the code on
 Fig.9?
 
@@ -25,9 +22,6 @@ it's calculated and represented in the type-checking algorithm?
 p.19: "The result type is T, and the return object is..." - this is
 strange, as Example 4 provided a default value in the map and its type
 was String, not T.
-
-p.21: Do "error" terms serves only to specify erroneous Java calls
-(which are admitted by the type system)?
 
 p.24: "Java Interoperability in Statically Typed Languages" -- a
 significant work in this direction has been done in Kotlin:
