@@ -23,7 +23,6 @@ should compare to it.
 
 - Gradual typing vs optional typing?
 
- - spell Smalltalk, Strongtalk and Gradualtalk correctly!
  - cite Strongtalk, Dimondback Ruby,  (which is optional & gradual as
       I see it, while Strongtalk is just optional) and others.
  - the comparison between HMaps & OCaml row polymorphism could be expanded.
