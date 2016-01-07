@@ -210,10 +210,10 @@ Typed Clojure rejects programs that assume methods cannot return \clj{nil}.
 (defn parent-bad-out [f :- File] :- Str
   (.getParent f)) ; Type Error: Expected Str, given (U nil Str).
 \end{minted}
-Since Java-level types lack nullability information,
-Typed Clojure conservatively assumes Java methods and
-constructor arguments cannot be passed \clj{nil}---this restriction can be
-adjusted per method, but method targets can never be \clj{nil}.
+Method targets can never be \clj{nil}.
+Typed Clojure also prevents passing \clj{nil} as Java method or
+constructor arguments by default---this restriction can be
+adjusted per method.
 
 %
 %Typed Clojure and Java treat \java{null} differently.
