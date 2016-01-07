@@ -1,13 +1,15 @@
 \section{Experience}
 \label{sec:experience}
 
-Typed Clojure is implemented as a Clojure library---\coretyped{}---which has seen wide usage.
+Typed Clojure is implemented as \coretyped{}, which has seen wide usage.
 
 \subsection{Implementation}
 
 \coretyped{} provides preliminary integration with the Clojure compilation
-pipeline, primarily to resolve Java interoperability, however
-most usages are entirely optionally typed.
+pipeline, primarily to resolve Java interoperability.
+%, however
+%most usages are entirely optionally typed.
+
 %In contrast to Racket, Clojure does not provide extension
 %points to the macroexpander. 
 %To satisfy our goals of providing
@@ -21,7 +23,7 @@ The \coretyped{} implementation extends this paper in several key areas
 to handle checking real Clojure code, including an implementation
 of Typed Racket's variable-arity polymorphism~\cite{stf-esop}, 
 and support for other Clojure idioms like datatypes and protocols.
-
+%
 There is no integration with Java Generics, so only Java 1.4-style erased types are ``trusted''
 by \coretyped{}.
 Casts are needed to recover the discarded information, which---for collections---are 
@@ -130,15 +132,74 @@ existing Clojure programs, in interconnecting way, and that handling
 them as we have done is required to type check realistic Clojure
 programs.
 
-To evaluate this hypothesis, we analyzed two existing Typed Clojure
-code bases, one from the open-source community, and one from a company
-that uses Typed Clojure in production. For our data gathering, we
-instrumented the Typed Clojure type checker to record how often
-various features were used. 
+To evaluate this hypothesis, we analyzed two existing \coretyped{}
+code bases---feeds2imap\footnote{https://github.com/frenchy64/feeds2imap.clj},
+an open source library written in \coretyped{}
+providing an RSS reader using the \emph{javax.mail} framework, and
+the
+CircleCI \cite{CircleCI} backend,
+providing continuous integration services, which
+is partially written in \coretyped{}.
+For our data gathering, 
+\coretyped{} was instrumented to record how often
+various features were used (summarized in 
+\figref{experience:featuretable}).
 
-\paragraph{feeds2imap}
-feeds2imap is an open source library written in Typed Clojure. 
-It provides an RSS reader using the \emph{javax.mail} framework.
+\begin{figure}
+
+\begin{tabular}{lll}
+      \toprule
+
+
+  & feeds2imap & CircleCI \\
+  \midrule
+  Typed namespaces & 11 (825 LOC) & 87 (19,000 LOC) \\
+  Total number of \clj{def} expressions & 93  & 1834 \\
+  \tabitem
+  checked & 52 (56\%) & 407 (22\%) \\
+  \tabitem
+  unchecked & 41 (44\%) & 1427 (78\%) \\
+  Total number of Java interactions & 32 & 105 \\
+  \tabitem
+  static methods & 5 (16\%) & 26 (25\%) \\ 
+  \tabitem
+  instance methods & 20 (62\%) & 36 (34\%) \\
+  \tabitem
+  constructors & 6 (19\%) & 38 (36\%) \\
+  \tabitem
+  static fields & 1 (3\%) & 5 (5\%) \\
+  Methods overriden to return non-nil & 0 & 35 \\
+  Methods overriden to accept nil arguments & 0 & 1 \\
+  Total HMap lookups & 27  & 328  \\
+  \tabitem
+  resolved to mandatory key & 20 (74\%) & 208 (64\%) \\
+  \tabitem
+  resolved to optional key & 6 (22\%) & 70 (21\%) \\
+  \tabitem
+  resolved of absent key & 0 (0\%) & 20 (6\%) \\
+  \tabitem
+  unresolved key & 1 (4\%) & 30 (9\%) \\
+  Total number of \clj{defalias} expressions & 18  & 95 \\
+  \tabitem
+  contained HMap or union of HMap type & 7 (39\%)  & 62 (65\%) \\
+  Total number of checked \clj{defmulti} expressions & 0  & 11 \\
+  Total number of checked \clj{defmethod} expressions & 0  & 89 \\
+
+
+\end{tabular}
+\caption{Typed Clojure Features used in Practice}
+\label{experience:featuretable}
+\end{figure}
+
+%\paragraph{feeds2imap}
+%feeds2imap is an open source library written in Typed Clojure. 
+%It provides an RSS reader using the \emph{javax.mail} framework.
+%
+%%% Now in table
+% :collect/:def     93
+% :check/checked-def 52
+%From 93 \clj{def} expressions in typed code, 52 (56\%) are checked, with a rate of 1 Java interaction for 1.6 checked top-level definitions, and 1 HMap lookup to 1.9 checked top-level definitions.
+%Of note, the 41 (44\%) unchecked vars are mainly due to partially complete porting to Typed Clojure, but in some cases due to unannotated third-party libraries.
 
 % static call (:check/:static-call) = 74
 % - user   5
@@ -154,32 +215,32 @@ It provides an RSS reader using the \emph{javax.mail} framework.
 % - inlined (:check/instance-call-clojure-lang-probably-inline) 33
 % total 151
 % - user  32
-Of 11 typed namespaces containing 825 lines of code, there are 32 Java interactions.
-The majority are method calls, consisting of 20 (62\%) instance methods and 5 (16\%) static methods. 
-The rest consists of 1 (3\%) static field access, and 6 (19\%) constructor calls---there are no instance field accesses.
 
+%%% Now in table
+%Of 11 typed namespaces containing 825 lines of code, there are 32 Java interactions.
+%The majority are method calls, consisting of 20 (62\%) instance methods and 5 (16\%) static methods. 
+%The rest consists of 1 (3\%) static field access, and 6 (19\%) constructor calls---there are no instance field accesses.
+
+%%% Now in table
 %  from :check/find-val-type-with-hmap* numbers
-There are 27 lookup operations on HMap types, of which 20 (74\%) resolve to mandatory entries, 6 (22\%) to optional entries, and 1 (4\%) is an unresolved lookup. 
-No lookups involved fully specified maps.
+%There are 27 lookup operations on HMap types, of which 20 (74\%) resolve to mandatory entries, 6 (22\%) to optional entries, and 1 (4\%) is an unresolved lookup. 
 
-% :collect/:def     93
-% :check/checked-def 52
-From 93 \clj{def} expressions in typed code, 52 (56\%) are checked, with a rate of 1 Java interaction for 1.6 checked top-level definitions, and 1 HMap lookup to 1.9 checked top-level definitions.
-That leaves 41 (44\%) unchecked vars, mainly due to partially complete porting to Typed Clojure, but in some cases due to unannotated third-party libraries.
+%%% No longer mentioned
+%No lookups involved fully specified maps.
 
-No typed multimethods are defined or used. 
+%No typed multimethods are defined or used. 
 % :collect/defalias-is-HMap      7
 % :invoke-special-collect/(quote clojure.core.typed/def-alias*)     18
-Of 18 total type aliases, 7 (39\%) contained one HMap type, and none contained unions of HMaps---on further inspection there was no HMap entry used to dictate control flow, often handled by multimethods.
-This is unusual in our experience, and is perhaps explained by feeds2imap mainly wrapping existing \emph{javax.mail} functionality.
+%Of 18 total type aliases, 7 (39\%) contained one HMap type, and none contained unions of HMaps---on further inspection there was no HMap entry used to dictate control flow, often handled by multimethods.
+%This is unusual in our experience, and is perhaps explained by feeds2imap mainly wrapping existing \emph{javax.mail} functionality.
 
-\paragraph{CircleCI}
-CircleCI %% \footnote{\url{https://circleci.com/}}
-provides continuous integration services built with a mixture of open-
-and closed-source.
-Typed Clojure was used at CircleCI in production systems for two years \cite{CircleCIUsesTC},
-maintaining
-87 namespaces and 19,000 lines of code.
+%\paragraph{CircleCI}
+%CircleCI %% \footnote{\url{https://circleci.com/}}
+%provides continuous integration services built with a mixture of open-
+%and closed-source.
+%Typed Clojure was used at CircleCI in production systems for two years \cite{CircleCIUsesTC},
+%maintaining
+%87 namespaces and 19,000 lines of code.
 %an experience we summarise in \secref{sec:limitations}.
 %
 %CircleCI provided the first author access to the main closed-source backend system written in Clojure
@@ -217,14 +278,14 @@ maintaining
 %% the first author ported 11 previously-untyped multimethods to Typed Clojure, also checking 
 %% 89 methods.
 
-The CircleCI code base contains 11 checked multimethods.
- All 11 dispatch functions
-are on a HMap key containing a keyword, in a similar style to
-\egref{example:desserts-on-meal}.
-Correspondingly, all 89 methods are associated with a keyword dispatch value.
-The argument type was in all cases a single HMap type, however,
-rather than a union type.
-In our experience from porting other libraries, this is unusual.
+%The CircleCI code base contains 11 checked multimethods.
+% All 11 dispatch functions
+%are on a HMap key containing a keyword, in a similar style to
+%\egref{example:desserts-on-meal}.
+%Correspondingly, all 89 methods are associated with a keyword dispatch value.
+%The argument type was in all cases a single HMap type, however,
+%rather than a union type.
+%In our experience from porting other libraries, this is unusual.
 
 % 87 typed namespaces
 % :check/gen-analysis     87
@@ -237,16 +298,18 @@ In our experience from porting other libraries, this is unusual.
 % :check/find-val-has-complete      2
 % :merge/complete-used-on-right      5
 
-Of 328 lookup operations on HMaps,
-208 (64\%) resolve to mandatory keys,
-70 (21\%) to optional keys,
-20 (6\%) to absent keys, and
-30 (9\%) lookups are unresolved.
+%%% In table
+%Of 328 lookup operations on HMaps,
+%208 (64\%) resolve to mandatory keys,
+%70 (21\%) to optional keys,
+%20 (6\%) to absent keys, and
+%30 (9\%) lookups are unresolved.
 %
 % :collect/defalias-is-HMap     62
 % :invoke-special-collect/(quote clojure.core.typed/def-alias*)     95 
-Of 95 total type aliases defined with \clj{defalias},
-62 (65\%) involved one or more HMap types.
+%%% In table
+%Of 95 total type aliases defined with \clj{defalias},
+%62 (65\%) involved one or more HMap types.
 %
 %% :new-special/(quote clojure.lang.MultiFn)     11
 %
@@ -271,49 +334,53 @@ Of 95 total type aliases defined with \clj{defalias},
 %% :invoke-special-collect/(quote clojure.core.typed/non-nil-return*) 35
 %% :invoke-special-collect/(quote clojure.core.typed/nilable-param*)  1
 %
-Out of 105 Java interactions, 26 (25\%) are static methods, 36 (34\%)
-are instance methods, 38 (36\%) are constructors, and 5 (5\%) are static
-fields. 35 methods are overriden to return non-nil, and 1 method 
-overridden to accept nil---suggesting that
-\coretyped{} disallowing \clj{nil} as a method argument by default
-is justified.
+%Out of 105 Java interactions, 26 (25\%) are static methods, 36 (34\%)
+%are instance methods, 38 (36\%) are constructors, and 5 (5\%) are static
+%fields. 
+%35 methods are overriden to return non-nil, 
 
 % :check/checked-def  407
 % :check/checked-MultiFn-addMethod 57
 % :instance-method-special/(quote clojure.lang.MultiFn/addMethod)     89
 % = 464 checked definitions
-Of 464 checked top-level definitions (which consists of
-57 \clj{defmethod} calls and 407 \clj{def} expressions),
-1 HMap lookup occurs per 1.4 top-level definitions,
-and 1 Java interaction occurs every 4.4 top-level definitions.
+%Of 464 checked top-level definitions (which consists of
+%57 \clj{defmethod} calls and 407 \clj{def} expressions),
+%1 HMap lookup occurs per 1.4 top-level definitions,
+%and 1 Java interaction occurs every 4.4 top-level definitions.
 
 % :check/def-not-checking-definition   1352
 % :check/checked-def  407
 % = 1759
 % :collect/:def   1834
 % = 1427 unchecked
-From 1834 \clj{def} expressions in typed code,
+%From 1834 \clj{def} expressions in typed code,
 %87 typed namespaces,
-only 407 (22\%) were checked.
-That leaves 1427 (78\%) which have unchecked definitions, either by an explicit \clj{:no-check} annotation
-or \clj{tc-ignore} to suppress type checking,
-or the \clj{warn-on-unannotated-vars} option, which skips \clj{def} expressions
-that lack expected types via \clj{ann}.
-From a brief investigation,
-reasons include unannotated third-party libraries,
-work-in-progress conversions to Typed Clojure,
-unsupported Clojure idioms, 
-and hard-to-check code.
+%only 407 (22\%) were checked.
+%78\% of var definitions are unchecked, either by an explicit \clj{:no-check} annotation
+%or \clj{tc-ignore} to suppress type checking,
+%or the \clj{warn-on-unannotated-vars} option, which skips \clj{def} expressions
+%that lack expected types via \clj{ann}.
+%From a brief investigation,
+%reasons include unannotated third-party libraries,
+%work-in-progress conversions to Typed Clojure,
+%unsupported Clojure idioms, 
+%and hard-to-check code.
 
 \paragraph{Lessons}
 Based on our empirical survey, HMaps and Java interoperability support
 are vital features used on average more than once per typed
 function. 
 %
-Multimethods are less common
-in our case studies. The CircleCI code base contains only 26 multimethods total
-in 55,000 lines of mixed untyped-typed Clojure code,
-a low number in our experience.
+Multimethods are less common in our case studies, but still represent a significant
+portion of the CircleCI code base, so support is still necessary.
+%The CircleCI code base contains only 26 multimethods total
+%in 55,000 lines of mixed untyped-typed Clojure code.
+%a low number in our experience.
+%
+%Only 1 Java method 
+%is overridden to accept nil, suggesting that
+%\coretyped{} disallowing \clj{nil} as a method argument by default
+%is justified.
 
 %The
 %data therefore validates our choice of a type system that supports
@@ -334,7 +401,8 @@ a low number in our experience.
 After a 2 year trial, the second case study decided to disabled type checking~\cite{CircleCIBlog}.
 They were supportive of the fundamental ideas presented in this paper, but primarily
 cited issues with the checker implementation in practice and would reconsider
-type checking if they were resolved.
+type checking if they were resolved. This is also supported by \figref{experience:featuretable},
+where 78\% of \clj{def} expressions are unchecked.
 
 \smallsection{Performance}
 Rechecking files with transitive dependencies is expensive since all dependencies must be rechecked.
@@ -347,9 +415,9 @@ Annotations for external code are rarely available, so a large part of the
 untyped-typed porting process is reverse engineering libraries.
 
 \smallsection{Unsupported idioms}
-While the current set of features is vital to checking Clojure code, as we have seen
-in \secref{sec:casestudy} there is still much work to do.
-In practice, common Clojure functions are too polymorphic for the current implementation
+While the current set of features is vital to checking Clojure code,
+there is still much work to do.
+For example, common Clojure functions are often too polymorphic for the current implementation
 or theory to account for. The post-mortem~\cite{CircleCIBlog} contains more details.
 
 %\smallsection{Java Arrays}
