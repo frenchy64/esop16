@@ -5,9 +5,6 @@
 
 - Section 5.1 provide tables
 
-p.17: "A, a set of keyword keys that are known to be absent" -- how
-it's calculated and represented in the type-checking algorithm?
-
 p.24: "Java Interoperability in Statically Typed Languages" -- a
 significant work in this direction has been done in Kotlin:
 https://kotlinlang.org/docs/reference/null-safety.html. Perhaps, you

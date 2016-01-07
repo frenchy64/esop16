@@ -1476,18 +1476,20 @@ and {\partial{}} (``partial'') if there are \emph{unknown} entries.
 The partially specified map of
 \clj{lunch} in \egref{example:lunchpartial}
 is written
-\HMapp{\mandatoryset{\mandatoryentrynoarrow{\Valkw{en}}{\String}, {\mandatoryentrynoarrow{\Valkw{fr}}{\String}}}}{\emptyabsent{}}.
-We abbreviate this type as \Lunch in this section.
+\HMapp{\mandatoryset{\mandatoryentrynoarrow{\Valkw{en}}{\String}, {\mandatoryentrynoarrow{\Valkw{fr}}{\String}}}}{\emptyabsent{}}
+(abbreviated \Lunch).
 %
 The type of the fully specified map
 \clj{breakfast} in \egref{example:breakfastcomplete} elides the absent entries,
 written
-\HMapc{\mandatoryset{\mandatoryentrynoarrow{\Valkw{en}}{\String}, {\mandatoryentrynoarrow{\Valkw{fr}}{\String}}}}.
-We abbreviate this type as \Breakfast in this section.
+\HMapc{\mandatoryset{\mandatoryentrynoarrow{\Valkw{en}}{\String}, {\mandatoryentrynoarrow{\Valkw{fr}}{\String}}}}
+(abbreviated \Breakfast).
 To ease presentation, 
-if an HMap has completeness tag \complete{} then \absent{} implicitly contains all keywords not in the domain of \mandatory{}.
-%\HMapcwithabsent{\mandatory{}}{\absent{}} is abbreviated to \HMapc{\mandatory{}}. 
+if an HMap has completeness tag \complete{} then \absent{} is elided and implicitly contains all keywords not in the domain of 
+\mandatory{}---dissociating keys is not modelled, so the set of absent entries otherwise
+never grows.
 Keys cannot be both present and absent.
+%\HMapcwithabsent{\mandatory{}}{\absent{}} is abbreviated to \HMapc{\mandatory{}}. 
 
 The metavariable \mapval{}
 ranges over the runtime value of maps {\curlymapvaloverright{\k{}}{\v{}}},
