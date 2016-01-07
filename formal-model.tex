@@ -1521,14 +1521,14 @@ An absent lookup is checked by T-GetHMapAbsent.
 $$
 \abs{\makelocal{b}}{\Breakfast}{\getexp{\makelocal{b}}{\makekw{bocce}}}
 $$
-The result type is \Nil, and the return object is \path{\keype{\makekw{bocce}}}{\makelocal{b}}.
+The result type is \Nil---since \Breakfast is fully specified---with return object \path{\keype{\makekw{bocce}}}{\makelocal{b}}.
 
 A lookup that is not present or absent is checked by
 T-GetHMapPartialDefault.
 $$
 \abs{\makelocal{u}}{\Lunch}{\getexp{\makelocal{u}}{\makekw{bocce}}}
 $$
-The result type is \Top, and the return object is \path{\keype{\makekw{bocce}}}{\makelocal{u}}.
+The result type is \Top---since {\Lunch} has an unknown \makekw{bocce} entry---with return object \path{\keype{\makekw{bocce}}}{\makelocal{u}}.
 Notice propositions are erased once they enter a HMap type.
 
 For presentational reasons, lookups on unions of HMaps are only supported in T-GetHMap
