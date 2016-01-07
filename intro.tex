@@ -82,13 +82,13 @@ appropriately. Notably, \texttt{null} is a distinct type in Typed Clojure,
 designed to automatically rule out null-pointer exceptions.
 
 An example of these features is given in
-\figref{fig:ex1}. Here, the \texttt{pname} multimethod dispatches
-on the \texttt{class} of the argument---for \texttt{String}s,
-the first method implementation is called, for \texttt{File}s, the
-second. The \texttt{String} method calls
-a \texttt{File} constructor, returning a non-nil \texttt{File} instance---the 
-\texttt{.getName} method 
-on \texttt{File} requires a non-nil target, returning a nilable
+\figref{fig:ex1}. Here, the \clj{pname} multimethod dispatches
+on the \clj{class} of the argument---for \clj{String}s,
+the first method implementation is called, for \clj{File}s, the
+second. The \clj{String} method calls
+a \clj{File} constructor, returning a non-nil \clj{File} instance---the 
+\clj{.getName} method 
+on \clj{File} requires a non-nil target, returning a nilable
 type.  
 %Typed Clojure offers an opt-in mode that
 %resolves JVM overloading, avoiding expensive runtime reflective calls.

@@ -41,9 +41,7 @@ However, this smooth interoperability comes at the cost of pervasive \java{null}
 
 \subsection{Typed Clojure}
 
-Here is a simple one-argument function
-%
-\clj{greet} that takes and returns strings.
+A simple one-argument function \clj{greet} is annotated with \clj{ann} to take and return strings.
 
 \begin{minted}{clj}
 (ann  greet [Str -> Str])
@@ -180,7 +178,7 @@ surrounding static context, a type error is thrown.
 (fn [f] (.getParent f)) ; Type Error: Unresolved interop: getParent
 \end{minted}
 %
-Function arguments default to \clj{Any}, the most permissive type. Ascribing
+Function arguments default to \clj{Any}, which is similar to a union of all types. Ascribing
 a parameter type allows Typed Clojure to find a specific method.
 
 %Calls to Java methods and fields have prefix notation
@@ -243,7 +241,7 @@ In contrast, JVM invariants guarantee constructors return non-null.\footnote{\ur
 one or more \emph{methods}---widely used to define Clojure operations.
 
 \paragraph{Value-based dispatch}
-This simple multimethod says hello in different languages.%, as
+This simple multimethod takes a keyword (\clj{Kw}) and says hello in different languages.%, as
 %specified by a keyword argument.
 
 \begin{exmp}

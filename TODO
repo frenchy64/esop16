@@ -22,12 +22,9 @@ https://kotlinlang.org/docs/reference/null-safety.html. Perhaps, you
 should compare to it.
 
 - Gradual typing vs optional typing?
-
  - cite Strongtalk, Dimondback Ruby,  (which is optional & gradual as
       I see it, while Strongtalk is just optional) and others.
  - the comparison between HMaps & OCaml row polymorphism could be expanded.
- - I didn't know what Clojure "ann" was. Still don't
- - ditto Kw & Any (p.5)
  - I presume Any is *not* type Dynamic (which accepts any method
  request statically?) I think the paper also mentions type Object: how
  are Any and Object related?
