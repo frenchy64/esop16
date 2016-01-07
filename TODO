@@ -14,6 +14,5 @@ should compare to it.
  - cite Strongtalk, Dimondback Ruby,  (which is optional & gradual as
       I see it, while Strongtalk is just optional) and others.
  - the comparison between HMaps & OCaml row polymorphism could be expanded.
-  - p.9 why does 42 have the object "0"
 
 - what is consistency
