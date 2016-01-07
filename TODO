@@ -1,8 +1,6 @@
 - Outline delta from ICFP'10
 - is OC decidable?
 
-- Section 5.1 provide tables
-
 p.24: "Java Interoperability in Statically Typed Languages" -- a
 significant work in this direction has been done in Kotlin:
 https://kotlinlang.org/docs/reference/null-safety.html. Perhaps, you
