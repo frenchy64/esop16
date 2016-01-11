@@ -52,7 +52,13 @@ Furthermore, Typed Racket's \emph{occurrence typing} has proved
 necessary for type checking realistic Clojure programs.
 
 \begin{figure}[t!]
-\inputminted[firstline=15]{clojure}{code/demo/src/demo/ex-intro.clj}
+\begin{verbatim}
+(ann pname [(U File String) -> (U nil String)])
+(defmulti pname class)  ; multimethod dispatching on class of argument
+(defmethod pname String [s] (pname (new File s))) ; String case 
+(defmethod pname File [f] (.getName f)) ; File case, with static null check
+(pname "STAINS/JELLY") ;=> "JELLY" :- (U nil Str)
+\end{verbatim}
 \caption{A simple Typed Clojure program}
 \label{fig:ex1}
 \end{figure}

@@ -34,7 +34,6 @@
 \bibliographystyle{splncs03}
 
 \usepackage{common}
-\usepackage{minted}
 \include{bibliography.bib}
 \usepackage{chngcntr}
 \usepackage{url}
@@ -54,6 +53,14 @@
 \\[-3.23em]\nopagebreak}
 {\relax}
 
+\newenvironment{mintedclj}{
+  {\begin{verbatim}
+      \\
+    }
+
+  {\\
+  \end{verbatim}}
+  }
 
 \begin{document}
 
@@ -65,9 +72,9 @@
 %\setminted{%fontsize=\footnotesize
 %}
 
-\newcommand{\clj}[1]{\mintinline{clojure}{#1}}
-\newcommand{\java}[1]{\mintinline{java}{#1}}
-\newcommand{\rkt}[1]{\mintinline{racket}{#1}}
+\newcommand{\clj}[1]{\lstinline{#1}}
+\newcommand{\java}[1]{\lstinline{#1}}
+\newcommand{\rkt}[1]{\lstinline{#1}}
 
 % Uncomment one of the following two, if you are not going for the 
 % traditional copyright transfer agreement.
