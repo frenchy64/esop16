@@ -60,8 +60,9 @@ necessary for type checking realistic Clojure programs.
 (defmethod pname File [f] (*interop .getName f interop*)) ; File case, static null check
 (*invoke pname "STAINS/JELLY" invoke*) ;=> "JELLY" :- (U nil Str)
 \end{lstlisting}
-\caption{A simple Typed Clojure program (delimiter colors: {\color{interop}Java interoperation}, {\color{types}type annotation},
-  {\color{invoke}function invocation (black)}, {\color{red}collection literals}, {\color{mygray}miscellaneous})}
+\caption{A simple Typed Clojure program (delimiter colors: {\color{interop}Java interoperation (green)}, 
+  {\color{types}type annotation (blue)},
+  {\color{invoke}function invocation (black)}, {\color{red}collection literal (red)}, {\color{mygray}miscellaneous (gray)})}
 \label{fig:ex1}
 \end{figure*}
 
@@ -95,7 +96,7 @@ on the \clj{class} of the argument---for \clj{String}s,
 the first method implementation is called, for \clj{File}s, the
 second. The \clj{String} method calls
 a \clj{File} constructor, returning a non-nil \clj{File} instance---the 
-\clj{.getName} method 
+\clj{getName} method 
 on \clj{File} requires a non-nil target, returning a nilable
 type.  
 %Typed Clojure offers an opt-in mode that
