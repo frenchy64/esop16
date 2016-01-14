@@ -607,8 +607,8 @@ natural to dispatch on a known entry like \clj{:Meal}.
 \begin{lstlisting}
 (*typed ann desserts [Order -> Int] typed*)
 (defmulti desserts :Meal)  ; dispatch on :Meal entry
-(defmethod desserts :lunch [o] (*invoke :desserts d invoke*))
-(defmethod desserts :dinner [o] (*invoke :desserts d invoke*))
+(defmethod desserts :lunch [o] (*invoke :desserts o invoke*))
+(defmethod desserts :dinner [o] (*invoke :desserts o invoke*))
 (defmethod desserts :combo [o] 
   (*invoke + (*invoke desserts (*invoke :meal1 o invoke*) invoke*) (*invoke desserts (*invoke :meal2 o invoke*) invoke*) invoke*))
 
