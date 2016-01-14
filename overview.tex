@@ -464,6 +464,8 @@ a company with a large production Typed Clojure system
 (\secref{sec:casestudy} presents a case study and empirical
 result from this code base).
 
+\newpage
+
 \begin{exmp}
 \begin{lstlisting}
 (*typed defalias RawKeyPair ; extra keys disallowed
@@ -598,8 +600,10 @@ The \clj{:Meal} entry is common to each HMap, always mapped to a known keyword s
 type.
 It's natural to dispatch on the \clj{class} of an instance---it's similarly
 natural to dispatch on a known entry like \clj{:Meal}.
-%
-\begin{exmp2} % use other environment to work around page break
+
+\newpage
+
+\begin{exmp}
 \begin{lstlisting}
 (*typed ann desserts [Order -> Int] typed*)
 (defmulti desserts :Meal)  ; dispatch on :Meal entry
@@ -612,7 +616,7 @@ natural to dispatch on a known entry like \clj{:Meal}.
            :meal2 {*map :Meal :dinner :desserts 2 map*} map*} invoke*) ;=> 3
 \end{lstlisting}
 \label{example:desserts-on-meal}
-\end{exmp2}
+\end{exmp}
 %
 The \clj{:combo} method is verified to only structurally recur
 on \clj{Order}s. This is achieved because we learn the argument \clj{o} must
