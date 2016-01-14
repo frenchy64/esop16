@@ -268,7 +268,7 @@ bindings---this is explained in \secref{formalmodel:proofsystem}.
 
 
 
-\begin{figure*}
+\begin{figure*}[t]
 \footnotesize
     %{\TDo}
     %{\TClass}
@@ -960,7 +960,7 @@ field accesses are written \fieldexp{\fld{}}{\e{}}
 and method calls $\methodexp{\mth{}}{\e{}}{\overrightarrow{e}}$.
 %and \clj{(new class es*)} is $\newexp{\class{}}{\overrightarrow{es}}$.
 
-In \egref{example:getparent-direct-constructor}, \clj{(.getParent (new File "a/b"))}
+In \egref{example:getparent-direct-constructor}, \clj{(*interop .getParent (*interop new File "a/b" interop*) interop*)}
 translates to
 \begin{equation}  \label{eq:unresolved}
   \qquad {\methodexp {\getparent{}} {\newexp {\File{}} {\makestr{a/b}}} {}}
@@ -1584,7 +1584,7 @@ as long as they agree on the mandatory entries of the partial map via subtyping 
 The semantics for \getliteral{} and \assocliteral{} are straightforward.
 %If the entry is missing, B-GetMissing produces \nil{}.
 
-\begin{figure}
+\begin{figure}[t]
   $$
 \begin{array}{llll}
 \updatefigure{}

@@ -73,6 +73,10 @@ with-meta,with-open,with-out-str,with-precision,xml-seq,zero?,zipmap
 \definecolor{mygray}{rgb}{0.5,0.5,0.5}
 \definecolor{stringgray}{rgb}{0.4,0.4,0.4}
 \definecolor{mymauve}{rgb}{0.58,0,0.82}
+\definecolor{types}{rgb}{0.0, 0.7, 1.0}
+\definecolor{turnstile}{rgb}{0.0, 0.5, 1.0}
+\definecolor{interop}{rgb}{0,0.8,0}
+\definecolor{invoke}{rgb}{0,0,0}
 
 \lstset{ %
   %upquote=true,
@@ -94,15 +98,28 @@ with-meta,with-open,with-out-str,with-precision,xml-seq,zero?,zipmap
   %breakatwhitespace=true,    % sets if automatic breaks should only happen at whitespace
   %escapeinside={\%*}{*)},          % if you want to add a comment within your code
   literate= 
-            {\#\{ }{{\textcolor{red}{\#\{}}}1
-            {\{ }{{\textcolor{red}{\{}}}1
-            {\}} {{\textcolor{red}{\}}}}1
+            %{\#\{*set\ }{{\textcolor{red}{\#\{}}}1
+            %{\ set*\}} {{\textcolor{red}{\}}}}1
+            {\{}{{\textcolor{mygray}{\{}}}1
+            {\}} {{\textcolor{mygray}{\}}}}1
+            {\{*map\ }{{\textcolor{red}{\{}}}1
+            {\ map*\}} {{\textcolor{red}{\}}}}1
             {[}  {{\textcolor{mygray}{[}}}1
             {]}  {{\textcolor{mygray}{]}}}1     
             {(}  {{\textcolor{mygray}{(}}}1
             {)}  {{\textcolor{mygray}{)}}}1     
-            {:-}  {{\textcolor{mygray}{:-}}}1     
+            {:-}  {{\textcolor{turnstile}{:-}}}1     
             {->}  {{\textcolor{mygray}{->}}}1     
+            {[*vec\ }  {{\textcolor{red}{[}}}1
+            {\ vec*]}  {{\textcolor{red}{]}}}1     
+            {(*list\ }  {{\textcolor{red}{(}}}1
+            {\ list*)}  {{\textcolor{red}{)}}}1     
+            {(*interop\ }  {{\textcolor{interop}{(}}}1     
+            {\ interop*)}  {{\textcolor{interop}{)}}}1     
+            {(*typed\ }  {{\textcolor{types}{(}}}1     
+            {\ typed*)}  {{\textcolor{types}{)}}}1     
+            {(*invoke\ }  {{\textcolor{invoke}{(}}}1     
+            {\ invoke*)}  {{\textcolor{invoke}{)}}}1     
 }
 
 \lstset{ %
