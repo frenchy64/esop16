@@ -1,0 +1,195 @@
+% rubber: set arguments --shell-escape
+% arara: pdflatex: {shell: true}
+%-----------------------------------------------------------------------------
+%
+%               Template for sigplanconf LaTeX Class
+%
+% Name:         sigplanconf-template.tex
+%
+% Purpose:      A template for sigplanconf.cls, which is a LaTeX 2e class
+%               file for SIGPLAN conference proceedings.
+%
+% Guide:        Refer to "Author's Guide to the ACM SIGPLAN Class,"
+%               sigplanconf-guide.pdf
+%
+% Author:       Paul C. Anagnostopoulos
+%               Windfall Software
+%               978 371-2316
+%               paul@windfall.com
+%
+% Created:      15 February 2005
+%
+%-----------------------------------------------------------------------------
+
+
+\documentclass{llncs}
+
+% The following \documentclass options may be useful:
+
+% preprint      Remove this option only once the paper is in final form.
+% 10pt          To set in 10-point type instead of 9-point.
+% 11pt          To set in 11-point type instead of 9-point.
+% authoryear    To obtain author/year citation style instead of numeric.
+
+\bibliographystyle{splncs03}
+
+\usepackage{common}
+\include{bibliography.bib}
+\usepackage{chngcntr}
+\usepackage{url}
+% seems like a nightmare to use, but you get clickable links
+%\usepackage{hyperref}
+
+\newcounter{ex}
+\newenvironment{exmp}{
+\refstepcounter{ex}%
+\par\vspace{.8em}\hfill\framebox{\small Example~\theex}\nopagebreak
+\\[-3.23em]\nopagebreak}
+{\relax}
+
+\newenvironment{exmp2}{
+\refstepcounter{ex}%
+\par\vspace{3em}\hfill\framebox{\small Example~\theex}\nopagebreak
+\\[-3.23em]\nopagebreak}
+{\relax}
+
+\newenvironment{mintedclj}{
+\begin{verbatim}%
+}
+{\end{verbatim}%
+}%
+
+
+\begin{document}
+
+\special{papersize=8.5in,11in}
+\setlength{\pdfpageheight}{\paperheight}
+\setlength{\pdfpagewidth}{\paperwidth}
+
+%
+%\setminted{%fontsize=\footnotesize
+%}
+
+\newcommand{\clj}[1]{\lstinline{#1}}
+\newcommand{\java}[1]{\lstinline{#1}}
+\newcommand{\rkt}[1]{\lstinline{#1}}
+
+% Uncomment one of the following two, if you are not going for the 
+% traditional copyright transfer agreement.
+
+%\exclusivelicense                % ACM gets exclusive license to publish, 
+                                  % you retain copyright
+
+%\permissiontopublish             % ACM gets nonexclusive license to publish
+                                  % (paid open-access papers, 
+                                  % short abstracts)
+
+%\titlebanner{banner above paper title}        % These are ignored unless
+%\preprintfooter{short description of paper}   % 'preprint' option specified.
+
+\title{Practical Optional Types for Clojure}
+
+%\authorinfo{}{}{\vspace*{-2mm}}
+\author{\ma{\text{Ambrose Bonnaire-Sergeant}^\dagger\text{, Rowan Davies*}, \text{Sam Tobin-Hochstadt}^\dagger}}
+\institute{Indiana University$\dagger$; Omnia Team, Commonwealth Bank of Australia*
+  \{abonnair,samth\}@indiana.edu, Rowan.Davies@cba.com.au}
+%       {Indiana University}
+%       {abonnair@indiana.edu}
+%       {University of Western Australia}
+%       {Rowan.Davies@cba.com.au}
+%       {Indiana University}
+%       {samth@indiana.edu}
+
+\maketitle
+
+\begin{abstract}
+Typed Clojure is an optional type system for Clojure, a dynamic
+language in the Lisp family that targets the JVM. Typed Clojure
+enables Clojure programmers to gain greater confidence in the
+correctness of their code via static type checking while remaining in
+the Clojure world, and has acquired significant adoption in the
+Clojure community. Typed Clojure repurposes Typed Racket's
+\emph{occurrence typing}, an approach to statically reasoning about
+predicate tests, and also includes several new type system features to
+handle existing Clojure idioms.
+
+In this paper, we describe Typed Clojure and present these type system
+extensions, focusing on three features widely used in Clojure. 
+%
+ First, multimethods provide extensible
+operations, and their Clojure semantics turns out to have a surprising
+synergy with the underlying occurrence typing framework.
+%
+Second, Java
+interoperability is central to Clojure's mission but introduces
+challenges such as ubiquitous \texttt{null}; Typed Clojure handles
+Java interoperability while ensuring the absence of null-pointer
+exceptions in typed programs. 
+%
+Third, Clojure programmers
+idiomatically use immutable dictionaries for data structures; Typed
+Clojure handles this with multiple forms of
+heterogeneous dictionary types.
+%
+
+We provide a formal model of the Typed Clojure type system
+incorporating these and other features, with a proof of
+soundness. Additionally, Typed Clojure is now in use by numerous
+corporations and developers working with Clojure, and we present
+a quantitative analysis on the use of type system features
+in two substantial code bases.
+
+
+%% Clojure is a dynamically typed language hosted on the Java 
+%% Virtual Machine.
+%% Typed Racket is a valuable starting point for
+%% a gradual type system that targets Clojure.
+%% Building a similar type system for a new language gives the
+%% designer some flexibility to repurpose and extend features.
+%% This paper gives an overview of Typed Clojure, concentrating
+%% on the extensions and differences from Typed Racket. We also
+%% show where Typed Racket's features were particularly useful
+%% for type checking non-trivial Clojure idioms.
+\end{abstract}
+
+%% \category{CR-number}{subcategory}{third-level}
+
+%% \keywords
+%% optional types, Clojure
+
+\input{intro}
+
+\input{overview}
+
+\input{formal-model}
+
+\input{metatheory}
+
+\input{experience}
+
+\input{related-work}
+
+\input{conclusion}
+
+%\input{acknowledgements}
+
+% We recommend abbrvnat bibliography style.
+
+% The bibliography should be embedded for final submission.
+\newpage
+
+\bibliography{bibliography}
+
+\clearpage
+
+\input{appendix}
+
+\end{document}
+
+%                       Revision History
+%                       -------- -------
+%  Date         Person  Ver.    Change
+%  ----         ------  ----    ------
+
+%  2013.06.29   TU      0.1--4  comments on permission/copyright notices
+
