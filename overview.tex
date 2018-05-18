@@ -621,7 +621,7 @@ natural to dispatch on a known entry like \clj{:Meal}.
 The \clj{:combo} method is verified to only structurally recur
 on \clj{Order}s. This is achieved because we learn the argument \clj{o} must
 be of type
-\clj{'\{:Meal :combo\}}
+\clj{'\{:Meal ':combo\}}
 since
 \clj{(isa? (:Meal o) :combo)}
 is true. Combining this
