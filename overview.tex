@@ -686,7 +686,7 @@ must be true---which implies \clj{(*invoke class (*invoke :desserts o invoke*) i
 %
 Since lookups on missing keys return \clj{nil}, either
 \begin{itemize}
-  \item \clj{o} has a \clj{:desserts} entry to \clj{nil}, like \clj{{:desserts nil}}, or
+  \item \clj{o} maps the \clj{:desserts} entry to \clj{nil}, like the value \clj{\{:desserts nil\}}, or
   \item \clj{o} is missing a \clj{:desserts} entry.%, like \clj{{}}.
 \end{itemize}
 We can express this type with the \clj{:absent-keys} HMap option
