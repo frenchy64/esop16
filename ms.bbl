@@ -1,0 +1,107 @@
+\begin{thebibliography}{10}
+\providecommand{\url}[1]{\texttt{#1}}
+\providecommand{\urlprefix}{URL }
+
+\bibitem{gradualtalk}
+Allende, E., Callau, O., Fabry, J., Tanter, {\'E}., Denker, M.: Gradual typing
+  for {Smalltalk}. Science of Computer Programming  96,  52--69 (2014)
+
+\bibitem{coretyped}
+Bonnaire-Sergeant, A., contributors: {core.typed},
+  \url{https://github.com/clojure/core.typed}
+
+\bibitem{CM91}
+Cardelli, L., Mitchell, J.C.: Operations on records. In: Mathematical
+  Structures in Computer Science. pp. 3--48 (1991)
+
+\bibitem{Chambers:1992:OMC}
+Chambers, C.: Object-oriented multi-methods in {Cecil}. In: Proc. ECOOP (1992)
+
+\bibitem{Chambers:1994:TMM}
+Chambers, C., Leavens, G.T.: Typechecking and modules for multi-methods. In:
+  Proc. OOPSLA (1994)
+
+\bibitem{Chugh:2012:DTJ}
+Chugh, R., Herman, D., Jhala, R.: Dependent types for {JavaScript}. In: Proc.
+  OOPSLA (2012)
+
+\bibitem{CircleCI}
+CircleCI: {CircleCI}, \url{https://circleci.com}
+
+\bibitem{CircleCIUsesTC}
+CircleCI: Why we're supporting {Typed Clojure}, and you should too! (September
+  2013), \url{http://blog.circleci.com/supporting-typed-clojure/}
+
+\bibitem{CircleCIBlog}
+CircleCI;~O'Morain, M.: Why we're no longer using core.typed (September 2015),
+  \url{http://blog.circleci.com/why-were-no-longer-using-core-typed/}
+
+\bibitem{hack}
+Facebook: {Hack} language specification. Tech. rep., Facebook (2014)
+
+\bibitem{flow}
+Facebook: {Flow} language specification. Tech. rep., Facebook (2015)
+
+\bibitem{HP91}
+Harper, R., Pierce, B.: A record calculus based on symmetric concatenation. In:
+  Proc. POPL (1991)
+
+\bibitem{Hic08}
+Hickey, R.: The {Clojure} programming language. In: Proc. DLS (2008)
+
+\bibitem{CljSeqDoc}
+Hickey, R.: {Clojure} sequence Documentation (February 2015),
+  \url{http://clojure.org/sequences}
+
+\bibitem{mypy}
+Lehtosalo, J.: mypy, \url{http://mypy-lang.org/}
+
+\bibitem{TeJaS}
+Lerner, B.S., Politz, J.G., Guha, A., Krishnamurthi, S.: {TeJaS}: Retrofitting
+  type systems for {JavaScript}. In: Proceedings of the 9th Symposium on
+  Dynamic Languages. pp. 1--16. DLS '13, ACM, New York, NY, USA (2013),
+  \url{http://doi.acm.org/10.1145/2508168.2508170}
+
+\bibitem{Lucassen88polymorphiceffect}
+Lucassen, J.M., Gifford, D.K.: Polymorphic effect systems. In: Proc. POPL
+  (1988)
+
+\bibitem{Maidl:2014:TLO}
+Maidl, A.M., Mascarenhas, F., Ierusalimschy, R.: Typed {Lua}: An optional type
+  system for {Lua}. In: Proc. Dyla (2014)
+
+\bibitem{typescript}
+Microsoft: {Typescript} language specification. Tech. Rep. Version 1.4,
+  Microsoft (2014)
+
+\bibitem{MS02}
+Millstein, T., Chambers, C.: Modular statically typed multimethods. In:
+  Information and Computation. pp. 279--303. Springer-Verlag (2002)
+
+\bibitem{OCD+}
+Odersky, M., Cremet, V., Dragos, I., Dubochet, G., Emir, B., McDirmid, S.,
+  Micheloud, S., Mihaylov, N., Schinz, M., Stenman, E., Spoon, L., Zenger, M.,
+  et~al.: An overview of the {Scala} programming language (second edition).
+  Tech. rep., EPFL Lausanne, Switzerland (2006)
+
+\bibitem{stf-esop}
+Strickland, T.S., Tobin-Hochstadt, S., Felleisen, M.: Practical variable-arity
+  polymorphism. In: Proc. ESOP (2009)
+
+\bibitem{TF08}
+Tobin-Hochstadt, S., Felleisen, M.: The design and implementation of {Typed
+  Scheme}. In: Proc. POPL (2008)
+
+\bibitem{TF10}
+Tobin-Hochstadt, S., Felleisen, M.: Logical types for untyped languages. In:
+  Proc. ICFP. ICFP '10 (2010)
+
+\bibitem{Vitousek14}
+Vitousek, M.M., Kent, A.M., Siek, J.G., Baker, J.: Design and evaluation of
+  gradual typing for {Python}. In: Proc. DLS (2014)
+
+\bibitem{Wand89typeinference}
+Wand, M.: Type inference for record concatenation and multiple inheritance
+  (1989)
+
+\end{thebibliography}
